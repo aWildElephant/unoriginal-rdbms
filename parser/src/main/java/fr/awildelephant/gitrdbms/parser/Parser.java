@@ -48,4 +48,8 @@ public final class Parser {
 
         return token;
     }
+
+    public boolean isNextTokenOFType(TokenType expectedType) {
+        return lexer.lookupNextToken().type() == expectedType;
+    }
 }
