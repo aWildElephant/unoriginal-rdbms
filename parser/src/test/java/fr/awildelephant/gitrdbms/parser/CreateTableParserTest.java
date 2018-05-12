@@ -28,6 +28,16 @@ class CreateTableParserTest {
         assertParsing("CREATE TABLE z (y INTEGER)", new CreateTable("z", columns));
     }
 
+    @Test
+    void it_should_parse_a_create_table_query_with_several_columns() {
+        final ArrayList<ColumnDefinition> columns = new ArrayList<>();
+        columns.add(new ColumnDefinition("y", INTEGER));
+        columns.add(new ColumnDefinition("x", INTEGER));
+        columns.add(new ColumnDefinition("w", INTEGER));
+
+        assertParsing("CREATE TABLE z (y INTEGER, x INTEGER, w INTEGER)", new CreateTable("z", columns));
+    }
+
     private void assertParsing(String input, AST expectedAST) {
         assertThat(new Parser(new Lexer(InputStreamWrapper.wrap(input))).parse()).isEqualTo(expectedAST);
     }

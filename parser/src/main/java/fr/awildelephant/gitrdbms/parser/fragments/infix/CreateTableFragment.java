@@ -7,13 +7,8 @@ import fr.awildelephant.gitrdbms.parser.ast.ColumnDefinition;
 import fr.awildelephant.gitrdbms.parser.ast.CreateTable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.IDENTIFIER;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.INTEGER;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.LEFT_PAREN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.RIGHT_PAREN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.TABLE;
+import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.*;
 
 public class CreateTableFragment implements InfixFragment {
 
@@ -23,19 +18,25 @@ public class CreateTableFragment implements InfixFragment {
         final String tableName = parser.consumeAndExpect(IDENTIFIER).text();
         parser.consumeAndExpect(LEFT_PAREN);
 
-        if (parser.isNextTokenOFType(RIGHT_PAREN)) {
-            parser.consumeAndExpect(RIGHT_PAREN);
+        final ArrayList<ColumnDefinition> columns = new ArrayList<>();
 
-            return new CreateTable(tableName, Collections.emptyList());
-        } else {
-            final String columnName = parser.consumeAndExpect(IDENTIFIER).text();
-            parser.consumeAndExpect(INTEGER);
-            parser.consumeAndExpect(RIGHT_PAREN);
+        while (!parser.isNextTokenOFType(RIGHT_PAREN)) {
+            columns.add(parseColumnDefinition(parser));
 
-            final ArrayList<ColumnDefinition> columns = new ArrayList<>();
-            columns.add(new ColumnDefinition(columnName, ColumnDefinition.INTEGER));
-
-            return new CreateTable(tableName, columns);
+            if (parser.isNextTokenOFType(COMMA)) {
+                parser.consumeAndExpect(COMMA);
+            }
         }
+
+        parser.consumeAndExpect(RIGHT_PAREN);
+
+        return new CreateTable(tableName, columns);
+    }
+
+    private ColumnDefinition parseColumnDefinition(Parser parser) {
+        final String columnName = parser.consumeAndExpect(IDENTIFIER).text();
+        parser.consumeAndExpect(INTEGER);
+
+        return new ColumnDefinition(columnName, ColumnDefinition.INTEGER);
     }
 }
