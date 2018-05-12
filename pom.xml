@@ -12,6 +12,7 @@
     <modules>
         <module>parser</module>
         <module>lexer</module>
+        <module>ast</module>
     </modules>
 
     <properties>
@@ -51,6 +52,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>git-rdbms-ast</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>git-rdbms-lexer</artifactId>

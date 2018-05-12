@@ -2,15 +2,15 @@ package fr.awildelephant.gitrdbms.parser;
 
 import fr.awildelephant.gitrdbms.lexer.InputStreamWrapper;
 import fr.awildelephant.gitrdbms.lexer.Lexer;
-import fr.awildelephant.gitrdbms.parser.ast.AST;
-import fr.awildelephant.gitrdbms.parser.ast.ColumnDefinition;
-import fr.awildelephant.gitrdbms.parser.ast.CreateTable;
+import fr.awildelephant.gitrdbms.ast.AST;
+import fr.awildelephant.gitrdbms.ast.ColumnDefinition;
+import fr.awildelephant.gitrdbms.ast.CreateTable;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static fr.awildelephant.gitrdbms.parser.ast.ColumnDefinition.INTEGER;
+import static fr.awildelephant.gitrdbms.ast.ColumnDefinition.INTEGER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CreateTableParserTest {

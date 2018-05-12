@@ -3,7 +3,7 @@ package fr.awildelephant.gitrdbms.parser;
 import fr.awildelephant.gitrdbms.lexer.Lexer;
 import fr.awildelephant.gitrdbms.lexer.tokens.Token;
 import fr.awildelephant.gitrdbms.lexer.tokens.TokenType;
-import fr.awildelephant.gitrdbms.parser.ast.AST;
+import fr.awildelephant.gitrdbms.ast.AST;
 import fr.awildelephant.gitrdbms.parser.fragments.infix.CreateTableFragment;
 import fr.awildelephant.gitrdbms.parser.fragments.infix.InfixFragment;
 

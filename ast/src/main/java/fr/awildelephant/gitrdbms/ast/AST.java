@@ -1,4 +1,4 @@
-package fr.awildelephant.gitrdbms.parser.ast;
+package fr.awildelephant.gitrdbms.ast;
 
 public interface AST {
 

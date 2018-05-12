@@ -2,9 +2,9 @@ package fr.awildelephant.gitrdbms.parser.fragments.infix;
 
 import fr.awildelephant.gitrdbms.lexer.tokens.Token;
 import fr.awildelephant.gitrdbms.parser.Parser;
-import fr.awildelephant.gitrdbms.parser.ast.AST;
-import fr.awildelephant.gitrdbms.parser.ast.ColumnDefinition;
-import fr.awildelephant.gitrdbms.parser.ast.CreateTable;
+import fr.awildelephant.gitrdbms.ast.AST;
+import fr.awildelephant.gitrdbms.ast.ColumnDefinition;
+import fr.awildelephant.gitrdbms.ast.CreateTable;
 
 import java.util.ArrayList;
 

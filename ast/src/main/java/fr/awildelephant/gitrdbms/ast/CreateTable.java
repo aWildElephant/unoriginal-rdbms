@@ -1,4 +1,4 @@
-package fr.awildelephant.gitrdbms.parser.ast;
+package fr.awildelephant.gitrdbms.ast;
 
 import java.util.List;
 

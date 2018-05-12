@@ -1,4 +1,4 @@
-package fr.awildelephant.gitrdbms.parser.ast;
+package fr.awildelephant.gitrdbms.ast;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
