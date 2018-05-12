@@ -11,9 +11,13 @@ public final class ColumnDefinition implements AST {
      * @param columnName must be not null
      * @param columnType must be not null
      */
-    public ColumnDefinition(String columnName, int columnType) {
+    private ColumnDefinition(String columnName, int columnType) {
         this.columnName = columnName;
         this.columnType = columnType;
+    }
+
+    public static ColumnDefinition columnDefinition(String columnName, int columnType) {
+        return new ColumnDefinition(columnName, columnType);
     }
 
     @Override

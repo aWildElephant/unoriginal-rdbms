@@ -1,19 +1,21 @@
 package fr.awildelephant.gitrdbms.ast;
 
-import java.util.List;
-
 public final class CreateTable implements AST {
 
-    private final String tableName;
-    private final List<ColumnDefinition> columns;
+    private final TableName tableName;
+    private final AST columns;
 
     /**
      * @param tableName must be not null
-     * @param columns must be not null
+     * @param columns   must be not null
      */
-    public CreateTable(String tableName, List<ColumnDefinition> columns) {
+    private CreateTable(TableName tableName, AST columns) {
         this.tableName = tableName;
         this.columns = columns;
+    }
+
+    public static CreateTable createTable(TableName tableName, AST columns) {
+        return new CreateTable(tableName, columns);
     }
 
     @Override

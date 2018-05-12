@@ -1,18 +1,13 @@
 package fr.awildelephant.gitrdbms.lexer;
 
 import fr.awildelephant.gitrdbms.lexer.tokens.IdentifierToken;
+import fr.awildelephant.gitrdbms.lexer.tokens.IntegerLiteralToken;
 import fr.awildelephant.gitrdbms.lexer.tokens.Token;
+import fr.awildelephant.gitrdbms.lexer.tokens.TokenType;
 
 import java.util.InputMismatchException;
 
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.CREATE_TOKEN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.END_OF_FILE_TOKEN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.INTEGER_TOKEN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.TABLE_TOKEN;
+import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.*;
 
 public final class Lexer {
 
@@ -54,16 +49,31 @@ public final class Lexer {
 
         final int firstCharacter = read();
 
+        if (firstCharacter >= '0' && firstCharacter <= '9') {
+            return matchIntegerLiteral(firstCharacter);
+        }
+
         switch (firstCharacter) {
             case 'c':
             case 'C':
-                return matchCreate();
-            case 't':
-            case 'T':
-                return matchTable();
+                return matchC();
+            case 'f':
+            case 'F':
+                return matchF();
             case 'i':
             case 'I':
-                return matchInteger();
+                readAndExpect('n', 'N');
+
+                return matchIN();
+            case 's':
+            case 'S':
+                return matchS();
+            case 't':
+            case 'T':
+                return matchT();
+            case 'v':
+            case 'V':
+                return matchV();
             case '(':
                 return LEFT_PAREN_TOKEN;
             case ')':
@@ -102,10 +112,67 @@ public final class Lexer {
         return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
     }
 
-    private Token matchInteger() {
-        readAndExpect('n', 'N');
+    private Token matchIntegerLiteral(int firstCharacter) {
+        return new IntegerLiteralToken(firstCharacter - '0');
+    }
+
+    private Token matchC() {
+        readAndExpect('r', 'R');
+        readAndExpect('e', 'E');
+        readAndExpect('a', 'A');
         readAndExpect('t', 'T');
         readAndExpect('e', 'E');
+
+        return CREATE_TOKEN;
+    }
+
+    private Token matchF() {
+        readAndExpect('r', 'R');
+        readAndExpect('o', 'O');
+        readAndExpect('m', 'M');
+
+        return FROM_TOKEN;
+    }
+
+    private Token matchIN() {
+        final int thirdCharacter = read();
+
+        switch (thirdCharacter) {
+            case 's':
+            case 'S':
+                return matchINS();
+            case 't':
+            case 'T':
+                return matchINT();
+            default:
+                throw new InputMismatchException();
+        }
+    }
+
+    private Token matchINS() {
+        readAndExpect('e', 'E');
+        readAndExpect('r', 'R');
+        readAndExpect('t', 'T');
+
+        return INSERT_TOKEN;
+    }
+
+    private Token matchINT() {
+        final int fourthCharacter = read();
+
+        switch (fourthCharacter) {
+            case 'e':
+            case 'E':
+                return matchINTE();
+            case 'o':
+            case 'O':
+                return INTO_TOKEN;
+            default:
+                throw new InputMismatchException();
+        }
+    }
+
+    private Token matchINTE() {
         readAndExpect('g', 'G');
         readAndExpect('e', 'E');
         readAndExpect('r', 'R');
@@ -113,7 +180,17 @@ public final class Lexer {
         return INTEGER_TOKEN;
     }
 
-    private Token matchTable() {
+    private Token matchS() {
+        readAndExpect('e', 'E');
+        readAndExpect('l', 'L');
+        readAndExpect('e', 'E');
+        readAndExpect('c', 'C');
+        readAndExpect('t', 'T');
+
+        return SELECT_TOKEN;
+    }
+
+    private Token matchT() {
         readAndExpect('a', 'A');
         readAndExpect('b', 'B');
         readAndExpect('l', 'L');
@@ -122,14 +199,14 @@ public final class Lexer {
         return TABLE_TOKEN;
     }
 
-    private Token matchCreate() {
-        readAndExpect('r', 'R');
-        readAndExpect('e', 'E');
+    private Token matchV() {
         readAndExpect('a', 'A');
-        readAndExpect('t', 'T');
+        readAndExpect('l', 'L');
+        readAndExpect('u', 'U');
         readAndExpect('e', 'E');
+        readAndExpect('s', 'S');
 
-        return CREATE_TOKEN;
+        return VALUES_TOKEN;
     }
 
     private void readAndExpect(char lowercase, char uppercase) {

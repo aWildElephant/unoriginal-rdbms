@@ -1,11 +1,13 @@
-package fr.awildelephant.gitrdbms.lexer.tokens;
+package fr.awildelephant.gitrdbms.lexer;
 
+import fr.awildelephant.gitrdbms.lexer.tokens.StaticToken;
+import fr.awildelephant.gitrdbms.lexer.tokens.Token;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 
-import static fr.awildelephant.gitrdbms.lexer.tokens.LexingTestHelper.assertLexing;
+import static fr.awildelephant.gitrdbms.lexer.LexingTestHelper.assertLexing;
 import static fr.awildelephant.gitrdbms.lexer.tokens.StaticToken.END_OF_FILE_TOKEN;
 
 class StaticTokenLexingTest {

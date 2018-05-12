@@ -3,6 +3,7 @@ package fr.awildelephant.gitrdbms.lexer.tokens;
 import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.IDENTIFIER;
 
 public final class IdentifierToken implements Token {
+
     private final String text;
 
     /**

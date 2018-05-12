@@ -1,7 +1,6 @@
-package fr.awildelephant.gitrdbms.lexer.tokens;
+package fr.awildelephant.gitrdbms.lexer;
 
-import fr.awildelephant.gitrdbms.lexer.InputStreamWrapper;
-import fr.awildelephant.gitrdbms.lexer.Lexer;
+import fr.awildelephant.gitrdbms.lexer.tokens.Token;
 
 import java.util.ArrayList;
 

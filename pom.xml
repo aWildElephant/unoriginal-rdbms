@@ -59,6 +59,16 @@
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
+                <artifactId>git-rdbms-command</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>git-rdbms-engine</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
                 <artifactId>git-rdbms-lexer</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -67,6 +77,18 @@
                 <artifactId>git-rdbms-parser</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>git-rdbms-transformer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.7</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>

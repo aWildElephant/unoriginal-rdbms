@@ -1,13 +1,6 @@
 package fr.awildelephant.gitrdbms.lexer.tokens;
 
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.COMMA;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.CREATE;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.END_OF_FILE;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.INTEGER;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.LEFT_PAREN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.RIGHT_PAREN;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.SEMICOLON;
-import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.TABLE;
+import static fr.awildelephant.gitrdbms.lexer.tokens.TokenType.*;
 
 public enum StaticToken implements Token {
     END_OF_FILE_TOKEN {
@@ -76,6 +69,28 @@ public enum StaticToken implements Token {
             return CREATE;
         }
     },
+    FROM_TOKEN {
+        @Override
+        public String text() {
+            return "FROM";
+        }
+
+        @Override
+        public TokenType type() {
+            return FROM;
+        }
+    },
+    INSERT_TOKEN {
+        @Override
+        public String text() {
+            return "INSERT";
+        }
+
+        @Override
+        public TokenType type() {
+            return INSERT;
+        }
+    },
     INTEGER_TOKEN {
         @Override
         public String text() {
@@ -87,6 +102,28 @@ public enum StaticToken implements Token {
             return INTEGER;
         }
     },
+    INTO_TOKEN {
+        @Override
+        public String text() {
+            return "INTO";
+        }
+
+        @Override
+        public TokenType type() {
+            return INTO;
+        }
+    },
+    SELECT_TOKEN {
+        @Override
+        public String text() {
+            return "SELECT";
+        }
+
+        @Override
+        public TokenType type() {
+            return SELECT;
+        }
+    },
     TABLE_TOKEN {
         @Override
         public String text() {
@@ -96,6 +133,17 @@ public enum StaticToken implements Token {
         @Override
         public TokenType type() {
             return TABLE;
+        }
+    },
+    VALUES_TOKEN {
+        @Override
+        public String text() {
+            return "VALUES";
+        }
+
+        @Override
+        public TokenType type() {
+            return VALUES;
         }
     }
 }

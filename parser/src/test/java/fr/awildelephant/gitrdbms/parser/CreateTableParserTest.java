@@ -1,44 +1,37 @@
 package fr.awildelephant.gitrdbms.parser;
 
-import fr.awildelephant.gitrdbms.lexer.InputStreamWrapper;
-import fr.awildelephant.gitrdbms.lexer.Lexer;
-import fr.awildelephant.gitrdbms.ast.AST;
 import fr.awildelephant.gitrdbms.ast.ColumnDefinition;
-import fr.awildelephant.gitrdbms.ast.CreateTable;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 import static fr.awildelephant.gitrdbms.ast.ColumnDefinition.INTEGER;
-import static org.assertj.core.api.Assertions.assertThat;
+import static fr.awildelephant.gitrdbms.ast.ColumnDefinition.columnDefinition;
+import static fr.awildelephant.gitrdbms.ast.CreateTable.createTable;
+import static fr.awildelephant.gitrdbms.ast.TableElementList.tableElementList;
+import static fr.awildelephant.gitrdbms.ast.TableName.tableName;
+import static fr.awildelephant.gitrdbms.parser.ParserTestHelper.assertParsing;
+import static java.util.Collections.emptyList;
 
 class CreateTableParserTest {
 
     @Test
-    void it_should_parse_a_create_table_query_with_no_column() {
-        assertParsing("CREATE TABLE z ()", new CreateTable("z", Collections.emptyList()));
-    }
-
-    @Test
     void it_should_parse_a_create_table_query_with_a_single_column() {
-        final ArrayList<ColumnDefinition> columns = new ArrayList<>();
-        columns.add(new ColumnDefinition("y", INTEGER));
+        final List<ColumnDefinition> columns = new ArrayList<>();
+        columns.add(columnDefinition("y", INTEGER));
 
-        assertParsing("CREATE TABLE z (y INTEGER)", new CreateTable("z", columns));
+        assertParsing("CREATE TABLE z (y INTEGER)", createTable(tableName("z"), tableElementList(columns)));
     }
 
     @Test
     void it_should_parse_a_create_table_query_with_several_columns() {
         final ArrayList<ColumnDefinition> columns = new ArrayList<>();
-        columns.add(new ColumnDefinition("y", INTEGER));
-        columns.add(new ColumnDefinition("x", INTEGER));
-        columns.add(new ColumnDefinition("w", INTEGER));
+        columns.add(columnDefinition("y", INTEGER));
+        columns.add(columnDefinition("x", INTEGER));
+        columns.add(columnDefinition("w", INTEGER));
 
-        assertParsing("CREATE TABLE z (y INTEGER, x INTEGER, w INTEGER)", new CreateTable("z", columns));
+        assertParsing("CREATE TABLE z (y INTEGER, x INTEGER, w INTEGER)", createTable(tableName("z"), tableElementList(columns)));
     }
 
-    private void assertParsing(String input, AST expectedAST) {
-        assertThat(new Parser(new Lexer(InputStreamWrapper.wrap(input))).parse()).isEqualTo(expectedAST);
-    }
 }
