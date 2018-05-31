@@ -13,6 +13,7 @@
         <module>parser</module>
         <module>lexer</module>
         <module>ast</module>
+        <module>jdbc</module>
     </modules>
 
     <properties>
