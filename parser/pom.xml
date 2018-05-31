@@ -4,21 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>git-rdbms</artifactId>
+        <artifactId>rdbms</artifactId>
         <groupId>fr.awildelephant</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>git-rdbms-parser</artifactId>
+    <artifactId>rdbms-parser</artifactId>
     <name>${project.fancyName} :: Parser</name>
 
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
-            <artifactId>git-rdbms-ast</artifactId>
+            <artifactId>rdbms-ast</artifactId>
         </dependency>
         <dependency>
             <groupId>fr.awildelephant</groupId>
-            <artifactId>git-rdbms-lexer</artifactId>
+            <artifactId>rdbms-lexer</artifactId>
         </dependency>
 
         <!-- Test dependencies -->
