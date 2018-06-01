@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.jdbc;
 
+import fr.awildelephant.rdbms.system.RDBMS;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ class RDBMSConnectionTest {
 
     @BeforeEach
     void setUp() {
-        connection = new RDBMSConnection();
+        connection = new RDBMSConnection(new RDBMS());
     }
 
     @Test

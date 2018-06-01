@@ -8,16 +8,6 @@ import java.sql.Statement;
 public abstract class AbstractStatement implements Statement {
 
     @Override
-    public ResultSet executeQuery(String sql) {
-        return null;
-    }
-
-    @Override
-    public int executeUpdate(String sql) {
-        return 0;
-    }
-
-    @Override
     public int getMaxFieldSize() {
         return 0;
     }

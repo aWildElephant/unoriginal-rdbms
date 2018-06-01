@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.jdbc;
 
+import fr.awildelephant.rdbms.system.RDBMS;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ class RDBMSStatementTest {
 
     @BeforeEach
     void setUp() {
-        statement = new RDBMSStatement();
+        statement = new RDBMSStatement(new RDBMS());
     }
 
     @Test

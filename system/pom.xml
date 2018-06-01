@@ -9,22 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rtdbms-jdbc</artifactId>
-    <name>${project.fancyName} :: JDBC</name>
+    <artifactId>rdbms-system</artifactId>
+    <name>${project.fancyName} :: System</name>
 
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-system</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
     </dependencies>
 </project>

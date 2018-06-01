@@ -1,18 +1,24 @@
 package fr.awildelephant.rdbms.jdbc;
 
+import fr.awildelephant.rdbms.system.RDBMS;
+
 import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 
 public class RDBMSConnection extends AbstractConnection {
 
-    private final List<RDBMSStatement> statements = new LinkedList<>();
-
+    private List<RDBMSStatement> statements = new LinkedList<>();
+    private RDBMS system;
     private boolean isClosed;
+
+    RDBMSConnection(RDBMS system) {
+        this.system = system;
+    }
 
     @Override
     public RDBMSStatement createStatement() {
-        final RDBMSStatement statement = new RDBMSStatement();
+        final RDBMSStatement statement = new RDBMSStatement(system);
 
         statements.add(statement);
 
@@ -24,6 +30,8 @@ public class RDBMSConnection extends AbstractConnection {
         if (!isClosed) {
             statements.forEach(RDBMSStatement::close);
 
+            statements = null;
+            system = null;
             isClosed = true;
         }
     }
