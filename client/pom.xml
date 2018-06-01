@@ -9,26 +9,22 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rdbms-feature-tests</artifactId>
-    <name>${project.fancyName} :: Feature tests</name>
+    <artifactId>rdbms-client</artifactId>
+    <name>${project.fancyName} :: Client</name>
 
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-client</artifactId>
+            <artifactId>rdbms-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-server</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
         </dependency>
     </dependencies>
 </project>

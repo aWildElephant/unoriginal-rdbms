@@ -11,11 +11,11 @@
 
     <modules>
         <module>ast</module>
-        <module>engine</module>
-        <module>jdbc</module>
         <module>lexer</module>
         <module>parser</module>
-        <module>system</module>
+        <module>engine</module>
+        <module>server</module>
+        <module>client</module>
         <module>feature-tests</module>
     </modules>
 
@@ -84,12 +84,12 @@
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-system</artifactId>
+                <artifactId>rdbms-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-jdbc</artifactId>
+                <artifactId>rdbms-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
