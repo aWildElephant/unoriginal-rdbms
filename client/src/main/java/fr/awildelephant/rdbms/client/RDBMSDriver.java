@@ -28,7 +28,7 @@ public class RDBMSDriver implements Driver {
             throw new SQLException("URL cannot be null");
         }
 
-        return url.startsWith("client:rdbms:mem:");
+        return url.startsWith("jdbc:rdbms:mem:");
     }
 
     @Override

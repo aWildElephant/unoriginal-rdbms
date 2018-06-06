@@ -1,8 +1,9 @@
 Feature: Create table
 
+  @todo
   Scenario: I create an empty table with a single integer column
 
-    When I execute the update
+    When I execute the query
     """
     CREATE TABLE z (y INTEGER);
     """

@@ -24,7 +24,7 @@ class RDBMSDriverTest {
 
     @Test
     void acceptsURL_should_accept_any_connection_string_starting_with_the_magic_prefix() throws SQLException {
-        assertTrue(driver.acceptsURL("client:rdbms:mem:idgaf_about_that_part"));
+        assertTrue(driver.acceptsURL("jdbc:rdbms:mem:idgaf_about_that_part"));
     }
 
     @Test
