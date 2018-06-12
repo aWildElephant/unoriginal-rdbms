@@ -63,11 +63,6 @@ public abstract class AbstractStatement implements Statement {
     }
 
     @Override
-    public ResultSet getResultSet() {
-        return null;
-    }
-
-    @Override
     public int getUpdateCount() {
         return 0;
     }
@@ -125,7 +120,7 @@ public abstract class AbstractStatement implements Statement {
     @Override
     public Connection getConnection() {
         return null;
-    }
+    } // TODO: implement, should be pretty easy
 
     @Override
     public boolean getMoreResults(int current) {

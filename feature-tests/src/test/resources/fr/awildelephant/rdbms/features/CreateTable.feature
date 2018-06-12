@@ -1,6 +1,5 @@
 Feature: Create table
 
-  @todo
   Scenario: I create an empty table with a single integer column
 
     When I execute the query

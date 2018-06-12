@@ -11,4 +11,13 @@ public class Projection implements Plan {
         this.columnNames = columnNames;
         this.input = input;
     }
+
+    public Plan input() {
+        return input;
+    }
+
+    @Override
+    public <T> T accept(PlanVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }
