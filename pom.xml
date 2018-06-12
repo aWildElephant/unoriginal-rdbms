@@ -14,9 +14,11 @@
         <module>lexer</module>
         <module>parser</module>
         <module>engine</module>
-        <module>server</module>
         <module>client</module>
         <module>feature-tests</module>
+        <module>plan</module>
+        <module>algebraizer</module>
+        <module>server</module>
     </modules>
 
     <properties>
@@ -69,12 +71,22 @@
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-plan</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-lexer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-parser</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-algebraizer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

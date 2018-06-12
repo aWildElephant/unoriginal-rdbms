@@ -3,19 +3,27 @@ package fr.awildelephant.rdbms.ast;
 public final class CreateTable implements AST {
 
     private final TableName tableName;
-    private final AST columns;
+    private final TableElementList columns;
 
     /**
      * @param tableName must be not null
      * @param columns   must be not null
      */
-    private CreateTable(TableName tableName, AST columns) {
+    private CreateTable(TableName tableName, TableElementList columns) {
         this.tableName = tableName;
         this.columns = columns;
     }
 
-    public static CreateTable createTable(TableName tableName, AST columns) {
+    public static CreateTable createTable(TableName tableName, TableElementList columns) {
         return new CreateTable(tableName, columns);
+    }
+
+    public TableName tableName() {
+        return tableName;
+    }
+
+    public TableElementList tableElementList() {
+        return columns;
     }
 
     @Override

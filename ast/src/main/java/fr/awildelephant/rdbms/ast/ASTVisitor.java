@@ -1,6 +1,12 @@
 package fr.awildelephant.rdbms.ast;
 
-public interface ASTVisitor<T> {
+import java.util.function.Function;
+
+public interface ASTVisitor<T> extends Function<AST, T> {
+
+    default T apply(AST node) {
+        return node.accept(this);
+    }
 
     T visit(ColumnDefinition columnDefinition);
 

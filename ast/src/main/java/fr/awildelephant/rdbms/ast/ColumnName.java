@@ -12,6 +12,10 @@ public final class ColumnName implements AST {
         return new ColumnName(name);
     }
 
+    public String name() {
+        return name;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

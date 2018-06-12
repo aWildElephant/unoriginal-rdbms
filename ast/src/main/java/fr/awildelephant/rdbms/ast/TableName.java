@@ -12,6 +12,10 @@ public final class TableName implements AST {
         return new TableName(name);
     }
 
+    public String name() {
+        return name;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

@@ -14,6 +14,14 @@ public final class InsertInto implements AST {
         return new InsertInto(targetTable, value);
     }
 
+    public TableName targetTable() {
+        return targetTable;
+    }
+
+    public Rows rows() {
+        return rows;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

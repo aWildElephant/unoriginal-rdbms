@@ -20,6 +20,10 @@ public final class ColumnDefinition implements AST {
         return new ColumnDefinition(columnName, columnType);
     }
 
+    public String columnName() {
+        return columnName;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

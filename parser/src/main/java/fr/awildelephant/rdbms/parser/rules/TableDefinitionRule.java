@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.parser.rules;
 
-import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.CreateTable;
+import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
@@ -23,7 +23,7 @@ final class TableDefinitionRule {
         consumeAndExpect(lexer, TABLE);
 
         final TableName tableName = deriveTableNameRule(lexer);
-        final AST tableContentsSource = deriveTableContentsSourceRule(lexer);
+        final TableElementList tableContentsSource = deriveTableContentsSourceRule(lexer);
 
         return createTable(tableName, tableContentsSource);
     }

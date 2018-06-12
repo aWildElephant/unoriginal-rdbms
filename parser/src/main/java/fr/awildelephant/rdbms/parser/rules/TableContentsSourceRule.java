@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.parser.rules;
 
-import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
@@ -14,7 +14,7 @@ final class TableContentsSourceRule {
 
     }
 
-    static AST deriveTableContentsSourceRule(final Lexer lexer) {
+    static TableElementList deriveTableContentsSourceRule(final Lexer lexer) {
         final Token token = lexer.lookupNextToken();
 
         if (token.type() == LEFT_PAREN) {

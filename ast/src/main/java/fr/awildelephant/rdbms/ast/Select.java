@@ -18,6 +18,14 @@ public final class Select implements AST {
         return new Select(output, inputTable);
     }
 
+    public List<? extends AST> outputColumns() {
+        return outputColumns;
+    }
+
+    public TableName inputTable() {
+        return inputTable;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

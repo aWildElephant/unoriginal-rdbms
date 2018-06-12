@@ -13,7 +13,7 @@ public final class Parser {
         this.lexer = lexer;
     }
 
-    AST parse() {
+    public AST parse() {
         return deriveStatementRule(lexer);
     }
 }

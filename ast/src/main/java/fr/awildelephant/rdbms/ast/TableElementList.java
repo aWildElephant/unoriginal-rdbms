@@ -14,6 +14,10 @@ public final class TableElementList implements AST {
         return new TableElementList(elements);
     }
 
+    public List<ColumnDefinition> elements() {
+        return elements;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

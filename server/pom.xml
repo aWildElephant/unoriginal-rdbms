@@ -2,17 +2,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>rdbms</artifactId>
         <groupId>fr.awildelephant</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rdbms-server</artifactId>
     <name>${project.fancyName} :: Server</name>
 
     <dependencies>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-lexer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-parser</artifactId>
+        </dependency>
         <dependency>
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-engine</artifactId>

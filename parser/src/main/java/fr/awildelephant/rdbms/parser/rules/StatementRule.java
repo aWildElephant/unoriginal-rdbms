@@ -3,9 +3,11 @@ package fr.awildelephant.rdbms.parser.rules;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
-import fr.awildelephant.rdbms.parser.error.ErrorHelper;
 
+import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.InsertStatementRule.deriveInsertStatementRule;
+import static fr.awildelephant.rdbms.parser.rules.QuerySpecificationRule.deriveQuerySpecificationRule;
+import static fr.awildelephant.rdbms.parser.rules.TableDefinitionRule.deriveTableDefinitionRule;
 
 public final class StatementRule {
 
@@ -18,13 +20,13 @@ public final class StatementRule {
 
         switch (token.type()) {
             case CREATE:
-                return TableDefinitionRule.deriveTableDefinitionRule(lexer);
+                return deriveTableDefinitionRule(lexer);
             case INSERT:
                 return deriveInsertStatementRule(lexer);
             case SELECT:
-                return QuerySpecificationRule.deriveQuerySpecificationRule(lexer);
+                return deriveQuerySpecificationRule(lexer);
             default:
-                throw ErrorHelper.unexpectedToken(token);
+                throw unexpectedToken(token);
         }
     }
 }

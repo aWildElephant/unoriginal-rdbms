@@ -14,6 +14,10 @@ public final class Rows implements AST {
         return new Rows(rows);
     }
 
+    public List<Row> rows() {
+        return rows;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
