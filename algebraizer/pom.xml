@@ -19,7 +19,15 @@
         </dependency>
         <dependency>
             <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-plan</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-schema</artifactId>
         </dependency>
     </dependencies>
 </project>

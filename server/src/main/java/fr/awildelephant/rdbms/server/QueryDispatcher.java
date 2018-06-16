@@ -3,9 +3,9 @@ package fr.awildelephant.rdbms.server;
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.engine.Engine;
-import fr.awildelephant.rdbms.engine.Table;
-import fr.awildelephant.rdbms.engine.domain.DomainValue;
-import fr.awildelephant.rdbms.engine.domain.IntegerValue;
+import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.data.domain.DomainValue;
+import fr.awildelephant.rdbms.engine.data.domain.IntegerValue;
 
 import java.util.List;
 

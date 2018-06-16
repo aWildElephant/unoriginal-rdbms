@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.engine;
 
+import fr.awildelephant.rdbms.engine.data.Table;
 import fr.awildelephant.rdbms.plan.BaseTable;
 import fr.awildelephant.rdbms.plan.PlanVisitor;
 import fr.awildelephant.rdbms.plan.Projection;
@@ -10,7 +11,7 @@ public class PlanExecutor implements PlanVisitor<Table> {
 
     private final Map<String, Table> tables;
 
-    public PlanExecutor(Map<String, Table> tables) {
+    PlanExecutor(Map<String, Table> tables) {
         this.tables = tables;
     }
 

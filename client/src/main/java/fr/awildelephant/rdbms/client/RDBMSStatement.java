@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.client;
 
-import fr.awildelephant.rdbms.engine.Table;
+import fr.awildelephant.rdbms.engine.data.Table;
 import fr.awildelephant.rdbms.server.RDBMS;
 
 import java.sql.ResultSet;
@@ -18,8 +18,9 @@ public class RDBMSStatement extends AbstractStatement {
     }
 
     @Override
-    public boolean execute(String sql) {
-        final Table table = system.execute(sql);
+    public boolean execute(String sql) throws SQLException {
+        final Table table = executeAndForwardException(sql);
+
 
         if (table == null) {
             lastResult = null;
@@ -58,5 +59,13 @@ public class RDBMSStatement extends AbstractStatement {
     @Override
     public boolean isClosed() {
         return isClosed;
+    }
+
+    private Table executeAndForwardException(String sql) throws SQLException {
+        try {
+            return system.execute(sql);
+        } catch (Throwable e) {
+            throw new SQLException(e.getMessage());
+        }
     }
 }

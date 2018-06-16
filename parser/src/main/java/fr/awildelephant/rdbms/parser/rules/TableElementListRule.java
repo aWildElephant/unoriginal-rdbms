@@ -10,6 +10,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.TableElementList.tableElementList;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.TableElement.deriveTableElement;
 
 final class TableElementListRule {
 
@@ -22,12 +23,12 @@ final class TableElementListRule {
 
         final List<ColumnDefinition> elements = new LinkedList<>();
 
-        elements.add(TableElement.deriveTableElement(lexer));
+        elements.add(deriveTableElement(lexer));
 
         while (lexer.lookupNextToken().type() == COMMA) {
             lexer.consumeNextToken();
 
-            elements.add(TableElement.deriveTableElement(lexer));
+            elements.add(deriveTableElement(lexer));
         }
 
         consumeAndExpect(lexer, RIGHT_PAREN);

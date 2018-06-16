@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.client;
 
-import fr.awildelephant.rdbms.engine.Table;
-import fr.awildelephant.rdbms.engine.domain.IntegerValue;
+import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.data.domain.IntegerValue;
 
 public class RDBMSResultSet extends AbstractResultSet {
 

@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine;
+package fr.awildelephant.rdbms.schema;
 
 import java.util.Map;
 
@@ -12,5 +12,9 @@ public class Schema {
 
     public int indexOf(String attributeName) {
         return attributes.get(attributeName);
+    }
+
+    public boolean contains(String attributeName) {
+        return attributes.containsKey(attributeName);
     }
 }

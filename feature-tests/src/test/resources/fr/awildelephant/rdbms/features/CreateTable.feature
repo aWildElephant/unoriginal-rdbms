@@ -4,7 +4,7 @@ Feature: Create table
 
     When I execute the query
     """
-    CREATE TABLE z (y INTEGER);
+    CREATE TABLE z (y INTEGER)
     """
 
     And I execute the query

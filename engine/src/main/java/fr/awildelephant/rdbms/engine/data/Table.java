@@ -1,4 +1,6 @@
-package fr.awildelephant.rdbms.engine;
+package fr.awildelephant.rdbms.engine.data;
+
+import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 

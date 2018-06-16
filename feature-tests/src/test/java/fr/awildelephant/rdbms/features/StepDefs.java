@@ -11,24 +11,20 @@ import java.sql.Statement;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
+import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StepDefs implements En {
 
     private final Connection connection;
     private Statement lastStatement;
+    private SQLException lastException;
 
     public StepDefs() throws SQLException {
 
         connection = new RDBMSDriver().connect("jdbc:rdbms:mem:feature-tests", null);
 
-        When("I execute the query", (String query) -> {
-            final Statement statement = connection.createStatement();
-
-            statement.execute(query);
-
-            lastStatement = statement;
-        });
+        When("I execute the query", this::execute);
 
         Then("I expect the result set", (DataTable table) -> {
             assertNotNull(lastStatement, "Last statement is null: no query run");
@@ -65,5 +61,54 @@ public class StepDefs implements En {
 
             assertEquals(numberOfExpectedRows, i, "Expected " + numberOfExpectedRows + " rows but got " + i);
         });
+
+        Given("^the table (\\w+)$", (String name, DataTable definition) -> {
+            final List<String> columnNames = definition.row(0);
+
+            // definition.row(1) is ignored for now since we only support integer type
+
+            execute("CREATE TABLE " +
+                    name +
+                    " (" +
+                    columnNames.stream().map(columnName -> columnName + " INTEGER").collect(joining(", ")) +
+                    ");");
+
+            definition.rows(2).asLists().forEach(row -> execute("INSERT INTO " +
+                    name +
+                    " VALUES (" +
+                    row.stream().collect(joining(", ")) +
+                    ");"));
+        });
+
+        Then("^I expect an error with the message$", (String expectedErrorMessage) -> {
+            assertNotNull(lastException, "No exception was thrown");
+
+            final String actualErrorMessage = lastException.getMessage();
+
+            assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error with the message \"" + expectedErrorMessage + "\" but got \"" + actualErrorMessage + "\"");
+        });
+    }
+
+    private void execute(String query) {
+        try {
+            reset();
+
+            final Statement statement = connection.createStatement();
+
+            statement.execute(query);
+
+            lastStatement = statement;
+        } catch (SQLException e) {
+            lastException = e;
+        }
+    }
+
+    private void reset() throws SQLException {
+        lastException = null;
+
+        if (lastStatement != null) {
+            lastStatement.close();
+            lastStatement = null;
+        }
     }
 }

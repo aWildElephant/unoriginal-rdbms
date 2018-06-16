@@ -1,19 +1,22 @@
 package fr.awildelephant.rdbms.plan;
 
-import java.util.Set;
+import fr.awildelephant.rdbms.schema.Schema;
 
 public class Projection implements Plan {
 
-    private final Set<String> columnNames;
     private final Plan input;
 
-    public Projection(Set<String> columnNames, Plan input) {
-        this.columnNames = columnNames;
+    public Projection(Plan input) {
         this.input = input;
     }
 
     public Plan input() {
         return input;
+    }
+
+    @Override
+    public Schema schema() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

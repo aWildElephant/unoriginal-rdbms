@@ -1,12 +1,12 @@
 package fr.awildelephant.rdbms.engine;
 
-import fr.awildelephant.rdbms.engine.domain.DomainValue;
+import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.data.Tuple;
+import fr.awildelephant.rdbms.engine.data.domain.DomainValue;
 import fr.awildelephant.rdbms.plan.Plan;
+import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class Engine {
 
@@ -33,5 +33,15 @@ public final class Engine {
 
     public Table execute(final Plan logicalPlan) {
         return logicalPlan.accept(new PlanExecutor(tables));
+    }
+
+    public Optional<Schema> schemaOf(String tableName) {
+        final Table table = tables.get(tableName);
+
+        if (table == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(table.schema());
     }
 }

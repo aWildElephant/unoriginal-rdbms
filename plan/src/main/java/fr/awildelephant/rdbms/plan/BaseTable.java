@@ -1,10 +1,14 @@
 package fr.awildelephant.rdbms.plan;
 
-public class BaseTable implements Plan {
+import fr.awildelephant.rdbms.schema.Schema;
+
+public class BaseTable extends AbstractPlan {
 
     private final String name;
 
-    public BaseTable(String name) {
+    public BaseTable(String name, Schema schema) {
+        super(schema);
+
         this.name = name;
     }
 

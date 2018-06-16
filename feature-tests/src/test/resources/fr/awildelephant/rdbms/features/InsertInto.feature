@@ -4,12 +4,12 @@ Feature: Insert into
 
         Given I execute the query
         """
-        CREATE TABLE z (y INTEGER);
+        CREATE TABLE z (y INTEGER)
         """
 
         And I execute the query
         """
-        INSERT INTO z VALUES (1);
+        INSERT INTO z VALUES (1)
         """
 
         When I execute the query

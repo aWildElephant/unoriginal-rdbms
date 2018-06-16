@@ -10,14 +10,15 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
+        <module>algebraizer</module>
         <module>ast</module>
+        <module>client</module>
+        <module>engine</module>
+        <module>feature-tests</module>
         <module>lexer</module>
         <module>parser</module>
-        <module>engine</module>
-        <module>client</module>
-        <module>feature-tests</module>
         <module>plan</module>
-        <module>algebraizer</module>
+        <module>schema</module>
         <module>server</module>
     </modules>
 
@@ -71,7 +72,17 @@
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-plan</artifactId>
+                <artifactId>rdbms-algebraizer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-engine</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -86,22 +97,17 @@
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-algebraizer</artifactId>
+                <artifactId>rdbms-plan</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-engine</artifactId>
+                <artifactId>rdbms-schema</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
