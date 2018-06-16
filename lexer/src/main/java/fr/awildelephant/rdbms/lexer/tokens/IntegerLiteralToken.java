@@ -4,6 +4,9 @@ public final class IntegerLiteralToken implements Token {
 
     private final int value;
 
+    /**
+     * @param value must be not null
+     */
     public IntegerLiteralToken(int value) {
         this.value = value;
     }

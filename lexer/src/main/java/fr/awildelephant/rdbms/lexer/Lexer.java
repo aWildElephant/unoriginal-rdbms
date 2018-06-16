@@ -2,10 +2,9 @@ package fr.awildelephant.rdbms.lexer;
 
 import fr.awildelephant.rdbms.lexer.tokens.IdentifierToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
-import fr.awildelephant.rdbms.lexer.tokens.StaticToken;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
-import java.util.InputMismatchException;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.*;
 
 public final class Lexer {
 
@@ -38,51 +37,41 @@ public final class Lexer {
 
     private Token matchNextToken() {
         if (input.isFinished()) {
-            return StaticToken.END_OF_FILE_TOKEN;
+            return END_OF_FILE_TOKEN;
         }
 
-        while (isBlank(input.get())) {
+        int codePoint = input.get();
+
+        while (isBlank(codePoint)) {
             input.next();
+
+            codePoint = input.get();
         }
 
-        final int firstCharacter = read();
+        input.next();
 
-        if (firstCharacter >= '0' && firstCharacter <= '9') {
-            return matchIntegerLiteral(firstCharacter);
-        }
-
-        switch (firstCharacter) {
-            case 'c':
-            case 'C':
-                return matchC();
-            case 'f':
-            case 'F':
-                return matchF();
-            case 'i':
-            case 'I':
-                readAndExpect('n', 'N');
-
-                return matchIN();
-            case 's':
-            case 'S':
-                return matchS();
-            case 't':
-            case 'T':
-                return matchT();
-            case 'v':
-            case 'V':
-                return matchV();
+        switch (codePoint) {
             case '(':
-                return StaticToken.LEFT_PAREN_TOKEN;
+                return LEFT_PAREN_TOKEN;
             case ')':
-                return StaticToken.RIGHT_PAREN_TOKEN;
+                return RIGHT_PAREN_TOKEN;
             case ',':
-                return StaticToken.COMMA_TOKEN;
+                return COMMA_TOKEN;
             case ';':
-                return StaticToken.SEMICOLON_TOKEN;
+                return SEMICOLON_TOKEN;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                return matchIntegerLiteral(codePoint);
             default:
-                // TODO: https://www.youtube.com/watch?v=07So_lJQyqw, allow matching identifiers starting with c/t/i
-                return matchIdentifier(firstCharacter);
+                return matchKeywordOrIdentifier(codePoint);
         }
     }
 
@@ -90,12 +79,10 @@ public final class Lexer {
         return codePoint == ' ' || codePoint == '\t' || codePoint == '\n';
     }
 
-    private Token matchIdentifier(int firstCharacter) {
+    private Token matchKeywordOrIdentifier(int firstCodePoint) {
         final StringBuilder builder = new StringBuilder();
 
-        if (isValidForIdentifier(firstCharacter)) {
-            builder.appendCodePoint(firstCharacter);
-        }
+        builder.appendCodePoint(firstCodePoint);
 
         while (isValidForIdentifier(input.get())) {
             builder.appendCodePoint(input.get());
@@ -103,123 +90,35 @@ public final class Lexer {
             input.next();
         }
 
-        return new IdentifierToken(builder.toString());
-    }
+        final String obtained = builder.toString().toLowerCase();
 
-    private boolean isValidForIdentifier(int character) {
-        return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z');
-    }
-
-    private Token matchIntegerLiteral(int firstCharacter) {
-        return new IntegerLiteralToken(firstCharacter - '0');
-    }
-
-    private Token matchC() {
-        readAndExpect('r', 'R');
-        readAndExpect('e', 'E');
-        readAndExpect('a', 'A');
-        readAndExpect('t', 'T');
-        readAndExpect('e', 'E');
-
-        return StaticToken.CREATE_TOKEN;
-    }
-
-    private Token matchF() {
-        readAndExpect('r', 'R');
-        readAndExpect('o', 'O');
-        readAndExpect('m', 'M');
-
-        return StaticToken.FROM_TOKEN;
-    }
-
-    private Token matchIN() {
-        final int thirdCharacter = read();
-
-        switch (thirdCharacter) {
-            case 's':
-            case 'S':
-                return matchINS();
-            case 't':
-            case 'T':
-                return matchINT();
+        switch (obtained) {
+            case "create":
+                return CREATE_TOKEN;
+            case "from":
+                return FROM_TOKEN;
+            case "insert":
+                return INSERT_TOKEN;
+            case "integer":
+                return INTEGER_TOKEN;
+            case "into":
+                return INTO_TOKEN;
+            case "select":
+                return SELECT_TOKEN;
+            case "table":
+                return TABLE_TOKEN;
+            case "values":
+                return VALUES_TOKEN;
             default:
-                throw new InputMismatchException();
+                return new IdentifierToken(obtained);
         }
     }
 
-    private Token matchINS() {
-        readAndExpect('e', 'E');
-        readAndExpect('r', 'R');
-        readAndExpect('t', 'T');
-
-        return StaticToken.INSERT_TOKEN;
+    private Token matchIntegerLiteral(int firstCodePoint) {
+        return new IntegerLiteralToken(firstCodePoint - '0');
     }
 
-    private Token matchINT() {
-        final int fourthCharacter = read();
-
-        switch (fourthCharacter) {
-            case 'e':
-            case 'E':
-                return matchINTE();
-            case 'o':
-            case 'O':
-                return StaticToken.INTO_TOKEN;
-            default:
-                throw new InputMismatchException();
-        }
-    }
-
-    private Token matchINTE() {
-        readAndExpect('g', 'G');
-        readAndExpect('e', 'E');
-        readAndExpect('r', 'R');
-
-        return StaticToken.INTEGER_TOKEN;
-    }
-
-    private Token matchS() {
-        readAndExpect('e', 'E');
-        readAndExpect('l', 'L');
-        readAndExpect('e', 'E');
-        readAndExpect('c', 'C');
-        readAndExpect('t', 'T');
-
-        return StaticToken.SELECT_TOKEN;
-    }
-
-    private Token matchT() {
-        readAndExpect('a', 'A');
-        readAndExpect('b', 'B');
-        readAndExpect('l', 'L');
-        readAndExpect('e', 'E');
-
-        return StaticToken.TABLE_TOKEN;
-    }
-
-    private Token matchV() {
-        readAndExpect('a', 'A');
-        readAndExpect('l', 'L');
-        readAndExpect('u', 'U');
-        readAndExpect('e', 'E');
-        readAndExpect('s', 'S');
-
-        return StaticToken.VALUES_TOKEN;
-    }
-
-    private void readAndExpect(char lowercase, char uppercase) {
-        final int actual = read();
-
-        if (actual != lowercase && actual != uppercase) {
-            throw new InputMismatchException();
-        }
-    }
-
-    private int read() {
-        final int codePoint = input.get();
-
-        input.next();
-
-        return codePoint;
+    private boolean isValidForIdentifier(int codePoint) {
+        return (codePoint >= 'a' && codePoint <= 'z') || (codePoint >= 'A' && codePoint <= 'Z');
     }
 }

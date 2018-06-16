@@ -8,14 +8,14 @@ Feature: Select error
       | 1       |
 
     When I execute the query
-    """
-    SELECT x FROM z
-    """
+      """
+      SELECT x FROM z
+      """
 
     Then I expect an error with the message
-    """
-    Column not found: x
-    """
+      """
+      Column not found: x
+      """
 
   Scenario: I query a table that doesn't exist
 
@@ -26,5 +26,5 @@ Feature: Select error
 
     Then I expect an error with the message
       """
-      Table not found: UnknownTable
+      Table not found: unknowntable
       """
