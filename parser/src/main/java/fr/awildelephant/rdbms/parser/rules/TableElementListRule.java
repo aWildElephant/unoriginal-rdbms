@@ -19,7 +19,7 @@ final class TableElementListRule {
     }
 
     static TableElementList deriveTableElementList(final Lexer lexer) {
-        consumeAndExpect(lexer, LEFT_PAREN);
+        consumeAndExpect(LEFT_PAREN, lexer);
 
         final List<ColumnDefinition> elements = new LinkedList<>();
 
@@ -31,7 +31,7 @@ final class TableElementListRule {
             elements.add(deriveTableElement(lexer));
         }
 
-        consumeAndExpect(lexer, RIGHT_PAREN);
+        consumeAndExpect(RIGHT_PAREN, lexer);
 
         return tableElementList(elements);
     }

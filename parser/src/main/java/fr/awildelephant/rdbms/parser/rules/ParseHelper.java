@@ -15,7 +15,11 @@ final class ParseHelper {
 
     }
 
-    static Token consumeAndExpect(final Lexer lexer, final TokenType expectedType) {
+    static boolean nextTokenIs(final TokenType expectedType, final Lexer lexer) {
+        return lexer.lookupNextToken().type() == expectedType;
+    }
+
+    static Token consumeAndExpect(final TokenType expectedType, final Lexer lexer) {
         final Token actual = lexer.consumeNextToken();
 
         if (actual.type() != expectedType) {
@@ -26,10 +30,10 @@ final class ParseHelper {
     }
 
     static String consumeIdentifier(final Lexer lexer) {
-        return consumeAndExpect(lexer, IDENTIFIER).text();
+        return consumeAndExpect(IDENTIFIER, lexer).text();
     }
 
     static Integer consumeInteger(final Lexer lexer) {
-        return ((IntegerLiteralToken) consumeAndExpect(lexer, INTEGER_LITERAL)).value();
+        return ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
     }
 }

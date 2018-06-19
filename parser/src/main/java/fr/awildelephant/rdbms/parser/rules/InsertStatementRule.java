@@ -18,8 +18,8 @@ final class InsertStatementRule {
     }
 
     static AST deriveInsertStatementRule(final Lexer lexer) {
-        consumeAndExpect(lexer, INSERT);
-        consumeAndExpect(lexer, INTO);
+        consumeAndExpect(INSERT, lexer);
+        consumeAndExpect(INTO, lexer);
 
         final TableName tableName = TableNameRule.deriveTableNameRule(lexer);
         final Rows insertSource = deriveFromConstructorRule(lexer);

@@ -15,7 +15,7 @@ final class FromConstructorRule {
     }
 
     static Rows deriveFromConstructorRule(final Lexer lexer) {
-        consumeAndExpect(lexer, VALUES);
+        consumeAndExpect(VALUES, lexer);
 
         return rows(singletonList(RowRule.deriveRowRule(lexer)));
     }

@@ -19,11 +19,11 @@ final class QuerySpecificationRule {
     }
 
     static AST deriveQuerySpecificationRule(final Lexer lexer) {
-        consumeAndExpect(lexer, SELECT);
+        consumeAndExpect(SELECT, lexer);
 
         final List<AST> outputColumns = deriveSelectListRule(lexer);
 
-        consumeAndExpect(lexer, FROM);
+        consumeAndExpect(FROM, lexer);
 
         final TableName tableName = TableNameRule.deriveTableNameRule(lexer);
 

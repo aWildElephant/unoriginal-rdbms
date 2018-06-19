@@ -18,7 +18,7 @@ final class RowRule {
     }
 
     static Row deriveRowRule(final Lexer lexer) {
-        consumeAndExpect(lexer, LEFT_PAREN);
+        consumeAndExpect(LEFT_PAREN, lexer);
 
         final List<Integer> values = new LinkedList<>();
         values.add(consumeInteger(lexer));
@@ -29,7 +29,7 @@ final class RowRule {
             values.add(consumeInteger(lexer));
         }
 
-        consumeAndExpect(lexer, RIGHT_PAREN);
+        consumeAndExpect(RIGHT_PAREN, lexer);
 
         return row(values);
     }

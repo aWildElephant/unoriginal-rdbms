@@ -17,7 +17,7 @@ final class TableElement {
     static ColumnDefinition deriveTableElement(final Lexer lexer) {
         final String columnName = consumeIdentifier(lexer);
 
-        consumeAndExpect(lexer, INTEGER);
+        consumeAndExpect(INTEGER, lexer);
 
         return columnDefinition(columnName, ColumnDefinition.INTEGER);
     }

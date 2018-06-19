@@ -3,6 +3,11 @@ package fr.awildelephant.rdbms.ast;
 public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
 
     @Override
+    public T visit(Asterisk asterisk) {
+        return defaultVisit(asterisk);
+    }
+
+    @Override
     public T visit(ColumnDefinition columnDefinition) {
         return defaultVisit(columnDefinition);
     }

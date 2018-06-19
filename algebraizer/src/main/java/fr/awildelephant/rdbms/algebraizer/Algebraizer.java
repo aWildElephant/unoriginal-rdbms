@@ -36,9 +36,8 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
         final Set<String> outputColumns = select
                 .outputColumns()
                 .stream()
-                .map(new ColumnNameResolver(fromClause.schema()))
+                .flatMap(new ColumnNameResolver(fromClause.schema()))
                 .collect(toSet());
-
 
         return new Projection(outputColumns, fromClause);
     }

@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
 public enum TokenType {
+    ASTERISK,
     COMMA,
     CREATE,
     END_OF_FILE,

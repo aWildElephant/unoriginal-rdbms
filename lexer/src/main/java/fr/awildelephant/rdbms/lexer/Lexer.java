@@ -51,6 +51,8 @@ public final class Lexer {
         input.next();
 
         switch (codePoint) {
+            case '*':
+                return ASTERISK_TOKEN;
             case '(':
                 return LEFT_PAREN_TOKEN;
             case ')':

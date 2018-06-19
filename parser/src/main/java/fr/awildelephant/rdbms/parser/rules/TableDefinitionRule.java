@@ -19,8 +19,8 @@ final class TableDefinitionRule {
     }
 
     static CreateTable deriveTableDefinitionRule(final Lexer lexer) {
-        consumeAndExpect(lexer, CREATE);
-        consumeAndExpect(lexer, TABLE);
+        consumeAndExpect(CREATE, lexer);
+        consumeAndExpect(TABLE, lexer);
 
         final TableName tableName = deriveTableNameRule(lexer);
         final TableElementList tableContentsSource = deriveTableContentsSourceRule(lexer);

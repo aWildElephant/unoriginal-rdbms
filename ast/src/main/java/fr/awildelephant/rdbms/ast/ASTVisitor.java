@@ -8,6 +8,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
         return node.accept(this);
     }
 
+    T visit(Asterisk asterisk);
+
     T visit(ColumnDefinition columnDefinition);
 
     T visit(ColumnName columnName);

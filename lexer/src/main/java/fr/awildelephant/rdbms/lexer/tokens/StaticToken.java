@@ -14,6 +14,17 @@ public enum StaticToken implements Token {
             return END_OF_FILE;
         }
     },
+    ASTERISK_TOKEN {
+        @Override
+        public String text() {
+            return "*";
+        }
+
+        @Override
+        public TokenType type() {
+            return ASTERISK;
+        }
+    },
     COMMA_TOKEN {
         @Override
         public String text() {
