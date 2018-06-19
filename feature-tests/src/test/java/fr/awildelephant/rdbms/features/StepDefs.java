@@ -38,6 +38,8 @@ public class StepDefs implements En {
 
             final int numberOfExpectedRows = rows.size();
 
+            // TODO: check that the actual number of column is the same as the expected
+
             int i = 0;
 
             while (i < numberOfExpectedRows) {

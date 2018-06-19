@@ -8,7 +8,12 @@ public class Table extends ArrayList<Tuple> {
 
     private final Schema schema;
 
-    public Table(final Schema schema) {
+    public Table(Schema schema) {
+        this(schema, 8);
+    }
+
+    public Table(Schema schema, int initialCapacity) {
+        super(initialCapacity);
         this.schema = schema;
     }
 

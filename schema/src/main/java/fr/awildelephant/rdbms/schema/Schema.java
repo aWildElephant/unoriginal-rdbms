@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.schema;
 
 import java.util.Map;
+import java.util.Set;
 
 public class Schema {
 
@@ -8,6 +9,10 @@ public class Schema {
 
     public Schema(Map<String, Integer> attributes) {
         this.attributes = attributes;
+    }
+
+    public Set<String> attributes() {
+        return attributes.keySet();
     }
 
     public int indexOf(String attributeName) {

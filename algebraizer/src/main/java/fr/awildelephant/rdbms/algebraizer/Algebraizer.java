@@ -40,7 +40,7 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
                 .collect(toSet());
 
 
-        return new Projection(fromClause);
+        return new Projection(outputColumns, fromClause);
     }
 
     @Override

@@ -1,4 +1,4 @@
-Feature: Select error
+Feature: Select errors
 
   Scenario: I select a column that doesn't exist in the table
 

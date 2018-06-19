@@ -1,7 +1,9 @@
 package fr.awildelephant.rdbms.engine;
 
 import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.plan.BaseTable;
+import fr.awildelephant.rdbms.plan.Plan;
 import fr.awildelephant.rdbms.plan.PlanVisitor;
 import fr.awildelephant.rdbms.plan.Projection;
 
@@ -17,7 +19,10 @@ public class PlanExecutor implements PlanVisitor<Table> {
 
     @Override
     public Table visit(Projection projection) {
-        return projection.input().accept(this);
+        final Plan input = projection.input();
+        final ProjectionOperator projectionOperator = new ProjectionOperator(input.schema(), projection.schema());
+
+        return projectionOperator.compute(input.accept(this));
     }
 
     @Override
