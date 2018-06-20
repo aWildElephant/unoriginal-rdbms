@@ -12,12 +12,7 @@ Feature: Insert into
         INSERT INTO z VALUES (1)
         """
 
-        When I execute the query
-        """
-        SELECT y FROM z
-        """
-
-        Then I expect the result set
+      Then table z should be
           | y       |
           | INTEGER |
           | 1       |

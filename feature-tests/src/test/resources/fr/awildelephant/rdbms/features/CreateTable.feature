@@ -7,11 +7,6 @@ Feature: Create table
     CREATE TABLE z (y INTEGER)
     """
 
-    And I execute the query
-    """
-    SELECT y FROM z
-    """
-
-    Then I expect the result set
+    Then table z should be
       | y       |
       | INTEGER |
