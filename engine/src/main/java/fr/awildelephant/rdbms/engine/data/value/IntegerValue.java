@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.data.domain;
+package fr.awildelephant.rdbms.engine.data.value;
 
 public class IntegerValue implements DomainValue {
 

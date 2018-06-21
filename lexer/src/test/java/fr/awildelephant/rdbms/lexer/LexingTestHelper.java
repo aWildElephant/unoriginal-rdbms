@@ -14,13 +14,17 @@ final class LexingTestHelper {
     }
 
     static void assertLexing(String input, Token... expected) {
+        assertThat(tryLexing(input)).containsExactly(expected);
+    }
+
+    static ArrayList<Token> tryLexing(String input) {
         final Lexer lexer = new Lexer(InputStreamWrapper.wrap(input));
-        final ArrayList<Token> actualTokens = new ArrayList<>(expected.length);
+        final ArrayList<Token> actualTokens = new ArrayList<>();
 
         while (lexer.lookupNextToken().type() != TokenType.END_OF_FILE) {
             actualTokens.add(lexer.consumeNextToken());
         }
 
-        assertThat(actualTokens).containsExactly(expected);
+        return actualTokens;
     }
 }

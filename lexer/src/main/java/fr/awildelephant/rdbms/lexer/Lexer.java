@@ -1,8 +1,9 @@
 package fr.awildelephant.rdbms.lexer;
 
-import fr.awildelephant.rdbms.lexer.tokens.IdentifierToken;
-import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
-import fr.awildelephant.rdbms.lexer.tokens.Token;
+import fr.awildelephant.rdbms.lexer.tokens.*;
+
+import java.util.Arrays;
+import java.util.InputMismatchException;
 
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.*;
 
@@ -61,6 +62,8 @@ public final class Lexer {
                 return COMMA_TOKEN;
             case ';':
                 return SEMICOLON_TOKEN;
+            case '\'':
+                return matchTextLiteral();
             case '0':
             case '1':
             case '2':
@@ -77,8 +80,26 @@ public final class Lexer {
         }
     }
 
-    private boolean isBlank(int codePoint) {
-        return codePoint == ' ' || codePoint == '\t' || codePoint == '\n';
+    private Token matchTextLiteral() {
+        final StringBuilder builder = new StringBuilder();
+
+        while (true) {
+            int codePoint = input.get();
+
+            input.next();
+
+            if (codePoint == -1) {
+                throw new InputMismatchException();
+            } else if (codePoint == '\'') {
+                if (input.get() == '\'') {
+                    input.next();
+                } else {
+                    return new TextLiteralToken(builder.toString());
+                }
+            }
+
+            builder.appendCodePoint(codePoint);
+        }
     }
 
     private Token matchKeywordOrIdentifier(int firstCodePoint) {
@@ -94,30 +115,18 @@ public final class Lexer {
 
         final String obtained = builder.toString().toLowerCase();
 
-        switch (obtained) {
-            case "create":
-                return CREATE_TOKEN;
-            case "from":
-                return FROM_TOKEN;
-            case "insert":
-                return INSERT_TOKEN;
-            case "integer":
-                return INTEGER_TOKEN;
-            case "into":
-                return INTO_TOKEN;
-            case "select":
-                return SELECT_TOKEN;
-            case "table":
-                return TABLE_TOKEN;
-            case "values":
-                return VALUES_TOKEN;
-            default:
-                return new IdentifierToken(obtained);
-        }
+        return Arrays.<Token>stream(Keywords.values())
+                .filter(keyword -> keyword.text().equals(obtained))
+                .findAny()
+                .orElse(new IdentifierToken(obtained));
     }
 
     private Token matchIntegerLiteral(int firstCodePoint) {
         return new IntegerLiteralToken(firstCodePoint - '0');
+    }
+
+    private boolean isBlank(int codePoint) {
+        return codePoint == ' ' || codePoint == '\t' || codePoint == '\n';
     }
 
     private boolean isValidForIdentifier(int codePoint) {

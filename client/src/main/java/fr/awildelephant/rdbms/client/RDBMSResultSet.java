@@ -1,7 +1,8 @@
 package fr.awildelephant.rdbms.client;
 
 import fr.awildelephant.rdbms.engine.data.Table;
-import fr.awildelephant.rdbms.engine.data.domain.IntegerValue;
+import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
+import fr.awildelephant.rdbms.engine.data.value.StringValue;
 
 public class RDBMSResultSet extends AbstractResultSet {
 
@@ -22,6 +23,16 @@ public class RDBMSResultSet extends AbstractResultSet {
     @Override
     public int getInt(String columnLabel) {
         return ((IntegerValue) result.get(cursor).get(columnLabel)).value();
+    }
+
+    @Override
+    public String getString(int columnIndex) {
+        return ((StringValue) result.get(cursor).get(columnIndex - 1)).value();
+    }
+
+    @Override
+    public String getString(String columnLabel) {
+        return ((StringValue) result.get(cursor).get(columnLabel)).value();
     }
 
     @Override

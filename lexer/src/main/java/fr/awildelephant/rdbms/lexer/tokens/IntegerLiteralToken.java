@@ -11,6 +11,10 @@ public final class IntegerLiteralToken implements Token {
         this.value = value;
     }
 
+    public int value() {
+        return value;
+    }
+
     @Override
     public String text() {
         return "<integer literal>";
@@ -19,10 +23,6 @@ public final class IntegerLiteralToken implements Token {
     @Override
     public TokenType type() {
         return TokenType.INTEGER_LITERAL;
-    }
-
-    public int value() {
-        return value;
     }
 
     @Override

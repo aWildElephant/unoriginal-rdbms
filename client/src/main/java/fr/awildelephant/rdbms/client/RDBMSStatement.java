@@ -21,7 +21,6 @@ public class RDBMSStatement extends AbstractStatement {
     public boolean execute(String sql) throws SQLException {
         final Table table = executeAndForwardException(sql);
 
-
         if (table == null) {
             lastResult = null;
 

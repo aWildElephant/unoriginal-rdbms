@@ -12,6 +12,7 @@ import java.util.List;
 
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StepDefs implements En {
@@ -45,8 +46,6 @@ public class StepDefs implements En {
         When("I execute the query", this::execute);
 
         Then("I expect the result set", (DataTable table) -> {
-            assertNotNull(lastStatement, "Last statement is null: no query run");
-
             assertResult(table);
         });
 
@@ -67,11 +66,22 @@ public class StepDefs implements En {
     }
 
     private void assertResult(DataTable table) throws SQLException {
+        if (lastStatement == null) {
+            if (lastException != null) {
+                fail("Exception thrown", lastException);
+            } else {
+                fail("Last statement is null: no query run");
+            }
+        }
+
         final ResultSet lastResult = lastStatement.getResultSet();
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
         final List<List<String>> expectedResult = table.asLists();
+        final List<Checker> columnCheckers = expectedResult.get(1).stream()
+                .map(Checker::checkerFor)
+                .collect(toList());
         final List<List<String>> rows = expectedResult.subList(2, expectedResult.size());
 
         final int numberOfExpectedRows = rows.size();
@@ -86,10 +96,7 @@ public class StepDefs implements En {
             final List<String> row = rows.get(i);
 
             for (int j = 0; j < row.size(); j++) {
-                final int expected = parseInt(row.get(j));
-                final int actual = lastResult.getInt(j + 1);
-
-                assertEquals(expected, actual, "Row " + (i + 1) + " column " + (j + 1) + " : expected " + expected + " but got " + actual);
+                columnCheckers.get(j).check(lastResult, i + 1, j + 1, row.get(j));
             }
 
             i++;

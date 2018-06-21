@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
+import java.util.List;
+
 public final class InsertInto implements AST {
 
     private final TableName targetTable;
@@ -10,8 +12,8 @@ public final class InsertInto implements AST {
         this.rows = rows;
     }
 
-    public static InsertInto insertInto(TableName targetTable, Rows value) {
-        return new InsertInto(targetTable, value);
+    public static InsertInto insertInto(TableName targetTable, Rows rows) {
+        return new InsertInto(targetTable, rows);
     }
 
     public TableName targetTable() {
@@ -40,7 +42,7 @@ public final class InsertInto implements AST {
 
         final InsertInto other = (InsertInto) obj;
 
-        return rows.equals(other.rows)
-                && targetTable.equals(other.targetTable);
+        return targetTable.equals(other.targetTable)
+                && rows.equals(other.rows);
     }
 }

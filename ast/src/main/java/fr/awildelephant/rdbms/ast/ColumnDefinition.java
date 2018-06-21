@@ -3,13 +3,13 @@ package fr.awildelephant.rdbms.ast;
 public final class ColumnDefinition implements AST {
 
     public static final int INTEGER = 0;
+    public static final int TEXT = 1;
 
     private final String columnName;
     private final int columnType;
 
     /**
      * @param columnName must be not null
-     * @param columnType must be not null
      */
     private ColumnDefinition(String columnName, int columnType) {
         this.columnName = columnName;
@@ -22,6 +22,10 @@ public final class ColumnDefinition implements AST {
 
     public String columnName() {
         return columnName;
+    }
+
+    public int columnType() {
+        return columnType;
     }
 
     @Override
@@ -42,7 +46,6 @@ public final class ColumnDefinition implements AST {
 
         final ColumnDefinition other = (ColumnDefinition) obj;
 
-        return columnType == other.columnType
-                && columnName.equals(other.columnName);
+        return columnType == other.columnType && columnName.equals(other.columnName);
     }
 }

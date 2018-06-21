@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.data;
 
-import fr.awildelephant.rdbms.engine.data.domain.DomainValue;
+import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
 public class Tuple {

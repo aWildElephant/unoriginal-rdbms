@@ -1,31 +1,14 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.schema.Schema;
-
-import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 public class Projection extends AbstractPlan {
 
     private final Plan input;
 
-    public Projection(Set<String> outputColumns, Plan input) {
-        super(buildSchema(outputColumns));
+    public Projection(List<String> outputColumns, Plan input) {
+        super(input.schema().project(outputColumns));
         this.input = input;
-    }
-
-    private static Schema buildSchema(Set<String> outputColumns) {
-        final HashMap<String, Integer> mapping = new HashMap<>();
-
-        int i = 0;
-
-        for (String column : outputColumns) {
-            mapping.put(column, i);
-
-            i++;
-        }
-
-        return new Schema(mapping);
     }
 
     public Plan input() {

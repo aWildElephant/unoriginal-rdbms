@@ -16,5 +16,7 @@ public enum TokenType {
     SELECT,
     SEMICOLON,
     TABLE,
+    TEXT,
+    TEXT_LITERAL,
     VALUES
 }

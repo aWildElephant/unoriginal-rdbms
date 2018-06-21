@@ -4,17 +4,17 @@ import java.util.List;
 
 public final class Row implements AST {
 
-    private final List<Integer> values;
+    private final List<Object> values;
 
-    private Row(final List<Integer> values) {
+    private Row(final List<Object> values) {
         this.values = values;
     }
 
-    public static Row row(final List<Integer> values) {
+    public static Row row(final List<Object> values) {
         return new Row(values);
     }
 
-    public List<Integer> values() {
+    public List<Object> values() {
         return values;
     }
 

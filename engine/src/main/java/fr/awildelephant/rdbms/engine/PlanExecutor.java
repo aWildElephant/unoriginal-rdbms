@@ -20,7 +20,7 @@ public class PlanExecutor implements PlanVisitor<Table> {
     @Override
     public Table visit(Projection projection) {
         final Plan input = projection.input();
-        final ProjectionOperator projectionOperator = new ProjectionOperator(input.schema(), projection.schema());
+        final ProjectionOperator projectionOperator = new ProjectionOperator(projection.schema());
 
         return projectionOperator.compute(input.accept(this));
     }

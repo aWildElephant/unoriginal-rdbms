@@ -2,23 +2,23 @@ package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.engine.data.Table;
 import fr.awildelephant.rdbms.engine.data.Tuple;
-import fr.awildelephant.rdbms.engine.data.domain.DomainValue;
+import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.Set;
+import java.util.List;
 
 public class ProjectionOperator implements Operator {
 
     private final Schema outputSchema;
-    private final int[] outputToInputIndex;
+    private int[] outputToInputIndex;
 
-    public ProjectionOperator(Schema inputSchema, Schema outputSchema) {
+    public ProjectionOperator(Schema outputSchema) {
         this.outputSchema = outputSchema;
-        this.outputToInputIndex = buildRelativeMapping(inputSchema);
     }
 
     @Override
     public Table compute(Table inputTable) {
+        this.outputToInputIndex = buildRelativeMapping(inputTable.schema());
         final Table outputTable = new Table(outputSchema, inputTable.size());
 
         for (Tuple tuple : inputTable) {
@@ -39,7 +39,7 @@ public class ProjectionOperator implements Operator {
     }
 
     private int[] buildRelativeMapping(Schema inputSchema) {
-        final Set<String> outputColumns = outputSchema.attributes();
+        final List<String> outputColumns = outputSchema.attributeNames();
         final int[] mapping = new int[outputColumns.size()];
 
         for (String column : outputColumns) {

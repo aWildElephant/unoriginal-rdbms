@@ -4,15 +4,15 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.engine.Engine;
+import fr.awildelephant.rdbms.engine.data.Table;
 import fr.awildelephant.rdbms.plan.BaseTable;
 import fr.awildelephant.rdbms.plan.Plan;
 import fr.awildelephant.rdbms.plan.Projection;
-import fr.awildelephant.rdbms.schema.Schema;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toList;
 
 public final class Algebraizer extends DefaultASTVisitor<Plan> {
 
@@ -25,19 +25,19 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
     @Override
     public Plan visit(Select select) {
         final String inputTable = select.inputTable().name();
-        final Optional<Schema> schema = engine.schemaOf(inputTable);
+        final Optional<Table> table = engine.getTable(inputTable);
 
-        if (!schema.isPresent()) {
+        if (!table.isPresent()) {
             throw new IllegalArgumentException("Table not found: " + inputTable);
         }
 
-        final BaseTable fromClause = new BaseTable(inputTable, schema.get());
+        final BaseTable fromClause = new BaseTable(inputTable, table.get().schema());
 
-        final Set<String> outputColumns = select
+        final List<String> outputColumns = select
                 .outputColumns()
                 .stream()
                 .flatMap(new ColumnNameResolver(fromClause.schema()))
-                .collect(toSet());
+                .collect(toList());
 
         return new Projection(outputColumns, fromClause);
     }
