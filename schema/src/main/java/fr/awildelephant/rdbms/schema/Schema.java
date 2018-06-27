@@ -1,68 +1,86 @@
 package fr.awildelephant.rdbms.schema;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-public class Schema {
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
-    private final List<String> attributeNames;
-    private final Map<String, IndexedAttribute> index;
+public final class Schema {
 
-    private Schema(List<String> attributeNames, Map<String, IndexedAttribute> index) {
-        this.attributeNames = attributeNames;
-        this.index = index;
+    private final List<String> columnNames;
+    private final Map<String, Column> columnIndex;
+
+    private Schema(List<String> columnNames, Map<String, Column> columnIndex) {
+        this.columnNames = columnNames;
+        this.columnIndex = columnIndex;
     }
 
-    public Schema(List<Attribute> orderedAttributes) {
-        final int numberOfAttributes = orderedAttributes.size();
+    public Schema(List<Column> columns) {
+        final int numberOfAttributes = columns.size();
 
-        final Map<String, IndexedAttribute> indexedAttributes = new HashMap<>(numberOfAttributes);
-        final List<String> nameList = new ArrayList<>(numberOfAttributes);
+        final Map<String, Column> indexedAttributes = new HashMap<>(numberOfAttributes);
+        final String[] nameList = new String[numberOfAttributes];
 
-        int i = 0;
-        for (Attribute attribute : orderedAttributes) {
-            nameList.add(attribute.name());
-            indexedAttributes.put(attribute.name(), new IndexedAttribute(i, attribute.name(), attribute.domain()));
-            i = i + 1;
+        for (Column column : columns) {
+            nameList[column.index()] = column.name();
+            indexedAttributes.put(column.name(), column);
         }
 
-        attributeNames = nameList;
-        index = indexedAttributes;
+        columnNames = unmodifiableList(asList(nameList));
+        columnIndex = indexedAttributes;
     }
 
-    public List<String> attributeNames() {
-        return attributeNames;
+    public List<String> columnNames() {
+        return columnNames;
     }
 
-    public Attribute attribute(String attributeName) {
-        return index.get(attributeName);
+    public Column attribute(String attributeName) {
+        return columnIndex.get(attributeName);
     }
 
     public boolean contains(String attributeName) {
-        return index.containsKey(attributeName);
+        return columnIndex.containsKey(attributeName);
     }
 
     public int indexOf(String attributeName) {
-        return index.get(attributeName).index();
+        return columnIndex.get(attributeName).index();
     }
 
     public int numberOfAttributes() {
-        return index.size();
+        return columnIndex.size();
     }
 
     public Schema project(List<String> names) {
-        final HashMap<String, IndexedAttribute> newIndex = new HashMap<>(names.size());
+        final HashMap<String, Column> newIndex = new HashMap<>(names.size());
 
         int i = 0;
         for (String name : names) {
-            final IndexedAttribute attribute = index.get(name);
+            final Column attribute = columnIndex.get(name);
 
-            newIndex.put(name, new IndexedAttribute(i, attribute.name(), attribute.domain()));
+            newIndex.put(name, new Column(i, attribute.name(), attribute.domain()));
             i = i + 1;
         }
 
         return new Schema(names, newIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(columnIndex, columnNames);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Schema)) {
+            return false;
+        }
+
+        final Schema other = (Schema) obj;
+
+        return Objects.equals(columnNames, other.columnNames)
+                && Objects.equals(columnIndex, other.columnIndex);
     }
 }

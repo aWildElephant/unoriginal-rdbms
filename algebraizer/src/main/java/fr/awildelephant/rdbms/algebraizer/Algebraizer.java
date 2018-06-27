@@ -4,8 +4,9 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.engine.Engine;
-import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.BaseTable;
+import fr.awildelephant.rdbms.plan.Distinct;
 import fr.awildelephant.rdbms.plan.Plan;
 import fr.awildelephant.rdbms.plan.Projection;
 
@@ -39,7 +40,13 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
                 .flatMap(new ColumnNameResolver(fromClause.schema()))
                 .collect(toList());
 
-        return new Projection(outputColumns, fromClause);
+        final Plan output = new Projection(outputColumns, fromClause);
+
+        if (!select.distinct()) {
+            return output;
+        }
+
+        return new Distinct(output);
     }
 
     @Override

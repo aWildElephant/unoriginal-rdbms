@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.server;
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.engine.Engine;
-import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
 

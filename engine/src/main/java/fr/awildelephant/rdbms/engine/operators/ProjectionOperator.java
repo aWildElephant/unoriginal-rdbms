@@ -1,7 +1,8 @@
 package fr.awildelephant.rdbms.engine.operators;
 
-import fr.awildelephant.rdbms.engine.data.Table;
-import fr.awildelephant.rdbms.engine.data.Tuple;
+import fr.awildelephant.rdbms.engine.data.table.ListTable;
+import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.tuple.Tuple;
 import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -17,9 +18,9 @@ public class ProjectionOperator implements Operator {
     }
 
     @Override
-    public Table compute(Table inputTable) {
+    public ListTable compute(Table inputTable) {
         this.outputToInputIndex = buildRelativeMapping(inputTable.schema());
-        final Table outputTable = new Table(outputSchema, inputTable.size());
+        final ListTable outputTable = new ListTable(outputSchema, inputTable.numberOfTuples());
 
         for (Tuple tuple : inputTable) {
             outputTable.add(projectTuple(tuple));
@@ -39,7 +40,7 @@ public class ProjectionOperator implements Operator {
     }
 
     private int[] buildRelativeMapping(Schema inputSchema) {
-        final List<String> outputColumns = outputSchema.attributeNames();
+        final List<String> outputColumns = outputSchema.columnNames();
         final int[] mapping = new int[outputColumns.size()];
 
         for (String column : outputColumns) {

@@ -1,38 +1,41 @@
 package fr.awildelephant.rdbms.client;
 
-import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.data.tuple.Tuple;
 import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
 import fr.awildelephant.rdbms.engine.data.value.StringValue;
 
+import java.util.Iterator;
+
 public class RDBMSResultSet extends AbstractResultSet {
 
-    private final Table result;
+    private Iterator<Tuple> tuples;
+    private Tuple current;
     private boolean isClosed;
 
     private int cursor = -1;
 
-    RDBMSResultSet(final Table result) {
-        this.result = result;
+    RDBMSResultSet(Iterator<Tuple> tuples) {
+        this.tuples = tuples;
     }
 
     @Override
     public int getInt(int columnIndex) {
-        return ((IntegerValue) result.get(cursor).get(columnIndex - 1)).value();
+        return ((IntegerValue) current.get(columnIndex - 1)).value();
     }
 
     @Override
     public int getInt(String columnLabel) {
-        return ((IntegerValue) result.get(cursor).get(columnLabel)).value();
+        return ((IntegerValue) current.get(columnLabel)).value();
     }
 
     @Override
     public String getString(int columnIndex) {
-        return ((StringValue) result.get(cursor).get(columnIndex - 1)).value();
+        return ((StringValue) current.get(columnIndex - 1)).value();
     }
 
     @Override
     public String getString(String columnLabel) {
-        return ((StringValue) result.get(cursor).get(columnLabel)).value();
+        return ((StringValue) current.get(columnLabel)).value();
     }
 
     @Override
@@ -42,8 +45,8 @@ public class RDBMSResultSet extends AbstractResultSet {
 
     @Override
     public boolean next() {
-        if (cursor < result.size() - 1) {
-            cursor++;
+        if (tuples.hasNext()) {
+            current = tuples.next();
 
             return true;
         }
@@ -54,6 +57,8 @@ public class RDBMSResultSet extends AbstractResultSet {
     @Override
     public void close() {
         isClosed = true;
+        tuples = null;
+        current = null;
     }
 
     @Override

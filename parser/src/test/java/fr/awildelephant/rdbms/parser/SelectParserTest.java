@@ -25,4 +25,9 @@ class SelectParserTest {
     void it_should_parse_a_select_star_statement() {
         assertParsing("SELECT * FROM z", select(singletonList(asterisk()), tableName("z")));
     }
+
+    @Test
+    void it_should_parse_a_select_distinct() {
+        assertParsing("SELECT DISTINCT a FROM test", select(true, columns("a"), tableName("test")));
+    }
 }

@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,11 +42,29 @@ public class StepDefs implements En {
             execute(createTableBuilder.toString());
 
             for (List<String> row : definition.rows(2).asLists()) {
-                execute("INSERT INTO " +
-                        name +
-                        " VALUES (" +
-                        row.stream().collect(joining(", ")) +
-                        ");");
+                final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name).append(" VALUES (");
+
+                for (int i = 0; i < columnNames.size(); i++) {
+                    final String columnType = columnTypes.get(i);
+
+                    if (columnType.equalsIgnoreCase("TEXT")) {
+                        insertIntoBuilder.append('\'');
+                    }
+
+                    insertIntoBuilder.append(row.get(i));
+
+                    if (columnType.equalsIgnoreCase("TEXT")) {
+                        insertIntoBuilder.append('\'');
+                    }
+
+                    if (i < columnNames.size() - 1) {
+                        insertIntoBuilder.append(", ");
+                    }
+                }
+
+                insertIntoBuilder.append(");");
+
+                execute(insertIntoBuilder.toString());
             }
         });
 

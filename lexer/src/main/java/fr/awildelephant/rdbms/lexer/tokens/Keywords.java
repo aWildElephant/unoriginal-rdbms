@@ -14,6 +14,17 @@ public enum Keywords implements Token {
             return CREATE;
         }
     },
+    DISTINCT_TOKEN {
+        @Override
+        public String text() {
+            return "distinct";
+        }
+
+        @Override
+        public TokenType type() {
+            return DISTINCT;
+        }
+    },
     FROM_TOKEN {
         @Override
         public String text() {

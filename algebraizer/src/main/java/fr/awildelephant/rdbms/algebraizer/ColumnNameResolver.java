@@ -18,7 +18,7 @@ public class ColumnNameResolver extends DefaultASTVisitor<Stream<String>> {
 
     @Override
     public Stream<String> visit(Asterisk asterisk) {
-        return inputSchema.attributeNames().stream();
+        return inputSchema.columnNames().stream();
     }
 
     @Override

@@ -3,21 +3,21 @@ package fr.awildelephant.rdbms.server;
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.engine.Engine;
-import fr.awildelephant.rdbms.engine.data.Table;
-import fr.awildelephant.rdbms.engine.data.Tuple;
+import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.tuple.Tuple;
 import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
 import fr.awildelephant.rdbms.engine.data.value.StringValue;
-import fr.awildelephant.rdbms.schema.Attribute;
+import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.INTEGER;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.TEXT;
-import static java.util.stream.Collectors.toList;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
@@ -35,19 +35,24 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
         checkTableDoesNotExist(tableName);
 
-        final List<Attribute> attributes = attributesOf(createTable);
+        final List<Column> attributes = attributesOf(createTable);
 
         engine.createTable(tableName, attributes);
 
         return null;
     }
 
-    private List<Attribute> attributesOf(CreateTable createTable) {
-        return createTable.tableElementList()
-                .elements()
-                .stream()
-                .map(this::toAttribute)
-                .collect(toList());
+    private List<Column> attributesOf(CreateTable createTable) {
+        final List<ColumnDefinition> elements = createTable.tableElementList().elements();
+        final ArrayList<Column> columns = new ArrayList<>(elements.size());
+
+        int i = 0;
+        for (ColumnDefinition element : elements) {
+            columns.add(new Column(i, element.columnName(), domainOf(element.columnType())));
+            i = i + 1;
+        }
+
+        return columns;
     }
 
     private void checkTableDoesNotExist(String tableName) {
@@ -66,7 +71,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
         final Domain[] domains = new Domain[schema.numberOfAttributes()];
 
-        for (String attributeName : schema.attributeNames()) {
+        for (String attributeName : schema.columnNames()) {
             domains[schema.indexOf(attributeName)] = schema.attribute(attributeName).domain();
         }
 
@@ -83,10 +88,6 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     @Override
     public Table defaultVisit(AST node) {
         throw new IllegalStateException();
-    }
-
-    private Attribute toAttribute(ColumnDefinition definition) {
-        return new Attribute(definition.columnName(), domainOf(definition.columnType()));
     }
 
     private Domain domainOf(int columnType) {

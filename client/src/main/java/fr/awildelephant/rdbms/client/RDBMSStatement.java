@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.client;
 
-import fr.awildelephant.rdbms.engine.data.Table;
+import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.server.RDBMS;
 
 import java.sql.ResultSet;
@@ -27,7 +27,7 @@ public class RDBMSStatement extends AbstractStatement {
             return false;
         }
 
-        lastResult = new RDBMSResultSet(table);
+        lastResult = new RDBMSResultSet(table.iterator());
 
         return true;
     }

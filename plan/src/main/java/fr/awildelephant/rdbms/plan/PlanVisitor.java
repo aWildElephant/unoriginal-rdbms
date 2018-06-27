@@ -1,8 +1,16 @@
 package fr.awildelephant.rdbms.plan;
 
-public interface PlanVisitor<T> {
+import java.util.function.Function;
 
-    T visit(Projection projection);
+public interface PlanVisitor<T> extends Function<Plan, T> {
+
+    default T apply(Plan plan) {
+        return plan.accept(this);
+    }
 
     T visit(BaseTable baseTable);
+
+    T visit(Distinct distinct);
+
+    T visit(Projection projection);
 }
