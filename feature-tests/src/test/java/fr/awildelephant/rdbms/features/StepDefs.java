@@ -25,6 +25,8 @@ public class StepDefs implements En {
         connection = new RDBMSDriver().connect("jdbc:rdbms:mem:feature-tests", null);
 
         Given("^the table (\\w+)$", (String name, DataTable definition) -> {
+            forwardExceptionIfPresent();
+
             final List<String> columnNames = definition.row(0);
             final List<String> columnTypes = definition.row(1);
 
@@ -40,11 +42,13 @@ public class StepDefs implements En {
 
             execute(createTableBuilder.toString());
 
-            definition.rows(2).asLists().forEach(row -> execute("INSERT INTO " +
-                    name +
-                    " VALUES (" +
-                    row.stream().collect(joining(", ")) +
-                    ");"));
+            for (List<String> row : definition.rows(2).asLists()) {
+                execute("INSERT INTO " +
+                        name +
+                        " VALUES (" +
+                        row.stream().collect(joining(", ")) +
+                        ");");
+            }
         });
 
         When("I execute the query", this::execute);
@@ -68,13 +72,7 @@ public class StepDefs implements En {
     }
 
     private void assertResult(DataTable table) throws SQLException {
-        if (lastStatement == null) {
-            if (lastException != null) {
-                fail("Exception thrown", lastException);
-            } else {
-                fail("Last statement is null: no query run");
-            }
-        }
+        forwardExceptionIfPresent();
 
         final ResultSet lastResult = lastStatement.getResultSet();
 
@@ -111,7 +109,15 @@ public class StepDefs implements En {
         assertEquals(numberOfExpectedRows, i, "Expected " + numberOfExpectedRows + " rows but got " + i);
     }
 
-    private void execute(String query) {
+    private void forwardExceptionIfPresent() throws SQLException {
+        if (lastException != null) {
+            throw lastException;
+        }
+    }
+
+    private void execute(String query) throws SQLException {
+        forwardExceptionIfPresent();
+
         try {
             reset();
 
@@ -126,8 +132,6 @@ public class StepDefs implements En {
     }
 
     private void reset() throws SQLException {
-        lastException = null;
-
         if (lastStatement != null) {
             lastStatement.close();
             lastStatement = null;
