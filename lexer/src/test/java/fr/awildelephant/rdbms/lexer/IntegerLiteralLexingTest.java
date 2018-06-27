@@ -11,4 +11,9 @@ class IntegerLiteralLexingTest {
     void it_should_match_a_number_lower_than_10() {
         assertLexing("5", new IntegerLiteralToken(5));
     }
+
+    @Test
+    void it_should_match_a_number_greater_than_10() {
+        assertLexing("2018", new IntegerLiteralToken(2018));
+    }
 }

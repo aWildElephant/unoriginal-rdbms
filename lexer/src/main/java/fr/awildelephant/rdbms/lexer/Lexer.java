@@ -122,7 +122,20 @@ public final class Lexer {
     }
 
     private Token matchIntegerLiteral(int firstCodePoint) {
-        return new IntegerLiteralToken(firstCodePoint - '0');
+        int value = intValueOf(firstCodePoint);
+
+        int next = input.get();
+        while (next >= '0' && next <= '9') {
+            value = value * 10 + intValueOf(next);
+            input.next();
+            next = input.get();
+        }
+
+        return new IntegerLiteralToken(value);
+    }
+
+    private int intValueOf(int firstCodePoint) {
+        return firstCodePoint - '0';
     }
 
     private boolean isBlank(int codePoint) {

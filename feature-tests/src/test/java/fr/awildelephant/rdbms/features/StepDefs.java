@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,14 +26,19 @@ public class StepDefs implements En {
 
         Given("^the table (\\w+)$", (String name, DataTable definition) -> {
             final List<String> columnNames = definition.row(0);
+            final List<String> columnTypes = definition.row(1);
 
-            // definition.row(1) is ignored for now since we only support integer type
+            final StringBuilder createTableBuilder = new StringBuilder("CREATE TABLE ").append(name).append(" (");
+            for (int i = 0; i < columnNames.size(); i++) {
+                createTableBuilder.append(columnNames.get(i)).append(" ").append(columnTypes.get(i));
 
-            execute("CREATE TABLE " +
-                    name +
-                    " (" +
-                    columnNames.stream().map(columnName -> columnName + " INTEGER").collect(joining(", ")) +
-                    ");");
+                if (i < columnNames.size() - 1) {
+                    createTableBuilder.append(", ");
+                }
+            }
+            createTableBuilder.append(");");
+
+            execute(createTableBuilder.toString());
 
             definition.rows(2).asLists().forEach(row -> execute("INSERT INTO " +
                     name +
@@ -45,9 +49,7 @@ public class StepDefs implements En {
 
         When("I execute the query", this::execute);
 
-        Then("I expect the result set", (DataTable table) -> {
-            assertResult(table);
-        });
+        Then("I expect the result set", this::assertResult);
 
         Then("^table (\\w+) should be$", (String name, DataTable content) -> {
             execute("SELECT * FROM " + name);

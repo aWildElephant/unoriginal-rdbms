@@ -1,28 +1,26 @@
 Feature: Insert into
 
-  Scenario: I insert a single integer value into a table
+  Scenario: I insert a single digit into an integer column
 
-    Given I execute the query
-    """
-    CREATE TABLE z (y INTEGER)
-    """
+    Given the table test
+      | a       |
+      | INTEGER |
 
     And I execute the query
     """
-    INSERT INTO z VALUES (1)
+    INSERT INTO test VALUES (1)
     """
 
-    Then table z should be
-      | y       |
+    Then table test should be
+      | a       |
       | INTEGER |
       | 1       |
 
   Scenario: I insert an integer and a string into a table
 
-    Given I execute the query
-    """
-    CREATE TABLE people (id INTEGER, name TEXT)
-    """
+    Given the table people
+      | id      | name |
+      | INTEGER | TEXT |
 
     And I execute the query
     """
@@ -33,3 +31,19 @@ Feature: Insert into
       | id      | name    |
       | INTEGER | TEXT    |
       | 1       | bernard |
+
+  Scenario: I insert an integer greater than 10 into a table
+
+    Given the table test
+      | a       |
+      | INTEGER |
+
+    When I execute the query
+    """
+    INSERT INTO test VALUES (1992)
+    """
+
+    Then table test should be
+      | a       |
+      | INTEGER |
+      | 1992    |
