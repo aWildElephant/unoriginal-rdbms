@@ -3,8 +3,8 @@ package fr.awildelephant.rdbms.server;
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.engine.Engine;
+import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.tuple.Tuple;
 import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
 import fr.awildelephant.rdbms.engine.data.value.StringValue;
@@ -75,7 +75,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
             domains[schema.indexOf(attributeName)] = schema.attribute(attributeName).domain();
         }
 
-        insertInto.rows().rows().forEach(row -> table.add(createTuple(schema, row.values(), domains)));
+        insertInto.rows().rows().forEach(row -> table.add(createTuple(row.values(), domains)));
 
         return null;
     }
@@ -101,14 +101,14 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         }
     }
 
-    private Tuple createTuple(Schema schema, List<Object> row, Domain[] domains) {
+    private Record createTuple(List<Object> row, Domain[] domains) {
         final DomainValue[] values = new DomainValue[domains.length];
 
         for (int i = 0; i < row.size(); i++) {
             values[i] = wrap(row.get(i), domains[i]);
         }
 
-        return new Tuple(schema, values);
+        return new Record(values);
     }
 
     private DomainValue wrap(Object obj, Domain domain) {

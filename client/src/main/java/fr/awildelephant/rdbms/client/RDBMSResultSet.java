@@ -1,41 +1,45 @@
 package fr.awildelephant.rdbms.client;
 
-import fr.awildelephant.rdbms.engine.data.tuple.Tuple;
+import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
 import fr.awildelephant.rdbms.engine.data.value.StringValue;
+import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Iterator;
 
 public class RDBMSResultSet extends AbstractResultSet {
 
-    private Iterator<Tuple> tuples;
-    private Tuple current;
+    private final Schema schema;
+    private Iterator<Record> tuples;
+    private Record current;
     private boolean isClosed;
 
     private int cursor = -1;
 
-    RDBMSResultSet(Iterator<Tuple> tuples) {
+    RDBMSResultSet(Schema schema, Iterator<Record> tuples) {
+        this.schema = schema;
         this.tuples = tuples;
     }
 
     @Override
     public int getInt(int columnIndex) {
-        return ((IntegerValue) current.get(columnIndex - 1)).value();
+        return ((IntegerValue) field(columnIndex - 1)).value();
     }
 
     @Override
     public int getInt(String columnLabel) {
-        return ((IntegerValue) current.get(columnLabel)).value();
+        return ((IntegerValue) field(schema.indexOf(columnLabel))).value();
     }
 
     @Override
     public String getString(int columnIndex) {
-        return ((StringValue) current.get(columnIndex - 1)).value();
+        return ((StringValue) field(columnIndex - 1)).value();
     }
 
     @Override
     public String getString(String columnLabel) {
-        return ((StringValue) current.get(columnLabel)).value();
+        return ((StringValue) field(schema.indexOf(columnLabel))).value();
     }
 
     @Override
@@ -64,5 +68,9 @@ public class RDBMSResultSet extends AbstractResultSet {
     @Override
     public boolean isClosed() {
         return isClosed;
+    }
+
+    private DomainValue field(int index) {
+        return current.get(index);
     }
 }

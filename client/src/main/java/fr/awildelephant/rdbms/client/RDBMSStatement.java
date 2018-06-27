@@ -27,7 +27,7 @@ public class RDBMSStatement extends AbstractStatement {
             return false;
         }
 
-        lastResult = new RDBMSResultSet(table.iterator());
+        lastResult = new RDBMSResultSet(table.schema(), table.iterator());
 
         return true;
     }
