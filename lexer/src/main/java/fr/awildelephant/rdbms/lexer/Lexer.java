@@ -2,10 +2,12 @@ package fr.awildelephant.rdbms.lexer;
 
 import fr.awildelephant.rdbms.lexer.tokens.*;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.*;
+import static java.lang.Integer.parseInt;
 
 public final class Lexer {
 
@@ -74,9 +76,9 @@ public final class Lexer {
             case '7':
             case '8':
             case '9':
-                return matchIntegerLiteral(codePoint);
+                return matchIntegerOrDecimalLiteral(codePoint);
             default:
-                return matchKeywordOrIdentifier(codePoint);
+                return matchKeywordOrIdentifier(codePoint); // TODO: check that first codePoint is allowed for an identifier
         }
     }
 
@@ -121,21 +123,32 @@ public final class Lexer {
                 .orElse(new IdentifierToken(obtained));
     }
 
-    private Token matchIntegerLiteral(int firstCodePoint) {
-        int value = intValueOf(firstCodePoint);
+    private Token matchIntegerOrDecimalLiteral(int firstCodePoint) {
+        final StringBuilder valueBuilder = new StringBuilder().appendCodePoint(firstCodePoint);
+        boolean decimalSeparatorFound = false;
 
-        int next = input.get();
-        while (next >= '0' && next <= '9') {
-            value = value * 10 + intValueOf(next);
+        while (true) {
+            final int codePoint = input.get();
+
+            if (codePoint == '.') {
+                if (decimalSeparatorFound) {
+                    throw new InputMismatchException();
+                }
+
+                decimalSeparatorFound = true;
+                valueBuilder.appendCodePoint(codePoint);
+            } else if (codePoint >= '0' && codePoint <= '9') {
+                valueBuilder.appendCodePoint(codePoint);
+            } else {
+                if (decimalSeparatorFound) {
+                    return new DecimalLiteralToken(new BigDecimal(valueBuilder.toString()));
+                } else {
+                    return new IntegerLiteralToken(parseInt(valueBuilder.toString()));
+                }
+            }
+
             input.next();
-            next = input.get();
         }
-
-        return new IntegerLiteralToken(value);
-    }
-
-    private int intValueOf(int firstCodePoint) {
-        return firstCodePoint - '0';
     }
 
     private boolean isBlank(int codePoint) {

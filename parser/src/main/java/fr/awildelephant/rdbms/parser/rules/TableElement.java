@@ -20,6 +20,8 @@ final class TableElement {
         final Token columnTypeToken = lexer.consumeNextToken();
 
         switch (columnTypeToken.type()) {
+            case DECIMAL:
+                return columnDefinition(columnName, ColumnDefinition.DECIMAL);
             case INTEGER:
                 return columnDefinition(columnName, ColumnDefinition.INTEGER);
             case TEXT:

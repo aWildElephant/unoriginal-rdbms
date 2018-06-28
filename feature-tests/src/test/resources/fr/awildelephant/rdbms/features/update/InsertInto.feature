@@ -47,3 +47,19 @@ Feature: Insert into
       | a       |
       | INTEGER |
       | 1992    |
+
+  Scenario: I insert a decimal value into a table
+
+    Given the table test
+      | a       |
+      | DECIMAL |
+
+    When I execute the query
+      """
+      INSERT INTO test VALUES (1.234)
+      """
+
+    Then table test should be
+      | a       |
+      | DECIMAL |
+      | 1.234   |

@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.value.DecimalValue;
 import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
 import fr.awildelephant.rdbms.engine.data.value.StringValue;
@@ -12,12 +13,12 @@ import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.INTEGER;
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.TEXT;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.*;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
@@ -92,6 +93,8 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     private Domain domainOf(int columnType) {
         switch (columnType) {
+            case DECIMAL:
+                return Domain.DECIMAL;
             case INTEGER:
                 return Domain.INTEGER;
             case TEXT:
@@ -113,6 +116,8 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     private DomainValue wrap(Object obj, Domain domain) {
         switch (domain) {
+            case DECIMAL:
+                return new DecimalValue((BigDecimal) obj);
             case INTEGER:
                 return new IntegerValue((int) obj);
             case TEXT:

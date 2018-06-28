@@ -14,6 +14,17 @@ public enum Keywords implements Token {
             return CREATE;
         }
     },
+    DECIMAL_TOKEN {
+        @Override
+        public String text() {
+            return "decimal";
+        }
+
+        @Override
+        public TokenType type() {
+            return DECIMAL;
+        }
+    },
     DISTINCT_TOKEN {
         @Override
         public String text() {

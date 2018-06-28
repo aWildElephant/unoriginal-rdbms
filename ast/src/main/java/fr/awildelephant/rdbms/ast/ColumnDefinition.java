@@ -2,8 +2,10 @@ package fr.awildelephant.rdbms.ast;
 
 public final class ColumnDefinition implements AST {
 
+    // TODO: use java.sql.Types?
     public static final int INTEGER = 0;
     public static final int TEXT = 1;
+    public static final int DECIMAL = 2;
 
     private final String columnName;
     private final int columnType;

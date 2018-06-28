@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.lexer.Lexer;
+import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
@@ -40,10 +41,12 @@ final class RowRule {
     private static Object deriveValue(Lexer lexer) {
         final Token valueToken = lexer.consumeNextToken();
 
-        if (valueToken instanceof TextLiteralToken) {
-            return ((TextLiteralToken) valueToken).content();
+        if (valueToken instanceof DecimalLiteralToken) {
+            return ((DecimalLiteralToken) valueToken).value();
         } else if (valueToken instanceof IntegerLiteralToken) {
             return ((IntegerLiteralToken) valueToken).value();
+        } else if (valueToken instanceof TextLiteralToken) {
+            return ((TextLiteralToken) valueToken).content();
         } else {
             throw unexpectedToken(valueToken);
         }

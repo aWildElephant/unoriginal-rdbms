@@ -4,6 +4,8 @@ public enum TokenType {
     ASTERISK,
     COMMA,
     CREATE,
+    DECIMAL,
+    DECIMAL_LITERAL,
     DISTINCT,
     END_OF_FILE,
     FROM,

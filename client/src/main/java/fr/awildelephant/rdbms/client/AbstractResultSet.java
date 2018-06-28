@@ -201,16 +201,6 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
     public boolean isBeforeFirst() throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }

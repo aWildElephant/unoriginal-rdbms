@@ -2,6 +2,8 @@ package fr.awildelephant.rdbms.parser;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Rows.rows;
@@ -25,5 +27,10 @@ class InsertIntoParserTest {
     @Test
     void it_should_parse_an_insert_into_statement_with_a_text_literal() {
         assertParsing("INSERT INTO test VALUES ('some text')", insertInto(tableName("test"), rows(singletonList(row(singletonList("some text"))))));
+    }
+
+    @Test
+    void it_should_parse_an_insert_into_statement_with_a_decimal_literal() {
+        assertParsing("INSERT INTO test VALUES (19.99)", insertInto(tableName("test"), rows(singletonList(row(singletonList(new BigDecimal("19.99")))))));
     }
 }

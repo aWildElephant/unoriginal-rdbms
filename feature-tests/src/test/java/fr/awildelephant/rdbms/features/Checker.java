@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.features;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.function.Supplier;
@@ -9,6 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public enum Checker {
 
+    DECIMAL {
+        @Override
+        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
+            final BigDecimal actualDecimal = actual.getBigDecimal(columnPosition);
+
+            assertEquals(new BigDecimal(expected), actualDecimal, errorMessage(rowPosition, columnPosition, expected, actualDecimal));
+        }
+    },
     INTEGER {
         @Override
         void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {

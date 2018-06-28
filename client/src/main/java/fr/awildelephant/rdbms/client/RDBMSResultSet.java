@@ -1,11 +1,13 @@
 package fr.awildelephant.rdbms.client;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.value.DecimalValue;
 import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
 import fr.awildelephant.rdbms.engine.data.value.StringValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 
 public class RDBMSResultSet extends AbstractResultSet {
@@ -20,6 +22,16 @@ public class RDBMSResultSet extends AbstractResultSet {
     RDBMSResultSet(Schema schema, Iterator<Record> tuples) {
         this.schema = schema;
         this.tuples = tuples;
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(int columnIndex) {
+        return ((DecimalValue) field(columnIndex - 1)).value();
+    }
+
+    @Override
+    public BigDecimal getBigDecimal(String columnLabel) {
+        return ((DecimalValue) field(schema.indexOf(columnLabel))).value();
     }
 
     @Override
@@ -51,6 +63,7 @@ public class RDBMSResultSet extends AbstractResultSet {
     public boolean next() {
         if (tuples.hasNext()) {
             current = tuples.next();
+            // TODO: cursor is not incremented, write an unit test for getRow
 
             return true;
         }

@@ -40,4 +40,13 @@ class CreateTableParserTest {
 
         assertParsing("CREATE TABLE test (a INTEGER, b TEXT)", createTable(tableName("test"), tableElementList(columns)));
     }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_decimal_column() {
+        final List<ColumnDefinition> columns = new ArrayList<>();
+        columns.add(columnDefinition("a", INTEGER));
+        columns.add(columnDefinition("b", DECIMAL));
+
+        assertParsing("CREATE TABLE test (a INTEGER, b DECIMAL)", createTable(tableName("test"), tableElementList(columns)));
+    }
 }
