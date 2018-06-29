@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.*;
+import static fr.awildelephant.rdbms.engine.data.value.NullValue.NULL_VALUE;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
@@ -115,6 +116,10 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     }
 
     private DomainValue wrap(Object obj, Domain domain) {
+        if (obj == null) {
+            return NULL_VALUE;
+        }
+
         switch (domain) {
             case DECIMAL:
                 return new DecimalValue((BigDecimal) obj);

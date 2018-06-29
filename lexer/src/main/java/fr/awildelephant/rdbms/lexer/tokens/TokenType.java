@@ -15,6 +15,8 @@ public enum TokenType {
     INTEGER_LITERAL,
     INTO,
     LEFT_PAREN,
+    NOT,
+    NULL,
     RIGHT_PAREN,
     SELECT,
     SEMICOLON,

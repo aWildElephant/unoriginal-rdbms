@@ -1,10 +1,7 @@
 package fr.awildelephant.rdbms.client;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.value.DecimalValue;
 import fr.awildelephant.rdbms.engine.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
-import fr.awildelephant.rdbms.engine.data.value.StringValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
@@ -16,6 +13,7 @@ public class RDBMSResultSet extends AbstractResultSet {
     private Iterator<Record> tuples;
     private Record current;
     private boolean isClosed;
+    private boolean wasNull;
 
     private int cursor = -1;
 
@@ -26,32 +24,55 @@ public class RDBMSResultSet extends AbstractResultSet {
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) {
-        return ((DecimalValue) field(columnIndex - 1)).value();
+        final DomainValue value = field(columnIndex - 1);
+
+        if (value.isNull()) {
+            wasNull = true;
+
+            return null;
+        }
+
+        return value.getBigDecimal();
     }
 
     @Override
     public BigDecimal getBigDecimal(String columnLabel) {
-        return ((DecimalValue) field(schema.indexOf(columnLabel))).value();
+        return getBigDecimal(schema.indexOf(columnLabel) + 1);
     }
 
-    @Override
+    @Override // TODO: write an unit test to see that we return 0 if the value is NULL
     public int getInt(int columnIndex) {
-        return ((IntegerValue) field(columnIndex - 1)).value();
+        final DomainValue value = field(columnIndex - 1);
+
+        if (value.isNull()) {
+            wasNull = true;
+            return 0;
+        }
+
+        return value.getInt();
     }
 
     @Override
     public int getInt(String columnLabel) {
-        return ((IntegerValue) field(schema.indexOf(columnLabel))).value();
+        return getInt(schema.indexOf(columnLabel) + 1);
     }
 
     @Override
     public String getString(int columnIndex) {
-        return ((StringValue) field(columnIndex - 1)).value();
+        final DomainValue value = field(columnIndex - 1);
+
+        if (value.isNull()) {
+            wasNull = true;
+
+            return null;
+        }
+
+        return value.getString();
     }
 
     @Override
     public String getString(String columnLabel) {
-        return ((StringValue) field(schema.indexOf(columnLabel))).value();
+        return getString(schema.indexOf(columnLabel) + 1);
     }
 
     @Override
@@ -60,8 +81,14 @@ public class RDBMSResultSet extends AbstractResultSet {
     }
 
     @Override
+    public boolean wasNull() {
+        return wasNull;
+    }
+
+    @Override
     public boolean next() {
         if (tuples.hasNext()) {
+            wasNull = false;
             current = tuples.next();
             // TODO: cursor is not incremented, write an unit test for getRow
 

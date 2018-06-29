@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.engine.data.value;
 
 import java.util.Objects;
 
-public final class StringValue implements DomainValue {
+public final class StringValue extends AbstractValue {
 
     private final String value;
 
@@ -10,7 +10,8 @@ public final class StringValue implements DomainValue {
         this.value = value;
     }
 
-    public String value() {
+    @Override
+    public String getString() {
         return value;
     }
 

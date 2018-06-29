@@ -11,11 +11,6 @@ import java.util.Map;
 public abstract class AbstractResultSet implements ResultSet {
 
     @Override
-    public boolean wasNull() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }

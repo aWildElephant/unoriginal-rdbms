@@ -41,14 +41,17 @@ final class RowRule {
     private static Object deriveValue(Lexer lexer) {
         final Token valueToken = lexer.consumeNextToken();
 
-        if (valueToken instanceof DecimalLiteralToken) {
-            return ((DecimalLiteralToken) valueToken).value();
-        } else if (valueToken instanceof IntegerLiteralToken) {
-            return ((IntegerLiteralToken) valueToken).value();
-        } else if (valueToken instanceof TextLiteralToken) {
-            return ((TextLiteralToken) valueToken).content();
-        } else {
-            throw unexpectedToken(valueToken);
+        switch (valueToken.type()) {
+            case NULL:
+                return null;
+            case DECIMAL_LITERAL:
+                return ((DecimalLiteralToken) valueToken).value();
+            case INTEGER_LITERAL:
+                return ((IntegerLiteralToken) valueToken).value();
+            case TEXT_LITERAL:
+                return ((TextLiteralToken) valueToken).content();
+            default:
+                throw unexpectedToken(valueToken);
         }
     }
 }

@@ -80,6 +80,28 @@ public enum Keywords implements Token {
             return INTO;
         }
     },
+    NOT_TOKEN {
+        @Override
+        public String text() {
+            return "not";
+        }
+
+        @Override
+        public TokenType type() {
+            return NOT;
+        }
+    },
+    NULL_TOKEN {
+        @Override
+        public String text() {
+            return "null";
+        }
+
+        @Override
+        public TokenType type() {
+            return NULL;
+        }
+    },
     SELECT_TOKEN {
         @Override
         public String text() {

@@ -33,4 +33,9 @@ class InsertIntoParserTest {
     void it_should_parse_an_insert_into_statement_with_a_decimal_literal() {
         assertParsing("INSERT INTO test VALUES (19.99)", insertInto(tableName("test"), rows(singletonList(row(singletonList(new BigDecimal("19.99")))))));
     }
+
+    @Test
+    void it_should_parse_an_insert_into_statement_with_the_null_value() {
+        assertParsing("INSERT INTO test VALUES (null)", insertInto(tableName("test"), rows(singletonList(row(singletonList(null))))));
+    }
 }

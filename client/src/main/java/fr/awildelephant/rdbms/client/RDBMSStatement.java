@@ -64,7 +64,7 @@ public class RDBMSStatement extends AbstractStatement {
         try {
             return system.execute(sql);
         } catch (Throwable e) {
-            throw new SQLException(e.getMessage());
+            throw new SQLException(e.getMessage(), e);
         }
     }
 }

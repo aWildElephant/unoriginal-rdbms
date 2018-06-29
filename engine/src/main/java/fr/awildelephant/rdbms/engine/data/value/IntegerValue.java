@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.data.value;
 
-public final class IntegerValue implements DomainValue {
+public final class IntegerValue extends AbstractValue {
 
     private final int value;
 
@@ -8,7 +8,8 @@ public final class IntegerValue implements DomainValue {
         this.value = value;
     }
 
-    public int value() {
+    @Override
+    public int getInt() {
         return value;
     }
 
