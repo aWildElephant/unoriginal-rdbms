@@ -50,7 +50,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
         int i = 0;
         for (ColumnDefinition element : elements) {
-            columns.add(new Column(i, element.columnName(), domainOf(element.columnType())));
+            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), element.notNull()));
             i = i + 1;
         }
 
@@ -71,10 +71,10 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         final Table table = engine.getTable(tableName).orElseThrow(() -> new IllegalArgumentException("Table not found: " + tableName));
         final Schema schema = table.schema();
 
-        final Domain[] domains = new Domain[schema.numberOfAttributes()];
+        final Column[] domains = new Column[schema.numberOfAttributes()];
 
         for (String attributeName : schema.columnNames()) {
-            domains[schema.indexOf(attributeName)] = schema.attribute(attributeName).domain();
+            domains[schema.indexOf(attributeName)] = schema.attribute(attributeName);
         }
 
         insertInto.rows().rows().forEach(row -> table.add(createTuple(row.values(), domains)));
@@ -105,11 +105,18 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         }
     }
 
-    private Record createTuple(List<Object> row, Domain[] domains) {
-        final DomainValue[] values = new DomainValue[domains.length];
+    private Record createTuple(List<Object> row, Column[] columns) {
+        final DomainValue[] values = new DomainValue[columns.length];
 
         for (int i = 0; i < row.size(); i++) {
-            values[i] = wrap(row.get(i), domains[i]);
+            final Column column = columns[i];
+            final DomainValue value = wrap(row.get(i), column.domain());
+
+            if (value.isNull() && column.notNull()) {
+                throw new IllegalArgumentException("Cannot insert NULL in not-null column " + column.name());
+            }
+
+            values[i] = value;
         }
 
         return new Record(values);

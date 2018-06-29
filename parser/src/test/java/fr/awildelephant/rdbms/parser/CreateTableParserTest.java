@@ -11,6 +11,7 @@ import static fr.awildelephant.rdbms.ast.CreateTable.createTable;
 import static fr.awildelephant.rdbms.ast.TableElementList.tableElementList;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
+import static java.util.Collections.singletonList;
 
 class CreateTableParserTest {
 
@@ -48,5 +49,12 @@ class CreateTableParserTest {
         columns.add(columnDefinition("b", DECIMAL));
 
         assertParsing("CREATE TABLE test (a INTEGER, b DECIMAL)", createTable(tableName("test"), tableElementList(columns)));
+    }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_not_null_constraint() {
+        final List<ColumnDefinition> columns = singletonList(columnDefinition("a", INTEGER, true));
+
+        assertParsing("CREATE TABLE test (a INTEGER NOT NULL)", createTable(tableName("test"), tableElementList(columns)));
     }
 }

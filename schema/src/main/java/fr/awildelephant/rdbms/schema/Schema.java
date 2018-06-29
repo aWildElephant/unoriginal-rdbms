@@ -58,9 +58,9 @@ public final class Schema {
 
         int i = 0;
         for (String name : names) {
-            final Column attribute = columnIndex.get(name);
+            final Column column = columnIndex.get(name);
 
-            newIndex.put(name, new Column(i, attribute.name(), attribute.domain()));
+            newIndex.put(name, new Column(i, column.name(), column.domain(), column.notNull()));
             i = i + 1;
         }
 

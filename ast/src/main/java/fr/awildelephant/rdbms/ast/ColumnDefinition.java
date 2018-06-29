@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
+import java.util.Objects;
+
 public final class ColumnDefinition implements AST {
 
     // TODO: use java.sql.Types?
@@ -9,17 +11,20 @@ public final class ColumnDefinition implements AST {
 
     private final String columnName;
     private final int columnType;
+    private final boolean notNull;
 
-    /**
-     * @param columnName must be not null
-     */
-    private ColumnDefinition(String columnName, int columnType) {
+    private ColumnDefinition(String columnName, int columnType, boolean notNull) {
         this.columnName = columnName;
         this.columnType = columnType;
+        this.notNull = notNull;
     }
 
     public static ColumnDefinition columnDefinition(String columnName, int columnType) {
-        return new ColumnDefinition(columnName, columnType);
+        return columnDefinition(columnName, columnType, false);
+    }
+
+    public static ColumnDefinition columnDefinition(String columnName, int columnType, boolean notNull) {
+        return new ColumnDefinition(columnName, columnType, notNull);
     }
 
     public String columnName() {
@@ -30,6 +35,10 @@ public final class ColumnDefinition implements AST {
         return columnType;
     }
 
+    public boolean notNull() {
+        return notNull;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
@@ -37,7 +46,7 @@ public final class ColumnDefinition implements AST {
 
     @Override
     public int hashCode() {
-        return columnName.hashCode() * 32 + columnType;
+        return Objects.hash(columnName, columnType, notNull);
     }
 
     @Override
@@ -48,6 +57,8 @@ public final class ColumnDefinition implements AST {
 
         final ColumnDefinition other = (ColumnDefinition) obj;
 
-        return columnType == other.columnType && columnName.equals(other.columnName);
+        return columnType == other.columnType
+                && notNull == other.notNull
+                && Objects.equals(columnName, other.columnName);
     }
 }
