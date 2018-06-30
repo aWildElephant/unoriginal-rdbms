@@ -16,7 +16,6 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.*;
 import static fr.awildelephant.rdbms.engine.data.value.NullValue.NULL_VALUE;
@@ -39,36 +38,24 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
         final List<Column> attributes = attributesOf(createTable);
 
-        engine.createTable(tableName, attributes);
+        engine.create(tableName, attributes);
 
         return null;
     }
 
-    private List<Column> attributesOf(CreateTable createTable) {
-        final List<ColumnDefinition> elements = createTable.tableElementList().elements();
-        final ArrayList<Column> columns = new ArrayList<>(elements.size());
+    @Override
+    public Table visit(DropTable dropTable) {
+        final String tableName = dropTable.tableName().name();
 
-        int i = 0;
-        for (ColumnDefinition element : elements) {
-            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), element.notNull()));
-            i = i + 1;
-        }
+        engine.drop(tableName);
 
-        return columns;
-    }
-
-    private void checkTableDoesNotExist(String tableName) {
-        final Optional<Table> table = engine.getTable(tableName);
-
-        if (table.isPresent()) {
-            throw new IllegalArgumentException("Table " + tableName + " already exists");
-        }
+        return null;
     }
 
     @Override
     public Table visit(InsertInto insertInto) {
         final String tableName = insertInto.targetTable().name();
-        final Table table = engine.getTable(tableName).orElseThrow(() -> new IllegalArgumentException("Table not found: " + tableName));
+        final Table table = engine.get(tableName);
         final Schema schema = table.schema();
 
         final Column[] domains = new Column[schema.numberOfAttributes()];
@@ -90,6 +77,25 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     @Override
     public Table defaultVisit(AST node) {
         throw new IllegalStateException();
+    }
+
+    private List<Column> attributesOf(CreateTable createTable) {
+        final List<ColumnDefinition> elements = createTable.tableElementList().elements();
+        final ArrayList<Column> columns = new ArrayList<>(elements.size());
+
+        int i = 0;
+        for (ColumnDefinition element : elements) {
+            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), element.notNull()));
+            i = i + 1;
+        }
+
+        return columns;
+    }
+
+    private void checkTableDoesNotExist(String tableName) {
+        if (engine.exists(tableName)) {
+            throw new IllegalArgumentException("Table " + tableName + " already exists");
+        }
     }
 
     private Domain domainOf(int columnType) {

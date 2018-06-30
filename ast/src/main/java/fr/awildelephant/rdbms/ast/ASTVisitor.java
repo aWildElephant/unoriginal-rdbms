@@ -16,6 +16,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(CreateTable createTable);
 
+    T visit(DropTable dropTable);
+
     T visit(InsertInto insertInto);
 
     T visit(Row row);

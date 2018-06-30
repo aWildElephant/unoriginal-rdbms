@@ -78,14 +78,21 @@ public class StepDefs implements En {
             assertResult(content);
         });
 
+        Then("^there is no table named (\\w+)$", (String name) -> {
+            execute("SELECT * FROM " + name);
 
-        Then("^I expect an error with the message$", (String expectedErrorMessage) -> {
-            assertNotNull(lastException, "No exception was thrown");
-
-            final String actualErrorMessage = lastException.getMessage();
-
-            assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error with the message \"" + expectedErrorMessage + "\" but got \"" + actualErrorMessage + "\"");
+            assertException("Table not found: " + name);
         });
+
+        Then("^I expect an error with the message$", this::assertException);
+    }
+
+    private void assertException(String expectedErrorMessage) {
+        assertNotNull(lastException, "No exception was thrown");
+
+        final String actualErrorMessage = lastException.getMessage();
+
+        assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error with the message \"" + expectedErrorMessage + "\" but got \"" + actualErrorMessage + "\"");
     }
 
     private void assertResult(DataTable table) throws SQLException {

@@ -7,6 +7,7 @@ public enum TokenType {
     DECIMAL,
     DECIMAL_LITERAL,
     DISTINCT,
+    DROP,
     END_OF_FILE,
     FROM,
     IDENTIFIER,

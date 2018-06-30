@@ -9,23 +9,42 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public final class Engine {
 
     private final Map<String, Table> tables = new HashMap<>();
 
-    public void createTable(final String tableName, final List<Column> attributes) {
+    public void create(final String tableName, final List<Column> attributes) {
         final Schema schema = new Schema(attributes);
 
         tables.put(tableName, new ListTable(schema));
     }
 
-    public Optional<Table> getTable(final String tableName) {
-        return Optional.ofNullable(tables.get(tableName));
+    public void drop(String tableName) {
+        final Table table = tables.remove(tableName);
+
+        checkTableFound(table, tableName);
+    }
+
+    public boolean exists(String tableName) {
+        return tables.containsKey(tableName);
+    }
+
+    public Table get(final String tableName) {
+        final Table table = tables.get(tableName);
+
+        checkTableFound(table, tableName);
+
+        return table;
     }
 
     public Table execute(final Plan logicalPlan) {
         return logicalPlan.accept(new PlanExecutor(tables));
+    }
+
+    private void checkTableFound(Table table, String tableName) {
+        if (table == null) {
+            throw new IllegalArgumentException("Table not found: " + tableName);
+        }
     }
 }

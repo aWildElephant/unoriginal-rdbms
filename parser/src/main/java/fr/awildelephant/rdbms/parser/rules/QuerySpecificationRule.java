@@ -26,7 +26,7 @@ final class QuerySpecificationRule {
 
         consumeAndExpect(FROM, lexer);
 
-        final TableName tableName = TableNameRule.deriveTableNameRule(lexer);
+        final TableName tableName = TableNameRule.deriveTableName(lexer);
 
         return select(distinct, outputColumns, tableName);
     }

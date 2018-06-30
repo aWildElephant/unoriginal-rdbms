@@ -12,7 +12,7 @@ final class TableNameRule {
 
     }
 
-    static TableName deriveTableNameRule(Lexer lexer) {
+    static TableName deriveTableName(Lexer lexer) {
         return tableName(consumeIdentifier(lexer));
     }
 }

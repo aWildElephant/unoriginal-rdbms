@@ -23,6 +23,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(DropTable dropTable) {
+        return defaultVisit(dropTable);
+    }
+
+    @Override
     public T visit(InsertInto insertInto) {
         return defaultVisit(insertInto);
     }

@@ -36,6 +36,17 @@ public enum Keywords implements Token {
             return DISTINCT;
         }
     },
+    DROP_TABLE_TOKEN {
+        @Override
+        public String text() {
+            return "drop";
+        }
+
+        @Override
+        public TokenType type() {
+            return DROP;
+        }
+    },
     FROM_TOKEN {
         @Override
         public String text() {

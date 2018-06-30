@@ -10,7 +10,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.TableContentsSourceRule.deriveTableContentsSourceRule;
-import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableNameRule;
+import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
 
 final class TableDefinitionRule {
 
@@ -22,7 +22,7 @@ final class TableDefinitionRule {
         consumeAndExpect(CREATE, lexer);
         consumeAndExpect(TABLE, lexer);
 
-        final TableName tableName = deriveTableNameRule(lexer);
+        final TableName tableName = deriveTableName(lexer);
         final TableElementList tableContentsSource = deriveTableContentsSourceRule(lexer);
 
         return createTable(tableName, tableContentsSource);

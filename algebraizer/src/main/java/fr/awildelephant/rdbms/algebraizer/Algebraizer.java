@@ -11,7 +11,6 @@ import fr.awildelephant.rdbms.plan.Plan;
 import fr.awildelephant.rdbms.plan.Projection;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,13 +25,9 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
     @Override
     public Plan visit(Select select) {
         final String inputTable = select.inputTable().name();
-        final Optional<Table> table = engine.getTable(inputTable);
+        final Table table = engine.get(inputTable);
 
-        if (!table.isPresent()) {
-            throw new IllegalArgumentException("Table not found: " + inputTable);
-        }
-
-        final BaseTable fromClause = new BaseTable(inputTable, table.get().schema());
+        final BaseTable fromClause = new BaseTable(inputTable, table.schema());
 
         final List<String> outputColumns = select
                 .outputColumns()
