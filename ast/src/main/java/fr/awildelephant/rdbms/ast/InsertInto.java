@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
-import java.util.List;
+import java.util.Objects;
 
 public final class InsertInto implements AST {
 
@@ -31,7 +31,7 @@ public final class InsertInto implements AST {
 
     @Override
     public int hashCode() {
-        return targetTable.hashCode() * 32 + rows.hashCode();
+        return Objects.hash(targetTable, rows);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class InsertInto implements AST {
 
         final InsertInto other = (InsertInto) obj;
 
-        return targetTable.equals(other.targetTable)
-                && rows.equals(other.rows);
+        return Objects.equals(targetTable, other.targetTable)
+                && Objects.equals(rows, other.rows);
     }
 }

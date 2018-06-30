@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.ast;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class Select implements AST {
 
@@ -52,7 +53,7 @@ public final class Select implements AST {
 
     @Override
     public int hashCode() {
-        return outputColumns.hashCode() * 62 + inputTable.hashCode() * 2 + (distinct ? 1 : 0);
+        return Objects.hash(distinct, outputColumns, inputTable);
     }
 
     @Override
@@ -64,7 +65,7 @@ public final class Select implements AST {
         final Select other = (Select) obj;
 
         return distinct == other.distinct
-                && outputColumns.equals(other.outputColumns)
-                && inputTable.equals(other.inputTable);
+                && Objects.equals(outputColumns, other.outputColumns)
+                && Objects.equals(inputTable, other.inputTable);
     }
 }

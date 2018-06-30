@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class Row implements AST {
 
@@ -25,7 +26,7 @@ public final class Row implements AST {
 
     @Override
     public int hashCode() {
-        return values.hashCode();
+        return Objects.hashCode(values);
     }
 
     @Override
@@ -36,6 +37,6 @@ public final class Row implements AST {
 
         final Row other = (Row) obj;
 
-        return values.equals(other.values);
+        return Objects.equals(values, other.values);
     }
 }

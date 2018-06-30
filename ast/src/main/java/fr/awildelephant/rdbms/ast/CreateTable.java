@@ -1,14 +1,12 @@
 package fr.awildelephant.rdbms.ast;
 
+import java.util.Objects;
+
 public final class CreateTable implements AST {
 
     private final TableName tableName;
     private final TableElementList columns;
 
-    /**
-     * @param tableName must be not null
-     * @param columns   must be not null
-     */
     private CreateTable(TableName tableName, TableElementList columns) {
         this.tableName = tableName;
         this.columns = columns;
@@ -33,7 +31,7 @@ public final class CreateTable implements AST {
 
     @Override
     public int hashCode() {
-        return tableName.hashCode() * 32 + columns.hashCode();
+        return Objects.hash(tableName, columns);
     }
 
     @Override
@@ -44,6 +42,7 @@ public final class CreateTable implements AST {
 
         final CreateTable other = (CreateTable) obj;
 
-        return tableName.equals(other.tableName) && columns.equals(other.columns);
+        return Objects.equals(tableName, other.tableName)
+                && Objects.equals(columns, other.columns);
     }
 }

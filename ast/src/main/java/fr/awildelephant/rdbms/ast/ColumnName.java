@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
+import java.util.Objects;
+
 public final class ColumnName implements AST {
 
     private final String name;
@@ -28,7 +30,7 @@ public final class ColumnName implements AST {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return Objects.hashCode(name);
     }
 
     @Override
@@ -39,6 +41,6 @@ public final class ColumnName implements AST {
 
         final ColumnName other = (ColumnName) obj;
 
-        return name.equals(other.name);
+        return Objects.equals(name, other.name);
     }
 }
