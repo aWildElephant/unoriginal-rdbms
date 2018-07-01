@@ -1,6 +1,5 @@
 package fr.awildelephant.rdbms.engine;
 
-import fr.awildelephant.rdbms.engine.data.table.ListTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.Plan;
 import fr.awildelephant.rdbms.schema.Column;
@@ -10,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+
 public final class Engine {
 
     private final Map<String, Table> tables = new HashMap<>();
@@ -17,7 +18,7 @@ public final class Engine {
     public void create(final String tableName, final List<Column> attributes) {
         final Schema schema = new Schema(attributes);
 
-        tables.put(tableName, new ListTable(schema));
+        tables.put(tableName, simpleTable(schema));
     }
 
     public void drop(String tableName) {

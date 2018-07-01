@@ -1,12 +1,13 @@
 package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.ListTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.List;
+
+import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
 public class ProjectionOperator implements Operator {
 
@@ -18,9 +19,9 @@ public class ProjectionOperator implements Operator {
     }
 
     @Override
-    public ListTable compute(Table inputTable) {
+    public Table compute(Table inputTable) {
         this.outputToInputIndex = buildRelativeMapping(inputTable.schema());
-        final ListTable outputTable = new ListTable(outputSchema, inputTable.numberOfTuples());
+        final Table outputTable = simpleTable(outputSchema, inputTable.numberOfTuples());
 
         for (Record record : inputTable) {
             outputTable.add(projectTuple(record));

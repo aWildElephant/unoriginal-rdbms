@@ -3,18 +3,22 @@ package fr.awildelephant.rdbms.engine.data.table;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
-public class SetTable extends AbstractTable {
+public class CollectionTable implements Table {
 
-    private final Set<Record> records;
+    private final Schema schema;
+    private final Collection<Record> records;
 
-    public SetTable(Schema schema) {
-        super(schema);
+    CollectionTable(Schema schema, Collection<Record> records) {
+        this.schema = schema;
+        this.records = records;
+    }
 
-        records = new HashSet<>();
+    @Override
+    public Schema schema() {
+        return schema;
     }
 
     @Override
