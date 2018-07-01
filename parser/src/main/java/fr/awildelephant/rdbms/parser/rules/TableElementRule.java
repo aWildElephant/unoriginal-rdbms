@@ -4,16 +4,13 @@ import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.columnDefinition;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ColumnConstraintDefinitionsRule.deriveColumnConstraintDefinitions;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 
-final class TableElement {
+final class TableElementRule {
 
-    private TableElement() {
+    private TableElementRule() {
 
     }
 
@@ -22,15 +19,11 @@ final class TableElement {
 
         final Token columnTypeToken = lexer.consumeNextToken();
 
-        boolean notNull = false;
-        if (lexer.lookupNextToken().type() == NOT) {
-            lexer.consumeNextToken();
-            consumeAndExpect(NULL, lexer);
+        final ColumnDefinition.Builder builder = ColumnDefinition.builder(columnName, columnType(columnTypeToken));
 
-            notNull = true;
-        }
+        deriveColumnConstraintDefinitions(builder, lexer);
 
-        return columnDefinition(columnName, columnType(columnTypeToken), notNull);
+        return builder.build();
     }
 
     private static int columnType(Token columnTypeToken) {

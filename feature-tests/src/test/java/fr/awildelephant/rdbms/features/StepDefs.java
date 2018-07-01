@@ -23,15 +23,16 @@ public class StepDefs implements En {
 
         connection = new RDBMSDriver().connect("jdbc:rdbms:mem:feature-tests", null);
 
-        Given("^the table (\\w+)$", (String name, DataTable definition) -> {
+        Given("^the table (\\w+)$", (String name, DataTable content) -> {
             forwardExceptionIfPresent();
 
-            final List<String> columnNames = definition.row(0);
-            final List<String> columnTypes = definition.row(1);
+            final List<String> columnNames = content.row(0);
+            final List<String> columnDefinitions = content.row(1);
+            final List<String> columnTypes = columnDefinitions.stream().map(definition -> definition.split(" ")[0]).collect(toList());
 
             final StringBuilder createTableBuilder = new StringBuilder("CREATE TABLE ").append(name).append(" (");
             for (int i = 0; i < columnNames.size(); i++) {
-                createTableBuilder.append(columnNames.get(i)).append(" ").append(columnTypes.get(i));
+                createTableBuilder.append(columnNames.get(i)).append(" ").append(columnDefinitions.get(i));
 
                 if (i < columnNames.size() - 1) {
                     createTableBuilder.append(", ");
@@ -41,7 +42,7 @@ public class StepDefs implements En {
 
             execute(createTableBuilder.toString());
 
-            for (List<String> row : definition.rows(2).asLists()) {
+            for (List<String> row : content.rows(2).asLists()) {
                 final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name).append(" VALUES (");
 
                 for (int i = 0; i < columnNames.size(); i++) {

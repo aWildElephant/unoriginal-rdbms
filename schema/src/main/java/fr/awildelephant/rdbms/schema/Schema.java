@@ -37,7 +37,7 @@ public final class Schema {
         return columnNames;
     }
 
-    public Column attribute(String attributeName) {
+    public Column column(String attributeName) {
         return columnIndex.get(attributeName);
     }
 
@@ -60,7 +60,7 @@ public final class Schema {
         for (String name : names) {
             final Column column = columnIndex.get(name);
 
-            newIndex.put(name, new Column(i, column.name(), column.domain(), column.notNull()));
+            newIndex.put(name, new Column(i, column.name(), column.domain(), column.notNull(), column.unique()));
             i = i + 1;
         }
 

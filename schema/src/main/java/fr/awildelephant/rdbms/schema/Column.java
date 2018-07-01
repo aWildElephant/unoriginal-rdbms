@@ -8,15 +8,17 @@ public final class Column {
     private final String name;
     private final Domain domain;
     private final boolean notNull;
+    private final boolean unique;
 
-    public Column(int index, String name, Domain domain, boolean notNull) {
+    public Column(int index, String name, Domain domain, boolean notNull, boolean unique) {
         this.name = name;
         this.domain = domain;
         this.index = index;
         this.notNull = notNull;
+        this.unique = unique;
     }
 
-    int index() {
+    public int index() {
         return index;
     }
 
@@ -32,9 +34,13 @@ public final class Column {
         return notNull;
     }
 
+    public boolean unique() {
+        return unique;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(name, domain, index, notNull);
+        return Objects.hash(name, domain, index, notNull, unique);
     }
 
     @Override
@@ -47,6 +53,7 @@ public final class Column {
 
         return index == other.index
                 && notNull == other.notNull
+                && unique == other.unique
                 && domain == other.domain
                 && Objects.equals(name, other.name);
     }

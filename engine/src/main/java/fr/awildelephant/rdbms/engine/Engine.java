@@ -15,10 +15,18 @@ public final class Engine {
 
     private final Map<String, Table> tables = new HashMap<>();
 
-    public void create(final String tableName, final List<Column> attributes) {
-        final Schema schema = new Schema(attributes);
+    public void create(final String tableName, final List<Column> columns) {
+        final Schema schema = new Schema(columns);
 
-        tables.put(tableName, simpleTable(schema));
+        final Table table = simpleTable(schema);
+
+        for (Column column : columns) {
+            if (column.unique()) {
+                table.createIndexOn(column.name());
+            }
+        }
+
+        tables.put(tableName, table);
     }
 
     public void drop(String tableName) {

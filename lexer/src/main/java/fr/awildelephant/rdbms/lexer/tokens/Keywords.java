@@ -146,6 +146,17 @@ public enum Keywords implements Token {
             return TEXT;
         }
     },
+    UNIQUE_TOKEN {
+        @Override
+        public String text() {
+            return "unique";
+        }
+
+        @Override
+        public TokenType type() {
+            return UNIQUE;
+        }
+    },
     VALUES_TOKEN {
         @Override
         public String text() {

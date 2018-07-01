@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.server;
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.engine.Engine;
+import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.value.DecimalValue;
@@ -15,10 +16,13 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.*;
 import static fr.awildelephant.rdbms.engine.data.value.NullValue.NULL_VALUE;
+import static java.util.Collections.singletonList;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
@@ -36,9 +40,9 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
         checkTableDoesNotExist(tableName);
 
-        final List<Column> attributes = attributesOf(createTable);
+        final List<Column> columns = attributesOf(createTable);
 
-        engine.create(tableName, attributes);
+        engine.create(tableName, columns);
 
         return null;
     }
@@ -58,13 +62,20 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         final Table table = engine.get(tableName);
         final Schema schema = table.schema();
 
-        final Column[] domains = new Column[schema.numberOfAttributes()];
+        final Column[] columns = new Column[schema.numberOfAttributes()];
+        final Map<Integer, UniqueIndex> uniqueIndexes = new HashMap<>();
 
-        for (String attributeName : schema.columnNames()) {
-            domains[schema.indexOf(attributeName)] = schema.attribute(attributeName);
+        for (String columnName : schema.columnNames()) {
+            final Column column = schema.column(columnName);
+
+            columns[schema.indexOf(columnName)] = column;
+
+            if (column.unique()) {
+                uniqueIndexes.put(column.index(), table.indexOn(column.name()));
+            }
         }
 
-        insertInto.rows().rows().forEach(row -> table.add(createTuple(row.values(), domains)));
+        insertInto.rows().rows().forEach(row -> table.add(createTuple(row.values(), columns, uniqueIndexes)));
 
         return null;
     }
@@ -85,7 +96,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
         int i = 0;
         for (ColumnDefinition element : elements) {
-            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), element.notNull()));
+            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), element.notNull(), element.unique()));
             i = i + 1;
         }
 
@@ -111,15 +122,20 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         }
     }
 
-    private Record createTuple(List<Object> row, Column[] columns) {
+    private Record createTuple(List<Object> row, Column[] columns, Map<Integer, UniqueIndex> uniqueIndexes) {
         final DomainValue[] values = new DomainValue[columns.length];
 
         for (int i = 0; i < row.size(); i++) {
             final Column column = columns[i];
-            final DomainValue value = wrap(row.get(i), column.domain());
+            final Object obj = row.get(i);
+            final DomainValue value = wrap(obj, column.domain());
 
-            if (value.isNull() && column.notNull()) {
+            if (column.notNull() && value.isNull()) {
                 throw new IllegalArgumentException("Cannot insert NULL in not-null column " + column.name());
+            }
+
+            if (!value.isNull() && uniqueIndexes.containsKey(i) && uniqueIndexes.get(i).contains(singletonList(value))) {
+                throw new IllegalArgumentException("Unique constraint violation: column " + column.name() + " already contains value " + obj);
             }
 
             values[i] = value;

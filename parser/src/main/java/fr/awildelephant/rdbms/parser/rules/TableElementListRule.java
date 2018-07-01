@@ -10,7 +10,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.TableElementList.tableElementList;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.TableElement.deriveTableElement;
+import static fr.awildelephant.rdbms.parser.rules.TableElementRule.deriveTableElement;
 
 final class TableElementListRule {
 

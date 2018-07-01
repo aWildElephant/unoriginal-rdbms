@@ -12,19 +12,17 @@ public final class ColumnDefinition implements AST {
     private final String columnName;
     private final int columnType;
     private final boolean notNull;
+    private final boolean unique;
 
-    private ColumnDefinition(String columnName, int columnType, boolean notNull) {
-        this.columnName = columnName;
-        this.columnType = columnType;
-        this.notNull = notNull;
+    private ColumnDefinition(Builder builder) {
+        this.columnName = builder.columnName();
+        this.columnType = builder.columnType();
+        this.notNull = builder.isNotNull();
+        this.unique = builder.isUnique();
     }
 
-    public static ColumnDefinition columnDefinition(String columnName, int columnType) {
-        return columnDefinition(columnName, columnType, false);
-    }
-
-    public static ColumnDefinition columnDefinition(String columnName, int columnType, boolean notNull) {
-        return new ColumnDefinition(columnName, columnType, notNull);
+    public static Builder builder(String columnName, int columnType) {
+        return new Builder(columnName, columnType);
     }
 
     public String columnName() {
@@ -39,6 +37,10 @@ public final class ColumnDefinition implements AST {
         return notNull;
     }
 
+    public boolean unique() {
+        return unique;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
@@ -46,7 +48,7 @@ public final class ColumnDefinition implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(columnName, columnType, notNull);
+        return Objects.hash(columnName, columnType, notNull, unique);
     }
 
     @Override
@@ -59,6 +61,53 @@ public final class ColumnDefinition implements AST {
 
         return columnType == other.columnType
                 && notNull == other.notNull
+                && unique == other.unique
                 && Objects.equals(columnName, other.columnName);
+    }
+
+    public static class Builder {
+
+        private final String columnName;
+        private final int columnType;
+
+        private boolean notNull;
+        private boolean unique;
+
+        Builder(String columnName, int columnType) {
+            this.columnName = columnName;
+            this.columnType = columnType;
+        }
+
+        public Builder notNull() {
+            notNull = true;
+
+            return this;
+        }
+
+        public Builder unique() {
+            unique = true;
+
+            return this;
+        }
+
+        String columnName() {
+            return columnName;
+        }
+
+        int columnType() {
+            return columnType;
+        }
+
+        boolean isNotNull() {
+            return notNull;
+        }
+
+        boolean isUnique() {
+            return unique;
+        }
+
+        public ColumnDefinition build() {
+            return new ColumnDefinition(this);
+        }
     }
 }

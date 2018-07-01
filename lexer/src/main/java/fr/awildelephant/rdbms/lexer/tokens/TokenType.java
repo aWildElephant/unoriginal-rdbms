@@ -24,5 +24,6 @@ public enum TokenType {
     TABLE,
     TEXT,
     TEXT_LITERAL,
+    UNIQUE,
     VALUES
 }
