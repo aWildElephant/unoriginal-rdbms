@@ -38,6 +38,14 @@ public final class Column {
         return unique;
     }
 
+    public Column butUnique() {
+        return new Column(index, name, domain, notNull, true);
+    }
+
+    public Column butNotNull() {
+        return new Column(index, name, domain, true, unique);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, domain, index, notNull, unique);

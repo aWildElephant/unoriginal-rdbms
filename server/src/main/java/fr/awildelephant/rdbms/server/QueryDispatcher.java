@@ -2,6 +2,8 @@ package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.*;
+import fr.awildelephant.rdbms.ast.constraints.NotNullConstraint;
+import fr.awildelephant.rdbms.ast.constraints.UniqueConstraint;
 import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.record.Record;
@@ -91,16 +93,51 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     }
 
     private List<Column> attributesOf(CreateTable createTable) {
-        final List<ColumnDefinition> elements = createTable.tableElementList().elements();
-        final ArrayList<Column> columns = new ArrayList<>(elements.size());
+        final TableElementList elements = createTable.tableElementList();
+        final List<ColumnDefinition> columnDefinitions = elements.columns();
+        final ArrayList<Column> columns = new ArrayList<>(columnDefinitions.size());
 
         int i = 0;
-        for (ColumnDefinition element : elements) {
-            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), element.notNull(), element.unique()));
+        for (ColumnDefinition element : columnDefinitions) {
+            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), false, false));
             i = i + 1;
         }
 
+        for (UniqueConstraint constraint : elements.uniqueConstraints()) {
+            updateAndSetUnique(constraint.columnName(), columns);
+        }
+
+        for (NotNullConstraint constraint : elements.notNullConstraints()) {
+            updateAndSetNotNull(constraint.columnName(), columns);
+        }
+
         return columns;
+    }
+
+    private void updateAndSetNotNull(String columnName, ArrayList<Column> columns) {
+        for (int i = 0; i < columns.size(); i++) {
+            final Column column = columns.get(i);
+
+            if (column.name().equals(columnName)) {
+                columns.set(i, column.butNotNull());
+                return;
+            }
+        }
+
+        // TODO: throw a "column not found" exception
+    }
+
+    private void updateAndSetUnique(String columnName, ArrayList<Column> columns) {
+        for (int i = 0; i < columns.size(); i++) {
+            final Column column = columns.get(i);
+
+            if (column.name().equals(columnName)) {
+                columns.set(i, column.butUnique());
+                return;
+            }
+        }
+
+        // TODO: throw a "column not found" exception
     }
 
     private void checkTableDoesNotExist(String tableName) {
@@ -134,8 +171,10 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
                 throw new IllegalArgumentException("Cannot insert NULL in not-null column " + column.name());
             }
 
-            if (!value.isNull() && uniqueIndexes.containsKey(i) && uniqueIndexes.get(i).contains(singletonList(value))) {
-                throw new IllegalArgumentException("Unique constraint violation: column " + column.name() + " already contains value " + obj);
+            if (!value.isNull() && uniqueIndexes.containsKey(i) && uniqueIndexes.get(i)
+                                                                                .contains(singletonList(value))) {
+                throw new IllegalArgumentException("Unique constraint violation: column " + column
+                        .name() + " already contains value " + obj);
             }
 
             values[i] = value;

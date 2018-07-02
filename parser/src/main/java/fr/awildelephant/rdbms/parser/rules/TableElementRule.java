@@ -1,11 +1,15 @@
 package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnConstraintDefinitionsRule.deriveColumnConstraintDefinitions;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 
 final class TableElementRule {
@@ -14,16 +18,28 @@ final class TableElementRule {
 
     }
 
-    static ColumnDefinition deriveTableElement(final Lexer lexer) {
-        final String columnName = consumeIdentifier(lexer);
+    static void deriveTableElement(TableElementList.Builder tableElementListBuilder, final Lexer lexer) {
+        final Token token = lexer.lookupNextToken();
 
-        final Token columnTypeToken = lexer.consumeNextToken();
+        switch (token.type()) {
+            case UNIQUE:
+                lexer.consumeNextToken();
 
-        final ColumnDefinition.Builder builder = ColumnDefinition.builder(columnName, columnType(columnTypeToken));
+                consumeAndExpect(LEFT_PAREN, lexer);
 
-        deriveColumnConstraintDefinitions(builder, lexer);
+                tableElementListBuilder.addUniqueConstraint(consumeIdentifier(lexer));
 
-        return builder.build();
+                consumeAndExpect(RIGHT_PAREN, lexer);
+                break;
+
+            default:
+                final String columnName = consumeIdentifier(lexer);
+                final Token columnTypeToken = lexer.consumeNextToken();
+
+                tableElementListBuilder.addColumn(columnName, columnType(columnTypeToken));
+
+                deriveColumnConstraintDefinitions(columnName, tableElementListBuilder, lexer);
+        }
     }
 
     private static int columnType(Token columnTypeToken) {
