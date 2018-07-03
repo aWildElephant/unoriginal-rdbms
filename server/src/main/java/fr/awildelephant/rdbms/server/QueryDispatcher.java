@@ -137,7 +137,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
             }
         }
 
-        // TODO: throw a "column not found" exception
+        throw new IllegalArgumentException("Column not found: " + columnName);
     }
 
     private void checkTableDoesNotExist(String tableName) {
