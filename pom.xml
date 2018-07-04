@@ -25,7 +25,7 @@
     <properties>
         <project.fancyName>RDBMS</project.fancyName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>9</java.version>
         <junit.version>5.2.0</junit.version>
         <cucumber.version>3.0.2</cucumber.version>
     </properties>
