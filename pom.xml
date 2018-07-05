@@ -20,6 +20,7 @@
         <module>plan</module>
         <module>schema</module>
         <module>server</module>
+        <module>tpch-tests</module>
     </modules>
 
     <properties>
