@@ -29,7 +29,7 @@ Feature: Unique constraint
 
     Then I expect an error with the message
     """
-    Unique constraint violation: column pseudo already contains value mistermv
+    Unique constraint violation
     """
 
   Scenario: I insert several null values in the an unique column

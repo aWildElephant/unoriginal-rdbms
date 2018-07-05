@@ -31,4 +31,14 @@ public final class Record {
 
         return Arrays.equals(values, other.values);
     }
+
+    public boolean anyNull() {
+        for (DomainValue value : values) {
+            if (value.isNull()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

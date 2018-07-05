@@ -5,8 +5,9 @@ import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
+import java.util.HashSet;
+
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnConstraintDefinitionsRule.deriveColumnConstraintDefinitions;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -27,11 +28,21 @@ final class TableElementRule {
 
                 consumeAndExpect(LEFT_PAREN, lexer);
 
-                tableElementListBuilder.addUniqueConstraint(consumeIdentifier(lexer));
+                final HashSet<String> columns = new HashSet<>();
+
+                columns.add(consumeIdentifier(lexer));
+
+                while (lexer.lookupNextToken().type() == COMMA) {
+                    lexer.consumeNextToken();
+
+                    columns.add(consumeIdentifier(lexer));
+                }
 
                 consumeAndExpect(RIGHT_PAREN, lexer);
-                break;
 
+                tableElementListBuilder.addUniqueConstraint(columns);
+
+                break;
             default:
                 final String columnName = consumeIdentifier(lexer);
                 final Token columnTypeToken = lexer.consumeNextToken();

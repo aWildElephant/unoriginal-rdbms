@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.parser;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.*;
 import static fr.awildelephant.rdbms.ast.CreateTable.createTable;
 import static fr.awildelephant.rdbms.ast.TableElementList.tableElementList;
@@ -71,5 +73,17 @@ class CreateTableParserTest {
                                                             .build();
 
         assertParsing("CREATE TABLE test (a INTEGER, UNIQUE(a))", createTable(tableName("test"), elements));
+    }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_an_unique_constraint_definition_on_several_columns() {
+        final TableElementList elements = tableElementList().addColumn("a", INTEGER)
+                                                            .addColumn("b", INTEGER)
+                                                            .addUniqueConstraint(Set.of("a", "b"))
+                                                            .build();
+
+        assertParsing("CREATE TABLE test (a INTEGER, b INTEGER, UNIQUE(a, b))",
+
+                      createTable(tableName("test"), elements));
     }
 }

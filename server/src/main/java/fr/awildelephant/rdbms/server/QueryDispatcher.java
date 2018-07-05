@@ -6,7 +6,7 @@ import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 
 import static fr.awildelephant.rdbms.server.Inserter.insertRows;
-import static fr.awildelephant.rdbms.server.TableCreator.attributesOf;
+import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
@@ -24,7 +24,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
         checkTableDoesNotExist(tableName);
 
-        engine.create(tableName, attributesOf(createTable));
+        engine.create(tableName, tableFrom(createTable));
 
         return null;
     }

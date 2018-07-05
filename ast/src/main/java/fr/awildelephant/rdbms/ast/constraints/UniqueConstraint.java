@@ -1,22 +1,23 @@
 package fr.awildelephant.rdbms.ast.constraints;
 
 import java.util.Objects;
+import java.util.Set;
 
 public final class UniqueConstraint {
 
-    private final String columnName;
+    private final Set<String> columnNames;
 
-    public UniqueConstraint(String columnName) {
-        this.columnName = columnName;
+    public UniqueConstraint(Set<String> columnNames) {
+        this.columnNames = columnNames;
     }
 
-    public String columnName() {
-        return columnName;
+    public Set<String> columnNames() {
+        return columnNames;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(columnName);
+        return Objects.hashCode(columnNames);
     }
 
     @Override
@@ -27,6 +28,6 @@ public final class UniqueConstraint {
 
         final UniqueConstraint other = (UniqueConstraint) obj;
 
-        return Objects.equals(columnName, other.columnName);
+        return Objects.equals(columnNames, other.columnNames);
     }
 }

@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.engine;
 
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.plan.BaseTable;
@@ -12,9 +13,9 @@ import java.util.Map;
 
 public class PlanExecutor implements PlanVisitor<Table> {
 
-    private final Map<String, Table> tables;
+    private final Map<String, TableWithChecker> tables;
 
-    PlanExecutor(Map<String, Table> tables) {
+    PlanExecutor(Map<String, TableWithChecker> tables) {
         this.tables = tables;
     }
 

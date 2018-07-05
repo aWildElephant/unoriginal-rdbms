@@ -60,7 +60,7 @@ public final class Schema {
         for (String name : names) {
             final Column column = columnIndex.get(name);
 
-            newIndex.put(name, new Column(i, column.name(), column.domain(), column.notNull(), column.unique()));
+            newIndex.put(name, new Column(i, column.name(), column.domain(), column.notNull()));
             i = i + 1;
         }
 

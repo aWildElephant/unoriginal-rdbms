@@ -28,4 +28,8 @@ public final class TableFactory {
     public static Table simpleTable(Schema schema, int initialCapacity) {
         return new CollectionTable(schema, new ArrayList<>(initialCapacity));
     }
+
+    public static TableWithChecker tableWithChecker(Schema schema) {
+        return new TableWithChecker(simpleTable(schema));
+    }
 }

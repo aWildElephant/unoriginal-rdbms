@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.constraints.UniqueConstraint;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.column;
 
@@ -79,7 +80,11 @@ public final class TableElementList implements AST {
         }
 
         public Builder addUniqueConstraint(String columnName) {
-            uniqueConstraints.add(new UniqueConstraint(columnName));
+            return addUniqueConstraint(Set.of(columnName));
+        }
+
+        public Builder addUniqueConstraint(Set<String> columnNames) {
+            uniqueConstraints.add(new UniqueConstraint(columnNames));
 
             return this;
         }
