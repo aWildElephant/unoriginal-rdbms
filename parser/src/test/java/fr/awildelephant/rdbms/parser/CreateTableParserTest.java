@@ -86,4 +86,28 @@ class CreateTableParserTest {
 
                       createTable(tableName("test"), elements));
     }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_foreign_key_constraint() {
+        final TableElementList elements = tableElementList().addColumn("a", INTEGER)
+                                                            .addForeignKeyConstraint(Set.of("a"), "other", Set.of("a"))
+                                                            .build();
+
+        assertParsing("CREATE TABLE test (a INTEGER REFERENCES other(a))",
+
+                      createTable(tableName("test"), elements));
+    }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_foreign_key_constraint_definition_on_several_columns() {
+        final TableElementList elements = tableElementList().addColumn("a", INTEGER)
+                                                            .addColumn("b", INTEGER)
+                                                            .addForeignKeyConstraint(Set.of("a", "b"), "other",
+                                                                                     Set.of("c", "d"))
+                                                            .build();
+
+        assertParsing("CREATE TABLE test (a INTEGER, b INTEGER, FOREIGN KEY (a, b) REFERENCES other(c, d))",
+
+                      createTable(tableName("test"), elements));
+    }
 }

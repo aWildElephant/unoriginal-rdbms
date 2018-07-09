@@ -47,6 +47,17 @@ public enum Keywords implements Token {
             return DROP;
         }
     },
+    FOREIGN_TOKEN {
+        @Override
+        public String text() {
+            return "foreign";
+        }
+
+        @Override
+        public TokenType type() {
+            return FOREIGN;
+        }
+    },
     FROM_TOKEN {
         @Override
         public String text() {
@@ -91,6 +102,17 @@ public enum Keywords implements Token {
             return INTO;
         }
     },
+    KEY_TOKEN {
+        @Override
+        public String text() {
+            return "key";
+        }
+
+        @Override
+        public TokenType type() {
+            return KEY;
+        }
+    },
     NOT_TOKEN {
         @Override
         public String text() {
@@ -111,6 +133,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return NULL;
+        }
+    },
+    REFERENCES_TOKEN {
+        @Override
+        public String text() {
+            return "references";
+        }
+
+        @Override
+        public TokenType type() {
+            return REFERENCES;
         }
     },
     SELECT_TOKEN {

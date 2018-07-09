@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
+import fr.awildelephant.rdbms.ast.constraints.ForeignKeyConstraint;
 import fr.awildelephant.rdbms.ast.constraints.NotNullConstraint;
 import fr.awildelephant.rdbms.ast.constraints.UniqueConstraint;
 
@@ -15,11 +16,13 @@ public final class TableElementList implements AST {
     private final List<ColumnDefinition> columns;
     private final List<NotNullConstraint> notNullConstraints;
     private final List<UniqueConstraint> uniqueConstraints;
+    private final List<ForeignKeyConstraint> foreignKeyConstraints;
 
     private TableElementList(TableElementList.Builder builder) {
         this.columns = builder.columns();
         this.notNullConstraints = builder.notNullConstraints();
         this.uniqueConstraints = builder.uniqueConstraints();
+        this.foreignKeyConstraints = builder.foreignKeyConstraints();
     }
 
     public static TableElementList.Builder tableElementList() {
@@ -28,6 +31,10 @@ public final class TableElementList implements AST {
 
     public List<ColumnDefinition> columns() {
         return columns;
+    }
+
+    public Iterable<NotNullConstraint> notNullConstraints() {
+        return notNullConstraints;
     }
 
     public Iterable<UniqueConstraint> uniqueConstraints() {
@@ -39,13 +46,9 @@ public final class TableElementList implements AST {
         return visitor.visit(this);
     }
 
-    public Iterable<NotNullConstraint> notNullConstraints() {
-        return notNullConstraints;
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hash(columns, notNullConstraints, uniqueConstraints);
+        return Objects.hash(columns, notNullConstraints, uniqueConstraints, foreignKeyConstraints);
     }
 
     @Override
@@ -58,7 +61,8 @@ public final class TableElementList implements AST {
 
         return Objects.equals(columns, other.columns)
                 && Objects.equals(notNullConstraints, other.notNullConstraints)
-                && Objects.equals(uniqueConstraints, other.uniqueConstraints);
+                && Objects.equals(uniqueConstraints, other.uniqueConstraints)
+                && Objects.equals(foreignKeyConstraints, other.foreignKeyConstraints);
     }
 
     public static class Builder {
@@ -66,6 +70,7 @@ public final class TableElementList implements AST {
         private List<ColumnDefinition> columns = new LinkedList<>();
         private List<NotNullConstraint> notNullConstraints = new LinkedList<>();
         private List<UniqueConstraint> uniqueConstraints = new LinkedList<>();
+        private List<ForeignKeyConstraint> foreignKeyConstraints = new LinkedList<>();
 
         public Builder addColumn(String columnName, int columnType) {
             columns.add(column(columnName, columnType));
@@ -89,6 +94,12 @@ public final class TableElementList implements AST {
             return this;
         }
 
+        public Builder addForeignKeyConstraint(Set<String> columns, String targetTable, Set<String> targetColumns) {
+            foreignKeyConstraints.add(new ForeignKeyConstraint(targetTable, columns, targetColumns));
+
+            return this;
+        }
+
         List<ColumnDefinition> columns() {
             return columns;
         }
@@ -99,6 +110,10 @@ public final class TableElementList implements AST {
 
         List<UniqueConstraint> uniqueConstraints() {
             return uniqueConstraints;
+        }
+
+        List<ForeignKeyConstraint> foreignKeyConstraints() {
+            return foreignKeyConstraints;
         }
 
         public TableElementList build() {

@@ -4,8 +4,11 @@ import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
+import java.util.Set;
+
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 
 final class ColumnConstraintDefinitionsRule {
 
@@ -20,9 +23,24 @@ final class ColumnConstraintDefinitionsRule {
             switch (token.type()) {
                 case NOT:
                     lexer.consumeNextToken();
+
                     consumeAndExpect(NULL, lexer);
 
                     tableElementListBuilder.addNotNullConstraint(columnName);
+                    break;
+                case REFERENCES:
+                    lexer.consumeNextToken();
+
+                    final String targetTableName = consumeIdentifier(lexer);
+
+                    consumeAndExpect(LEFT_PAREN, lexer);
+
+                    final String targetColumnName = consumeIdentifier(lexer);
+
+                    consumeAndExpect(RIGHT_PAREN, lexer);
+
+                    tableElementListBuilder
+                            .addForeignKeyConstraint(Set.of(columnName), targetTableName, Set.of(targetColumnName));
                     break;
                 case UNIQUE:
                     lexer.consumeNextToken();

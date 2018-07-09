@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
@@ -23,6 +24,42 @@ final class TableElementRule {
         final Token token = lexer.lookupNextToken();
 
         switch (token.type()) {
+            case FOREIGN:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(KEY, lexer);
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final Set<String> columnNames = new HashSet<>();
+
+                columnNames.add(consumeIdentifier(lexer));
+
+                while (lexer.lookupNextToken().type() == COMMA) {
+                    lexer.consumeNextToken();
+                    columnNames.add(consumeIdentifier(lexer));
+                }
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+                consumeAndExpect(REFERENCES, lexer);
+
+                final String targetTableName = consumeIdentifier(lexer);
+
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final Set<String> targetColumnNames = new HashSet<>();
+
+                targetColumnNames.add(consumeIdentifier(lexer));
+
+                while (lexer.lookupNextToken().type() == COMMA) {
+                    lexer.consumeNextToken();
+                    targetColumnNames.add(consumeIdentifier(lexer));
+                }
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                tableElementListBuilder.addForeignKeyConstraint(columnNames, targetTableName, targetColumnNames);
+
+                break;
             case UNIQUE:
                 lexer.consumeNextToken();
 

@@ -34,7 +34,7 @@ public class UniqueIndex {
 
         int i = 0;
         for (Integer columnIndex : columnIndexes) {
-            values[i] = record.get(i);
+            values[i] = record.get(columnIndex);
 
             i++;
         }
