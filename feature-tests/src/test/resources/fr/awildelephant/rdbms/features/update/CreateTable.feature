@@ -11,13 +11,13 @@ Feature: Create table
       | a       |
       | INTEGER |
 
-  Scenario: I create an empty table with a single text column
+  Scenario: I create an empty table with text columns
 
     When I execute the query
       """
-      CREATE TABLE test (a TEXT)
+      CREATE TABLE test (a TEXT, b CHAR(8), c VARCHAR(8))
       """
 
     Then table test should be
-      | a    |
-      | TEXT |
+      | a    | b    | c    |
+      | TEXT | TEXT | TEXT |

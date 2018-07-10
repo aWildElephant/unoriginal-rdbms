@@ -3,6 +3,17 @@ package fr.awildelephant.rdbms.lexer.tokens;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 
 public enum Keywords implements Token {
+    CHAR_TOKEN {
+        @Override
+        public String text() {
+            return "char";
+        }
+
+        @Override
+        public TokenType type() {
+            return CHAR;
+        }
+    },
     CREATE_TOKEN {
         @Override
         public String text() {
@@ -199,6 +210,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return VALUES;
+        }
+    },
+    VARCHAR_TOKEN {
+        @Override
+        public String text() {
+            return "varchar";
+        }
+
+        @Override
+        public TokenType type() {
+            return VARCHAR;
         }
     }
 }

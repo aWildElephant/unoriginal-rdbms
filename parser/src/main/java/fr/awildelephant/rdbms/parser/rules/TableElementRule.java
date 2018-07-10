@@ -83,24 +83,38 @@ final class TableElementRule {
             default:
                 final String columnName = consumeIdentifier(lexer);
                 final Token columnTypeToken = lexer.consumeNextToken();
+                final int columnType = columnType(columnTypeToken, lexer);
 
-                tableElementListBuilder.addColumn(columnName, columnType(columnTypeToken));
+                tableElementListBuilder.addColumn(columnName, columnType);
 
                 deriveColumnConstraintDefinitions(columnName, tableElementListBuilder, lexer);
         }
     }
 
-    private static int columnType(Token columnTypeToken) {
+    private static int columnType(Token columnTypeToken, Lexer lexer) {
         switch (columnTypeToken.type()) {
+            case CHAR:
+                ignoreLengthInformation(lexer);
+
+                return ColumnDefinition.TEXT;
             case DECIMAL:
                 return ColumnDefinition.DECIMAL;
             case INTEGER:
                 return ColumnDefinition.INTEGER;
             case TEXT:
                 return ColumnDefinition.TEXT;
+            case VARCHAR:
+                ignoreLengthInformation(lexer);
+
+                return ColumnDefinition.TEXT;
             default:
                 throw unexpectedToken(columnTypeToken);
         }
     }
 
+    private static void ignoreLengthInformation(Lexer lexer) {
+        consumeAndExpect(LEFT_PAREN, lexer);
+        consumeAndExpect(INTEGER_LITERAL, lexer);
+        consumeAndExpect(RIGHT_PAREN, lexer);
+    }
 }

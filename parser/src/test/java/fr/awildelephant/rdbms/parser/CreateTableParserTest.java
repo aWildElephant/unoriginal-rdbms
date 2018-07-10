@@ -110,4 +110,24 @@ class CreateTableParserTest {
 
                       createTable(tableName("test"), elements));
     }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_fixed_length_char_type() {
+        final TableElementList elements = tableElementList().addColumn("a", TEXT)
+                                                            .build();
+
+        assertParsing("CREATE TABLE test (a CHAR(8))",
+
+                      createTable(tableName("test"), elements));
+    }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_variable_length_char_type() {
+        final TableElementList elements = tableElementList().addColumn("a", TEXT)
+                                                            .build();
+
+        assertParsing("CREATE TABLE test (a VARCHAR(32))",
+
+                      createTable(tableName("test"), elements));
+    }
 }
