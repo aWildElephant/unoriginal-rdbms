@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.client;
 import fr.awildelephant.rdbms.server.RDBMS;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,5 +45,10 @@ public class RDBMSConnection extends AbstractConnection {
     @Override
     public int getTransactionIsolation() {
         return Connection.TRANSACTION_NONE;
+    }
+
+    @Override
+    public DatabaseMetaData getMetaData() {
+        return RDBMSDatabaseMetaData.getMetaData();
     }
 }
