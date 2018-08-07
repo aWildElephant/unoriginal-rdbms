@@ -4,9 +4,9 @@ This project will not have any distinguishing feature. Its sole purpose is to al
 
 ## What's the plan?
 
-* Support the date data type
+* Support the date data type (should be good)
 * Support loading from csv
-* Support count(*) aggregate without a group by clause
+* Support count(*) aggregate without a group by clause (in progress)
 * Have a test loading the TPC-H SF1 dataset, asserting count(*) should be enough
 * Implement the select operator
 * Implement grouping

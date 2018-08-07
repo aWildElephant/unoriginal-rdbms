@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.lexer.tokens;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COUNT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
@@ -56,6 +57,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return CHAR;
+        }
+    },
+    COUNT_TOKEN {
+        @Override
+        public String text() {
+            return "count";
+        }
+
+        @Override
+        public TokenType type() {
+            return COUNT;
         }
     },
     CREATE_TOKEN {

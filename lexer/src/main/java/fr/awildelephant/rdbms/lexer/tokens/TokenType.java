@@ -6,6 +6,7 @@ public enum TokenType {
     CAST,
     CHAR,
     COMMA,
+    COUNT,
     CREATE,
     DATE,
     DECIMAL,
