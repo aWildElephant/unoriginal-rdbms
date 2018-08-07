@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.OffsetDateTime;
 import java.util.Iterator;
 
 public class RDBMSResultSet extends AbstractResultSet {
@@ -39,6 +41,19 @@ public class RDBMSResultSet extends AbstractResultSet {
     public BigDecimal getBigDecimal(String columnLabel) {
         return getBigDecimal(schema.indexOf(columnLabel) + 1);
     }
+
+    @Override
+    public Date getDate(int columnIndex) {
+        final DomainValue value = field(columnIndex - 1);
+
+        return new Date(numberOfMillisecondsFromEpochToStartOfDay(value));
+    }
+
+    private long numberOfMillisecondsFromEpochToStartOfDay(DomainValue value) {
+        return value.getLocalDate().atStartOfDay().toEpochSecond(OffsetDateTime.now().getOffset()) * 1000;
+    }
+
+    // TODO: implement getDate methods with Calendar as second parameter?
 
     @Override // TODO: write an unit test to see that we return 0 if the value is NULL
     public int getInt(int columnIndex) {

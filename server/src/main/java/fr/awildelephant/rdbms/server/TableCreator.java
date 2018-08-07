@@ -17,7 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.*;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.DECIMAL;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.INTEGER;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.TEXT;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.tableWithChecker;
 
 final class TableCreator {
@@ -82,6 +85,8 @@ final class TableCreator {
 
     private static Domain domainOf(int columnType) {
         switch (columnType) {
+            case DATE:
+                return Domain.DATE;
             case DECIMAL:
                 return Domain.DECIMAL;
             case INTEGER:

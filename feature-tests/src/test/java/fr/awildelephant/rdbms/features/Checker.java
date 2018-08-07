@@ -1,8 +1,11 @@
 package fr.awildelephant.rdbms.features;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.function.Supplier;
 
 import static java.lang.Integer.parseInt;
@@ -11,6 +14,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public enum Checker {
 
+    DATE {
+        @Override
+        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException, ParseException {
+            final Date actualDate = actual.getDate(columnPosition);
+            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualDate);
+
+            if ("null".equalsIgnoreCase(expected)) {
+                assertTrue(actual.wasNull(), messageSupplier);
+            } else {
+
+                assertEquals(ISO8601.parse(expected), actualDate, messageSupplier);
+            }
+        }
+    },
     DECIMAL {
         @Override
         void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
@@ -51,6 +68,8 @@ public enum Checker {
         }
     };
 
+    private static final SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd");
+
     public static Checker checkerFor(String typeName) {
         return Checker.valueOf(typeName);
     }
@@ -59,5 +78,5 @@ public enum Checker {
         return () -> "Row " + rowIndex + " column " + columnIndex + " : expected " + expected + " but got " + actual;
     }
 
-    abstract void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException;
+    abstract void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception;
 }

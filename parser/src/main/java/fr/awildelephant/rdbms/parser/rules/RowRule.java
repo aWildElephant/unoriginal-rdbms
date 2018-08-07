@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.parser.rules;
 
+import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
@@ -10,8 +12,12 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import java.util.LinkedList;
 import java.util.List;
 
+import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.Row.row;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
+import static fr.awildelephant.rdbms.ast.Value.value;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 
@@ -24,7 +30,7 @@ final class RowRule {
     static Row deriveRowRule(final Lexer lexer) {
         consumeAndExpect(LEFT_PAREN, lexer);
 
-        final List<Object> values = new LinkedList<>();
+        final List<AST> values = new LinkedList<>();
         values.add(deriveValue(lexer));
 
         while (lexer.lookupNextToken().type() == COMMA) {
@@ -38,18 +44,20 @@ final class RowRule {
         return row(values);
     }
 
-    private static Object deriveValue(Lexer lexer) {
+    private static AST deriveValue(Lexer lexer) {
         final Token valueToken = lexer.consumeNextToken();
 
         switch (valueToken.type()) {
             case NULL:
-                return null;
+                return value(null);
+            case DATE:
+                return cast(deriveValue(lexer), ColumnDefinition.DATE);
             case DECIMAL_LITERAL:
-                return ((DecimalLiteralToken) valueToken).value();
+                return value(((DecimalLiteralToken) valueToken).value());
             case INTEGER_LITERAL:
-                return ((IntegerLiteralToken) valueToken).value();
+                return value(((IntegerLiteralToken) valueToken).value());
             case TEXT_LITERAL:
-                return ((TextLiteralToken) valueToken).content();
+                return value(((TextLiteralToken) valueToken).content());
             default:
                 throw unexpectedToken(valueToken);
         }

@@ -8,7 +8,12 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import java.util.HashSet;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnConstraintDefinitionsRule.deriveColumnConstraintDefinitions;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -20,7 +25,7 @@ final class TableElementRule {
 
     }
 
-    static void deriveTableElement(TableElementList.Builder tableElementListBuilder, final Lexer lexer) {
+    static void deriveTableElement(final TableElementList.Builder tableElementListBuilder, final Lexer lexer) {
         final Token token = lexer.lookupNextToken();
 
         switch (token.type()) {
@@ -91,12 +96,14 @@ final class TableElementRule {
         }
     }
 
-    private static int columnType(Token columnTypeToken, Lexer lexer) {
+    private static int columnType(final Token columnTypeToken, final Lexer lexer) {
         switch (columnTypeToken.type()) {
             case CHAR:
                 ignoreLengthInformation(lexer);
 
                 return ColumnDefinition.TEXT;
+            case DATE:
+                return ColumnDefinition.DATE;
             case DECIMAL:
                 return ColumnDefinition.DECIMAL;
             case INTEGER:
@@ -112,7 +119,7 @@ final class TableElementRule {
         }
     }
 
-    private static void ignoreLengthInformation(Lexer lexer) {
+    private static void ignoreLengthInformation(final Lexer lexer) {
         consumeAndExpect(LEFT_PAREN, lexer);
         consumeAndExpect(INTEGER_LITERAL, lexer);
         consumeAndExpect(RIGHT_PAREN, lexer);

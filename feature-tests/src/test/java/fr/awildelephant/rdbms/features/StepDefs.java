@@ -11,7 +11,9 @@ import java.sql.Statement;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StepDefs implements En {
 
@@ -96,7 +98,7 @@ public class StepDefs implements En {
         assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error with the message \"" + expectedErrorMessage + "\" but got \"" + actualErrorMessage + "\"");
     }
 
-    private void assertResult(DataTable table) throws SQLException {
+    private void assertResult(DataTable table) throws Exception {
         forwardExceptionIfPresent();
 
         final ResultSet lastResult = lastStatement.getResultSet();
@@ -105,8 +107,8 @@ public class StepDefs implements En {
 
         final List<List<String>> expectedResult = table.asLists();
         final List<Checker> columnCheckers = expectedResult.get(1).stream()
-                .map(Checker::checkerFor)
-                .collect(toList());
+                                                           .map(Checker::checkerFor)
+                                                           .collect(toList());
         final List<List<String>> rows = expectedResult.subList(2, expectedResult.size());
 
         final int numberOfExpectedRows = rows.size();

@@ -5,6 +5,7 @@ public enum TokenType {
     CHAR,
     COMMA,
     CREATE,
+    DATE,
     DECIMAL,
     DECIMAL_LITERAL,
     DISTINCT,

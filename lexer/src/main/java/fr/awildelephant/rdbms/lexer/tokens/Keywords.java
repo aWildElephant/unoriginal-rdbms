@@ -1,6 +1,26 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INSERT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNIQUE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
 
 public enum Keywords implements Token {
     CHAR_TOKEN {
@@ -23,6 +43,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return CREATE;
+        }
+    },
+    DATE_TOKEN {
+        @Override
+        public String text() {
+            return "date";
+        }
+
+        @Override
+        public TokenType type() {
+            return DATE;
         }
     },
     DECIMAL_TOKEN {

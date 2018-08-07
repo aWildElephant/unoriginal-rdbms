@@ -5,17 +5,17 @@ import java.util.Objects;
 
 public final class Row implements AST {
 
-    private final List<Object> values;
+    private final List<AST> values;
 
-    private Row(final List<Object> values) {
+    private Row(final List<AST> values) {
         this.values = values;
     }
 
-    public static Row row(final List<Object> values) {
+    public static Row row(final List<AST> values) {
         return new Row(values);
     }
 
-    public List<Object> values() {
+    public List<AST> values() {
         return values;
     }
 

@@ -3,39 +3,46 @@ package fr.awildelephant.rdbms.parser;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import static fr.awildelephant.rdbms.ast.Cast.cast;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Rows.rows;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
+import static fr.awildelephant.rdbms.ast.Value.value;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 class InsertIntoParserTest {
 
     @Test
     void it_should_parse_an_insert_into_statement_with_a_single_column_and_a_single_row() {
-        assertParsing("INSERT INTO test VALUES (1)", insertInto(tableName("test"), rows(singletonList(row(singletonList(1))))));
+        assertParsing("INSERT INTO test VALUES (1)", insertInto(tableName("test"), rows(List.of(row(List.of(value(1)))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_several_columns_and_a_single_row() {
-        assertParsing("INSERT INTO test VALUES (1, 2, 3)", insertInto(tableName("test"), rows(singletonList(row(asList(1, 2, 3))))));
+        assertParsing("INSERT INTO test VALUES (1, 2, 3)", insertInto(tableName("test"), rows(List.of(row(List.of(value(1), value(2), value(3)))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_a_text_literal() {
-        assertParsing("INSERT INTO test VALUES ('some text')", insertInto(tableName("test"), rows(singletonList(row(singletonList("some text"))))));
+        assertParsing("INSERT INTO test VALUES ('some text')", insertInto(tableName("test"), rows(List.of(row(List.of(value("some text")))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_a_decimal_literal() {
-        assertParsing("INSERT INTO test VALUES (19.99)", insertInto(tableName("test"), rows(singletonList(row(singletonList(new BigDecimal("19.99")))))));
+        assertParsing("INSERT INTO test VALUES (19.99)", insertInto(tableName("test"), rows(List.of(row(List.of(value(new BigDecimal("19.99"))))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_the_null_value() {
-        assertParsing("INSERT INTO test VALUES (null)", insertInto(tableName("test"), rows(singletonList(row(singletonList(null))))));
+        assertParsing("INSERT INTO test VALUES (null)", insertInto(tableName("test"), rows(List.of(row(List.of(value(null)))))));
+    }
+
+    @Test
+    void it_should_parse_an_insert_into_statement_with_a_date_literal() {
+        assertParsing("INSERT INTO test VALUES (date '2018-07-15')", insertInto(tableName("test"), rows(List.of(row(List.of(cast(value("2018-07-15"), DATE)))))));
     }
 }

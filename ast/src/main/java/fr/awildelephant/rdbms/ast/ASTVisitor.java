@@ -10,6 +10,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Asterisk asterisk);
 
+    T visit(Cast cast);
+
     T visit(ColumnDefinition columnDefinition);
 
     T visit(ColumnName columnName);
@@ -29,4 +31,6 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(TableElementList tableElementList);
 
     T visit(TableName tableName);
+
+    T visit(Value value);
 }

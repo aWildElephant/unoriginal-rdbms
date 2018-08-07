@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.*;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.DECIMAL;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.INTEGER;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.TEXT;
 import static fr.awildelephant.rdbms.ast.CreateTable.createTable;
 import static fr.awildelephant.rdbms.ast.TableElementList.tableElementList;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
@@ -25,7 +28,8 @@ class CreateTableParserTest {
     void it_should_parse_a_create_table_query_with_several_columns() {
         final TableElementList elements = tableElementList().addColumn("a", INTEGER)
                                                             .addColumn("b", INTEGER)
-                                                            .addColumn("c", INTEGER).build();
+                                                            .addColumn("c", INTEGER)
+                                                            .build();
 
         assertParsing("CREATE TABLE test (a INTEGER, b INTEGER, c INTEGER)", createTable(tableName("test"), elements));
     }
@@ -102,8 +106,7 @@ class CreateTableParserTest {
     void it_should_parse_a_create_table_query_with_a_foreign_key_constraint_definition_on_several_columns() {
         final TableElementList elements = tableElementList().addColumn("a", INTEGER)
                                                             .addColumn("b", INTEGER)
-                                                            .addForeignKeyConstraint(Set.of("a", "b"), "other",
-                                                                                     Set.of("c", "d"))
+                                                            .addForeignKeyConstraint(Set.of("a", "b"), "other", Set.of("c", "d"))
                                                             .build();
 
         assertParsing("CREATE TABLE test (a INTEGER, b INTEGER, FOREIGN KEY (a, b) REFERENCES other(c, d))",
@@ -127,6 +130,16 @@ class CreateTableParserTest {
                                                             .build();
 
         assertParsing("CREATE TABLE test (a VARCHAR(32))",
+
+                      createTable(tableName("test"), elements));
+    }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_date_column() {
+        final TableElementList elements = tableElementList().addColumn("a", DATE)
+                                                            .build();
+
+        assertParsing("CREATE TABLE test (a DATE)",
 
                       createTable(tableName("test"), elements));
     }

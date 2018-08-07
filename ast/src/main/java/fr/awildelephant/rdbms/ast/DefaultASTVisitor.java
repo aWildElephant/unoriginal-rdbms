@@ -8,6 +8,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(Cast cast) {
+        return defaultVisit(cast);
+    }
+
+    @Override
     public T visit(ColumnDefinition columnDefinition) {
         return defaultVisit(columnDefinition);
     }
@@ -55,6 +60,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(TableName tableName) {
         return defaultVisit(tableName);
+    }
+
+    @Override
+    public T visit(Value value) {
+        return defaultVisit(value);
     }
 
     public abstract T defaultVisit(AST node);
