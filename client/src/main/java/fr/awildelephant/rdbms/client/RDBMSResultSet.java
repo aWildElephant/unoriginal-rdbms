@@ -46,6 +46,11 @@ public class RDBMSResultSet extends AbstractResultSet {
     public Date getDate(int columnIndex) {
         final DomainValue value = field(columnIndex - 1);
 
+        if (value.isNull()) {
+            wasNull = true;
+            return null;
+        }
+
         return new Date(numberOfMillisecondsFromEpochToStartOfDay(value));
     }
 

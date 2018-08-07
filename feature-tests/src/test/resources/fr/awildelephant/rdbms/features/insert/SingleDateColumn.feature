@@ -18,7 +18,6 @@ Feature: Insert into a single date column
       | DATE       |
       | 1992-05-20 |
 
-  @todo
   Scenario: I insert null
 
     When I execute the query
