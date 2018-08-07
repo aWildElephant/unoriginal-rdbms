@@ -1,7 +1,9 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
 public enum TokenType {
+    AS,
     ASTERISK,
+    CAST,
     CHAR,
     COMMA,
     CREATE,

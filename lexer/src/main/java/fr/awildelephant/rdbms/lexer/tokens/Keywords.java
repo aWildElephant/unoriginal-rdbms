@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
@@ -23,6 +25,28 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
 
 public enum Keywords implements Token {
+    AS_TOKEN {
+        @Override
+        public String text() {
+            return "as";
+        }
+
+        @Override
+        public TokenType type() {
+            return AS;
+        }
+    },
+    CAST_TOKEN {
+        @Override
+        public String text() {
+            return "cast";
+        }
+
+        @Override
+        public TokenType type() {
+            return CAST;
+        }
+    },
     CHAR_TOKEN {
         @Override
         public String text() {
