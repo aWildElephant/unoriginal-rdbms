@@ -1,7 +1,13 @@
 package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
-import fr.awildelephant.rdbms.ast.*;
+import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.CreateTable;
+import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.Distinct;
+import fr.awildelephant.rdbms.ast.DropTable;
+import fr.awildelephant.rdbms.ast.InsertInto;
+import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 
@@ -46,8 +52,17 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     }
 
     @Override
+    public Table visit(Distinct distinct) {
+        return executeReadQuery(distinct);
+    }
+
+    @Override
     public Table visit(Select select) {
-        return engine.execute(algebraizer.apply(select));
+        return executeReadQuery(select);
+    }
+
+    private Table executeReadQuery(AST ast) {
+        return engine.execute(algebraizer.apply(ast));
     }
 
     @Override

@@ -7,22 +7,16 @@ import java.util.Objects;
 
 public final class Select implements AST {
 
-    private final boolean distinct;
     private final List<? extends AST> outputColumns;
     private final TableName inputTable;
 
-    private Select(boolean distinct, List<? extends AST> outputColumns, TableName inputTable) {
-        this.distinct = distinct;
+    private Select(List<? extends AST> outputColumns, TableName inputTable) {
         this.outputColumns = outputColumns;
         this.inputTable = inputTable;
     }
 
     public static Select select(List<? extends AST> output, TableName inputTable) {
-        return select(false, output, inputTable);
-    }
-
-    public static Select select(boolean distinct, List<? extends AST> output, TableName inputTable) {
-        return new Select(distinct, output, inputTable);
+        return new Select(output, inputTable);
     }
 
     public List<? extends AST> outputColumns() {
@@ -33,10 +27,6 @@ public final class Select implements AST {
         return inputTable;
     }
 
-    public boolean distinct() {
-        return distinct;
-    }
-
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
@@ -45,7 +35,6 @@ public final class Select implements AST {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("distinct", distinct)
                 .append("outputColumns", outputColumns)
                 .append("inputTable", inputTable)
                 .toString();
@@ -53,7 +42,7 @@ public final class Select implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(distinct, outputColumns, inputTable);
+        return Objects.hash(outputColumns, inputTable);
     }
 
     @Override
@@ -64,8 +53,7 @@ public final class Select implements AST {
 
         final Select other = (Select) obj;
 
-        return distinct == other.distinct
-                && Objects.equals(outputColumns, other.outputColumns)
+        return Objects.equals(outputColumns, other.outputColumns)
                 && Objects.equals(inputTable, other.inputTable);
     }
 }

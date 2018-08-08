@@ -24,6 +24,11 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
     }
 
     @Override
+    public Plan visit(fr.awildelephant.rdbms.ast.Distinct distinct) {
+        return new Distinct(apply(distinct.input()));
+    }
+
+    @Override
     public Plan visit(Select select) {
         final Plan fromClause = visit(select.inputTable());
 
@@ -33,13 +38,7 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
                 .flatMap(new ColumnNameResolver(fromClause.schema()))
                 .collect(toList());
 
-        final Plan output = new Projection(outputColumns, fromClause);
-
-        if (!select.distinct()) {
-            return output;
-        }
-
-        return new Distinct(output);
+        return new Projection(outputColumns, fromClause);
     }
 
     @Override

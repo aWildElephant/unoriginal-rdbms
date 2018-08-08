@@ -1,13 +1,17 @@
 package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
 import java.util.List;
 
+import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.Select.select;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.SelectListRule.deriveSelectListRule;
 
@@ -28,7 +32,13 @@ final class QuerySpecificationRule {
 
         final TableName tableName = TableNameRule.deriveTableName(lexer);
 
-        return select(distinct, outputColumns, tableName);
+        final Select select = select(outputColumns, tableName);
+
+        if (distinct) {
+            return distinct(select);
+        }
+
+        return select;
     }
 
     private static boolean consumeIfDistinct(Lexer lexer) {

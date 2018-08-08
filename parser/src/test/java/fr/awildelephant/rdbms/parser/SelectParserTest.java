@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.parser;
 import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
+import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
@@ -28,6 +29,6 @@ class SelectParserTest {
 
     @Test
     void it_should_parse_a_select_distinct() {
-        assertParsing("SELECT DISTINCT a FROM test", select(true, columns("a"), tableName("test")));
+        assertParsing("SELECT DISTINCT a FROM test", distinct(select(columns("a"), tableName("test"))));
     }
 }

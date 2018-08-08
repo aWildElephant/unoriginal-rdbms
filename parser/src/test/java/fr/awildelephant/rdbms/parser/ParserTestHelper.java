@@ -22,7 +22,7 @@ final class ParserTestHelper {
     }
 
     static List<ColumnName> columns(String... names) {
-        ArrayList<ColumnName> columnNames = new ArrayList<>(names.length);
+        final ArrayList<ColumnName> columnNames = new ArrayList<>(names.length);
 
         for (String name : names) {
             columnNames.add(columnName(name));
