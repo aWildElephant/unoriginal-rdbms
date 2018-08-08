@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Select;
+import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.BaseTable;
@@ -24,10 +25,7 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
 
     @Override
     public Plan visit(Select select) {
-        final String inputTable = select.inputTable().name();
-        final Table table = engine.get(inputTable);
-
-        final BaseTable fromClause = new BaseTable(inputTable, table.schema());
+        final Plan fromClause = visit(select.inputTable());
 
         final List<String> outputColumns = select
                 .outputColumns()
@@ -42,6 +40,15 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
         }
 
         return new Distinct(output);
+    }
+
+    @Override
+    public Plan visit(TableName tableReference) {
+        final String name = tableReference.name();
+        final Table table = engine.get(name);
+
+        return new BaseTable(name, table.schema());
+
     }
 
     @Override
