@@ -12,6 +12,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Cast cast);
 
+    T visit(ColumnAlias columnAlias);
+
     T visit(ColumnDefinition columnDefinition);
 
     T visit(ColumnName columnName);

@@ -2,7 +2,11 @@ package fr.awildelephant.rdbms.parser;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
+import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
+import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
@@ -30,5 +34,10 @@ class SelectParserTest {
     @Test
     void it_should_parse_a_select_distinct() {
         assertParsing("SELECT DISTINCT a FROM test", distinct(select(columns("a"), tableName("test"))));
+    }
+
+    @Test
+    void it_should_parse_a_select_with_a_column_alias() {
+        assertParsing("SELECT a AS b FROM test", select(List.of(columnAlias(columnName("a"), "b")), tableName("test")));
     }
 }

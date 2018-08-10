@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public final class Schema {
 
@@ -29,7 +29,7 @@ public final class Schema {
             indexedAttributes.put(column.name(), column);
         }
 
-        columnNames = unmodifiableList(asList(nameList));
+        columnNames = List.of(nameList);
         columnIndex = indexedAttributes;
     }
 
@@ -65,6 +65,18 @@ public final class Schema {
         }
 
         return new Schema(names, newIndex);
+    }
+
+    public Schema alias(Alias alias) {
+        final Map<String, Column> newColumnIndex = columnIndex.entrySet()
+                                                              .stream()
+                                                              .collect(toMap(entry -> alias.get(entry.getKey()), Map.Entry::getValue));
+
+        final List<String> newColumnNames = columnNames.stream()
+                                                       .map(alias::get)
+                                                       .collect(toList());
+
+        return new Schema(newColumnNames, newColumnIndex);
     }
 
     @Override

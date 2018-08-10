@@ -13,6 +13,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(ColumnAlias columnAlias) {
+        return defaultVisit(columnAlias);
+    }
+
+    @Override
     public T visit(ColumnDefinition columnDefinition) {
         return defaultVisit(columnDefinition);
     }

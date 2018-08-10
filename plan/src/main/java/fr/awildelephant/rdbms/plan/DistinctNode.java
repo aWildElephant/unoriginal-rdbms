@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.plan;
 
-public class Distinct extends AbstractPlan {
+public class DistinctNode extends AbstractPlan {
 
     private final Plan input;
 
-    public Distinct(Plan input) {
+    public DistinctNode(Plan input) {
         super(input.schema());
         this.input = input;
     }

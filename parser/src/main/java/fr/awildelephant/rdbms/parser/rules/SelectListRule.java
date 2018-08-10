@@ -7,10 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
-import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
+import static fr.awildelephant.rdbms.parser.rules.DerivedColumnRule.deriveDerivedColumn;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static java.util.Collections.singletonList;
 
@@ -29,12 +28,12 @@ final class SelectListRule {
 
         final LinkedList<AST> selectList = new LinkedList<>();
 
-        selectList.add(columnName(consumeIdentifier(lexer)));
+        selectList.add(deriveDerivedColumn(lexer));
 
         while (lexer.lookupNextToken().type() == COMMA) {
             lexer.consumeNextToken();
 
-            selectList.add(columnName(consumeIdentifier(lexer)));
+            selectList.add(deriveDerivedColumn(lexer));
         }
 
         return selectList;
