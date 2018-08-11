@@ -1,12 +1,25 @@
 package fr.awildelephant.rdbms.lexer;
 
-import fr.awildelephant.rdbms.lexer.tokens.*;
+import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
+import fr.awildelephant.rdbms.lexer.tokens.IdentifierToken;
+import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
+import fr.awildelephant.rdbms.lexer.tokens.Keywords;
+import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
+import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.*;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.DIVIDE_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.END_OF_FILE_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.MINUS_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PLUS_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
 import static java.lang.Integer.parseInt;
 
 public final class Lexer {
@@ -56,6 +69,12 @@ public final class Lexer {
         switch (codePoint) {
             case '*':
                 return ASTERISK_TOKEN;
+            case '/':
+                return DIVIDE_TOKEN;
+            case '+':
+                return PLUS_TOKEN;
+            case '-':
+                return MINUS_TOKEN;
             case '(':
                 return LEFT_PAREN_TOKEN;
             case ')':
