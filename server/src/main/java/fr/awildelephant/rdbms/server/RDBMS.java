@@ -6,10 +6,15 @@ import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static fr.awildelephant.rdbms.lexer.InputStreamWrapper.wrap;
+import static java.lang.System.currentTimeMillis;
 
 public final class RDBMS {
+
+    private static final Logger LOGGER = LogManager.getLogger("Monitoring");
 
     private final QueryDispatcher dispatcher;
 
@@ -25,7 +30,9 @@ public final class RDBMS {
     }
 
     public Table execute(final String query) {
+        final long start = currentTimeMillis();
         final AST ast = parse(query);
+        LOGGER.trace("Took {}ms to parse", currentTimeMillis() - start);
 
         return dispatcher.apply(ast);
     }

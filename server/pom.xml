@@ -29,5 +29,10 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-engine</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
     </dependencies>
 </project>
