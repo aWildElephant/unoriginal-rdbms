@@ -18,26 +18,43 @@ class SelectParserTest {
 
     @Test
     void it_should_parse_a_select_statement_with_a_single_columns() {
-        assertParsing("SELECT y FROM z", select(columns("y"), tableName("z")));
+        assertParsing("SELECT y FROM z",
+
+                      select(columns("y"), tableName("z")));
     }
 
     @Test
     void it_should_parse_a_select_statement_with_several_output_columns() {
-        assertParsing("SELECT w, x, y FROM z", select(columns("w", "x", "y"), tableName("z")));
+        assertParsing("SELECT w, x, y FROM z",
+
+                      select(columns("w", "x", "y"), tableName("z")));
     }
 
     @Test
     void it_should_parse_a_select_star_statement() {
-        assertParsing("SELECT * FROM z", select(singletonList(asterisk()), tableName("z")));
+        assertParsing("SELECT * FROM z",
+
+                      select(singletonList(asterisk()), tableName("z")));
     }
 
     @Test
     void it_should_parse_a_select_distinct() {
-        assertParsing("SELECT DISTINCT a FROM test", distinct(select(columns("a"), tableName("test"))));
+        assertParsing("SELECT DISTINCT a FROM test",
+
+                      distinct(select(columns("a"), tableName("test"))));
     }
 
     @Test
     void it_should_parse_a_select_with_a_column_alias() {
-        assertParsing("SELECT a AS b FROM test", select(List.of(columnAlias(columnName("a"), "b")), tableName("test")));
+        assertParsing("SELECT a AS b FROM test",
+
+                      select(List.of(columnAlias(columnName("a"), "b")), tableName("test")));
+    }
+
+    @Test
+    void it_should_parse_a_parenthesized_column_reference() {
+        assertParsing("SELECT (a) FROM test",
+
+                      select(columns("a"), tableName("test")));
     }
 }
