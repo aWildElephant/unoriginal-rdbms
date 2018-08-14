@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.engine.Engine;
@@ -12,9 +12,8 @@ import fr.awildelephant.rdbms.plan.DistinctNode;
 import fr.awildelephant.rdbms.plan.Plan;
 import fr.awildelephant.rdbms.plan.ProjectionNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fr.awildelephant.rdbms.plan.AliasNode.aliasOperator;
 import static fr.awildelephant.rdbms.schema.Alias.alias;
@@ -28,7 +27,7 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
     }
 
     @Override
-    public Plan visit(fr.awildelephant.rdbms.ast.Distinct distinct) {
+    public Plan visit(Distinct distinct) {
         return new DistinctNode(apply(distinct.input()));
     }
 
@@ -36,31 +35,16 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
     public Plan visit(Select select) {
         final Plan fromClause = visit(select.inputTable());
 
-        final ColumnNameResolver columnNameResolver = new ColumnNameResolver(fromClause.schema());
-
         final List<? extends AST> outputColumns = select.outputColumns();
 
-        final ArrayList<String> transformedColumnNames = new ArrayList<>();
-        final HashMap<String, String> aliasing = new HashMap<>();
+        final OutputColumnsTransformer transformer = new OutputColumnsTransformer(fromClause.schema(), outputColumns);
 
-        for (AST column : outputColumns) {
-            if (column instanceof ColumnAlias) {
-                final ColumnAlias aliasedColumn = (ColumnAlias) column;
-                final String unaliasedColumnName = columnNameResolver.apply(aliasedColumn.input())
-                                                                     .findFirst()
-                                                                     .orElseThrow(IllegalStateException::new);
+        final Map<String, String> aliasing = transformer.extractAliases();
+        final List<String> outputColumnNames = transformer.collectProjectedColumnNames();
 
-                aliasing.put(unaliasedColumnName, aliasedColumn.alias());
+        final ProjectionNode projection = new ProjectionNode(outputColumnNames, fromClause);
 
-                transformedColumnNames.add(unaliasedColumnName);
-            } else {
-                columnNameResolver.apply(column).forEach(transformedColumnNames::add);
-            }
-        }
-
-        final ProjectionNode projection = new ProjectionNode(transformedColumnNames, fromClause);
-
-        if (aliasing.isEmpty()) {
+        if (!aliasing.isEmpty()) {
             return aliasOperator(alias(aliasing), projection);
         }
 

@@ -60,6 +60,10 @@ public final class Schema {
         for (String name : names) {
             final Column column = columnIndex.get(name);
 
+            if (column == null) {
+                throw new IllegalStateException("Column `" + name + "` not found. Available columns " + columnNames);
+            }
+
             newIndex.put(name, new Column(i, column.name(), column.domain(), column.notNull()));
             i = i + 1;
         }

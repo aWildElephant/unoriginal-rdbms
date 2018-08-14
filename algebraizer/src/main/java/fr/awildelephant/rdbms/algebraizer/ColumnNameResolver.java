@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.Value;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.stream.Stream;
@@ -30,6 +31,11 @@ public class ColumnNameResolver extends DefaultASTVisitor<Stream<String>> {
         }
 
         return Stream.of(name);
+    }
+
+    @Override
+    public Stream<String> visit(Value value) {
+        return Stream.of(value).map(Value::object).map(Object::toString);
     }
 
     @Override
