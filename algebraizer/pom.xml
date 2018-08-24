@@ -17,7 +17,7 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-ast</artifactId>
         </dependency>
-        <dependency> <!-- TODO: check if needed -->
+        <dependency>
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-engine</artifactId>
         </dependency>
