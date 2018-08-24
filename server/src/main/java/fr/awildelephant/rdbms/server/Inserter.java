@@ -4,13 +4,13 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.ast.Value;
+import fr.awildelephant.rdbms.data.value.DateValue;
+import fr.awildelephant.rdbms.data.value.DecimalValue;
+import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.data.value.IntegerValue;
+import fr.awildelephant.rdbms.data.value.StringValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.value.DateValue;
-import fr.awildelephant.rdbms.engine.data.value.DecimalValue;
-import fr.awildelephant.rdbms.engine.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.value.IntegerValue;
-import fr.awildelephant.rdbms.engine.data.value.StringValue;
 import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.engine.data.value.NullValue.NULL_VALUE;
+import static fr.awildelephant.rdbms.data.value.NullValue.NULL_VALUE;
 
 final class Inserter {
 

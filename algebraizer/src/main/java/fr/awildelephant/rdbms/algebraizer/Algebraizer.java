@@ -10,13 +10,8 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.BaseTable;
 import fr.awildelephant.rdbms.plan.DistinctNode;
 import fr.awildelephant.rdbms.plan.Plan;
-import fr.awildelephant.rdbms.plan.ProjectionNode;
 
-import java.util.List;
-import java.util.Map;
-
-import static fr.awildelephant.rdbms.plan.AliasNode.aliasOperator;
-import static fr.awildelephant.rdbms.schema.Alias.alias;
+import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
 
 public final class Algebraizer extends DefaultASTVisitor<Plan> {
 
@@ -33,22 +28,7 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
 
     @Override
     public Plan visit(Select select) {
-        final Plan fromClause = visit(select.inputTable());
-
-        final List<? extends AST> outputColumns = select.outputColumns();
-
-        final OutputColumnsTransformer transformer = new OutputColumnsTransformer(fromClause.schema(), outputColumns);
-
-        final Map<String, String> aliasing = transformer.extractAliases();
-        final List<String> outputColumnNames = transformer.collectProjectedColumnNames();
-
-        final ProjectionNode projection = new ProjectionNode(outputColumnNames, fromClause);
-
-        if (!aliasing.isEmpty()) {
-            return aliasOperator(alias(aliasing), projection);
-        }
-
-        return projection;
+        return transformOutputColumns(apply(select.inputTable()), select.outputColumns());
     }
 
     @Override

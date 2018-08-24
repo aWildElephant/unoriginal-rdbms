@@ -13,11 +13,6 @@ public final class Schema {
     private final List<String> columnNames;
     private final Map<String, Column> columnIndex;
 
-    private Schema(List<String> columnNames, Map<String, Column> columnIndex) {
-        this.columnNames = columnNames;
-        this.columnIndex = columnIndex;
-    }
-
     public Schema(List<Column> columns) {
         final int numberOfAttributes = columns.size();
 
@@ -31,6 +26,11 @@ public final class Schema {
 
         columnNames = List.of(nameList);
         columnIndex = indexedAttributes;
+    }
+
+    private Schema(List<String> columnNames, Map<String, Column> columnIndex) {
+        this.columnNames = columnNames;
+        this.columnIndex = columnIndex;
     }
 
     public List<String> columnNames() {

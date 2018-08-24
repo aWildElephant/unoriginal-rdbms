@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.data.value;
+package fr.awildelephant.rdbms.data.value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

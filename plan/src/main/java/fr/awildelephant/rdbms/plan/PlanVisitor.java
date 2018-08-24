@@ -14,5 +14,7 @@ public interface PlanVisitor<T> extends Function<Plan, T> {
 
     T visit(DistinctNode distinctNode);
 
+    T visit(MapNode mapNode);
+
     T visit(ProjectionNode projectionNode);
 }

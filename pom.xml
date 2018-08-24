@@ -15,12 +15,14 @@
         <module>client</module>
         <module>engine</module>
         <module>feature-tests</module>
+        <module>formula</module>
         <module>lexer</module>
         <module>parser</module>
         <module>plan</module>
         <module>schema</module>
         <module>server</module>
         <module>tpch-tests</module>
+        <module>value</module>
     </modules>
 
     <properties>
@@ -79,6 +81,16 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-value</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-formula</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

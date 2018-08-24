@@ -4,10 +4,12 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
 import fr.awildelephant.rdbms.engine.operators.AliasOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
+import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.plan.AliasNode;
 import fr.awildelephant.rdbms.plan.BaseTable;
 import fr.awildelephant.rdbms.plan.DistinctNode;
+import fr.awildelephant.rdbms.plan.MapNode;
 import fr.awildelephant.rdbms.plan.PlanVisitor;
 import fr.awildelephant.rdbms.plan.ProjectionNode;
 
@@ -34,6 +36,11 @@ public class PlanExecutor implements PlanVisitor<Table> {
     @Override
     public Table visit(DistinctNode distinctNode) {
         return new DistinctOperator().compute(apply(distinctNode.input()));
+    }
+
+    @Override
+    public Table visit(MapNode mapNode) {
+        return new MapOperator(mapNode.operations(), mapNode.schema()).compute(apply(mapNode.input()));
     }
 
     @Override

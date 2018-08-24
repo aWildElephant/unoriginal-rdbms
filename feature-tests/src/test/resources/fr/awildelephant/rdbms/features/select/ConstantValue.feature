@@ -1,7 +1,6 @@
-@todo
 Feature: I select a constant value from a table
 
-  Scenario: I select a constant from an empty table
+  Scenario: I select an integer constant from an empty table
 
     Given the table test
       | weOnlyCareAboutTheNumberOfRows |
@@ -16,7 +15,7 @@ Feature: I select a constant value from a table
       | 42      |
       | INTEGER |
 
-  Scenario: I select a constant from a table with several rows
+  Scenario: I select an integer constant from a table with several rows
 
     Given the table test
       | weOnlyCareAboutTheNumberOfRows |
@@ -34,3 +33,22 @@ Feature: I select a constant value from a table
       | INTEGER |
       | 42      |
       | 42      |
+
+  Scenario: I select a text constant from a table with several rows
+
+    Given the table test
+      | weOnlyCareAboutTheNumberOfRows |
+      | TEXT                           |
+      | hello                          |
+      | null                           |
+
+    When I execute the query
+      """
+      SELECT 'world' from test
+      """
+
+    Then I expect the result set
+      | world |
+      | TEXT  |
+      | world |
+      | world |

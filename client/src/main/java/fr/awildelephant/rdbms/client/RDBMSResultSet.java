@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.client;
 
+import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.data.value;
+package fr.awildelephant.rdbms.data.value;
 
 public final class IntegerValue extends AbstractValue {
 
