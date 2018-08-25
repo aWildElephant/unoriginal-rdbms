@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static fr.awildelephant.rdbms.algebraizer.ASTToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
 import static fr.awildelephant.rdbms.plan.AliasNode.aliasOperator;
 import static fr.awildelephant.rdbms.schema.Alias.alias;
@@ -38,7 +39,7 @@ final class OutputColumnsTransformer {
         final Map<String, String> aliasing = extractAliases();
         final List<String> outputColumnNames = collectProjectedColumnNames();
 
-        final List<Formula> constantMaps = collectConstantMaps();
+        final List<Formula> constantMaps = collectMaps();
 
         if (!constantMaps.isEmpty()) {
             input = new MapNode(constantMaps, input);
@@ -54,7 +55,7 @@ final class OutputColumnsTransformer {
     }
 
     private Map<String, String> extractAliases() {
-        final HashMap<String, String> aliasing = new HashMap<>();
+        final Map<String, String> aliasing = new HashMap<>();
 
         for (int i = 0; i < outputColumns.size(); i++) {
             final AST column = outputColumns.get(i);
@@ -81,19 +82,21 @@ final class OutputColumnsTransformer {
                             .collect(toList());
     }
 
-    private List<Formula> collectConstantMaps() {
-        final ArrayList<AST> outputColumnsWithoutMaps = new ArrayList<>();
-        final ArrayList<Formula> maps = new ArrayList<>();
+    private List<Formula> collectMaps() {
+        final List<AST> notMaps = new ArrayList<>();
+        final List<Formula> maps = new ArrayList<>();
 
         for (AST column : outputColumns) {
             if (isFormula(column)) {
-                maps.add(new Formula(column, columnNameResolver.apply(column).findAny().get()));
+                final String outputName = columnNameResolver.apply(column).findAny().get();
+
+                maps.add(createFormula(column, input.schema(), outputName));
             } else {
-                outputColumnsWithoutMaps.add(column);
+                notMaps.add(column);
             }
         }
 
-        outputColumns = outputColumnsWithoutMaps;
+        outputColumns = notMaps;
 
         return maps;
     }

@@ -1,5 +1,11 @@
 package fr.awildelephant.rdbms.ast;
 
+import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
+import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.TextLiteral;
+
 public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
 
     @Override
@@ -60,6 +66,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(NullLiteral nullLiteral) {
         return defaultVisit(nullLiteral);
+    }
+
+    @Override
+    public T visit(Plus plus) {
+        return defaultVisit(plus);
     }
 
     @Override

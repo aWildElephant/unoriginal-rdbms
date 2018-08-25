@@ -7,14 +7,14 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
-import static fr.awildelephant.rdbms.ast.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
-import static fr.awildelephant.rdbms.ast.IntegerLiteral.integerLiteral;
-import static fr.awildelephant.rdbms.ast.NullLiteral.nullLiteral;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Rows.rows;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
-import static fr.awildelephant.rdbms.ast.TextLiteral.textLiteral;
+import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
+import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
+import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 
 class InsertIntoParserTest {

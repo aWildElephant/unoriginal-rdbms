@@ -2,11 +2,11 @@ package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
-import fr.awildelephant.rdbms.ast.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.IntegerLiteral;
-import fr.awildelephant.rdbms.ast.NullLiteral;
-import fr.awildelephant.rdbms.ast.TextLiteral;
+import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
+import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
 import java.time.LocalDate;

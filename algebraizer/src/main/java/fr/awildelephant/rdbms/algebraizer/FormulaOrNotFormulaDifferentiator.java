@@ -1,11 +1,12 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.IntegerLiteral;
-import fr.awildelephant.rdbms.ast.NullLiteral;
-import fr.awildelephant.rdbms.ast.TextLiteral;
+import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
+import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -35,6 +36,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     @Override
     public Boolean visit(NullLiteral nullLiteral) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(Plus plus) {
         return TRUE;
     }
 

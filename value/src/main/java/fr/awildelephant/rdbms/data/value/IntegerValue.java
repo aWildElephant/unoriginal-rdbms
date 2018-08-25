@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.data.value;
 
+import java.math.BigDecimal;
+
 public final class IntegerValue extends AbstractValue {
 
     private final int value;
@@ -10,6 +12,11 @@ public final class IntegerValue extends AbstractValue {
 
     public static IntegerValue integerValue(int value) {
         return new IntegerValue(value);
+    }
+
+    @Override
+    public BigDecimal getBigDecimal() {
+        return new BigDecimal(value);
     }
 
     @Override
