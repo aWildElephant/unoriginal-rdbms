@@ -7,8 +7,12 @@ public class DecimalValue extends AbstractValue {
 
     private final BigDecimal value;
 
-    public DecimalValue(BigDecimal value) {
+    private DecimalValue(BigDecimal value) {
         this.value = value;
+    }
+
+    public static DecimalValue decimalValue(BigDecimal value) {
+        return new DecimalValue(value);
     }
 
     @Override

@@ -20,11 +20,17 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(CreateTable createTable);
 
+    T visit(DecimalLiteral decimalLiteral);
+
     T visit(Distinct distinct);
 
     T visit(DropTable dropTable);
 
     T visit(InsertInto insertInto);
+
+    T visit(IntegerLiteral integerLiteral);
+
+    T visit(NullLiteral nullLiteral);
 
     T visit(Row row);
 
@@ -36,5 +42,5 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(TableName tableName);
 
-    T visit(Value value);
+    T visit(TextLiteral textLiteral);
 }

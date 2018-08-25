@@ -2,12 +2,16 @@ package fr.awildelephant.rdbms.data.value;
 
 import java.util.Objects;
 
-public final class StringValue extends AbstractValue {
+public final class TextValue extends AbstractValue {
 
     private final String value;
 
-    public StringValue(String value) {
+    private TextValue(String value) {
         this.value = value;
+    }
+
+    public static TextValue textValue(String value) {
+        return new TextValue(value);
     }
 
     @Override
@@ -22,11 +26,11 @@ public final class StringValue extends AbstractValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof StringValue)) {
+        if (!(obj instanceof TextValue)) {
             return false;
         }
 
-        final StringValue other = (StringValue) obj;
+        final TextValue other = (TextValue) obj;
 
         return Objects.equals(value, other.value);
     }

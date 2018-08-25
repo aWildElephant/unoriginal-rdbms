@@ -12,7 +12,7 @@ public final class ColumnAlias implements AST {
         this.alias = alias;
     }
 
-    // TODO: find a way to make sure that the input represents a value expression
+    // TODO: find a way to make sure that the input represents a nullValue expression
     public static ColumnAlias columnAlias(AST input, String alias) {
         return new ColumnAlias(input, alias);
     }

@@ -4,8 +4,12 @@ public final class IntegerValue extends AbstractValue {
 
     private final int value;
 
-    public IntegerValue(int value) {
+    private IntegerValue(int value) {
         this.value = value;
+    }
+
+    public static IntegerValue integerValue(int value) {
+        return new IntegerValue(value);
     }
 
     @Override

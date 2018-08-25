@@ -33,6 +33,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(DecimalLiteral decimalLiteral) {
+        return defaultVisit(decimalLiteral);
+    }
+
+    @Override
     public T visit(Distinct distinct) {
         return defaultVisit(distinct);
     }
@@ -45,6 +50,16 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(InsertInto insertInto) {
         return defaultVisit(insertInto);
+    }
+
+    @Override
+    public T visit(IntegerLiteral integerLiteral) {
+        return defaultVisit(integerLiteral);
+    }
+
+    @Override
+    public T visit(NullLiteral nullLiteral) {
+        return defaultVisit(nullLiteral);
     }
 
     @Override
@@ -73,8 +88,8 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(Value value) {
-        return defaultVisit(value);
+    public T visit(TextLiteral textLiteral) {
+        return defaultVisit(textLiteral);
     }
 
     public abstract T defaultVisit(AST node);

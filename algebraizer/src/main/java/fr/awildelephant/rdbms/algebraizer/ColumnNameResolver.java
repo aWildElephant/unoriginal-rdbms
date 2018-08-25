@@ -3,8 +3,11 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.Value;
+import fr.awildelephant.rdbms.ast.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.NullLiteral;
+import fr.awildelephant.rdbms.ast.TextLiteral;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.stream.Stream;
@@ -34,8 +37,23 @@ public class ColumnNameResolver extends DefaultASTVisitor<Stream<String>> {
     }
 
     @Override
-    public Stream<String> visit(Value value) {
-        return Stream.of(value).map(Value::object).map(Object::toString);
+    public Stream<String> visit(IntegerLiteral integerLiteral) {
+        return Stream.of(String.valueOf(integerLiteral.value()));
+    }
+
+    @Override
+    public Stream<String> visit(DecimalLiteral decimalLiteral) {
+        return Stream.of(decimalLiteral.value().toString());
+    }
+
+    @Override
+    public Stream<String> visit(NullLiteral nullLiteral) {
+        return Stream.of("null");
+    }
+
+    @Override
+    public Stream<String> visit(TextLiteral textLiteral) {
+        return Stream.of(textLiteral.value());
     }
 
     @Override

@@ -25,7 +25,7 @@ class ASTEqualsAndHashCodeTest {
                 .getSubTypesOf(AST.class)
                 .stream()
                 .sorted(comparing(Class::getSimpleName))
-                .filter(type -> type != Asterisk.class);
+                .filter(type -> type != Asterisk.class && type != NullLiteral.class);
     }
 
     @DisplayName("All implementations of AST should implement equals and hashCode")

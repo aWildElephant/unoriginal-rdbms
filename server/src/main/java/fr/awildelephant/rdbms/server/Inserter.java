@@ -1,25 +1,15 @@
 package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.InsertInto;
-import fr.awildelephant.rdbms.ast.Value;
-import fr.awildelephant.rdbms.data.value.DateValue;
-import fr.awildelephant.rdbms.data.value.DecimalValue;
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.data.value.IntegerValue;
-import fr.awildelephant.rdbms.data.value.StringValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
-
-import static fr.awildelephant.rdbms.data.value.NullValue.NULL_VALUE;
 
 final class Inserter {
 
@@ -51,32 +41,8 @@ final class Inserter {
         return new Record(values);
     }
 
-    // TODO: check what happens when trying to insert an incompatible value
-    private static DomainValue wrap(AST value, Domain domain) {
-        if (isNull(value)) {
-            return NULL_VALUE;
-        }
-
-        switch (domain) {
-            case DATE:
-                final String dateString = (String) unwrapObject(((Cast) value).input());
-                return new DateValue(LocalDate.parse(dateString));
-            case DECIMAL:
-                return new DecimalValue((BigDecimal) unwrapObject(value));
-            case INTEGER:
-                return new IntegerValue((int) unwrapObject(value));
-            case TEXT:
-                return new StringValue((String) unwrapObject(value));
-            default:
-                throw new IllegalStateException();
-        }
-    }
-
-    private static boolean isNull(AST value) {
-        return value instanceof Value && ((Value) value).object() == null;
-    }
-
-    private static Object unwrapObject(AST value) {
-        return ((Value) value).object();
+    // TODO: throw error upon inserting an incompatible value
+    private static DomainValue wrap(AST ast, Domain domain) {
+        return new ObjectWrapper().apply(ast);
     }
 }

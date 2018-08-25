@@ -1,17 +1,35 @@
-package fr.awildelephant.rdbms.evaluator;
+package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.NullLiteral;
 import fr.awildelephant.rdbms.ast.TextLiteral;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
+import java.time.LocalDate;
+
+import static fr.awildelephant.rdbms.data.value.DateValue.dateValue;
+import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 
-public class Evaluator extends DefaultASTVisitor<DomainValue> {
+public class ObjectWrapper extends DefaultASTVisitor<DomainValue> {
+
+    @Override
+    public DomainValue visit(Cast cast) {
+        final String dateString = ((TextLiteral) cast.input()).value();
+
+        return dateValue(LocalDate.parse(dateString));
+    }
+
+    @Override
+    public DomainValue visit(DecimalLiteral decimalLiteral) {
+        return decimalValue(decimalLiteral.value());
+    }
 
     @Override
     public DomainValue visit(IntegerLiteral integerLiteral) {
@@ -30,6 +48,6 @@ public class Evaluator extends DefaultASTVisitor<DomainValue> {
 
     @Override
     public DomainValue defaultVisit(AST node) {
-        throw new UnsupportedOperationException();
+        throw new IllegalStateException();
     }
 }

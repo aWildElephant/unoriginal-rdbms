@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
-import fr.awildelephant.rdbms.ast.Value;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.MapNode;
 import fr.awildelephant.rdbms.plan.Plan;
@@ -13,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
 import static fr.awildelephant.rdbms.plan.AliasNode.aliasOperator;
 import static fr.awildelephant.rdbms.schema.Alias.alias;
 import static java.util.stream.Collectors.toList;
@@ -86,7 +86,7 @@ final class OutputColumnsTransformer {
         final ArrayList<Formula> maps = new ArrayList<>();
 
         for (AST column : outputColumns) {
-            if (column instanceof Value) {
+            if (isFormula(column)) {
                 maps.add(new Formula(column, columnNameResolver.apply(column).findAny().get()));
             } else {
                 outputColumnsWithoutMaps.add(column);
