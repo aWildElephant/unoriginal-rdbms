@@ -41,9 +41,9 @@ class ArithmeticExpressionParserTest {
 
     @Test
     void it_should_parse_a_division() {
-        assertParsing("SELECT a / 2.0 FROM test",
+        assertParsing("SELECT a / 2. FROM test",
 
-                      select(List.of(divide(columnName("a"), decimalLiteral(BigDecimal.valueOf(2.0)))), tableName("test")));
+                      select(List.of(divide(columnName("a"), decimalLiteral(BigDecimal.valueOf(2)))), tableName("test")));
     }
 
     @Test

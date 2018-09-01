@@ -10,7 +10,7 @@ Feature: Complex expressions
 
     When I execute the query
     """
-    SELECT 1 + (a + 1)/(b * 2.0) FROM test
+    SELECT 1 + (a + 1)/(b * 2.) FROM test
     """
 
     Then I expect the result set

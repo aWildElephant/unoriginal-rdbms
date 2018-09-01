@@ -43,12 +43,29 @@ Feature: I select a constant value from a table
       | null                           |
 
     When I execute the query
-      """
-      SELECT 'world' from test
-      """
+    """
+    SELECT 'world' from test
+    """
 
     Then I expect the result set
       | world |
       | TEXT  |
       | world |
       | world |
+
+  Scenario: I can add a dot after an integer value to make it a decimal
+
+    Given the table test
+      | weOnlyCareAboutTheNumberOfRows |
+      | TEXT                           |
+      | meh                            |
+
+    When I execute the query
+    """
+    SELECT 2. FROM test
+    """
+
+    Then I expect the result set
+      | 2       |
+      | DECIMAL |
+      | 2       |
