@@ -4,14 +4,13 @@ This project will not have any distinguishing feature. Its sole purpose is to al
 
 ## What's the plan?
 
-* Support the date data type (should be good)
-* Support loading from csv
+* Implement arithmetic operations
 * Support count(*) aggregate without a group by clause (in progress)
+* Support loading from csv
 * Have a test loading the TPC-H SF1 dataset, asserting count(*) should be enough
 * Implement the select operator
 * Implement grouping
 * Implement aggregation
-* Implement arithmetic operations
 * Some small stuff to be able to execute TPC-H Q1
 * Have a test executing TPC-H Q1 SF1
 
