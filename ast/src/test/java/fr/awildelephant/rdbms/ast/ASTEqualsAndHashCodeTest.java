@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
+import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
@@ -8,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.reflections.Reflections;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -22,11 +24,13 @@ class ASTEqualsAndHashCodeTest {
     }
 
     private static Stream<Class<? extends AST>> implementationsOfAST() {
+        final Set<Class> exceptions = Set.of(Asterisk.class, CountStar.class, NullLiteral.class);
+
         return new Reflections("fr.awildelephant.rdbms.ast")
                 .getSubTypesOf(AST.class)
                 .stream()
                 .sorted(comparing(Class::getSimpleName))
-                .filter(type -> type != Asterisk.class && type != NullLiteral.class);
+                .filter(type -> !exceptions.contains(type));
     }
 
     @DisplayName("All implementations of AST should implement equals and hashCode")

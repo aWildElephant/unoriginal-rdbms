@@ -8,6 +8,8 @@ public interface PlanVisitor<T> extends Function<Plan, T> {
         return plan.accept(this);
     }
 
+    T visit(AggregationNode aggregationNode);
+
     T visit(AliasNode alias);
 
     T visit(BaseTable baseTable);

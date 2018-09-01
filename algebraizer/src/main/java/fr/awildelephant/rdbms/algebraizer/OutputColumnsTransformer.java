@@ -2,10 +2,14 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
+import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.evaluator.Formula;
+import fr.awildelephant.rdbms.plan.AggregationNode;
 import fr.awildelephant.rdbms.plan.MapNode;
 import fr.awildelephant.rdbms.plan.Plan;
 import fr.awildelephant.rdbms.plan.ProjectionNode;
+import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +49,12 @@ final class OutputColumnsTransformer {
             input = new MapNode(constantMaps, input);
         }
 
+        final List<Aggregate> aggregates = collectAggregates();
+
+        if (!aggregates.isEmpty()) {
+            input = new AggregationNode(input);
+        }
+
         final ProjectionNode projection = new ProjectionNode(outputColumnNames, input);
 
         if (!aliasing.isEmpty()) {
@@ -52,6 +62,23 @@ final class OutputColumnsTransformer {
         }
 
         return projection;
+    }
+
+    private List<Aggregate> collectAggregates() {
+        final List<AST> notAggregates = new ArrayList<>();
+        final List<Aggregate> aggregates = new ArrayList<>();
+
+        for (AST column : outputColumns) {
+            if (column instanceof CountStar) {
+                aggregates.add(new CountStarAggregate());
+            } else {
+                notAggregates.add(column);
+            }
+        }
+
+        outputColumns = notAggregates;
+
+        return aggregates;
     }
 
     private Map<String, String> extractAliases() {

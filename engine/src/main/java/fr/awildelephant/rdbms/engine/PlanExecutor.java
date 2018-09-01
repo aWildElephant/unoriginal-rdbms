@@ -2,10 +2,12 @@ package fr.awildelephant.rdbms.engine;
 
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
+import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
 import fr.awildelephant.rdbms.engine.operators.AliasOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
+import fr.awildelephant.rdbms.plan.AggregationNode;
 import fr.awildelephant.rdbms.plan.AliasNode;
 import fr.awildelephant.rdbms.plan.BaseTable;
 import fr.awildelephant.rdbms.plan.DistinctNode;
@@ -21,6 +23,11 @@ public class PlanExecutor implements PlanVisitor<Table> {
 
     PlanExecutor(Map<String, TableWithChecker> tables) {
         this.tables = tables;
+    }
+
+    @Override
+    public Table visit(AggregationNode aggregationNode) {
+        return new AggregationOperator(aggregationNode.schema()).compute(apply(aggregationNode.input()));
     }
 
     @Override

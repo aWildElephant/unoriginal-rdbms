@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
@@ -38,6 +39,11 @@ public class ColumnNameResolver extends DefaultASTVisitor<Stream<String>> {
         }
 
         return Stream.of(name);
+    }
+
+    @Override
+    public Stream<String> visit(CountStar countStar) {
+        return Stream.of("COUNT(*)");
     }
 
     @Override

@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
+import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
@@ -19,6 +20,8 @@ import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
@@ -33,6 +36,13 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
+            case COUNT:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+                consumeAndExpect(ASTERISK, lexer);
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return countStar();
             case NULL:
                 lexer.consumeNextToken();
 

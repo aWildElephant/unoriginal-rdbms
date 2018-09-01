@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
+import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
@@ -26,6 +27,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(ColumnDefinition columnDefinition);
 
     T visit(ColumnName columnName);
+
+    T visit(CountStar countStar);
 
     T visit(CreateTable createTable);
 
