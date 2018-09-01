@@ -45,4 +45,32 @@ class ArithmeticExpressionParserTest {
 
                       select(List.of(divide(columnName("a"), decimalLiteral(BigDecimal.valueOf(2.0)))), tableName("test")));
     }
+
+    @Test
+    void it_should_parse_an_addition_followed_by_a_multiplication() {
+        assertParsing("SELECT a + b * c FROM test",
+
+                      select(List.of(plus(columnName("a"), multiply(columnName("b"), columnName("c")))), tableName("test")));
+    }
+
+    @Test
+    void it_should_parse_a_multiplication_and_an_addition_with_the_correct_precedence() {
+        assertParsing("SELECT a * b + c FROM test",
+
+                      select(List.of(plus(multiply(columnName("a"), columnName("b")), columnName("c"))), tableName("test")));
+    }
+
+    @Test
+    void it_should_parse_the_addition_of_operations_with_more_precedence() {
+        assertParsing("SELECT a * 2 + b / 3 FROM test",
+
+                      select(List.of(plus(multiply(columnName("a"), integerLiteral(2)), divide(columnName("b"), integerLiteral(3)))), tableName("test")));
+    }
+
+    @Test
+    void it_should_parse_parenthesis_in_a_numeric_expression() {
+        assertParsing("SELECT 2 * (a + b) FROM test",
+
+                      select(List.of(multiply(integerLiteral(2), plus(columnName("a"), columnName("b")))), tableName("test")));
+    }
 }
