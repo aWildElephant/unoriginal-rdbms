@@ -33,8 +33,6 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
-            case LEFT_PAREN:
-                return deriveParenthesizedValueExpression(lexer);
             case NULL:
                 lexer.consumeNextToken();
 
