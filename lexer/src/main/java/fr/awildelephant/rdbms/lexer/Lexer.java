@@ -13,13 +13,13 @@ import java.util.InputMismatchException;
 
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.DIVIDE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.END_OF_FILE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.MINUS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PLUS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SOLIDUS_TOKEN;
 import static java.lang.Integer.parseInt;
 
 public final class Lexer {
@@ -70,7 +70,7 @@ public final class Lexer {
             case '*':
                 return ASTERISK_TOKEN;
             case '/':
-                return DIVIDE_TOKEN;
+                return SOLIDUS_TOKEN;
             case '+':
                 return PLUS_TOKEN;
             case '-':

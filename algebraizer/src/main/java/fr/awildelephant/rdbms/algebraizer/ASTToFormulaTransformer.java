@@ -4,7 +4,9 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
+import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
@@ -23,9 +25,13 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
+import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalMultiplication.decimalMultiplication;
+import static fr.awildelephant.rdbms.evaluator.operation.DecimalSubtraction.decimalSubtraction;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerAddition.integerAddition;
+import static fr.awildelephant.rdbms.evaluator.operation.IntegerDivision.integerDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
+import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.integerSubtraction;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
@@ -63,6 +69,18 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
     }
 
     @Override
+    public Operation visit(Divide divide) {
+        final Operation left = apply(divide.left());
+        final Operation right = apply(divide.right());
+
+        if (left.domain() == DECIMAL || right.domain() == DECIMAL) {
+            return decimalDivision(left, right);
+        }
+
+        return integerDivision(left, right);
+    }
+
+    @Override
     public Operation visit(IntegerLiteral integerLiteral) {
         return constant(integerValue(integerLiteral.value()), INTEGER);
     }
@@ -72,10 +90,21 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         return constant(textValue(textLiteral.value()), TEXT);
     }
 
-    // TODO: we'll need some logic to simplify expressions with null (that are then constant & null)
     @Override
     public Operation visit(NullLiteral nullLiteral) {
-        throw new UnsupportedOperationException("Null value not supported in arithmetic expressions yet");
+        throw new UnsupportedOperationException("Null value not supported in arithmetic expressions yet"); // TODO
+    }
+
+    @Override
+    public Operation visit(Minus minus) {
+        final Operation left = apply(minus.left());
+        final Operation right = apply(minus.right());
+
+        if (left.domain() == DECIMAL || right.domain() == DECIMAL) {
+            return decimalSubtraction(left, right);
+        }
+
+        return integerSubtraction(left, right);
     }
 
     @Override

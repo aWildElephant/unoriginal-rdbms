@@ -3,7 +3,9 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
+import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
@@ -31,6 +33,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
     }
 
     @Override
+    public Boolean visit(Divide divide) {
+        return TRUE;
+    }
+
+    @Override
     public Boolean visit(IntegerLiteral integerLiteral) {
         return TRUE;
     }
@@ -47,6 +54,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     @Override
     public Boolean visit(Plus plus) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(Minus minus) {
         return TRUE;
     }
 

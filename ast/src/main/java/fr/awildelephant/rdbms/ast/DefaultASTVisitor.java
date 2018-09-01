@@ -1,7 +1,9 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
+import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
@@ -50,6 +52,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(Divide divide) {
+        return defaultVisit(divide);
+    }
+
+    @Override
     public T visit(DropTable dropTable) {
         return defaultVisit(dropTable);
     }
@@ -62,6 +69,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(IntegerLiteral integerLiteral) {
         return defaultVisit(integerLiteral);
+    }
+
+    @Override
+    public T visit(Minus minus) {
+        return defaultVisit(minus);
     }
 
     @Override

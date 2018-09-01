@@ -2,13 +2,13 @@ package fr.awildelephant.rdbms.lexer.tokens;
 
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DIVIDE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END_OF_FILE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MINUS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.PLUS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SEMICOLON;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SOLIDUS;
 
 public enum StaticToken implements Token {
 
@@ -43,17 +43,6 @@ public enum StaticToken implements Token {
         @Override
         public TokenType type() {
             return COMMA;
-        }
-    },
-    DIVIDE_TOKEN {
-        @Override
-        public String text() {
-            return "/";
-        }
-
-        @Override
-        public TokenType type() {
-            return DIVIDE;
         }
     },
     LEFT_PAREN_TOKEN {
@@ -109,6 +98,17 @@ public enum StaticToken implements Token {
         @Override
         public TokenType type() {
             return SEMICOLON;
+        }
+    },
+    SOLIDUS_TOKEN {
+        @Override
+        public String text() {
+            return "/";
+        }
+
+        @Override
+        public TokenType type() {
+            return SOLIDUS;
         }
     }
 }

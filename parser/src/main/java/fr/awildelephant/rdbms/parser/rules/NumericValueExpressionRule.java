@@ -9,7 +9,9 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
+import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
@@ -33,6 +35,14 @@ final class NumericValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return multiply(left, deriveTerm(lexer));
+            case MINUS:
+                lexer.consumeNextToken();
+
+                return minus(left, deriveTerm(lexer));
+            case SOLIDUS:
+                lexer.consumeNextToken();
+
+                return divide(left, deriveTerm(lexer));
             default:
                 return left;
         }
