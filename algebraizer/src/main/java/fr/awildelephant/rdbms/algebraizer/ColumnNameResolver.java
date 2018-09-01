@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
@@ -45,6 +46,14 @@ public class ColumnNameResolver extends DefaultASTVisitor<Stream<String>> {
     @Override
     public Stream<String> visit(DecimalLiteral decimalLiteral) {
         return Stream.of(decimalLiteral.value().toString());
+    }
+
+    @Override
+    public Stream<String> visit(Multiply multiply) {
+        final String left = apply(multiply.left()).findFirst().get();
+        final String right = apply(multiply.right()).findFirst().get();
+
+        return Stream.of(left + " * " + right);
     }
 
     @Override

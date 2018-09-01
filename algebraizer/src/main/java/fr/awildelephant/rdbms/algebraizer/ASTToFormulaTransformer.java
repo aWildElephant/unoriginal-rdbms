@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
@@ -22,7 +23,9 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
+import static fr.awildelephant.rdbms.evaluator.operation.DecimalMultiplication.decimalMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerAddition.integerAddition;
+import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
@@ -73,6 +76,18 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
     @Override
     public Operation visit(NullLiteral nullLiteral) {
         throw new UnsupportedOperationException("Null value not supported in arithmetic expressions yet");
+    }
+
+    @Override
+    public Operation visit(Multiply multiply) {
+        final Operation left = apply(multiply.left());
+        final Operation right = apply(multiply.right());
+
+        if (left.domain() == DECIMAL || right.domain() == DECIMAL) {
+            return decimalMultiplication(left, right);
+        }
+
+        return integerMultiplication(left, right);
     }
 
     @Override

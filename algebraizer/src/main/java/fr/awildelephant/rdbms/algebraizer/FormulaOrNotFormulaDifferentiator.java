@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
@@ -31,6 +32,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     @Override
     public Boolean visit(IntegerLiteral integerLiteral) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(Multiply multiply) {
         return TRUE;
     }
 

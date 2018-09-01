@@ -10,8 +10,8 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.PLUS;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 
 final class NumericValueExpressionRule {
@@ -23,13 +23,19 @@ final class NumericValueExpressionRule {
     static AST deriveNumericValueExpression(final Lexer lexer) {
         final AST left = deriveTerm(lexer);
 
-        if (lexer.lookupNextToken().type() != PLUS) {
-            return left;
+        final TokenType nextType = lexer.lookupNextToken().type();
+        switch (nextType) {
+            case PLUS:
+                lexer.consumeNextToken();
+
+                return plus(left, deriveTerm(lexer));
+            case ASTERISK:
+                lexer.consumeNextToken();
+
+                return multiply(left, deriveTerm(lexer));
+            default:
+                return left;
         }
-
-        lexer.consumeNextToken();
-
-        return plus(left, deriveTerm(lexer));
     }
 
     private static AST deriveTerm(Lexer lexer) {

@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
@@ -35,6 +36,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(InsertInto insertInto);
 
     T visit(IntegerLiteral integerLiteral);
+
+    T visit(Multiply multiply);
 
     T visit(NullLiteral nullLiteral);
 
