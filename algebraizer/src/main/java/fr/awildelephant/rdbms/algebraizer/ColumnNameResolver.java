@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.CountStar;
@@ -15,9 +14,7 @@ import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.stream.Stream;
-
-public class ColumnNameResolver extends DefaultASTVisitor<Stream<String>> {
+public final class ColumnNameResolver extends DefaultASTVisitor<String> {
 
     private final Schema inputSchema;
 
@@ -26,81 +23,75 @@ public class ColumnNameResolver extends DefaultASTVisitor<Stream<String>> {
     }
 
     @Override
-    public Stream<String> visit(Asterisk asterisk) {
-        return inputSchema.columnNames().stream();
-    }
-
-    @Override
-    public Stream<String> visit(ColumnName columnName) {
+    public String visit(ColumnName columnName) {
         final String name = columnName.name();
 
         if (!inputSchema.contains(name)) {
             throw new IllegalArgumentException("Column not found: " + name);
         }
 
-        return Stream.of(name);
+        return name;
     }
 
     @Override
-    public Stream<String> visit(CountStar countStar) {
-        return Stream.of("COUNT(*)");
+    public String visit(CountStar countStar) {
+        return "count(*)";
     }
 
     @Override
-    public Stream<String> visit(IntegerLiteral integerLiteral) {
-        return Stream.of(String.valueOf(integerLiteral.value()));
+    public String visit(IntegerLiteral integerLiteral) {
+        return String.valueOf(integerLiteral.value());
     }
 
     @Override
-    public Stream<String> visit(DecimalLiteral decimalLiteral) {
-        return Stream.of(decimalLiteral.value().toString());
+    public String visit(DecimalLiteral decimalLiteral) {
+        return decimalLiteral.value().toString();
     }
 
     @Override
-    public Stream<String> visit(Divide divide) {
-        final String left = apply(divide.left()).findFirst().get();
-        final String right = apply(divide.right()).findFirst().get();
+    public String visit(Divide divide) {
+        final String left = apply(divide.left());
+        final String right = apply(divide.right());
 
-        return Stream.of(left + " / " + right);
+        return left + " / " + right;
     }
 
     @Override
-    public Stream<String> visit(Minus minus) {
-        final String left = apply(minus.left()).findFirst().get();
-        final String right = apply(minus.right()).findFirst().get();
+    public String visit(Minus minus) {
+        final String left = apply(minus.left());
+        final String right = apply(minus.right());
 
-        return Stream.of(left + " - " + right);
+        return left + " - " + right;
     }
 
     @Override
-    public Stream<String> visit(Multiply multiply) {
-        final String left = apply(multiply.left()).findFirst().get();
-        final String right = apply(multiply.right()).findFirst().get();
+    public String visit(Multiply multiply) {
+        final String left = apply(multiply.left());
+        final String right = apply(multiply.right());
 
-        return Stream.of(left + " * " + right);
+        return left + " * " + right;
     }
 
     @Override
-    public Stream<String> visit(NullLiteral nullLiteral) {
-        return Stream.of("null");
-    }
-
-    // TODO: probably the resolver shouldn't return a Stream
-    @Override
-    public Stream<String> visit(Plus plus) {
-        final String left = apply(plus.left()).findFirst().get();
-        final String right = apply(plus.right()).findFirst().get();
-
-        return Stream.of(left + " + " + right);
+    public String visit(NullLiteral nullLiteral) {
+        return "null";
     }
 
     @Override
-    public Stream<String> visit(TextLiteral textLiteral) {
-        return Stream.of(textLiteral.value());
+    public String visit(Plus plus) {
+        final String left = apply(plus.left());
+        final String right = apply(plus.right());
+
+        return left + " + " + right;
     }
 
     @Override
-    public Stream<String> defaultVisit(AST node) {
+    public String visit(TextLiteral textLiteral) {
+        return textLiteral.value();
+    }
+
+    @Override
+    public String defaultVisit(AST node) {
         throw new IllegalStateException();
     }
 }

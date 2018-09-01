@@ -18,7 +18,7 @@ public class AggregationNode extends AbstractPlan {
     }
 
     private static Schema buildOutputSchema() {
-        return new Schema(List.of(new Column(0, "COUNT(*)", INTEGER, true)));
+        return new Schema(List.of(new Column(0, "count(*)", INTEGER, true)));
     }
 
     public Plan input() {

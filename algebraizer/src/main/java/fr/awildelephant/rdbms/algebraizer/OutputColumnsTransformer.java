@@ -41,6 +41,9 @@ final class OutputColumnsTransformer {
 
     private Plan transform() {
         final Map<String, String> aliasing = extractAliases();
+
+        expandAsterisks();
+
         final List<String> outputColumnNames = collectProjectedColumnNames();
 
         final List<Formula> constantMaps = collectMaps();
@@ -90,9 +93,7 @@ final class OutputColumnsTransformer {
             if (column instanceof ColumnAlias) {
                 final ColumnAlias aliasedColumn = (ColumnAlias) column;
                 final AST unaliasedColumn = aliasedColumn.input();
-                final String unaliasedColumnName = columnNameResolver.apply(unaliasedColumn)
-                                                                     .findFirst()
-                                                                     .orElseThrow(IllegalStateException::new);
+                final String unaliasedColumnName = columnNameResolver.apply(unaliasedColumn);
 
                 aliasing.put(unaliasedColumnName, aliasedColumn.alias());
 
@@ -103,9 +104,17 @@ final class OutputColumnsTransformer {
         return aliasing;
     }
 
+    private void expandAsterisks() {
+        final AsteriskExpander expander = new AsteriskExpander(input.schema());
+
+        outputColumns = outputColumns.stream()
+                                     .flatMap(expander)
+                                     .collect(toList());
+    }
+
     private List<String> collectProjectedColumnNames() {
         return outputColumns.stream()
-                            .flatMap(columnNameResolver::apply)
+                            .map(columnNameResolver)
                             .collect(toList());
     }
 
@@ -115,9 +124,7 @@ final class OutputColumnsTransformer {
 
         for (AST column : outputColumns) {
             if (isFormula(column)) {
-                final String outputName = columnNameResolver.apply(column).findAny().get();
-
-                maps.add(createFormula(column, input.schema(), outputName));
+                maps.add(createFormula(column, input.schema(), columnNameResolver.apply(column)));
             } else {
                 notMaps.add(column);
             }
