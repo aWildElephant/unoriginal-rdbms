@@ -2,8 +2,6 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
-import fr.awildelephant.rdbms.ast.value.CountStar;
-import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.AggregationNode;
 import fr.awildelephant.rdbms.plan.MapNode;
 import fr.awildelephant.rdbms.plan.Plan;
@@ -17,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToFormulaTransformer.createFormula;
+import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
 import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
+import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
 import static fr.awildelephant.rdbms.plan.AliasNode.aliasOperator;
 import static fr.awildelephant.rdbms.schema.Alias.alias;
 import static java.util.stream.Collectors.toList;
@@ -32,7 +32,7 @@ final class OutputColumnsTransformer {
     private OutputColumnsTransformer(final Plan input, final List<? extends AST> outputColumns) {
         this.input = input;
         this.outputColumns = new ArrayList<>(outputColumns);
-        this.columnNameResolver = new ColumnNameResolver(input.schema());
+        this.columnNameResolver = new ColumnNameResolver();
     }
 
     static Plan transformOutputColumns(final Plan input, final List<? extends AST> outputColumns) {
@@ -40,22 +40,40 @@ final class OutputColumnsTransformer {
     }
 
     private Plan transform() {
+        validateColumnReferences();
+
         final Map<String, String> aliasing = extractAliases();
 
         expandAsterisks();
 
         final List<String> outputColumnNames = collectProjectedColumnNames();
 
-        final List<Formula> constantMaps = collectMaps();
+        final AggregationsExtractor aggregateExtractor = aggregationsExtractor(columnNameResolver);
 
-        if (!constantMaps.isEmpty()) {
-            input = new MapNode(constantMaps, input);
+        final List<AST> mapsOverAggregates = new ArrayList<>();
+        final List<Aggregate> aggregates = new ArrayList<>();
+
+        for (AST column : outputColumns) {
+            final AST aggregateFreeOutputColumn = aggregateExtractor.apply(column);
+
+            if (isFormula(aggregateFreeOutputColumn)) {
+                mapsOverAggregates.add(aggregateFreeOutputColumn);
+            }
+
+            for (AST ignored : aggregateExtractor.collectedAggregates()) {
+                aggregates.add(new CountStarAggregate());
+            }
         }
-
-        final List<Aggregate> aggregates = collectAggregates();
 
         if (!aggregates.isEmpty()) {
             input = new AggregationNode(input);
+        }
+
+        if (!mapsOverAggregates.isEmpty()) {
+            input = new MapNode(mapsOverAggregates.stream()
+                                                  .map(map -> createFormula(map, input.schema(), columnNameResolver.apply(map)))
+                                                  .collect(toList()),
+                                input);
         }
 
         final ProjectionNode projection = new ProjectionNode(outputColumnNames, input);
@@ -67,21 +85,10 @@ final class OutputColumnsTransformer {
         return projection;
     }
 
-    private List<Aggregate> collectAggregates() {
-        final List<AST> notAggregates = new ArrayList<>();
-        final List<Aggregate> aggregates = new ArrayList<>();
+    private void validateColumnReferences() {
+        final SchemaValidator validator = schemaValidator(input.schema());
 
-        for (AST column : outputColumns) {
-            if (column instanceof CountStar) {
-                aggregates.add(new CountStarAggregate());
-            } else {
-                notAggregates.add(column);
-            }
-        }
-
-        outputColumns = notAggregates;
-
-        return aggregates;
+        outputColumns.forEach(validator::apply);
     }
 
     private Map<String, String> extractAliases() {
@@ -116,22 +123,5 @@ final class OutputColumnsTransformer {
         return outputColumns.stream()
                             .map(columnNameResolver)
                             .collect(toList());
-    }
-
-    private List<Formula> collectMaps() {
-        final List<AST> notMaps = new ArrayList<>();
-        final List<Formula> maps = new ArrayList<>();
-
-        for (AST column : outputColumns) {
-            if (isFormula(column)) {
-                maps.add(createFormula(column, input.schema(), columnNameResolver.apply(column)));
-            } else {
-                notMaps.add(column);
-            }
-        }
-
-        outputColumns = notMaps;
-
-        return maps;
     }
 }

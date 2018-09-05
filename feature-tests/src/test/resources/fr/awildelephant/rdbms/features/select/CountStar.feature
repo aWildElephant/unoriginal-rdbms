@@ -32,3 +32,16 @@ Feature: Count star
       | countA  | countB  |
       | INTEGER | INTEGER |
       | 3       | 3       |
+
+    @debug
+  Scenario: I subtract one to the number of rows in the table
+
+    When I execute the query
+    """
+    SELECT COUNT(*) - 1 FROM test
+    """
+
+    Then I expect the result set
+      | count(*) - 1 |
+      | INTEGER      |
+      | 2            |

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
+import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
@@ -92,7 +93,7 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
 
     @Override
     public Operation visit(NullLiteral nullLiteral) {
-        throw new UnsupportedOperationException("Null value not supported in arithmetic expressions yet"); // TODO
+        return constant(nullValue(), INTEGER);
     }
 
     @Override

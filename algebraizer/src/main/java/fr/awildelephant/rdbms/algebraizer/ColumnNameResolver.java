@@ -12,25 +12,12 @@ import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
-import fr.awildelephant.rdbms.schema.Schema;
 
 public final class ColumnNameResolver extends DefaultASTVisitor<String> {
 
-    private final Schema inputSchema;
-
-    ColumnNameResolver(Schema inputSchema) {
-        this.inputSchema = inputSchema;
-    }
-
     @Override
     public String visit(ColumnName columnName) {
-        final String name = columnName.name();
-
-        if (!inputSchema.contains(name)) {
-            throw new IllegalArgumentException("Column not found: " + name);
-        }
-
-        return name;
+        return columnName.name();
     }
 
     @Override

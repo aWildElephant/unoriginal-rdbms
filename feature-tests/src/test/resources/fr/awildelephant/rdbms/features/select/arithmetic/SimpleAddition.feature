@@ -58,3 +58,19 @@ Feature: Simple addition
       | 3.0     |
       | 4.0     |
       | 6.0     |
+
+  Scenario: I add null to an integer column
+
+    When I execute the query
+    """
+    SELECT i + null FROM test
+    """
+
+    Then I expect the result set
+      | i + null |
+      | INTEGER  |
+      | null     |
+      | null     |
+      | null     |
+      | null     |
+      | null     |

@@ -37,17 +37,6 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
-            case COUNT:
-                lexer.consumeNextToken();
-                consumeAndExpect(LEFT_PAREN, lexer);
-                consumeAndExpect(ASTERISK, lexer);
-                consumeAndExpect(RIGHT_PAREN, lexer);
-
-                return countStar();
-            case NULL:
-                lexer.consumeNextToken();
-
-                return nullLiteral();
             case DATE:
                 lexer.consumeNextToken();
 
@@ -103,12 +92,23 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
+            case COUNT:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+                consumeAndExpect(ASTERISK, lexer);
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return countStar();
             case DECIMAL_LITERAL:
                 return deriveDecimalLiteral(lexer);
             case INTEGER_LITERAL:
                 return deriveIntegerLiteral(lexer);
             case LEFT_PAREN:
                 return deriveParenthesizedValueExpression(lexer);
+            case NULL:
+                lexer.consumeNextToken();
+
+                return nullLiteral();
             default:
                 return columnName(consumeIdentifier(lexer));
         }
