@@ -68,6 +68,16 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(GroupBy groupBy) {
+        return defaultVisit(groupBy);
+    }
+
+    @Override
+    public T visit(GroupingSetsList groupingSetsList) {
+        return defaultVisit(groupingSetsList);
+    }
+
+    @Override
     public T visit(InsertInto insertInto) {
         return defaultVisit(insertInto);
     }

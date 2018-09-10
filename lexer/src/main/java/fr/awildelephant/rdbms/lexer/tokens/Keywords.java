@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COUNT;
@@ -11,6 +12,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INSERT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
@@ -35,6 +37,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return AS;
+        }
+    },
+    BY_TOKEN {
+        @Override
+        public String text() {
+            return "by";
+        }
+
+        @Override
+        public TokenType type() {
+            return BY;
         }
     },
     CAST_TOKEN {
@@ -145,6 +158,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return FROM;
+        }
+    },
+    GROUP_TOKEN {
+        @Override
+        public String text() {
+            return "group";
+        }
+
+        @Override
+        public TokenType type() {
+            return GROUP;
         }
     },
     INSERT_TOKEN {

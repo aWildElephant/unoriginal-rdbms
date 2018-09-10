@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
+import fr.awildelephant.rdbms.ast.GroupBy;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.engine.Engine;
@@ -24,6 +25,11 @@ public final class Algebraizer extends DefaultASTVisitor<Plan> {
     @Override
     public Plan visit(Distinct distinct) {
         return new DistinctNode(apply(distinct.input()));
+    }
+
+    @Override
+    public Plan visit(GroupBy groupBy) {
+        throw new UnsupportedOperationException("TODO");
     }
 
     @Override

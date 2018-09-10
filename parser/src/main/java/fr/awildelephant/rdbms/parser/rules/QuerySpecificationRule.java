@@ -8,12 +8,17 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
+import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
 import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
+import static fr.awildelephant.rdbms.parser.rules.GroupingSpecificationRule.deriveGroupingSpecification;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.SelectListRule.deriveSelectListRule;
+import static fr.awildelephant.rdbms.parser.rules.TableNameRule.*;
 
 final class QuerySpecificationRule {
 
@@ -30,9 +35,19 @@ final class QuerySpecificationRule {
 
         consumeAndExpect(FROM, lexer);
 
-        final TableName tableName = TableNameRule.deriveTableName(lexer);
+        AST input = deriveTableName(lexer);
 
-        final Select select = select(outputColumns, tableName);
+        if (lexer.lookupNextToken().type() == GROUP) {
+            lexer.consumeNextToken();
+
+            consumeAndExpect(BY, lexer);
+
+            final AST groupingSpecification = deriveGroupingSpecification(lexer);
+
+            input = groupBy(input, groupingSpecification);
+        }
+
+        final Select select = select(outputColumns, input);
 
         if (distinct) {
             return distinct(select);

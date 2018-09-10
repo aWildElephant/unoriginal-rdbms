@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.lexer.tokens;
 public enum TokenType {
     AS,
     ASTERISK,
+    BY,
     CAST,
     CHAR,
     COMMA,
@@ -16,6 +17,7 @@ public enum TokenType {
     END_OF_FILE,
     FOREIGN,
     FROM,
+    GROUP,
     IDENTIFIER,
     INSERT,
     INTEGER,

@@ -8,14 +8,14 @@ import java.util.Objects;
 public final class Select implements AST {
 
     private final List<? extends AST> outputColumns;
-    private final TableName inputTable;
+    private final AST inputTable;
 
-    private Select(List<? extends AST> outputColumns, TableName inputTable) {
+    private Select(List<? extends AST> outputColumns, AST inputTable) {
         this.outputColumns = outputColumns;
         this.inputTable = inputTable;
     }
 
-    public static Select select(List<? extends AST> output, TableName inputTable) {
+    public static Select select(List<? extends AST> output, AST inputTable) {
         return new Select(output, inputTable);
     }
 
@@ -23,7 +23,7 @@ public final class Select implements AST {
         return outputColumns;
     }
 
-    public TableName inputTable() {
+    public AST inputTable() {
         return inputTable;
     }
 

@@ -40,6 +40,10 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(DropTable dropTable);
 
+    T visit(GroupBy groupBy);
+
+    T visit(GroupingSetsList groupingSetsList);
+
     T visit(InsertInto insertInto);
 
     T visit(IntegerLiteral integerLiteral);

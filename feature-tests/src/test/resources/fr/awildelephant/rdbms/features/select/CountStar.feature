@@ -33,7 +33,6 @@ Feature: Count star
       | INTEGER | INTEGER |
       | 3       | 3       |
 
-    @debug
   Scenario: I subtract one to the number of rows in the table
 
     When I execute the query

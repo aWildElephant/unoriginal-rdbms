@@ -24,6 +24,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
+import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 
@@ -110,7 +111,7 @@ final class ValueExpressionRule {
 
                 return nullLiteral();
             default:
-                return columnName(consumeIdentifier(lexer));
+                return deriveColumnReference(lexer);
         }
     }
 
