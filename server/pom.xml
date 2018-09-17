@@ -10,8 +10,12 @@
     </parent>
 
     <artifactId>rdbms-server</artifactId>
-    <name>${project.fancyName} :: Server</name>
+    <name>${server.fancyName}</name>
     <packaging>pom</packaging>
+
+    <properties>
+        <server.fancyName>${project.fancyName} :: Server</server.fancyName>
+    </properties>
 
     <modules>
         <module>algebraizer</module>

@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-glue</artifactId>
-    <name>${project.fancyName} :: Server glue</name>
+    <name>${server.fancyName} :: Glue</name>
 
     <dependencies>
         <dependency>

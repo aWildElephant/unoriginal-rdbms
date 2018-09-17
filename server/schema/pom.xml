@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-schema</artifactId>
-    <name>${project.fancyName} :: Schema</name>
+    <name>${server.fancyName} :: Schema</name>
 
     <dependencies>
         <dependency>

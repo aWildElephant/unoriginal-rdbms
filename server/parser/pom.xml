@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-parser</artifactId>
-    <name>${project.fancyName} :: Parser</name>
+    <name>${server.fancyName} :: Parser</name>
 
     <dependencies>
         <dependency>

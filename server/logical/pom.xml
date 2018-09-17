@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-logical</artifactId>
-    <name>${project.fancyName} :: Logical operators</name>
+    <name>${server.fancyName} :: Logical operators</name>
 
     <dependencies>
         <dependency>

@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-algebraizer</artifactId>
-    <name>${project.fancyName} :: Algebraizer</name>
+    <name>${server.fancyName} :: Algebraizer</name>
 
     <dependencies>
         <dependency>

@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-engine</artifactId>
-    <name>${project.fancyName} :: Engine</name>
+    <name>${server.fancyName} :: Engine</name>
 
     <dependencies>
         <dependency>

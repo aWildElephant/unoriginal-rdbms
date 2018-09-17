@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-lexer</artifactId>
-    <name>${project.fancyName} :: Lexer</name>
+    <name>${server.fancyName} :: Lexer</name>
 
     <dependencies>
         <dependency>

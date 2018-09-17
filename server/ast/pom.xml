@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-ast</artifactId>
-    <name>${project.fancyName} :: AST</name>
+    <name>${server.fancyName} :: AST</name>
 
     <dependencies>
         <dependency>

@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>rdbms-formula</artifactId>
-    <name>${project.fancyName} :: Formula</name>
+    <name>${server.fancyName} :: Formula</name>
 
     <dependencies>
         <dependency>
