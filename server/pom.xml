@@ -4,35 +4,75 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>rdbms</artifactId>
         <groupId>fr.awildelephant</groupId>
+        <artifactId>rdbms</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>rdbms-server</artifactId>
     <name>${project.fancyName} :: Server</name>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-lexer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-parser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-algebraizer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-engine</artifactId>
-        </dependency>
+    <modules>
+        <module>algebraizer</module>
+        <module>ast</module>
+        <module>engine</module>
+        <module>formula</module>
+        <module>lexer</module>
+        <module>logical</module>
+        <module>parser</module>
+        <module>schema</module>
+        <module>value</module>
+        <module>glue</module>
+    </modules>
 
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-algebraizer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-ast</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-engine</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-formula</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-lexer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-logical</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-parser</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-schema</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-value</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

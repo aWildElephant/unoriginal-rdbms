@@ -1,3 +1,4 @@
+@todo
 Feature: I group by some columns
 
   Background: a table and some data
@@ -10,8 +11,6 @@ Feature: I group by some columns
       | 1       | 0       |
       | 1       | 1       |
 
-  @todo
-  @debug
   Scenario: I count the rows grouped by a
 
     When I execute the query
