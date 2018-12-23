@@ -23,7 +23,6 @@ public enum Checker {
             if ("null".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull(), messageSupplier);
             } else {
-
                 assertEquals(ISO8601.parse(expected), actualDate, messageSupplier);
             }
         }

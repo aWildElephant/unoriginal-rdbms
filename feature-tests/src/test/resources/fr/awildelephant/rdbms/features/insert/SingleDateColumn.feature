@@ -6,6 +6,7 @@ Feature: Insert into a single date column
       | a    |
       | DATE |
 
+  @todo
   Scenario: I insert a value
 
     When I execute the query

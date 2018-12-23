@@ -30,6 +30,7 @@ public final class RDBMS {
     }
 
     public Table execute(final String query) {
+        LOGGER.debug("Executing \"{}\"", query);
         final long start = currentTimeMillis();
         final AST ast = parse(query);
         LOGGER.trace("Took {}ms to parse", currentTimeMillis() - start);
