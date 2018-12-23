@@ -33,11 +33,23 @@ Feature: Insert into a single integer column
   Scenario: I insert null
 
     When I execute the query
-      """
-      INSERT INTO test VALUES (null)
-      """
+    """
+    INSERT INTO test VALUES (null)
+    """
 
     Then table test should be
       | a       |
       | INTEGER |
       | null    |
+
+  Scenario: I insert a negative value
+
+    When I execute the query
+    """
+    INSERT INTO test VALUES (-1)
+    """
+
+    Then table test should be
+      | a       |
+      | INTEGER |
+      | -1      |

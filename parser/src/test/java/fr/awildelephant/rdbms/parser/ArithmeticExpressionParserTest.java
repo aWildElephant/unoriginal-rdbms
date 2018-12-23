@@ -73,4 +73,11 @@ class ArithmeticExpressionParserTest {
 
                       select(List.of(multiply(integerLiteral(2), plus(columnName("a"), columnName("b")))), tableName("test")));
     }
+
+    @Test
+    void it_should_parse_a_negative_integer_value() {
+        assertParsing("SELECT -1000 FROM test",
+
+                select(List.of(integerLiteral(-1000)), tableName("test")));
+    }
 }

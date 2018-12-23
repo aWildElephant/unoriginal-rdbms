@@ -21,6 +21,7 @@ import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -53,6 +54,11 @@ final class ValueExpressionRule {
                 return cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
             case TEXT_LITERAL:
                 return deriveTextLiteral(lexer);
+            case MINUS:
+                lexer.consumeNextToken();
+                final IntegerLiteralToken integerValue = (IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer);
+
+                return integerLiteral(-integerValue.value());
             default:
                 return deriveNumericValueExpression(lexer);
         }
