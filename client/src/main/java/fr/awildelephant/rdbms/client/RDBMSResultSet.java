@@ -8,8 +8,9 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLWarning;
-import java.time.OffsetDateTime;
 import java.util.Iterator;
+
+import static java.time.ZoneOffset.UTC;
 
 public class RDBMSResultSet extends AbstractResultSet {
 
@@ -57,7 +58,7 @@ public class RDBMSResultSet extends AbstractResultSet {
     }
 
     private long numberOfMillisecondsFromEpochToStartOfDay(DomainValue value) {
-        return value.getLocalDate().atStartOfDay().toEpochSecond(OffsetDateTime.now().getOffset()) * 1000;
+        return value.getLocalDate().atStartOfDay().toEpochSecond(UTC) * 1000;
     }
 
     // TODO: implement getDate methods with Calendar as second parameter?

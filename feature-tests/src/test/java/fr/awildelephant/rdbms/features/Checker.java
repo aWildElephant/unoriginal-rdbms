@@ -6,9 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.function.Supplier;
 
 import static java.lang.Integer.parseInt;
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -67,7 +69,15 @@ public enum Checker {
         }
     };
 
-    private static final SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat ISO8601 = iso8601DateFormat();
+
+    private static SimpleDateFormat iso8601DateFormat() {
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        format.setTimeZone(TimeZone.getTimeZone(UTC));
+
+        return format;
+    }
 
     public static Checker checkerFor(String typeName) {
         return Checker.valueOf(typeName);
