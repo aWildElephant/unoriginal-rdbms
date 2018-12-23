@@ -6,7 +6,6 @@ Feature: Insert into a single date column
       | a    |
       | DATE |
 
-@debug
   Scenario: I insert a value
 
     When I execute the query
