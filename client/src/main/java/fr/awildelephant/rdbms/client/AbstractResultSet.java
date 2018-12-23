@@ -11,11 +11,9 @@ import java.sql.Date;
 import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
@@ -161,22 +159,7 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public SQLWarning getWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public void clearWarnings() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
     public String getCursorName() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 

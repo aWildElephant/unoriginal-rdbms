@@ -6,6 +6,8 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLWarning;
 import java.time.OffsetDateTime;
 import java.util.Iterator;
 
@@ -116,6 +118,21 @@ public class RDBMSResultSet extends AbstractResultSet {
         }
 
         return false;
+    }
+
+    @Override
+    public ResultSetMetaData getMetaData() {
+        return new RDBMSResultSetMetaData(schema);
+    }
+
+    @Override
+    public SQLWarning getWarnings() {
+        return null; // TODO: assuming that null must be returned if there is no warning
+    }
+
+    @Override
+    public void clearWarnings() {
+        // NOP: getWarnings not actually supported
     }
 
     @Override
