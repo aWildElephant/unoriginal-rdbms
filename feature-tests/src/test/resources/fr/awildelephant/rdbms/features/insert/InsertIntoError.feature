@@ -11,3 +11,20 @@ Feature: Insert Into errors
     """
     Table not found: unknowntable
     """
+
+  @todo
+  Scenario: I try to insert a row that doesn't have enough columns for the table
+
+    Given the table people
+    | id      | name |
+    | INTEGER | TEXT |
+
+    When I execute the query
+    """
+    INSERT INTO people VALUES (1)
+    """
+
+    Then I expect an error with the message
+    """
+    Column count mismatch: expected 2 but got 1
+    """
