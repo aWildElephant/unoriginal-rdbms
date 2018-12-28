@@ -11,7 +11,6 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.RowRule.deriveRowRule;
-import static java.util.Collections.singletonList;
 
 final class FromConstructorRule {
 
