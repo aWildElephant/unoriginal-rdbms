@@ -23,7 +23,6 @@ final class RowRule {
     static Row deriveRowRule(final Lexer lexer) {
         consumeAndExpect(LEFT_PAREN, lexer);
 
-        // TODO: put an array list here, use a factory method if possible
         final List<AST> values = new LinkedList<>();
         values.add(deriveValueExpression(lexer));
 
