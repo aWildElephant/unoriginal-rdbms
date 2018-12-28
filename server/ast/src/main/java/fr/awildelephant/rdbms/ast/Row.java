@@ -14,7 +14,11 @@ public final class Row implements AST {
     }
 
     public static Row row(final List<AST> values) {
-        return new Row(values);
+        return new Row(List.copyOf(values));
+    }
+
+    public static Row row(final AST... values) {
+        return new Row(List.of(values));
     }
 
     public List<AST> values() {
