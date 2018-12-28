@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Objects;
 
 public final class InsertInto implements AST {
@@ -44,5 +46,13 @@ public final class InsertInto implements AST {
 
         return Objects.equals(targetTable, other.targetTable)
                 && Objects.equals(rows, other.rows);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("target", targetTable)
+                .append("content", rows)
+                .toString();
     }
 }

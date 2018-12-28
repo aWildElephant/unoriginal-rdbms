@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -11,6 +13,7 @@ public final class Rows implements AST {
         this.rows = rows;
     }
 
+    // TODO: take varargs as input
     public static Rows rows(final List<Row> rows) {
         return new Rows(rows);
     }
@@ -38,5 +41,12 @@ public final class Rows implements AST {
         final Rows other = (Rows) obj;
 
         return Objects.equals(rows, other.rows);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append(rows)
+                .toString();
     }
 }

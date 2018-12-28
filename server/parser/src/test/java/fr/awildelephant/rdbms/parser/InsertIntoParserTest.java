@@ -25,6 +25,11 @@ class InsertIntoParserTest {
     }
 
     @Test
+    void it_should_parse_an_insert_statement_with_a_single_column_and_several_rows() {
+        assertParsing("INSERT INTO test VALUES (1), (2)", insertInto(tableName("test"), rows(List.of(row(List.of(integerLiteral(1))), row(List.of(integerLiteral(2)))))));
+    }
+
+    @Test
     void it_should_parse_an_insert_into_statement_with_several_columns_and_a_single_row() {
         assertParsing("INSERT INTO test VALUES (1, 2, 3)", insertInto(tableName("test"), rows(List.of(row(List.of(integerLiteral(1), integerLiteral(2), integerLiteral(3)))))));
     }

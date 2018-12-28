@@ -1,12 +1,13 @@
 Feature: Insert into
 
-  Scenario: I insert an integer and a string into a table
-
+  Background: a table with two columns of different types
     Given the table people
       | id      | name |
       | INTEGER | TEXT |
 
-    And I execute the query
+  Scenario: I insert a single row in the table
+
+    When I execute the query
     """
     INSERT INTO people VALUES (1, 'bernard');
     """
@@ -16,3 +17,15 @@ Feature: Insert into
       | INTEGER | TEXT    |
       | 1       | bernard |
 
+  Scenario: I insert two rows in the table
+
+    When I execute the query
+    """
+    INSERT INTO people VALUES (1, 'bernard'), (2, 'nicolas');
+    """
+
+    Then table people should be
+      | id      | name    |
+      | INTEGER | TEXT    |
+      | 1       | bernard |
+      | 2       | nicolas |
