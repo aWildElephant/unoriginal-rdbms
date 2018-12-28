@@ -14,6 +14,8 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
 
     T visit(BaseTableLop baseTable);
 
+    T visit(BreakdownLop breakdownNode);
+
     T visit(DistinctLop distinctNode);
 
     T visit(MapLop mapNode);

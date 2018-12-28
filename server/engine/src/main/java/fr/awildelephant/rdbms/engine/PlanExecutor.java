@@ -4,12 +4,14 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
 import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
 import fr.awildelephant.rdbms.engine.operators.AliasOperator;
+import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
+import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
@@ -33,6 +35,11 @@ public class PlanExecutor implements LopVisitor<Table> {
     @Override
     public Table visit(AliasLop aliasNode) {
         return new AliasOperator(aliasNode.schema()).compute(apply(aliasNode.input()));
+    }
+
+    @Override
+    public Table visit(BreakdownLop breakdownNode) {
+        return new BreakdownOperator(breakdownNode.breakdowns()).compute(apply(breakdownNode.input()));
     }
 
     @Override

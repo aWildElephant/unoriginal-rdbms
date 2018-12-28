@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.GroupingSetsList;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
@@ -41,7 +42,7 @@ final class QuerySpecificationRule {
 
             consumeAndExpect(BY, lexer);
 
-            final AST groupingSpecification = deriveGroupingSpecification(lexer);
+            final GroupingSetsList groupingSpecification = deriveGroupingSpecification(lexer);
 
             input = groupBy(input, groupingSpecification);
         }

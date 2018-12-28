@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.parser.rules;
 
-import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.GroupingSetsList;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ final class GroupingSpecificationRule {
 
     }
 
-    static AST deriveGroupingSpecification(Lexer lexer) {
+    static GroupingSetsList deriveGroupingSpecification(Lexer lexer) {
         final List<ColumnName> columns = new ArrayList<>();
 
         columns.add(deriveColumnReference(lexer));

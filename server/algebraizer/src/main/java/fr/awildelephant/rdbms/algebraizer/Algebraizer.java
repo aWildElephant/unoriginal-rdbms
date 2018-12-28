@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
+import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
@@ -29,7 +30,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(GroupBy groupBy) {
-        throw new UnsupportedOperationException("TODO");
+        return new BreakdownLop(apply(groupBy.input()), groupBy.groupingSpecification().breakdowns());
     }
 
     @Override
