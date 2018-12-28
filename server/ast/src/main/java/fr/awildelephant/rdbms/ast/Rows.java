@@ -13,9 +13,12 @@ public final class Rows implements AST {
         this.rows = rows;
     }
 
-    // TODO: take varargs as input
     public static Rows rows(final List<Row> rows) {
-        return new Rows(rows);
+        return new Rows(List.copyOf(rows));
+    }
+
+    public static Rows rows (final Row... rows) {
+        return new Rows(List.of(rows));
     }
 
     public List<Row> rows() {

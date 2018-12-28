@@ -21,36 +21,36 @@ class InsertIntoParserTest {
 
     @Test
     void it_should_parse_an_insert_into_statement_with_a_single_column_and_a_single_row() {
-        assertParsing("INSERT INTO test VALUES (1)", insertInto(tableName("test"), rows(List.of(row(List.of(integerLiteral(1)))))));
+        assertParsing("INSERT INTO test VALUES (1)", insertInto(tableName("test"), rows(row(List.of(integerLiteral(1))))));
     }
 
     @Test
     void it_should_parse_an_insert_statement_with_a_single_column_and_several_rows() {
-        assertParsing("INSERT INTO test VALUES (1), (2)", insertInto(tableName("test"), rows(List.of(row(List.of(integerLiteral(1))), row(List.of(integerLiteral(2)))))));
+        assertParsing("INSERT INTO test VALUES (1), (2)", insertInto(tableName("test"), rows(row(List.of(integerLiteral(1))), row(List.of(integerLiteral(2))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_several_columns_and_a_single_row() {
-        assertParsing("INSERT INTO test VALUES (1, 2, 3)", insertInto(tableName("test"), rows(List.of(row(List.of(integerLiteral(1), integerLiteral(2), integerLiteral(3)))))));
+        assertParsing("INSERT INTO test VALUES (1, 2, 3)", insertInto(tableName("test"), rows(row(List.of(integerLiteral(1), integerLiteral(2), integerLiteral(3))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_a_text_literal() {
-        assertParsing("INSERT INTO test VALUES ('some text')", insertInto(tableName("test"), rows(List.of(row(List.of(textLiteral("some text")))))));
+        assertParsing("INSERT INTO test VALUES ('some text')", insertInto(tableName("test"), rows(row(List.of(textLiteral("some text"))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_a_decimal_literal() {
-        assertParsing("INSERT INTO test VALUES (19.99)", insertInto(tableName("test"), rows(List.of(row(List.of(decimalLiteral(new BigDecimal("19.99"))))))));
+        assertParsing("INSERT INTO test VALUES (19.99)", insertInto(tableName("test"), rows(row(List.of(decimalLiteral(new BigDecimal("19.99")))))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_the_null_value() {
-        assertParsing("INSERT INTO test VALUES (null)", insertInto(tableName("test"), rows(List.of(row(List.of(nullLiteral()))))));
+        assertParsing("INSERT INTO test VALUES (null)", insertInto(tableName("test"), rows(row(List.of(nullLiteral())))));
     }
 
     @Test
     void it_should_parse_an_insert_into_statement_with_a_date_literal() {
-        assertParsing("INSERT INTO test VALUES (date '2018-07-15')", insertInto(tableName("test"), rows(List.of(row(List.of(cast(textLiteral("2018-07-15"), DATE)))))));
+        assertParsing("INSERT INTO test VALUES (date '2018-07-15')", insertInto(tableName("test"), rows(row(List.of(cast(textLiteral("2018-07-15"), DATE))))));
     }
 }
