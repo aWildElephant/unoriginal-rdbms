@@ -32,6 +32,8 @@ final class Inserter {
     }
 
     private static Record createTuple(List<AST> row, Domain[] domains) {
+        checkColumnCount(row.size(), domains.length);
+
         final DomainValue[] values = new DomainValue[domains.length];
 
         for (int i = 0; i < row.size(); i++) {
@@ -39,6 +41,12 @@ final class Inserter {
         }
 
         return new Record(values);
+    }
+
+    private static void checkColumnCount(int actual, int expected) {
+        if (actual != expected) {
+            throw new IllegalArgumentException("Column count mismatch: expected " + expected + " but got " + actual);
+        }
     }
 
     // TODO: throw error upon inserting an incompatible value

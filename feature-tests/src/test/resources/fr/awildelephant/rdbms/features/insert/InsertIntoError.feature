@@ -12,7 +12,6 @@ Feature: Insert Into errors
     Table not found: unknowntable
     """
 
-  @todo
   Scenario: I try to insert a row that doesn't have enough columns for the table
 
     Given the table people
