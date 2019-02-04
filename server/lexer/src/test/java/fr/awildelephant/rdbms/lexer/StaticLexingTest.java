@@ -26,5 +26,4 @@ class StaticLexingTest {
     void it_should_match_a_single_static_token(String inputText, Token expectedToken) {
         assertLexing(inputText, expectedToken);
     }
-
 }
