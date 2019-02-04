@@ -13,7 +13,7 @@ import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
-public class MapOperator implements Operator {
+public class MapOperator implements Operator<Table, Table> {
 
     private final List<Formula> operations;
     private final Schema outputSchema;

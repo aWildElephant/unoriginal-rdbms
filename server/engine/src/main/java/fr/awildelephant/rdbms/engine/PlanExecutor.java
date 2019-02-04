@@ -18,8 +18,9 @@ import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
-public class PlanExecutor implements LopVisitor<Table> {
+public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
     private final Map<String, TableWithChecker> tables;
 
@@ -28,37 +29,49 @@ public class PlanExecutor implements LopVisitor<Table> {
     }
 
     @Override
-    public Table visit(AggregationLop aggregationNode) {
-        return new AggregationOperator(aggregationNode.schema()).compute(apply(aggregationNode.input()));
+    public Stream<Table> visit(AggregationLop aggregationNode) {
+        final AggregationOperator operator = new AggregationOperator(aggregationNode.schema());
+
+        return apply(aggregationNode.input()).map(operator::compute);
     }
 
     @Override
-    public Table visit(AliasLop aliasNode) {
-        return new AliasOperator(aliasNode.schema()).compute(apply(aliasNode.input()));
+    public Stream<Table> visit(AliasLop aliasNode) {
+        final AliasOperator operator = new AliasOperator(aliasNode.schema());
+
+        return apply(aliasNode.input()).map(operator::compute);
     }
 
     @Override
-    public Table visit(BreakdownLop breakdownNode) {
-        return new BreakdownOperator(breakdownNode.breakdowns()).compute(apply(breakdownNode.input()));
+    public Stream<Table> visit(BreakdownLop breakdownNode) {
+        final BreakdownOperator operator = new BreakdownOperator(breakdownNode.breakdowns());
+
+        return apply(breakdownNode.input()).flatMap(operator::compute);
     }
 
     @Override
-    public Table visit(BaseTableLop baseTable) {
-        return tables.get(baseTable.name());
+    public Stream<Table> visit(BaseTableLop baseTable) {
+        return Stream.of(tables.get(baseTable.name()));
     }
 
     @Override
-    public Table visit(DistinctLop distinctNode) {
-        return new DistinctOperator().compute(apply(distinctNode.input()));
+    public Stream<Table> visit(DistinctLop distinctNode) {
+        final DistinctOperator operator = new DistinctOperator();
+
+        return apply(distinctNode.input()).map(operator::compute);
     }
 
     @Override
-    public Table visit(MapLop mapNode) {
-        return new MapOperator(mapNode.operations(), mapNode.schema()).compute(apply(mapNode.input()));
+    public Stream<Table> visit(MapLop mapNode) {
+        final MapOperator operator = new MapOperator(mapNode.operations(), mapNode.schema());
+
+        return apply(mapNode.input()).map(operator::compute);
     }
 
     @Override
-    public Table visit(ProjectionLop projectionNode) {
-        return new ProjectionOperator(projectionNode.schema()).compute(apply(projectionNode.input()));
+    public Stream<Table> visit(ProjectionLop projectionNode) {
+        final ProjectionOperator operator = new ProjectionOperator(projectionNode.schema());
+
+        return apply(projectionNode.input()).map(operator::compute);
     }
 }

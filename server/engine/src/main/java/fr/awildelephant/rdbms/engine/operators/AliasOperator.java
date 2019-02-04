@@ -6,7 +6,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
-public class AliasOperator implements Operator {
+public class AliasOperator implements Operator<Table, Table> {
 
     private final Schema schema;
 

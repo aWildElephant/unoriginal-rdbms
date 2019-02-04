@@ -1,4 +1,3 @@
-@todo
 Feature: I group by some columns
 
   Background: a table and some data

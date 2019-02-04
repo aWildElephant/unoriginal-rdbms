@@ -9,7 +9,7 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
-public class ProjectionOperator implements Operator {
+public class ProjectionOperator implements Operator<Table, Table> {
 
     private final Schema outputSchema;
     private int[] outputToInputIndex;

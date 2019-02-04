@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.distinctTable;
 
-public class DistinctOperator implements Operator {
+public class DistinctOperator implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {

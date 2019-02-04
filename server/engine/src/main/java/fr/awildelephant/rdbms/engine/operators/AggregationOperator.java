@@ -9,9 +9,9 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
 /**
- * TODO: Very simple because we only support COUNT(*) with no breakdown for now
+ * TODO: Very simple because we only support COUNT(*) for now
  */
-public class AggregationOperator implements Operator {
+public class AggregationOperator implements Operator<Table, Table> {
 
     private final Schema outputSchema;
 
