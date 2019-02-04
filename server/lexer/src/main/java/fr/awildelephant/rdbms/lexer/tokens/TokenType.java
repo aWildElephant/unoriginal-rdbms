@@ -34,6 +34,7 @@ public enum TokenType {
     SELECT,
     SEMICOLON,
     SOLIDUS,
+    SUM,
     TABLE,
     TEXT,
     TEXT_LITERAL,
