@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
@@ -120,6 +121,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(Select select) {
         return defaultVisit(select);
+    }
+
+    @Override
+    public T visit(Sum sum) {
+        return defaultVisit(sum);
     }
 
     @Override

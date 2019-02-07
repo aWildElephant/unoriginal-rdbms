@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
@@ -18,6 +19,7 @@ import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
+import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
@@ -108,6 +110,15 @@ final class ValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return nullLiteral();
+            case SUM:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final AST input = deriveValueExpression(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return sum(input);
             default:
                 return deriveColumnReference(lexer);
         }

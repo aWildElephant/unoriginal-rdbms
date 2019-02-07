@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 import java.util.Collection;
@@ -85,6 +86,13 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
     @Override
     public AST visit(Plus plus) {
         return plus(apply(plus.left()), apply(plus.right()));
+    }
+
+    @Override
+    public AST visit(Sum sum) {
+        final String name = nameResolver.apply(sum);
+        aggregates.put(name, sum);
+        return columnName(name);
     }
 
     @Override

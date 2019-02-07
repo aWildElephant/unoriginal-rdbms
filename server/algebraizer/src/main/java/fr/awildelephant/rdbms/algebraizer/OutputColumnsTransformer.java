@@ -2,12 +2,16 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
+import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.value.CountStar;
+import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,13 +64,25 @@ final class OutputColumnsTransformer {
                 mapsOverAggregates.add(aggregateFreeOutputColumn);
             }
 
-            for (AST ignored : aggregateExtractor.collectedAggregates()) {
-                aggregates.add(new CountStarAggregate());
+            for (AST aggregate : aggregateExtractor.collectedAggregates()) {
+                if (aggregate instanceof CountStar) {
+                    aggregates.add(new CountStarAggregate());
+                } else if (aggregate instanceof Sum) {
+                    final AST sumInput = ((Sum) aggregate).input();
+
+                    if (!(sumInput instanceof ColumnName)) {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    aggregates.add(new SumAggregate(((ColumnName) sumInput).name()));
+                } else {
+                    throw new UnsupportedOperationException();
+                }
             }
         }
 
         if (!aggregates.isEmpty()) {
-            input = new AggregationLop(input);
+            input = new AggregationLop(aggregates, input);
         }
 
         if (!mapsOverAggregates.isEmpty()) {

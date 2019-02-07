@@ -21,6 +21,7 @@ Feature: Count star
       | INTEGER  |
       | 3        |
 
+  @todo
   Scenario: I output several count star
 
     When I execute the query

@@ -14,6 +14,7 @@ import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -107,6 +108,13 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     public Void visit(Plus plus) {
         apply(plus.left());
         apply(plus.right());
+
+        return null;
+    }
+
+    @Override
+    public Void visit(Sum sum) {
+        apply(sum.input());
 
         return null;
     }

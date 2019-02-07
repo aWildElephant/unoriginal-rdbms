@@ -30,7 +30,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
     @Override
     public Stream<Table> visit(AggregationLop aggregationNode) {
-        final AggregationOperator operator = new AggregationOperator(aggregationNode.schema());
+        final AggregationOperator operator = new AggregationOperator(aggregationNode.aggregates(), aggregationNode.schema());
 
         return apply(aggregationNode.input()).map(operator::compute);
     }

@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 import java.util.function.Function;
@@ -59,6 +60,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Row row);
 
     T visit(Rows rows);
+
+    T visit(Sum sum);
 
     T visit(Select select);
 

@@ -44,7 +44,6 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Table table = engine.get(name);
 
         return new BaseTableLop(name, table.schema());
-
     }
 
     @Override

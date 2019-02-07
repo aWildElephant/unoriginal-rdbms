@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 public final class ColumnNameResolver extends DefaultASTVisitor<String> {
@@ -70,6 +71,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
         final String right = apply(plus.right());
 
         return left + " + " + right;
+    }
+
+    @Override
+    public String visit(Sum sum) {
+        return "sum(" + apply(sum.input()) + ")";
     }
 
     @Override

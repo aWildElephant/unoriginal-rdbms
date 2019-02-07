@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.schema;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,18 @@ public final class Schema {
                                                        .collect(toList());
 
         return new Schema(newColumnNames, newColumnIndex);
+    }
+
+    public Schema extend(List<Column> newColumns) {
+        final ArrayList<Column> allColumns = new ArrayList<>(columnNames.size() + newColumns.size());
+
+        for (String columnName : columnNames) {
+            allColumns.add(column(columnName));
+        }
+
+        allColumns.addAll(newColumns);
+
+        return new Schema(allColumns);
     }
 
     @Override
