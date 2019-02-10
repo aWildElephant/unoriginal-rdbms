@@ -17,7 +17,7 @@ Feature: Count star
     """
 
     Then I expect the result set
-      | COUNT(*) |
+      | count(*) |
       | INTEGER  |
       | 3        |
 

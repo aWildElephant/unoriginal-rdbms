@@ -35,7 +35,7 @@ Feature: Simple multiplication
     """
 
     Then I expect the result set
-      | i * 2   |
+      | i * 2.0 |
       | DECIMAL |
       | null    |
       | 2.0     |

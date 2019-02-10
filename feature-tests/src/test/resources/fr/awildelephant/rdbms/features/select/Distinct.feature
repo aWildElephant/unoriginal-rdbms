@@ -20,7 +20,7 @@ Feature: Distinct
     """
 
     Then I expect the result set
-      | LastName |
+      | lastname |
       | TEXT     |
       | Dalton   |
       | Girard   |

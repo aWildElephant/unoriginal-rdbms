@@ -35,7 +35,7 @@ Feature: Simple addition
     """
 
     Then I expect the result set
-      | i + 1   |
+      | i + 1.0 |
       | DECIMAL |
       | null    |
       | 2.0     |

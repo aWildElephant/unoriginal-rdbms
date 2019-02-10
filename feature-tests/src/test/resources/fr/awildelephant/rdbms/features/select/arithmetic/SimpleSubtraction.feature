@@ -35,7 +35,7 @@ Feature: Simple subtraction
     """
 
     Then I expect the result set
-      | i - 1   |
+      | i - 1.0 |
       | DECIMAL |
       | null    |
       | 0.0     |

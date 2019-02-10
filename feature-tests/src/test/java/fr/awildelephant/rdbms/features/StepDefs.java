@@ -6,6 +6,7 @@ import io.cucumber.datatable.DataTable;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -30,7 +31,8 @@ public class StepDefs implements En {
 
             final List<String> columnNames = content.row(0);
             final List<String> columnDefinitions = content.row(1);
-            final List<String> columnTypes = columnDefinitions.stream().map(definition -> definition.split(" ")[0]).collect(toList());
+            final List<String> columnTypes = columnDefinitions.stream().map(definition -> definition.split(" ")[0])
+                                                              .collect(toList());
 
             final StringBuilder createTableBuilder = new StringBuilder("CREATE TABLE ").append(name).append(" (");
             for (int i = 0; i < columnNames.size(); i++) {
@@ -45,7 +47,8 @@ public class StepDefs implements En {
             execute(createTableBuilder.toString());
 
             for (List<String> row : content.rows(2).asLists()) {
-                final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name).append(" VALUES (");
+                final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name)
+                                                                                         .append(" VALUES (");
 
                 for (int i = 0; i < columnNames.size(); i++) {
                     final String columnType = columnTypes.get(i);
@@ -95,10 +98,9 @@ public class StepDefs implements En {
 
         final String actualErrorMessage = lastException.getMessage();
 
-        assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error with the message \"" + expectedErrorMessage + "\" but got \"" + actualErrorMessage + "\"");
+        assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error message");
     }
 
-    // TODO: check that the column names are what we expect
     private void assertResult(DataTable table) throws Exception {
         forwardExceptionIfPresent();
 
@@ -107,14 +109,18 @@ public class StepDefs implements En {
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
         final List<List<String>> expectedResult = table.asLists();
-        final List<Checker> columnCheckers = expectedResult.get(1).stream()
-                                                           .map(Checker::checkerFor)
-                                                           .collect(toList());
+
+        final List<String> expectedColumnNames = expectedResult.get(0);
+        final List<String> expectedColumnTypes = expectedResult.get(1);
+
+        assertColumnNames(lastResult.getMetaData(), expectedColumnNames);
+
+        final List<Checker> columnCheckers = expectedColumnTypes.stream()
+                                                                .map(Checker::checkerFor)
+                                                                .collect(toList());
         final List<List<String>> rows = expectedResult.subList(2, expectedResult.size());
 
         final int numberOfExpectedRows = rows.size();
-
-        // TODO: check that the actual number of column is the same as the expected
 
         int i = 0;
 
@@ -135,6 +141,16 @@ public class StepDefs implements En {
         }
 
         assertEquals(numberOfExpectedRows, i, "Expected " + numberOfExpectedRows + " rows but got " + i);
+    }
+
+    private void assertColumnNames(ResultSetMetaData metaData, List<String> expectedColumnNames) throws SQLException {
+        final int numberOfColumns = metaData.getColumnCount();
+
+        assertEquals(expectedColumnNames.size(), numberOfColumns, "Number of columns");
+
+        for (int i = 0; i < numberOfColumns; i++) {
+            assertEquals(expectedColumnNames.get(i), metaData.getColumnName(i + 1), "Column name mismatch");
+        }
     }
 
     private void forwardExceptionIfPresent() throws SQLException {

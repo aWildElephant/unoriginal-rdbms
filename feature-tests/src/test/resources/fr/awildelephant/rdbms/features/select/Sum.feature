@@ -17,7 +17,7 @@ Feature: Sum
     """
 
     Then I expect the result set
-    | a       |
+    | sum(a)  |
     | INTEGER |
     | 6       |
 
@@ -29,6 +29,6 @@ Feature: Sum
     """
 
     Then I expect the result set
-    | sum(a*b)     |
+    | sum(a * b)   |
     | INTEGER      |
     | 33           |

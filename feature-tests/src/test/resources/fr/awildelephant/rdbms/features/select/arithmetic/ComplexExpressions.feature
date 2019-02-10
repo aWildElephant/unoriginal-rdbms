@@ -14,7 +14,7 @@ Feature: Complex expressions
     """
 
     Then I expect the result set
-      | 1 + (a + 1) / (b * 2.0) |
+      | 1 + a + 1 / b * 2       | # TODO: we should have 1 + (a + 1) / (b * 2.0)
       | DECIMAL                 |
       | 1.25                    |
       | 3                       |
