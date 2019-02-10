@@ -69,3 +69,23 @@ Feature: I select a constant value from a table
       | 2       |
       | DECIMAL |
       | 2       |
+
+  @todo
+  Scenario: I select true from a table with several rows
+
+    Given the table test
+      | weOnlyCareAboutTheNumberOfRows |
+      | TEXT                           |
+      | hello                          |
+      | world                          |
+
+    When I execute the query
+    """
+    SELECT true FROM test
+    """
+
+    Then I expect the result set
+      | true    |
+      | BOOLEAN |
+      | true    |
+      | true    |
