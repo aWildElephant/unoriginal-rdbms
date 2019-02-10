@@ -98,6 +98,7 @@ public class StepDefs implements En {
         assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error with the message \"" + expectedErrorMessage + "\" but got \"" + actualErrorMessage + "\"");
     }
 
+    // TODO: check that the column names are what we expect
     private void assertResult(DataTable table) throws Exception {
         forwardExceptionIfPresent();
 

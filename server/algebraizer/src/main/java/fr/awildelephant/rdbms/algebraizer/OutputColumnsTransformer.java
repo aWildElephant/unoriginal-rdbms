@@ -54,8 +54,9 @@ final class OutputColumnsTransformer {
 
         final AggregationsExtractor aggregateExtractor = aggregationsExtractor(columnNameResolver);
 
-        final List<AST> mapsOverAggregates = new ArrayList<>();
+        final ArrayList<AST> mapsBelowAggregates = new ArrayList<>();
         final List<Aggregate> aggregates = new ArrayList<>();
+        final List<AST> mapsOverAggregates = new ArrayList<>();
 
         for (AST column : outputColumns) {
             final AST aggregateFreeOutputColumn = aggregateExtractor.apply(column);
@@ -71,14 +72,22 @@ final class OutputColumnsTransformer {
                     final AST sumInput = ((Sum) aggregate).input();
 
                     if (!(sumInput instanceof ColumnName)) {
-                        throw new UnsupportedOperationException();
+                        mapsBelowAggregates.add(sumInput);
                     }
 
-                    aggregates.add(new SumAggregate(((ColumnName) sumInput).name()));
+                    aggregates.add(new SumAggregate(columnNameResolver.apply(sumInput)));
                 } else {
                     throw new UnsupportedOperationException();
                 }
             }
+        }
+
+        if (!mapsBelowAggregates.isEmpty()) {
+            input = new MapLop(mapsBelowAggregates.stream()
+                                                  .map(map -> createFormula(map, input.schema(),
+                                                                            columnNameResolver.apply(map)))
+                                                  .collect(toList()),
+                               input);
         }
 
         if (!aggregates.isEmpty()) {
@@ -87,7 +96,8 @@ final class OutputColumnsTransformer {
 
         if (!mapsOverAggregates.isEmpty()) {
             input = new MapLop(mapsOverAggregates.stream()
-                                                 .map(map -> createFormula(map, input.schema(), columnNameResolver.apply(map)))
+                                                 .map(map -> createFormula(map, input.schema(),
+                                                                           columnNameResolver.apply(map)))
                                                  .collect(toList()),
                                input);
         }
