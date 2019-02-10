@@ -10,6 +10,7 @@ import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
 import static java.util.Collections.singletonList;
@@ -56,5 +57,12 @@ class SelectParserTest {
         assertParsing("SELECT (a) FROM test",
 
                       select(columns("a"), tableName("test")));
+    }
+
+    @Test
+    void it_should_parse_a_boolean_constant_in_the_output_columns() {
+        assertParsing("SELECT true FROM test",
+
+                      select(List.of(TRUE), tableName("test")));
     }
 }

@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.value.Sum;
 import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,5 +17,12 @@ class ColumnNameResolverTest {
         final Sum input = sum(columnName("x"));
 
         assertThat(resolver.apply(input)).isEqualTo("sum(x)");
+    }
+
+    @Test
+    void it_should_resolve_true() {
+        final ColumnNameResolver resolver = new ColumnNameResolver();
+
+        assertThat(resolver.apply(TRUE)).isEqualTo("true");
     }
 }

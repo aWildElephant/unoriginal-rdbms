@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
@@ -25,6 +26,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     static boolean isFormula(AST ast) {
         return INSTANCE.apply(ast);
+    }
+
+    @Override
+    public Boolean visit(BooleanLiteral booleanLiteral) {
+        return TRUE;
     }
 
     @Override

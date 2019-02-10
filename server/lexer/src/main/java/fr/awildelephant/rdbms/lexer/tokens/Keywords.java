@@ -24,6 +24,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TRUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNIQUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
@@ -292,6 +293,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return TEXT;
+        }
+    },
+    TRUE_TOKEN {
+        @Override
+        public String text() {
+            return "true";
+        }
+
+        @Override
+        public TokenType type() {
+            return TRUE;
         }
     },
     UNIQUE_TOKEN {

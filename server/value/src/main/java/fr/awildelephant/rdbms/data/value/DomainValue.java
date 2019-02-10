@@ -7,6 +7,8 @@ public interface DomainValue {
 
     boolean isNull();
 
+    boolean getBool();
+
     int getInt();
 
     BigDecimal getBigDecimal();

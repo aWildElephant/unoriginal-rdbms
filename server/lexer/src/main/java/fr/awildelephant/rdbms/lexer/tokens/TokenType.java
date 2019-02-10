@@ -38,6 +38,7 @@ public enum TokenType {
     TABLE,
     TEXT,
     TEXT_LITERAL,
+    TRUE,
     UNIQUE,
     VALUES,
     VARCHAR,

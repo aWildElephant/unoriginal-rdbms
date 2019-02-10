@@ -70,7 +70,6 @@ Feature: I select a constant value from a table
       | DECIMAL |
       | 2       |
 
-  @todo
   Scenario: I select true from a table with several rows
 
     Given the table test

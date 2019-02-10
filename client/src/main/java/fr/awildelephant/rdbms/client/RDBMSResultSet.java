@@ -28,6 +28,24 @@ public class RDBMSResultSet extends AbstractResultSet {
     }
 
     @Override
+    public boolean getBoolean(int columnIndex) {
+        final DomainValue value = field(columnIndex - 1);
+
+        if (value.isNull()) {
+            wasNull = true;
+
+            return false;
+        }
+
+        return value.getBool();
+    }
+
+    @Override
+    public boolean getBoolean(String columnLabel) {
+        return getBoolean(schema.indexOf(columnLabel) + 1);
+    }
+
+    @Override
     public BigDecimal getBigDecimal(int columnIndex) {
         final DomainValue value = field(columnIndex - 1);
 

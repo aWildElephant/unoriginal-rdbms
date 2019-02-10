@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
@@ -24,6 +25,7 @@ import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
+import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
@@ -34,6 +36,7 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerDivision.integer
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.integerSubtraction;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
+import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
@@ -53,6 +56,14 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         final Operation operation = transformer.apply(tree);
 
         return new Formula(operation, transformer.references, outputName);
+    }
+
+    @Override
+    public Operation visit(BooleanLiteral booleanLiteral) {
+        if (booleanLiteral != BooleanLiteral.TRUE) {
+            throw new UnsupportedOperationException("Not yet implemented"); // TODO
+        }
+        return constant(trueValue(), BOOLEAN);
     }
 
     @Override

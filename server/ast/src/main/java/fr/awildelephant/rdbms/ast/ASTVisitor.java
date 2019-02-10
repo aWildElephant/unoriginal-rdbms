@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -20,6 +21,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     }
 
     T visit(Asterisk asterisk);
+
+    T visit(BooleanLiteral booleanLiteral);
 
     T visit(Cast cast);
 

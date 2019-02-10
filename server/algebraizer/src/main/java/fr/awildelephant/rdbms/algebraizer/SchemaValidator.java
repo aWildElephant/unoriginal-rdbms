@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -32,6 +33,11 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Asterisk asterisk) {
+        return null;
+    }
+
+    @Override
+    public Void visit(BooleanLiteral booleanLiteral) {
         return null;
     }
 

@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -15,6 +16,11 @@ import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 public final class ColumnNameResolver extends DefaultASTVisitor<String> {
+
+    @Override
+    public String visit(BooleanLiteral booleanLiteral) {
+        return booleanLiteral.toString().toLowerCase();
+    }
 
     @Override
     public String visit(ColumnName columnName) {

@@ -24,11 +24,6 @@ import java.util.Map;
 public abstract class AbstractResultSet implements ResultSet {
 
     @Override
-    public boolean getBoolean(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
     public byte getByte(int columnIndex) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
@@ -85,11 +80,6 @@ public abstract class AbstractResultSet implements ResultSet {
 
     @Override
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public boolean getBoolean(String columnLabel) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 

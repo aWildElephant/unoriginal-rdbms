@@ -14,6 +14,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.Keywords.INTO_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.SELECT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TABLE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TEXT_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TRUE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.VALUES_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
@@ -73,5 +74,13 @@ class LexerTest {
                      RIGHT_PAREN_TOKEN,
                      FROM_TOKEN,
                      new IdentifierToken("test"));
+    }
+
+    @Test
+    void it_should_tokenize_boolean_literals() {
+        assertLexing("SELECT TRUE",
+
+                     SELECT_TOKEN,
+                     TRUE_TOKEN);
     }
 }

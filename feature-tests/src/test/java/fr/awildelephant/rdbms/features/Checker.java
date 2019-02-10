@@ -14,8 +14,19 @@ import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// TODO: we try to get a value before checking DomainValue#wasNull: how bad will the error message be ?
 public enum Checker {
 
+    BOOLEAN {
+        @Override
+        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception {
+            if ("null".equalsIgnoreCase(expected) || "unknown".equalsIgnoreCase(expected)) {
+                assertTrue(actual.wasNull());
+            } else {
+                assertEquals(Boolean.valueOf(expected), actual.getBoolean(columnPosition));
+            }
+        }
+    },
     DATE {
         @Override
         void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException, ParseException {

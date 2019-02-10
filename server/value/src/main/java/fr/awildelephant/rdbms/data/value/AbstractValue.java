@@ -11,6 +11,11 @@ public abstract class AbstractValue implements DomainValue {
     }
 
     @Override
+    public boolean getBool() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public int getInt() {
         throw new UnsupportedOperationException();
     }

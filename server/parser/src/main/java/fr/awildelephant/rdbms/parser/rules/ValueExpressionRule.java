@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
-import fr.awildelephant.rdbms.ast.value.Sum;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
@@ -119,6 +119,10 @@ final class ValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return sum(input);
+            case TRUE:
+                lexer.consumeNextToken();
+
+                return BooleanLiteral.TRUE;
             default:
                 return deriveColumnReference(lexer);
         }
