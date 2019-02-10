@@ -40,5 +40,6 @@ public enum TokenType {
     TEXT_LITERAL,
     UNIQUE,
     VALUES,
-    VARCHAR
+    VARCHAR,
+    WHERE
 }

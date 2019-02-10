@@ -27,6 +27,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNIQUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
 
 public enum Keywords implements Token {
     AS_TOKEN {
@@ -324,6 +325,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return VARCHAR;
+        }
+    },
+    WHERE_TOKEN {
+        @Override
+        public String text() {
+            return "where";
+        }
+
+        @Override
+        public TokenType type() {
+            return WHERE;
         }
     }
 }
