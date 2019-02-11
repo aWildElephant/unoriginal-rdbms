@@ -5,20 +5,20 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 import java.util.Objects;
 
-public final class Rows implements AST {
+public final class Values implements AST {
 
     private final List<Row> rows;
 
-    private Rows(List<Row> rows) {
+    private Values(List<Row> rows) {
         this.rows = rows;
     }
 
-    public static Rows rows(final List<Row> rows) {
-        return new Rows(List.copyOf(rows));
+    public static Values rows(final List<Row> rows) {
+        return new Values(List.copyOf(rows));
     }
 
-    public static Rows rows (final Row... rows) {
-        return new Rows(List.of(rows));
+    public static Values rows(final Row... rows) {
+        return new Values(List.of(rows));
     }
 
     public List<Row> rows() {
@@ -37,11 +37,11 @@ public final class Rows implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Rows)) {
+        if (!(obj instanceof Values)) {
             return false;
         }
 
-        final Rows other = (Rows) obj;
+        final Values other = (Values) obj;
 
         return Objects.equals(rows, other.rows);
     }

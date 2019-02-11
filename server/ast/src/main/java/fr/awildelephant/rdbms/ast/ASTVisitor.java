@@ -62,7 +62,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Row row);
 
-    T visit(Rows rows);
+    T visit(Values values);
 
     T visit(Sum sum);
 

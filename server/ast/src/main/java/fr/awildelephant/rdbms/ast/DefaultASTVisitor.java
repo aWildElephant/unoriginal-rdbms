@@ -120,8 +120,8 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(Rows rows) {
-        return defaultVisit(rows);
+    public T visit(Values values) {
+        return defaultVisit(values);
     }
 
     @Override

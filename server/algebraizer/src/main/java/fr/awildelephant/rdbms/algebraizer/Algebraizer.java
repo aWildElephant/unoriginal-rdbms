@@ -4,18 +4,30 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.GroupBy;
+import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
+import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.ExplicitTableLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.schema.Schema;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static fr.awildelephant.rdbms.algebraizer.ASTToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
+import static java.util.Collections.emptyList;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
+
+    private static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final Engine engine;
 
@@ -44,6 +56,24 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Table table = engine.get(name);
 
         return new BaseTableLop(name, table.schema());
+    }
+
+    @Override
+    public LogicalOperator visit(Values values) {
+        final List<List<Formula>> matrix = new ArrayList<>();
+
+        for (Row row : values.rows()) {
+            final List<AST> expressions = row.values();
+            final List<Formula> formulas = new ArrayList<>();
+
+            for (int i = 0; i < expressions.size(); i++) {
+                formulas.add(createFormula(expressions.get(i), EMPTY_SCHEMA, "column" + (i + 1)));
+            }
+
+            matrix.add(formulas);
+        }
+
+        return new ExplicitTableLop(matrix);
     }
 
     @Override

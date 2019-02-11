@@ -7,23 +7,23 @@ import java.util.Objects;
 public final class InsertInto implements AST {
 
     private final TableName targetTable;
-    private final Rows rows;
+    private final Values values;
 
-    private InsertInto(TableName targetTable, Rows rows) {
+    private InsertInto(TableName targetTable, Values values) {
         this.targetTable = targetTable;
-        this.rows = rows;
+        this.values = values;
     }
 
-    public static InsertInto insertInto(TableName targetTable, Rows rows) {
-        return new InsertInto(targetTable, rows);
+    public static InsertInto insertInto(TableName targetTable, Values values) {
+        return new InsertInto(targetTable, values);
     }
 
     public TableName targetTable() {
         return targetTable;
     }
 
-    public Rows rows() {
-        return rows;
+    public Values rows() {
+        return values;
     }
 
     @Override
@@ -33,7 +33,7 @@ public final class InsertInto implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetTable, rows);
+        return Objects.hash(targetTable, values);
     }
 
     @Override
@@ -45,14 +45,14 @@ public final class InsertInto implements AST {
         final InsertInto other = (InsertInto) obj;
 
         return Objects.equals(targetTable, other.targetTable)
-                && Objects.equals(rows, other.rows);
+                && Objects.equals(values, other.values);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("target", targetTable)
-                .append("content", rows)
+                .append("content", values)
                 .toString();
     }
 }
