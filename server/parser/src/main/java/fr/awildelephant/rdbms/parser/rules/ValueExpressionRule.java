@@ -119,6 +119,10 @@ final class ValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return sum(input);
+            case FALSE:
+                lexer.consumeNextToken();
+
+                return BooleanLiteral.FALSE;
             case TRUE:
                 lexer.consumeNextToken();
 

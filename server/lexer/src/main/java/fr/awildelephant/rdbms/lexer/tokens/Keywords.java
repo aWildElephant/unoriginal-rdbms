@@ -10,6 +10,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
@@ -139,6 +140,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return DROP;
+        }
+    },
+    FALSE_TOKEN {
+        @Override
+        public String text() {
+            return "false";
+        }
+
+        @Override
+        public TokenType type() {
+            return FALSE;
         }
     },
     FOREIGN_TOKEN {

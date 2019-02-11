@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
+import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
@@ -60,10 +61,13 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
 
     @Override
     public Operation visit(BooleanLiteral booleanLiteral) {
-        if (booleanLiteral != BooleanLiteral.TRUE) {
+        if (booleanLiteral == BooleanLiteral.TRUE) {
+            return constant(trueValue(), BOOLEAN);
+        } else if (booleanLiteral == BooleanLiteral.FALSE) {
+            return constant(falseValue(), BOOLEAN);
+        } else {
             throw new UnsupportedOperationException("Not yet implemented"); // TODO
         }
-        return constant(trueValue(), BOOLEAN);
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static fr.awildelephant.rdbms.lexer.LexingTestHelper.assertLexing;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.COUNT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.CREATE_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.Keywords.FALSE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.FROM_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.INSERT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.INTEGER_TOKEN;
@@ -78,9 +79,11 @@ class LexerTest {
 
     @Test
     void it_should_tokenize_boolean_literals() {
-        assertLexing("SELECT TRUE",
+        assertLexing("SELECT TRUE, FALSE",
 
                      SELECT_TOKEN,
-                     TRUE_TOKEN);
+                     TRUE_TOKEN,
+                     COMMA_TOKEN,
+                     FALSE_TOKEN);
     }
 }

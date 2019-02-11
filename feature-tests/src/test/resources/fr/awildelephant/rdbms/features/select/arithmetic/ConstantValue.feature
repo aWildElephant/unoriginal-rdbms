@@ -88,3 +88,22 @@ Feature: I select a constant value from a table
       | BOOLEAN |
       | true    |
       | true    |
+
+  Scenario: I select false from a table with several rows
+
+    Given the table test
+      | weOnlyCareAboutTheNumberOfRows |
+      | TEXT                           |
+      | hello                          |
+      | world                          |
+
+    When I execute the query
+    """
+    SELECT false FROM test
+    """
+
+    Then I expect the result set
+      | false   |
+      | BOOLEAN |
+      | false   |
+      | false   |

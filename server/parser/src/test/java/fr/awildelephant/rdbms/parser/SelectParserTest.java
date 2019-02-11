@@ -10,6 +10,7 @@ import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
@@ -60,9 +61,9 @@ class SelectParserTest {
     }
 
     @Test
-    void it_should_parse_a_boolean_constant_in_the_output_columns() {
-        assertParsing("SELECT true FROM test",
+    void it_should_parse_boolean_constants_in_the_output_columns() {
+        assertParsing("SELECT true, false FROM test",
 
-                      select(List.of(TRUE), tableName("test")));
+                      select(List.of(TRUE, FALSE), tableName("test")));
     }
 }
