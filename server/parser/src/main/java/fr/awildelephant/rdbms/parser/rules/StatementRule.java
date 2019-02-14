@@ -7,9 +7,8 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.DropTableStatementRule.deriveDropTableStatement;
 import static fr.awildelephant.rdbms.parser.rules.InsertStatementRule.deriveInsertStatementRule;
-import static fr.awildelephant.rdbms.parser.rules.QuerySpecificationRule.deriveQuerySpecificationRule;
+import static fr.awildelephant.rdbms.parser.rules.SimpleTableRule.deriveSimpleTableRule;
 import static fr.awildelephant.rdbms.parser.rules.TableDefinitionRule.deriveTableDefinitionRule;
-import static fr.awildelephant.rdbms.parser.rules.TableValueConstructorRule.deriveTableValueConstructorRule;
 
 public final class StatementRule {
 
@@ -28,9 +27,8 @@ public final class StatementRule {
             case INSERT:
                 return deriveInsertStatementRule(lexer);
             case SELECT:
-                return deriveQuerySpecificationRule(lexer);
             case VALUES:
-                return deriveTableValueConstructorRule(lexer);
+                return deriveSimpleTableRule(lexer);
             default:
                 throw unexpectedToken(token);
         }

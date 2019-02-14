@@ -12,13 +12,12 @@ import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
+import static fr.awildelephant.rdbms.parser.rules.FromClauseRule.deriveFromClauseRule;
 import static fr.awildelephant.rdbms.parser.rules.GroupingSpecificationRule.deriveGroupingSpecification;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.SelectListRule.deriveSelectListRule;
-import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
 
 final class QuerySpecificationRule {
 
@@ -33,9 +32,7 @@ final class QuerySpecificationRule {
 
         final List<AST> outputColumns = deriveSelectListRule(lexer);
 
-        consumeAndExpect(FROM, lexer);
-
-        AST input = deriveTableName(lexer);
+        AST input = deriveFromClauseRule(lexer);
 
         if (lexer.lookupNextToken().type() == GROUP) {
             lexer.consumeNextToken();
