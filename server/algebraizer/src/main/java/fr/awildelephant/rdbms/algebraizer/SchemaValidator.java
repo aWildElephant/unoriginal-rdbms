@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -13,7 +14,9 @@ import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
@@ -29,6 +32,14 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
 
     static SchemaValidator schemaValidator(Schema inputSchema) {
         return new SchemaValidator(inputSchema);
+    }
+
+    @Override
+    public Void visit(And and) {
+        apply(and.left());
+        apply(and.right());
+
+        return null;
     }
 
     @Override
@@ -106,7 +117,22 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     }
 
     @Override
+    public Void visit(Not not) {
+        apply(not.input());
+
+        return null;
+    }
+
+    @Override
     public Void visit(NullLiteral nullLiteral) {
+        return null;
+    }
+
+    @Override
+    public Void visit(Or or) {
+        apply(or.left());
+        apply(or.right());
+
         return null;
     }
 

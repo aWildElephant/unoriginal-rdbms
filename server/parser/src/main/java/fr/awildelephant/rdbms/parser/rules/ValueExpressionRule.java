@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
-import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
@@ -25,7 +24,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
-import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
+import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 
 final class ValueExpressionRule {
@@ -119,16 +118,8 @@ final class ValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return sum(input);
-            case FALSE:
-                lexer.consumeNextToken();
-
-                return BooleanLiteral.FALSE;
-            case TRUE:
-                lexer.consumeNextToken();
-
-                return BooleanLiteral.TRUE;
             default:
-                return deriveColumnReference(lexer);
+                return deriveBooleanValueExpressionRule(lexer);
         }
     }
 

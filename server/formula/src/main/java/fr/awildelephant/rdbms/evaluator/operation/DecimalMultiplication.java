@@ -10,14 +10,10 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static java.math.BigDecimal.ZERO;
 
-public class DecimalMultiplication implements Operation {
-
-    private final Operation left;
-    private final Operation right;
+public class DecimalMultiplication extends AbstractBinaryOperation {
 
     private DecimalMultiplication(Operation left, Operation right) {
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     public static DecimalMultiplication decimalMultiplication(final Operation left, final Operation right) {
@@ -54,11 +50,6 @@ public class DecimalMultiplication implements Operation {
         return DECIMAL;
     }
 
-    // TODO: also constant if left/right is constant & null or 0
-    @Override
-    public boolean isConstant() {
-        return left.isConstant() && right.isConstant();
-    }
     private boolean isZero(BigDecimal value) {
         return value.compareTo(ZERO) == 0;
     }

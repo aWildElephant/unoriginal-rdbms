@@ -1,6 +1,5 @@
 Feature: Boolean operations
 
-    @todo
     Scenario: I output the truth table for and
 
         When I execute the query
@@ -21,7 +20,6 @@ Feature: Boolean operations
         | false   |
         | false   |
 
-    @todo
     Scenario: I output the truth table for or
 
         When I execute the query
@@ -42,7 +40,6 @@ Feature: Boolean operations
         | true    |
         | false   |
 
-    @todo
     Scenario: I output the expect result for not
 
         When I execute the query

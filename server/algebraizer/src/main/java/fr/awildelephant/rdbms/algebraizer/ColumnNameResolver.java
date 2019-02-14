@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -10,12 +11,19 @@ import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 public final class ColumnNameResolver extends DefaultASTVisitor<String> {
+
+    @Override
+    public String visit(And and) {
+        return apply(and.left()) + " and " + apply(and.right());
+    }
 
     @Override
     public String visit(BooleanLiteral booleanLiteral) {
@@ -67,8 +75,18 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     }
 
     @Override
+    public String visit(Not not) {
+        return "not " + apply(not.input());
+    }
+
+    @Override
     public String visit(NullLiteral nullLiteral) {
         return "null";
+    }
+
+    @Override
+    public String visit(Or or) {
+        return apply(or.left()) + " or " + apply(or.right());
     }
 
     @Override

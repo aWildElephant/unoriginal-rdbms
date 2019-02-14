@@ -2,13 +2,16 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
@@ -26,6 +29,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     static boolean isFormula(AST ast) {
         return INSTANCE.apply(ast);
+    }
+
+    @Override
+    public Boolean visit(And and) {
+        return TRUE;
     }
 
     @Override
@@ -54,7 +62,17 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
     }
 
     @Override
+    public Boolean visit(Not not) {
+        return TRUE;
+    }
+
+    @Override
     public Boolean visit(NullLiteral nullLiteral) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(Or or) {
         return TRUE;
     }
 

@@ -7,14 +7,10 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public class IntegerMultiplication implements Operation {
-
-    private final Operation left;
-    private final Operation right;
+public class IntegerMultiplication extends AbstractBinaryOperation {
 
     private IntegerMultiplication(Operation left, Operation right) {
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     public static IntegerMultiplication integerMultiplication(final Operation left, final Operation right) {
@@ -49,11 +45,5 @@ public class IntegerMultiplication implements Operation {
     @Override
     public Domain domain() {
         return INTEGER;
-    }
-
-    // TODO: also constant if left/right is constant & null or 0
-    @Override
-    public boolean isConstant() {
-        return left.isConstant() && right.isConstant();
     }
 }

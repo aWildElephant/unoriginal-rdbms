@@ -7,14 +7,10 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public class IntegerDivision implements Operation {
-
-    private final Operation left;
-    private final Operation right;
+public class IntegerDivision extends AbstractBinaryOperation {
 
     private IntegerDivision(Operation left, Operation right) {
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     public static IntegerDivision integerDivision(Operation left, Operation right) {
@@ -49,10 +45,5 @@ public class IntegerDivision implements Operation {
     @Override
     public Domain domain() {
         return INTEGER;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return left.isConstant() && right.isConstant();
     }
 }

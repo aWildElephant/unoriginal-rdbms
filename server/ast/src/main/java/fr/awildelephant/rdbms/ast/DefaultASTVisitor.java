@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
+import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -7,12 +8,19 @@ import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
+
+    @Override
+    public T visit(And and) {
+        return defaultVisit(and);
+    }
 
     @Override
     public T visit(Asterisk asterisk) {
@@ -105,8 +113,18 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(Not not) {
+        return defaultVisit(not);
+    }
+
+    @Override
     public T visit(NullLiteral nullLiteral) {
         return defaultVisit(nullLiteral);
+    }
+
+    @Override
+    public T visit(Or or) {
+        return defaultVisit(or);
     }
 
     @Override

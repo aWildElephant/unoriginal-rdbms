@@ -6,14 +6,10 @@ import fr.awildelephant.rdbms.schema.Domain;
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 
-public class DecimalSubtraction implements Operation {
-
-    private final Operation left;
-    private final Operation right;
+public class DecimalSubtraction extends AbstractBinaryOperation {
 
     private DecimalSubtraction(Operation left, Operation right) {
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     public static DecimalSubtraction decimalSubtraction(Operation left, Operation right) {
@@ -39,10 +35,4 @@ public class DecimalSubtraction implements Operation {
     public Domain domain() {
         return DECIMAL;
     }
-
-    @Override
-    public boolean isConstant() {
-        return left.isConstant() && right.isConstant();
-    }
-
 }

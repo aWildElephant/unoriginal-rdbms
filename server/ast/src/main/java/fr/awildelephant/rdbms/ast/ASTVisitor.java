@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
+import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -7,7 +8,9 @@ import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
@@ -19,6 +22,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     default T apply(AST node) {
         return node.accept(this);
     }
+
+    T visit(And and);
 
     T visit(Asterisk asterisk);
 
@@ -56,7 +61,11 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Multiply multiply);
 
+    T visit(Not not);
+
     T visit(NullLiteral nullLiteral);
+
+    T visit(Or or);
 
     T visit(Plus plus);
 

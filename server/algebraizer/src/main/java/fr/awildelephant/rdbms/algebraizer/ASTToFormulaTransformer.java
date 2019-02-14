@@ -3,13 +3,16 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.evaluator.Formula;
@@ -27,6 +30,7 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
+import static fr.awildelephant.rdbms.evaluator.operation.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
@@ -36,6 +40,8 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerAddition.integer
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerDivision.integerDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.integerSubtraction;
+import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperation;
+import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
@@ -57,6 +63,14 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         final Operation operation = transformer.apply(tree);
 
         return new Formula(operation, transformer.references, outputName);
+    }
+
+    @Override
+    public Operation visit(And and) {
+        final Operation left = apply(and.left());
+        final Operation right = apply(and.right());
+
+        return andOperation(left, right);
     }
 
     @Override
@@ -107,11 +121,6 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
     }
 
     @Override
-    public Operation visit(NullLiteral nullLiteral) {
-        return constant(nullValue(), INTEGER);
-    }
-
-    @Override
     public Operation visit(Minus minus) {
         final Operation left = apply(minus.left());
         final Operation right = apply(minus.right());
@@ -133,6 +142,24 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         }
 
         return integerMultiplication(left, right);
+    }
+
+    @Override
+    public Operation visit(Not not) {
+        return notOperation(apply(not.input()));
+    }
+
+    @Override
+    public Operation visit(NullLiteral nullLiteral) {
+        return constant(nullValue(), INTEGER);
+    }
+
+    @Override
+    public Operation visit(Or or) {
+        final Operation left = apply(or.left());
+        final Operation right = apply(or.right());
+
+        return orOperation(left, right);
     }
 
     @Override

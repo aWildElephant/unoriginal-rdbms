@@ -7,14 +7,10 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public final class IntegerSubtraction implements Operation {
-
-    private final Operation left;
-    private final Operation right;
+public final class IntegerSubtraction extends AbstractBinaryOperation {
 
     private IntegerSubtraction(Operation left, Operation right) {
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     public static IntegerSubtraction integerSubtraction(Operation left, Operation right) {
@@ -39,10 +35,5 @@ public final class IntegerSubtraction implements Operation {
     @Override
     public Domain domain() {
         return INTEGER;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return left.isConstant() && right.isConstant();
     }
 }

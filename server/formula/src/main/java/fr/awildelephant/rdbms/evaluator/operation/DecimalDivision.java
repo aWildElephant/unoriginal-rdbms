@@ -11,14 +11,10 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static java.math.BigDecimal.ZERO;
 
-public class DecimalDivision implements Operation {
-
-    private final Operation left;
-    private final Operation right;
+public class DecimalDivision extends AbstractBinaryOperation {
 
     private DecimalDivision(Operation left, Operation right) {
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     public static DecimalDivision decimalDivision(final Operation left, final Operation right) {
@@ -53,11 +49,6 @@ public class DecimalDivision implements Operation {
     @Override
     public Domain domain() {
         return DECIMAL;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return left.isConstant() && right.isConstant();
     }
 
     private boolean isZero(BigDecimal value) {
