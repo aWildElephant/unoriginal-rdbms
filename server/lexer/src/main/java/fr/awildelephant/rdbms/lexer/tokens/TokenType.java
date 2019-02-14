@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
 public enum TokenType {
+    AND,
     AS,
     ASTERISK,
     BY,
@@ -29,6 +30,7 @@ public enum TokenType {
     MINUS,
     NOT,
     NULL,
+    OR,
     PLUS,
     REFERENCES,
     RIGHT_PAREN,

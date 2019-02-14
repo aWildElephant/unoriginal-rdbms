@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
@@ -20,6 +21,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUM;
@@ -32,6 +34,18 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
 
 public enum Keywords implements Token {
+
+    AND_TOKEN {
+        @Override
+        public String text() {
+            return "and";
+        }
+
+        @Override
+        public TokenType type() {
+            return AND;
+        }
+    },
     AS_TOKEN {
         @Override
         public String text() {
@@ -250,6 +264,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return NULL;
+        }
+    },
+    OR_TOKEN {
+        @Override
+        public String text() {
+            return "or";
+        }
+
+        @Override
+        public TokenType type() {
+            return OR;
         }
     },
     REFERENCES_TOKEN {
