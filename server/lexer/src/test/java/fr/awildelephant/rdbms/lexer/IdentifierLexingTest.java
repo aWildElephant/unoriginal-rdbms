@@ -21,4 +21,9 @@ class IdentifierLexingTest {
     void it_should_match_an_identifier_that_starts_with_the_same_letter_as_some_reserved_keyword() {
         assertLexing("toto", new IdentifierToken("toto"));
     }
+
+    @Test
+    void it_should_match_an_identifier_with_a_digit() {
+        assertLexing("column1", new IdentifierToken("column1"));
+    }
 }

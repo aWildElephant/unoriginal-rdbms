@@ -97,7 +97,8 @@ public final class Lexer {
             case '9':
                 return matchIntegerOrDecimalLiteral(codePoint);
             default:
-                return matchKeywordOrIdentifier(codePoint); // TODO: check that first codePoint is allowed for an identifier
+                // TODO: check that first codePoint is allowed for an identifier
+                return matchKeywordOrIdentifier(codePoint);
         }
     }
 
@@ -175,6 +176,8 @@ public final class Lexer {
     }
 
     private boolean isValidForIdentifier(int codePoint) {
-        return (codePoint >= 'a' && codePoint <= 'z') || (codePoint >= 'A' && codePoint <= 'Z');
+        return (codePoint >= 'a' && codePoint <= 'z')
+                || (codePoint >= 'A' && codePoint <= 'Z')
+                || (codePoint >= '0' && codePoint <= '9');
     }
 }
