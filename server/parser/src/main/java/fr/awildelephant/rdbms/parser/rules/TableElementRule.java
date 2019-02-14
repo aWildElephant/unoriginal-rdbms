@@ -18,6 +18,7 @@ import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnConstraintDefinitionsRule.deriveColumnConstraintDefinitions;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 
 final class TableElementRule {
 
@@ -39,7 +40,7 @@ final class TableElementRule {
 
                 columnNames.add(consumeIdentifier(lexer));
 
-                while (lexer.lookupNextToken().type() == COMMA) {
+                while (nextTokenIs(COMMA, lexer)) {
                     lexer.consumeNextToken();
                     columnNames.add(consumeIdentifier(lexer));
                 }
@@ -55,7 +56,7 @@ final class TableElementRule {
 
                 targetColumnNames.add(consumeIdentifier(lexer));
 
-                while (lexer.lookupNextToken().type() == COMMA) {
+                while (nextTokenIs(COMMA, lexer)) {
                     lexer.consumeNextToken();
                     targetColumnNames.add(consumeIdentifier(lexer));
                 }
@@ -74,7 +75,7 @@ final class TableElementRule {
 
                 columns.add(consumeIdentifier(lexer));
 
-                while (lexer.lookupNextToken().type() == COMMA) {
+                while (nextTokenIs(COMMA, lexer)) {
                     lexer.consumeNextToken();
 
                     columns.add(consumeIdentifier(lexer));

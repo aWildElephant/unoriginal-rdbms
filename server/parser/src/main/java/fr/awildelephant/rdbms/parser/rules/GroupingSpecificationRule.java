@@ -10,6 +10,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.GroupingSetsList.groupingSetsList;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 
 final class GroupingSpecificationRule {
 
@@ -22,7 +23,7 @@ final class GroupingSpecificationRule {
 
         columns.add(deriveColumnReference(lexer));
 
-        while (lexer.lookupNextToken().type() == COMMA) {
+        while (nextTokenIs(COMMA, lexer)) {
             lexer.consumeNextToken();
 
             columns.add(deriveColumnReference(lexer));

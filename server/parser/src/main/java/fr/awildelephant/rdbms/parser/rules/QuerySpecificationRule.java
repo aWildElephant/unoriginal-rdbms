@@ -17,6 +17,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.parser.rules.FromClauseRule.deriveFromClauseRule;
 import static fr.awildelephant.rdbms.parser.rules.GroupingSpecificationRule.deriveGroupingSpecification;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.SelectListRule.deriveSelectListRule;
 
 final class QuerySpecificationRule {
@@ -34,7 +35,7 @@ final class QuerySpecificationRule {
 
         AST input = deriveFromClauseRule(lexer);
 
-        if (lexer.lookupNextToken().type() == GROUP) {
+        if (nextTokenIs(GROUP, lexer)) {
             lexer.consumeNextToken();
 
             consumeAndExpect(BY, lexer);
@@ -54,7 +55,7 @@ final class QuerySpecificationRule {
     }
 
     private static boolean consumeIfDistinct(Lexer lexer) {
-        if (lexer.lookupNextToken().type() == DISTINCT) {
+        if (nextTokenIs(DISTINCT, lexer)) {
             lexer.consumeNextToken();
 
             return true;

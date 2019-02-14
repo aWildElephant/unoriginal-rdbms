@@ -7,6 +7,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.SimpleTableRule.deriveSimpleTableRule;
 import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
 
@@ -19,7 +20,7 @@ final class FromClauseRule {
     static AST deriveFromClauseRule(final Lexer lexer) {
         consumeAndExpect(FROM, lexer);
 
-        if (lexer.lookupNextToken().type() == LEFT_PAREN) {
+        if (nextTokenIs(LEFT_PAREN, lexer)) {
             consumeAndExpect(LEFT_PAREN, lexer);
 
             final AST input = deriveSimpleTableRule(lexer);

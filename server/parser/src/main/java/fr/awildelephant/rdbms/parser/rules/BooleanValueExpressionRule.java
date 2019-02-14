@@ -13,6 +13,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 
 final class BooleanValueExpressionRule {
 
@@ -23,7 +24,7 @@ final class BooleanValueExpressionRule {
     static AST deriveBooleanValueExpressionRule(final Lexer lexer) {
         final AST left = deriveTerm(lexer);
 
-        if (lexer.lookupNextToken().type() == OR) {
+        if (nextTokenIs(OR, lexer)) {
             lexer.consumeNextToken();
 
             return or(left, deriveBooleanValueExpressionRule(lexer));
@@ -35,7 +36,7 @@ final class BooleanValueExpressionRule {
     private static AST deriveTerm(final Lexer lexer) {
         final AST left = deriveFactor(lexer);
 
-        if (lexer.lookupNextToken().type() == AND) {
+        if (nextTokenIs(AND, lexer)) {
             lexer.consumeNextToken();
 
             return and(left, deriveTerm(lexer));
@@ -45,7 +46,7 @@ final class BooleanValueExpressionRule {
     }
 
     private static AST deriveFactor(final Lexer lexer) {
-        if (lexer.lookupNextToken().type() == NOT) {
+        if (nextTokenIs(NOT, lexer)) {
             lexer.consumeNextToken();
 
             return not(deriveBooleanTest(lexer));

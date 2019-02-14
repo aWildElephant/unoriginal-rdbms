@@ -30,7 +30,7 @@ final class SelectListRule {
 
         selectList.add(deriveDerivedColumn(lexer));
 
-        while (lexer.lookupNextToken().type() == COMMA) {
+        while (nextTokenIs(COMMA, lexer)) {
             lexer.consumeNextToken();
 
             selectList.add(deriveDerivedColumn(lexer));
