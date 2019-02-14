@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.engine;
 
+import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
 import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
 import fr.awildelephant.rdbms.engine.operators.AliasOperator;
 import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
@@ -24,9 +24,9 @@ import java.util.stream.Stream;
 
 public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
-    private final Map<String, TableWithChecker> tables;
+    private final Map<String, ManagedTable> tables;
 
-    PlanExecutor(Map<String, TableWithChecker> tables) {
+    PlanExecutor(Map<String, ManagedTable> tables) {
         this.tables = tables;
     }
 

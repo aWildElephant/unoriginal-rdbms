@@ -2,13 +2,9 @@ Feature: I select a constant value from a table
 
   Scenario: I select an integer constant from an empty table
 
-    Given the table test
-      | weOnlyCareAboutTheNumberOfRows |
-      | TEXT                           |
-
     When I execute the query
     """
-    SELECT 42 FROM test
+    SELECT 42 FROM system.nothing
     """
 
     Then I expect the result set
@@ -17,15 +13,9 @@ Feature: I select a constant value from a table
 
   Scenario: I select an integer constant from a table with several rows
 
-    Given the table test
-      | weOnlyCareAboutTheNumberOfRows |
-      | TEXT                           |
-      | hello                          |
-      | null                           |
-
     When I execute the query
     """
-    SELECT 42 FROM test
+    SELECT 42 FROM (VALUES ('hello'), ('there'))
     """
 
     Then I expect the result set
@@ -36,33 +26,22 @@ Feature: I select a constant value from a table
 
   Scenario: I select a text constant from a table with several rows
 
-    Given the table test
-      | weOnlyCareAboutTheNumberOfRows |
-      | TEXT                           |
-      | hello                          |
-      | null                           |
-
     When I execute the query
     """
-    SELECT 'world' from test
+    SELECT 'fight' from (VALUES ('general'), ('kenobi'))
     """
 
     Then I expect the result set
-      | world |
+      | fight |
       | TEXT  |
-      | world |
-      | world |
+      | fight |
+      | fight |
 
   Scenario: I can add a dot after an integer value to make it a decimal
 
-    Given the table test
-      | weOnlyCareAboutTheNumberOfRows |
-      | TEXT                           |
-      | meh                            |
-
     When I execute the query
     """
-    SELECT 2. FROM test
+    SELECT 2. FROM (VALUES ('meh'))
     """
 
     Then I expect the result set
@@ -72,15 +51,9 @@ Feature: I select a constant value from a table
 
   Scenario: I select true from a table with several rows
 
-    Given the table test
-      | weOnlyCareAboutTheNumberOfRows |
-      | TEXT                           |
-      | hello                          |
-      | world                          |
-
     When I execute the query
     """
-    SELECT true FROM test
+    SELECT true FROM (VALUES ('I like working'), ('on this project'))
     """
 
     Then I expect the result set
@@ -91,15 +64,9 @@ Feature: I select a constant value from a table
 
   Scenario: I select false from a table with several rows
 
-    Given the table test
-      | weOnlyCareAboutTheNumberOfRows |
-      | TEXT                           |
-      | hello                          |
-      | world                          |
-
     When I execute the query
     """
-    SELECT false FROM test
+    SELECT false FROM (VALUES ('I am'), ('a successful man'))
     """
 
     Then I expect the result set

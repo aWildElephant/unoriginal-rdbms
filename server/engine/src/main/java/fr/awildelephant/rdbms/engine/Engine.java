@@ -1,8 +1,9 @@
 package fr.awildelephant.rdbms.engine;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
+import fr.awildelephant.rdbms.engine.data.table.system.NothingSystemTable;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
 import java.util.HashMap;
@@ -11,9 +12,13 @@ import java.util.Optional;
 
 public final class Engine {
 
-    private final Map<String, TableWithChecker> tables = new HashMap<>();
+    private final Map<String, ManagedTable> tables = new HashMap<>();
 
-    public void create(final String tableName, final TableWithChecker table) {
+    public Engine() {
+        tables.put("system.nothing", new NothingSystemTable());
+    }
+
+    public void create(final String tableName, final ManagedTable table) {
         tables.put(tableName, table);
     }
 
@@ -27,8 +32,8 @@ public final class Engine {
         return tables.containsKey(tableName);
     }
 
-    public TableWithChecker get(final String tableName) {
-        final TableWithChecker table = tables.get(tableName);
+    public ManagedTable get(final String tableName) {
+        final ManagedTable table = tables.get(tableName);
 
         checkTableFound(table, tableName);
 

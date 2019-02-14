@@ -13,7 +13,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public class TableWithChecker implements Table {
+public class TableWithChecker implements ManagedTable {
 
     private final Table protectedTable;
     private final Collection<UniqueIndex> indexes;
@@ -49,6 +49,7 @@ public class TableWithChecker implements Table {
         return protectedTable.iterator();
     }
 
+    @Override
     public UniqueIndex createIndexOn(List<String> columnNames) {
         final Schema schema = protectedTable.schema();
         final UniqueIndex index = new UniqueIndex(columnNames.stream().map(schema::indexOf).sorted().collect(toList()));
@@ -58,6 +59,7 @@ public class TableWithChecker implements Table {
         return index;
     }
 
+    @Override
     public void addChecker(ConstraintChecker checker) {
         checkers.add(checker);
     }

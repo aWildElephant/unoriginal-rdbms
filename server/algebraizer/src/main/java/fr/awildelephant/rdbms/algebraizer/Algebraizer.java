@@ -16,18 +16,15 @@ import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.ExplicitTableLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
-import static java.util.Collections.emptyList;
+import static fr.awildelephant.rdbms.engine.data.table.system.NothingSystemTable.EMPTY_SCHEMA;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
-
-    private static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final Engine engine;
 

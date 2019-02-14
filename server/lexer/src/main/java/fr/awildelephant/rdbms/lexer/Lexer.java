@@ -178,6 +178,7 @@ public final class Lexer {
     private boolean isValidForIdentifier(int codePoint) {
         return (codePoint >= 'a' && codePoint <= 'z')
                 || (codePoint >= 'A' && codePoint <= 'Z')
-                || (codePoint >= '0' && codePoint <= '9');
+                || (codePoint >= '0' && codePoint <= '9')
+                || codePoint == '.';
     }
 }
