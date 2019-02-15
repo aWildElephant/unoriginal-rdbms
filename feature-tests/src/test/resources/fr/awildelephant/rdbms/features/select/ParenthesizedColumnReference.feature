@@ -11,9 +11,9 @@ Feature: Parenthesized column reference
   Scenario: I select a column with parenthesis around the reference
 
     When I execute the query
-    """
-    SELECT (value) FROM test
-    """
+      """
+      SELECT (value) FROM test
+      """
 
     Then I expect the result set
       | value   |
@@ -24,9 +24,9 @@ Feature: Parenthesized column reference
   Scenario: I alias a parenthesized column
 
     When I execute the query
-    """
-    SELECT (value) AS alias FROM test
-    """
+      """
+      SELECT (value) AS alias FROM test
+      """
 
     Then I expect the result set
       | alias   |

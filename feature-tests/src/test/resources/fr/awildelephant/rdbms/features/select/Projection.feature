@@ -8,9 +8,9 @@ Feature: Projection
       | 1       | 2       |
 
     When I execute the query
-    """
-    SELECT b FROM test
-    """
+      """
+      SELECT b FROM test
+      """
 
     Then I expect the result set
       | b       |

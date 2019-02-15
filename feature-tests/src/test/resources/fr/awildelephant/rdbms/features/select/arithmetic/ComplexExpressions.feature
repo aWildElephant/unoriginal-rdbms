@@ -13,8 +13,10 @@ Feature: Complex expressions
     SELECT 1 + (a + 1)/(b * 2.) FROM test
     """
 
+    # TODO: we should expect 1 + (a + 1) / (b * 2.0)
+
     Then I expect the result set
-      | 1 + a + 1 / b * 2       | # TODO: we should have 1 + (a + 1) / (b * 2.0)
-      | DECIMAL                 |
-      | 1.25                    |
-      | 3                       |
+      | 1 + a + 1 / b * 2 |
+      | DECIMAL           |
+      | 1.25              |
+      | 3                 |

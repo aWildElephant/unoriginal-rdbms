@@ -14,9 +14,9 @@ Feature: Simple addition
   Scenario: I add one to a column
 
     When I execute the query
-    """
-    SELECT i + 1 FROM test
-    """
+      """
+      SELECT i + 1 FROM test
+      """
 
     Then I expect the result set
       | i + 1   |
@@ -30,9 +30,9 @@ Feature: Simple addition
   Scenario: I add a decimal to an integer column
 
     When I execute the query
-    """
-    SELECT i + 1.0 FROM test
-    """
+      """
+      SELECT i + 1.0 FROM test
+      """
 
     Then I expect the result set
       | i + 1.0 |
@@ -46,9 +46,9 @@ Feature: Simple addition
   Scenario: I add an integer to a decimal column
 
     When I execute the query
-    """
-    SELECT d + 1 FROM test
-    """
+      """
+      SELECT d + 1 FROM test
+      """
 
     Then I expect the result set
       | d + 1   |
@@ -62,9 +62,9 @@ Feature: Simple addition
   Scenario: I add null to an integer column
 
     When I execute the query
-    """
-    SELECT i + null FROM test
-    """
+      """
+      SELECT i + null FROM test
+      """
 
     Then I expect the result set
       | i + null |

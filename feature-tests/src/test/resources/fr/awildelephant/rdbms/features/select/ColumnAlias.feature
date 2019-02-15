@@ -8,9 +8,9 @@ Feature: Aliasing a column
       | 1       |
 
     When I execute the query
-    """
-    SELECT noalias AS alias FROM test
-    """
+      """
+      SELECT noalias AS alias FROM test
+      """
 
     Then I expect the result set
       | alias   |

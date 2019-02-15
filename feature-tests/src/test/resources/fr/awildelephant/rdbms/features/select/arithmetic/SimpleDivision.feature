@@ -14,9 +14,9 @@ Feature: Simple division
   Scenario: I divide an integer column by 2
 
     When I execute the query
-    """
-    SELECT i / 2 FROM test
-    """
+      """
+      SELECT i / 2 FROM test
+      """
 
     Then I expect the result set
       | i / 2   |
@@ -30,9 +30,9 @@ Feature: Simple division
   Scenario: I divide an integer column by decimal 2
 
     When I execute the query
-    """
-    SELECT i / 2.0 FROM test
-    """
+      """
+      SELECT i / 2.0 FROM test
+      """
 
     Then I expect the result set
       | i / 2.0 |
@@ -46,9 +46,9 @@ Feature: Simple division
   Scenario: I divide a decimal column by 2
 
     When I execute the query
-    """
-    SELECT d / 2 FROM test
-    """
+      """
+      SELECT d / 2 FROM test
+      """
 
     Then I expect the result set
       | d / 2   |
@@ -62,11 +62,11 @@ Feature: Simple division
   Scenario: I divide a column by zero
 
     When I execute the query
-    """
-    SELECT i / 0 FROM test
-    """
+      """
+      SELECT i / 0 FROM test
+      """
 
     Then I expect an error with the message
-    """
-    Division by zero
-    """
+      """
+      Division by zero
+      """

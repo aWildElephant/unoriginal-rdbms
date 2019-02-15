@@ -12,9 +12,9 @@ Feature: Count star
   Scenario: I count the number of rows in a table
 
     When I execute the query
-    """
-    SELECT COUNT(*) FROM test
-    """
+      """
+      SELECT COUNT(*) FROM test
+      """
 
     Then I expect the result set
       | count(*) |
@@ -25,9 +25,9 @@ Feature: Count star
   Scenario: I output several count star
 
     When I execute the query
-    """
-    SELECT COUNT(*) AS countA, COUNT(*) AS countB FROM test
-    """
+      """
+      SELECT COUNT(*) AS countA, COUNT(*) AS countB FROM test
+      """
 
     Then I expect the result set
       | countA  | countB  |
@@ -37,9 +37,9 @@ Feature: Count star
   Scenario: I subtract one to the number of rows in the table
 
     When I execute the query
-    """
-    SELECT COUNT(*) - 1 FROM test
-    """
+      """
+      SELECT COUNT(*) - 1 FROM test
+      """
 
     Then I expect the result set
       | count(*) - 1 |

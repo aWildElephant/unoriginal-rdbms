@@ -10,9 +10,9 @@ Feature: Unique constraint
   Scenario: I insert a value that doesn't exist in an unique column
 
     When I execute the query
-    """
-    INSERT INTO person VALUES ('zerator')
-    """
+      """
+      INSERT INTO person VALUES ('zerator')
+      """
 
     Then table person should be
       | pseudo   |
@@ -23,26 +23,26 @@ Feature: Unique constraint
   Scenario: I insert a value that already exist in an unique column
 
     When I execute the query
-    """
-    INSERT INTO person VALUES ('mistermv')
-    """
+      """
+      INSERT INTO person VALUES ('mistermv')
+      """
 
     Then I expect an error with the message
-    """
-    Unique constraint violation
-    """
+      """
+      Unique constraint violation
+      """
 
   Scenario: I insert several null values in the an unique column
 
     When I execute the query
-    """
-    INSERT INTO person VALUES (null)
-    """
+      """
+      INSERT INTO person VALUES (null)
+      """
 
     And I execute the query
-    """
-    INSERT INTO person VALUES (null)
-    """
+      """
+      INSERT INTO person VALUES (null)
+      """
 
     Then table person should be
       | pseudo   |

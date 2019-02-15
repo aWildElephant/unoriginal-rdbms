@@ -12,23 +12,23 @@ Feature: Sum
   Scenario: I sum the column
 
     When I execute the query
-    """
-    SELECT SUM(a) FROM test
-    """
+      """
+      SELECT SUM(a) FROM test
+      """
 
     Then I expect the result set
-    | sum(a)  |
-    | INTEGER |
-    | 6       |
+      | sum(a)  |
+      | INTEGER |
+      | 6       |
 
   Scenario: I sum a map on several columns
 
     When I execute the query
-    """
-    SELECT SUM(a*b) FROM test
-    """
+      """
+      SELECT SUM(a*b) FROM test
+      """
 
     Then I expect the result set
-    | sum(a * b)   |
-    | INTEGER      |
-    | 33           |
+      | sum(a * b) |
+      | INTEGER    |
+      | 33         |

@@ -7,11 +7,11 @@ Feature: Not null constraint
       | INTEGER NOT NULL |
 
     When I execute the query
-    """
-    INSERT INTO test VALUES (null)
-    """
+      """
+      INSERT INTO test VALUES (null)
+      """
 
     Then I expect an error with the message
-    """
-    Cannot insert NULL in not-null column notnullable
-    """
+      """
+      Cannot insert NULL in not-null column notnullable
+      """

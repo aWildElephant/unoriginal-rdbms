@@ -13,9 +13,9 @@ Feature: I group by some columns
   Scenario: I count the rows grouped by a
 
     When I execute the query
-    """
-    SELECT COUNT(*) FROM test GROUP BY a
-    """
+      """
+      SELECT COUNT(*) FROM test GROUP BY a
+      """
 
     Then I expect the result set
       | count(*) |

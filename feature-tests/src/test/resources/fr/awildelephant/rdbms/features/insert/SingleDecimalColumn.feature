@@ -9,9 +9,9 @@ Feature: Insert into a single decimal column
   Scenario: I insert a decimal value
 
     When I execute the query
-    """
-    INSERT INTO test VALUES (1.234)
-    """
+      """
+      INSERT INTO test VALUES (1.234)
+      """
 
     Then table test should be
       | a       |
@@ -21,9 +21,9 @@ Feature: Insert into a single decimal column
   Scenario: I insert null
 
     When I execute the query
-    """
-    INSERT INTO test VALUES (null)
-    """
+      """
+      INSERT INTO test VALUES (null)
+      """
 
     Then table test should be
       | a       |

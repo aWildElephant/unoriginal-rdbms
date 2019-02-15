@@ -9,9 +9,9 @@ Feature: Insert into a single date column
   Scenario: I insert a value
 
     When I execute the query
-    """
-    INSERT INTO test VALUES (date '1992-05-20')
-    """
+      """
+      INSERT INTO test VALUES (date '1992-05-20')
+      """
 
     Then table test should be
       | a          |

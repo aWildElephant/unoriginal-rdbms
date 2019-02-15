@@ -14,16 +14,12 @@ Feature: Distinct
   Scenario: I group by a column and only output this column to get distinct values
 
     When I execute the query
-    """
-    SELECT DISTINCT LastName
-    FROM Employees
-    """
+      """
+      SELECT DISTINCT LastName FROM Employees
+      """
 
     Then I expect the result set
       | lastname |
       | TEXT     |
       | Dalton   |
       | Girard   |
-
-
-

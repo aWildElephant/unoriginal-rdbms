@@ -9,9 +9,9 @@ Feature: Select star
       | 6       | 9       |
 
     When I execute the query
-    """
-    SELECT * FROM test
-    """
+      """
+      SELECT * FROM test
+      """
 
     Then I expect the result set
       | a       | b       |

@@ -9,9 +9,9 @@ Feature: Insert into a single integer column
   Scenario: I insert a single digit
 
     And I execute the query
-    """
-    INSERT INTO test VALUES (1)
-    """
+      """
+      INSERT INTO test VALUES (1)
+      """
 
     Then table test should be
       | a       |
@@ -21,9 +21,9 @@ Feature: Insert into a single integer column
   Scenario: I insert an integer greater than 10
 
     When I execute the query
-    """
-    INSERT INTO test VALUES (1992)
-    """
+      """
+      INSERT INTO test VALUES (1992)
+      """
 
     Then table test should be
       | a       |
@@ -33,9 +33,9 @@ Feature: Insert into a single integer column
   Scenario: I insert null
 
     When I execute the query
-    """
-    INSERT INTO test VALUES (null)
-    """
+      """
+      INSERT INTO test VALUES (null)
+      """
 
     Then table test should be
       | a       |
@@ -45,9 +45,9 @@ Feature: Insert into a single integer column
   Scenario: I insert a negative value
 
     When I execute the query
-    """
-    INSERT INTO test VALUES (-1)
-    """
+      """
+      INSERT INTO test VALUES (-1)
+      """
 
     Then table test should be
       | a       |
