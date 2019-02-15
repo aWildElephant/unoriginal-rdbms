@@ -1,6 +1,6 @@
 Feature: Subquery
 
-  Scenario: I execute a subquery with an explicit table in a subquery
+  Scenario: I execute a subquery with an table constructor in a subquery
 
     When I execute the query
       """

@@ -14,8 +14,8 @@ import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
-import fr.awildelephant.rdbms.plan.ExplicitTableLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.TableConstructorLop;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             matrix.add(formulas);
         }
 
-        return new ExplicitTableLop(matrix);
+        return new TableConstructorLop(matrix);
     }
 
     @Override

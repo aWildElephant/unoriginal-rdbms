@@ -11,12 +11,12 @@ import java.util.List;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static java.util.Collections.emptyMap;
 
-public class ExplicitTableOperator implements Operator<Void, Table> {
+public class TableConstructorOperator implements Operator<Void, Table> {
 
     private final List<List<Formula>> matrix;
     private final Schema schema;
 
-    public ExplicitTableOperator(List<List<Formula>> matrix, Schema schema) {
+    public TableConstructorOperator(List<List<Formula>> matrix, Schema schema) {
         this.matrix = matrix;
         this.schema = schema;
     }

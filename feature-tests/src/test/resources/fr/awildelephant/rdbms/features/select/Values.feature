@@ -1,6 +1,6 @@
 Feature: Values
 
-  Scenario: I create an explicit table using values
+  Scenario: I create an table using the values constructor
 
     When I execute the query
       """

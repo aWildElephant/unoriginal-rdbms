@@ -7,11 +7,11 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExplicitTableLop extends AbstractLop {
+public class TableConstructorLop extends AbstractLop {
 
     private final List<List<Formula>> matrix;
 
-    public ExplicitTableLop(List<List<Formula>> matrix) {
+    public TableConstructorLop(List<List<Formula>> matrix) {
         super(createSchema(matrix));
 
         this.matrix = matrix;
