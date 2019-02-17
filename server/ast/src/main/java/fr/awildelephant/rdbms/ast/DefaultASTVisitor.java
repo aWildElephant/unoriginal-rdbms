@@ -179,5 +179,10 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
         return defaultVisit(textLiteral);
     }
 
+    @Override
+    public T visit(Where where) {
+        return defaultVisit(where);
+    }
+
     public abstract T defaultVisit(AST node);
 }

@@ -10,10 +10,13 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
 import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
+import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.FromClauseRule.deriveFromClauseRule;
 import static fr.awildelephant.rdbms.parser.rules.GroupingSpecificationRule.deriveGroupingSpecification;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -34,6 +37,14 @@ final class QuerySpecificationRule {
         final List<AST> outputColumns = deriveSelectListRule(lexer);
 
         AST input = deriveFromClauseRule(lexer);
+
+        if (nextTokenIs(WHERE, lexer)) {
+            lexer.consumeNextToken();
+
+            final AST filter = deriveBooleanValueExpressionRule(lexer);
+
+            input = where(input, filter);
+        }
 
         if (nextTokenIs(GROUP, lexer)) {
             lexer.consumeNextToken();

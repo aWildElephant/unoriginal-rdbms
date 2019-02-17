@@ -88,4 +88,6 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(TableName tableName);
 
     T visit(TextLiteral textLiteral);
+
+    T visit(Where where);
 }
