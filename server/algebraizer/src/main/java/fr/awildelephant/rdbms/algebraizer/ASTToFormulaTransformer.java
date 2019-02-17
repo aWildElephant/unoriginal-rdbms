@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.And;
@@ -9,6 +10,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
@@ -25,6 +27,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.HashMap;
 import java.util.Map;
 
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
@@ -33,6 +36,7 @@ import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.evaluator.operation.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
+import static fr.awildelephant.rdbms.evaluator.operation.DateCastOperation.dateCastOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalMultiplication.decimalMultiplication;
@@ -44,7 +48,8 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.inte
 import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
-import static fr.awildelephant.rdbms.evaluator.operation.comparison.EqualComparisonFactory.equalComparison;
+import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.equalComparison;
+import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessOrEqualComparison;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
@@ -87,6 +92,23 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
     }
 
     @Override
+    public Operation visit(Cast cast) {
+        if (cast.targetType() != DATE) {
+            throw new UnsupportedOperationException("Unsupported cast to type " + cast.targetType());
+        }
+
+        final Operation input = apply(cast.input());
+
+        final Domain inputDomain = input.domain();
+
+        if (inputDomain != TEXT) {
+            throw new UnsupportedOperationException("Unsupported cast from " + inputDomain + " to DATE");
+        }
+
+        return dateCastOperation(input);
+    }
+
+    @Override
     public Operation visit(ColumnName columnName) {
         return references.computeIfAbsent(columnName.name(), name -> {
             final Domain domain = inputSchema.column(name).domain();
@@ -126,8 +148,11 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
     }
 
     @Override
-    public Operation visit(TextLiteral textLiteral) {
-        return constant(textValue(textLiteral.value()), TEXT);
+    public Operation visit(LessOrEqual lessOrEqual) {
+        final Operation left = apply(lessOrEqual.left());
+        final Operation right = apply(lessOrEqual.right());
+
+        return lessOrEqualComparison(left, right);
     }
 
     @Override
@@ -182,6 +207,11 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         }
 
         return integerAddition(left, right);
+    }
+
+    @Override
+    public Operation visit(TextLiteral textLiteral) {
+        return constant(textValue(textLiteral.value()), TEXT);
     }
 
     @Override

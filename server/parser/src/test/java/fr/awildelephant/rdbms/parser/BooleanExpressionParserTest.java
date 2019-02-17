@@ -2,6 +2,9 @@ package fr.awildelephant.rdbms.parser;
 
 import org.junit.jupiter.api.Test;
 
+import static fr.awildelephant.rdbms.ast.Cast.cast;
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
+import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.And.and;
@@ -9,6 +12,7 @@ import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
 import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
@@ -37,5 +41,11 @@ class BooleanExpressionParserTest {
         // TODO: I didn't put ê/à because the lexer doesn't handle them properly
         assertParsing("VALUES ((0 + 0) = 'la tete a toto')",
                       rows(row(equal(plus(integerLiteral(0), integerLiteral(0)), textLiteral("la tete a toto")))));
+    }
+
+    @Test
+    void it_should_parse_a_less_or_equal_comparison() {
+        assertParsing("VALUES(birthday <= date '2000-01-01')",
+                      rows(row(lessOrEqual(columnName("birthday"), cast(textLiteral("2000-01-01"), DATE)))));
     }
 }

@@ -10,6 +10,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
@@ -65,6 +66,14 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
         final String right = apply(equal.right());
 
         return left + " = " + right;
+    }
+
+    @Override
+    public String visit(LessOrEqual lessOrEqual) {
+        final String left = apply(lessOrEqual.left());
+        final String right = apply(lessOrEqual.right());
+
+        return left + " <= " + right;
     }
 
     @Override

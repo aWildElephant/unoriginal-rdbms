@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
@@ -107,6 +108,14 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(IntegerLiteral integerLiteral) {
+        return null;
+    }
+
+    @Override
+    public Void visit(LessOrEqual lessOrEqual) {
+        apply(lessOrEqual.left());
+        apply(lessOrEqual.right());
+
         return null;
     }
 

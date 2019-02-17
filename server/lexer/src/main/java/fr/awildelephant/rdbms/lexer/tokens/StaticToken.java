@@ -5,6 +5,8 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END_OF_FILE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EQUAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LESS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LESS_OR_EQUAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MINUS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.PLUS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
@@ -66,6 +68,28 @@ public enum StaticToken implements Token {
         @Override
         public TokenType type() {
             return LEFT_PAREN;
+        }
+    },
+    LESS_OR_EQUAL_TOKEN {
+        @Override
+        public String text() {
+            return "<=";
+        }
+
+        @Override
+        public TokenType type() {
+            return LESS_OR_EQUAL;
+        }
+    },
+    LESS_TOKEN {
+        @Override
+        public String text() {
+            return "<";
+        }
+
+        @Override
+        public TokenType type() {
+            return LESS;
         }
     },
     MINUS_TOKEN {

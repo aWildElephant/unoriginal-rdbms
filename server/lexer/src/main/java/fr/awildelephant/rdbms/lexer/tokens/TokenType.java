@@ -28,6 +28,8 @@ public enum TokenType {
     INTO,
     KEY,
     LEFT_PAREN,
+    LESS,
+    LESS_OR_EQUAL,
     MINUS,
     NOT,
     NULL,

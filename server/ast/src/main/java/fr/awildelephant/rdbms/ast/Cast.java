@@ -20,6 +20,10 @@ public final class Cast implements AST {
         return input;
     }
 
+    public int targetType() {
+        return targetType;
+    }
+
     @Override
     public <T> T accept(final ASTVisitor<T> visitor) {
         return visitor.visit(this);
