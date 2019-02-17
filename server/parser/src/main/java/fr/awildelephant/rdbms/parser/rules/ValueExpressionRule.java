@@ -33,7 +33,7 @@ final class ValueExpressionRule {
 
     }
 
-    static AST deriveValueExpression(final Lexer lexer) {
+    static AST deriveValueExpressionRule(final Lexer lexer) {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
@@ -103,8 +103,6 @@ final class ValueExpressionRule {
                 return deriveDecimalLiteral(lexer);
             case INTEGER_LITERAL:
                 return deriveIntegerLiteral(lexer);
-            case LEFT_PAREN:
-                return deriveParenthesizedValueExpression(lexer);
             case NULL:
                 lexer.consumeNextToken();
 
@@ -113,7 +111,7 @@ final class ValueExpressionRule {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
 
-                final AST input = deriveValueExpression(lexer);
+                final AST input = deriveValueExpressionRule(lexer);
 
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
@@ -139,15 +137,5 @@ final class ValueExpressionRule {
         final Token token = lexer.consumeNextToken();
 
         return textLiteral(((TextLiteralToken) token).content());
-    }
-
-    private static AST deriveParenthesizedValueExpression(final Lexer lexer) {
-        lexer.consumeNextToken();
-
-        final AST expression = deriveValueExpression(lexer);
-
-        consumeAndExpect(RIGHT_PAREN, lexer);
-
-        return expression;
     }
 }

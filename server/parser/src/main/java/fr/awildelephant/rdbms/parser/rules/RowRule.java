@@ -13,7 +13,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
-import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpression;
+import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpressionRule;
 
 final class RowRule {
 
@@ -25,12 +25,12 @@ final class RowRule {
         consumeAndExpect(LEFT_PAREN, lexer);
 
         final List<AST> values = new LinkedList<>();
-        values.add(deriveValueExpression(lexer));
+        values.add(deriveValueExpressionRule(lexer));
 
         while (nextTokenIs(COMMA, lexer)) {
             lexer.consumeNextToken();
 
-            values.add(deriveValueExpression(lexer));
+            values.add(deriveValueExpressionRule(lexer));
         }
 
         consumeAndExpect(RIGHT_PAREN, lexer);

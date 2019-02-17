@@ -6,14 +6,19 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import static fr.awildelephant.rdbms.ast.value.And.and;
+import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EQUAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpressionRule;
 
 final class BooleanValueExpressionRule {
 
@@ -56,9 +61,30 @@ final class BooleanValueExpressionRule {
     }
 
     private static AST deriveBooleanTest(final Lexer lexer) {
+        final AST left = deriveBooleanTestLeftInput(lexer);
+
+        if (nextTokenIs(EQUAL, lexer)) {
+            lexer.consumeNextToken();
+
+            final AST right = deriveValueExpressionRule(lexer);
+
+            return equal(left, right);
+        }
+        return left;
+    }
+
+    private static AST deriveBooleanTestLeftInput(final Lexer lexer) {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
+            case LEFT_PAREN:
+                lexer.consumeNextToken();
+
+                final AST parenthesizedValueExpression = deriveValueExpressionRule(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return parenthesizedValueExpression;
             case TRUE:
                 lexer.consumeNextToken();
 

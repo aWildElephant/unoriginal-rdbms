@@ -20,10 +20,11 @@ public enum Checker {
     BOOLEAN {
         @Override
         void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception {
+            final boolean actualBoolean = actual.getBoolean(columnPosition);
             if ("null".equalsIgnoreCase(expected) || "unknown".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull());
             } else {
-                assertEquals(Boolean.valueOf(expected), actual.getBoolean(columnPosition));
+                assertEquals(Boolean.valueOf(expected), actualBoolean);
             }
         }
     },

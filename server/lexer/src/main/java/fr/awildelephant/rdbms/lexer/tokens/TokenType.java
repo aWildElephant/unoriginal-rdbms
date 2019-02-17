@@ -16,6 +16,7 @@ public enum TokenType {
     DISTINCT,
     DROP,
     END_OF_FILE,
+    EQUAL,
     FALSE,
     FOREIGN,
     FROM,

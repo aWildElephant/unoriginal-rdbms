@@ -14,6 +14,7 @@ import java.util.InputMismatchException;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.END_OF_FILE_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.EQUAL_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.MINUS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PLUS_TOKEN;
@@ -69,6 +70,8 @@ public final class Lexer {
         switch (codePoint) {
             case '*':
                 return ASTERISK_TOKEN;
+            case '=':
+                return EQUAL_TOKEN;
             case '/':
                 return SOLIDUS_TOKEN;
             case '+':

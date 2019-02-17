@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
+import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
@@ -43,6 +44,7 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.inte
 import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
+import static fr.awildelephant.rdbms.evaluator.operation.comparison.EqualComparisonFactory.equalComparison;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
@@ -108,6 +110,14 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         }
 
         return integerDivision(left, right);
+    }
+
+    @Override
+    public Operation visit(Equal equal) {
+        final Operation left = apply(equal.left());
+        final Operation right = apply(equal.right());
+
+        return equalComparison(left, right);
     }
 
     @Override

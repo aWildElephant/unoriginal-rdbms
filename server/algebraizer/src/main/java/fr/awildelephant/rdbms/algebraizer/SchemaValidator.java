@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
+import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
@@ -22,6 +23,7 @@ import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.schema.Schema;
 
+// TODO: having BinaryAST/UnaryAST would allow us to reduce the size of this class
 public class SchemaValidator extends DefaultASTVisitor<Void> {
 
     private final Schema inputSchema;
@@ -91,6 +93,14 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     public Void visit(Divide divide) {
         apply(divide.left());
         apply(divide.right());
+
+        return null;
+    }
+
+    @Override
+    public Void visit(Equal equal) {
+        apply(equal.left());
+        apply(equal.right());
 
         return null;
     }
