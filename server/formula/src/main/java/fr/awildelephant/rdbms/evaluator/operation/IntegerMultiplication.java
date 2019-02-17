@@ -7,7 +7,7 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public class IntegerMultiplication extends AbstractBinaryOperation {
+public class IntegerMultiplication extends BinaryOperation {
 
     private IntegerMultiplication(Operation left, Operation right) {
         super(left, right);

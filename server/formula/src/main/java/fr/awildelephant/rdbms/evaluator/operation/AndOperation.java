@@ -7,7 +7,7 @@ import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
-public class AndOperation extends AbstractBinaryOperation {
+public class AndOperation extends BinaryOperation {
 
     private AndOperation(Operation left, Operation right) {
         super(left, right);

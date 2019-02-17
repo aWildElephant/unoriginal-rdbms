@@ -6,7 +6,7 @@ import fr.awildelephant.rdbms.schema.Domain;
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 
-public class DecimalSubtraction extends AbstractBinaryOperation {
+public class DecimalSubtraction extends BinaryOperation {
 
     private DecimalSubtraction(Operation left, Operation right) {
         super(left, right);

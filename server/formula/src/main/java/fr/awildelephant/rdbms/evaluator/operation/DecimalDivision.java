@@ -11,7 +11,7 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static java.math.BigDecimal.ZERO;
 
-public class DecimalDivision extends AbstractBinaryOperation {
+public class DecimalDivision extends BinaryOperation {
 
     private DecimalDivision(Operation left, Operation right) {
         super(left, right);

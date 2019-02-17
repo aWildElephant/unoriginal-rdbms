@@ -10,7 +10,7 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static java.math.BigDecimal.ZERO;
 
-public class DecimalMultiplication extends AbstractBinaryOperation {
+public class DecimalMultiplication extends BinaryOperation {
 
     private DecimalMultiplication(Operation left, Operation right) {
         super(left, right);
