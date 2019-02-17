@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -25,6 +26,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(And and) {
         return apply(and.left()) + " and " + apply(and.right());
+    }
+
+    @Override
+    public String visit(Avg avg) {
+        return "avg(" + apply(avg.input()) + ")";
     }
 
     @Override

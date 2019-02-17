@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -27,6 +28,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(Asterisk asterisk) {
         return defaultVisit(asterisk);
+    }
+
+    @Override
+    public T visit(Avg avg) {
+        return defaultVisit(avg);
     }
 
     @Override

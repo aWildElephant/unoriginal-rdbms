@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Minus;
@@ -34,6 +35,13 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
 
     Collection<AST> collectedAggregates() {
         return aggregates.values();
+    }
+
+    @Override
+    public AST visit(Avg avg) {
+        final String name = nameResolver.apply(avg);
+        aggregates.put(name, avg);
+        return columnName(name);
     }
 
     @Override

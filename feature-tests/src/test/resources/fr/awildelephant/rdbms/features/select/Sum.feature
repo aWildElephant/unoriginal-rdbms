@@ -16,9 +16,10 @@ Feature: Sum
       SELECT SUM(a) FROM test
       """
 
+    # TODO: make it an integer when the input is an integer and it doesn't overflow
     Then I expect the result set
       | sum(a)  |
-      | INTEGER |
+      | DECIMAL |
       | 6       |
 
   Scenario: I sum a map on several columns
@@ -30,5 +31,5 @@ Feature: Sum
 
     Then I expect the result set
       | sum(a * b) |
-      | INTEGER    |
+      | DECIMAL    |
       | 33         |

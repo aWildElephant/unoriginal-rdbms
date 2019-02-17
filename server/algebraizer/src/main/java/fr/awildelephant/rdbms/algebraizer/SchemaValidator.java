@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -47,6 +48,13 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Asterisk asterisk) {
+        return null;
+    }
+
+    @Override
+    public Void visit(Avg avg) {
+        apply(avg.input());
+
         return null;
     }
 

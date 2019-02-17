@@ -4,12 +4,15 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
@@ -38,7 +41,8 @@ public class AggregationOperator implements Operator<Table, Table> {
 
             final int firstAggregateIndex = numberOfOutputColumns - numberOfAggregates;
             for (int i = 0; i < numberOfAggregates; i++) {
-                outputValues[firstAggregateIndex + i] = (aggregates.get(i).outputIsNullable()) ? nullValue() : integerValue(0);
+                outputValues[firstAggregateIndex + i] = (aggregates.get(i)
+                                                                   .outputIsNullable()) ? nullValue() : integerValue(0);
             }
         } else {
             final Record firstRecord = inputTable.iterator().next();
@@ -61,7 +65,9 @@ public class AggregationOperator implements Operator<Table, Table> {
     }
 
     private DomainValue computeAggregation(Aggregate aggregate, Table inputTable) {
-        if (aggregate instanceof CountStarAggregate) {
+        if (aggregate instanceof AvgAggregate) {
+            return computeAvgAggregate(((AvgAggregate) aggregate).inputName(), inputTable);
+        } else if (aggregate instanceof CountStarAggregate) {
             return computeCountStarAggregation(inputTable);
         } else if (aggregate instanceof SumAggregate) {
             return computeSumAggregate(((SumAggregate) aggregate).inputName(), inputTable);
@@ -70,24 +76,54 @@ public class AggregationOperator implements Operator<Table, Table> {
         }
     }
 
-    private DomainValue computeSumAggregate(String inputName, Table inputTable) {
+    private DomainValue computeAvgAggregate(String inputName, Table inputTable) {
         final int inputIndex = outputSchema.indexOf(inputName);
-        boolean foundNotNullValue = false;
-        int accumulator = 0;
+        BigDecimal accumulator = null;
+        int numberOfNotNullValues = 0;
 
         for (Record record : inputTable) {
             final DomainValue value = record.get(inputIndex);
 
             if (!value.isNull()) {
-                foundNotNullValue = true;
-                accumulator += value.getInt();
+                numberOfNotNullValues++;
+
+                final BigDecimal newValue = value.getBigDecimal();
+                if (accumulator == null) {
+                    accumulator = newValue;
+                } else {
+                    accumulator = accumulator.add(newValue);
+                }
             }
         }
 
-        if (foundNotNullValue) {
-            return integerValue(accumulator);
-        } else {
+        if (accumulator == null) {
             return nullValue();
+        } else {
+            return decimalValue(accumulator.divide(BigDecimal.valueOf(numberOfNotNullValues)));
+        }
+    }
+
+    private DomainValue computeSumAggregate(String inputName, Table inputTable) {
+        final int inputIndex = outputSchema.indexOf(inputName);
+        BigDecimal accumulator = null;
+
+        for (Record record : inputTable) {
+            final DomainValue value = record.get(inputIndex);
+
+            if (!value.isNull()) {
+                final BigDecimal newValue = value.getBigDecimal();
+                if (accumulator == null) {
+                    accumulator = newValue;
+                } else {
+                    accumulator = accumulator.add(newValue);
+                }
+            }
+        }
+
+        if (accumulator == null) {
+            return nullValue();
+        } else {
+            return decimalValue(accumulator);
         }
     }
 

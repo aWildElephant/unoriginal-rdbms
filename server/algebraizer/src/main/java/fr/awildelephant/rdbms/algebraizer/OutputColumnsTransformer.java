@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.AggregationLop;
@@ -10,6 +11,7 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 
@@ -68,6 +70,14 @@ final class OutputColumnsTransformer {
             for (AST aggregate : aggregateExtractor.collectedAggregates()) {
                 if (aggregate instanceof CountStar) {
                     aggregates.add(new CountStarAggregate());
+                } else if (aggregate instanceof Avg) {
+                    final AST avgInput = ((Avg) aggregate).input();
+
+                    if (!(avgInput instanceof ColumnName)) {
+                        mapsBelowAggregates.add(avgInput);
+                    }
+
+                    aggregates.add(new AvgAggregate(columnNameResolver.apply(avgInput)));
                 } else if (aggregate instanceof Sum) {
                     final AST sumInput = ((Sum) aggregate).input();
 

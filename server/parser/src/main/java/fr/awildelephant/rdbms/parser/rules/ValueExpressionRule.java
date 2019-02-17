@@ -10,6 +10,7 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
+import static fr.awildelephant.rdbms.ast.value.Avg.avg;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
@@ -92,13 +93,6 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
-            case COUNT:
-                lexer.consumeNextToken();
-                consumeAndExpect(LEFT_PAREN, lexer);
-                consumeAndExpect(ASTERISK, lexer);
-                consumeAndExpect(RIGHT_PAREN, lexer);
-
-                return countStar();
             case DECIMAL_LITERAL:
                 return deriveDecimalLiteral(lexer);
             case INTEGER_LITERAL:
@@ -107,15 +101,31 @@ final class ValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return nullLiteral();
+            case AVG:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final AST avgInput = deriveValueExpressionRule(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return avg(avgInput);
+            case COUNT:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+                consumeAndExpect(ASTERISK, lexer);
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return countStar();
             case SUM:
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
 
-                final AST input = deriveValueExpressionRule(lexer);
+                final AST sumInput = deriveValueExpressionRule(lexer);
 
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
-                return sum(input);
+                return sum(sumInput);
             default:
                 return deriveBooleanValueExpressionRule(lexer);
         }
