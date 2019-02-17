@@ -4,6 +4,7 @@ public enum TokenType {
     AND,
     AS,
     ASTERISK,
+    AVG,
     BY,
     CAST,
     CHAR,

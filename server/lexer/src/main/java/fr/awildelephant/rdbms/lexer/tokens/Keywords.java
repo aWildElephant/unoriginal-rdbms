@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.lexer.tokens;
 
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AVG;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
@@ -55,6 +56,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return AS;
+        }
+    },
+    AVG_TOKEN {
+        @Override
+        public String text() {
+            return "avg";
+        }
+
+        @Override
+        public TokenType type() {
+            return AVG;
         }
     },
     BY_TOKEN {
