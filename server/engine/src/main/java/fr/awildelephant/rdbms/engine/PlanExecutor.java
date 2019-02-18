@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
 import fr.awildelephant.rdbms.engine.operators.AliasOperator;
 import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
+import fr.awildelephant.rdbms.engine.operators.FilterOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
@@ -14,6 +15,7 @@ import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
@@ -62,6 +64,13 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
         final DistinctOperator operator = new DistinctOperator();
 
         return apply(distinctNode.input()).map(operator::compute);
+    }
+
+    @Override
+    public Stream<Table> visit(FilterLop filter) {
+        final FilterOperator operator = new FilterOperator(filter.filter());
+
+        return apply(filter.input()).map(operator::compute);
     }
 
     @Override

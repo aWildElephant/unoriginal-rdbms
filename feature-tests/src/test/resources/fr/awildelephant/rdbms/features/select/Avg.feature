@@ -12,12 +12,13 @@ Feature: Sum
       | 3       | 8       |
       | 3       | null    |
       | 2       | 6       |
+      | 4       | null    |
 
   Scenario: I avg after grouping
 
     When I execute the query
       """
-      SELECT A, AVG(b) FROM test GROUP BY A
+      SELECT a, AVG(b) FROM test GROUP BY a
       """
 
     Then I expect the result set
@@ -26,3 +27,4 @@ Feature: Sum
       | 1       | 1.5     |
       | 2       | 6       |
       | 3       | 8       |
+      | 4       | null    |

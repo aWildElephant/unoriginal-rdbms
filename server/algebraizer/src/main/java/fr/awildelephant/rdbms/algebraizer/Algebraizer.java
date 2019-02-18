@@ -8,12 +8,14 @@ import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Values;
+import fr.awildelephant.rdbms.ast.Where;
 import fr.awildelephant.rdbms.engine.Engine;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 
@@ -71,6 +73,15 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         }
 
         return new TableConstructorLop(matrix);
+    }
+
+    @Override
+    public LogicalOperator visit(Where where) {
+        final LogicalOperator input = apply(where.input());
+
+        final Formula filter = createFormula(where.filter(), input.schema(), "<filter>");
+
+        return new FilterLop(input, filter);
     }
 
     @Override

@@ -6,7 +6,6 @@ import fr.awildelephant.rdbms.evaluator.operation.Reference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Map;
-import java.util.Set;
 
 public class Formula {
 
@@ -20,14 +19,14 @@ public class Formula {
         this.outputName = outputName;
     }
 
-    public DomainValue evaluate(Map<String, DomainValue> values) {
+    public DomainValue evaluate(Values values) {
         setValues(values);
 
         return operation.evaluate();
     }
 
-    private void setValues(Map<String, DomainValue> values) {
-        references.forEach((name, reference) -> reference.set(values.get(name)));
+    private void setValues(Values values) {
+        references.forEach((name, reference) -> reference.set(values.valueOf(name)));
     }
 
     public String outputName() {
@@ -36,9 +35,5 @@ public class Formula {
 
     public Domain outputType() {
         return operation.domain();
-    }
-
-    public Set<String> requiredColumns() {
-        return references.keySet();
     }
 }

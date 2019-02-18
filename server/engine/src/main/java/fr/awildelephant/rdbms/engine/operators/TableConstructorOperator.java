@@ -9,7 +9,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
-import static java.util.Collections.emptyMap;
+import static fr.awildelephant.rdbms.engine.operators.values.NoValues.noValues;
 
 public class TableConstructorOperator implements Operator<Void, Table> {
 
@@ -29,7 +29,7 @@ public class TableConstructorOperator implements Operator<Void, Table> {
             final DomainValue[] tuple = new DomainValue[row.size()];
 
             for (int i = 0; i < row.size(); i++) {
-                tuple[i] = row.get(i).evaluate(emptyMap());
+                tuple[i] = row.get(i).evaluate(noValues());
             }
 
             table.add(new Record(tuple));
