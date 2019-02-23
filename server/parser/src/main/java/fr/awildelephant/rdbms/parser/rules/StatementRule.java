@@ -27,6 +27,7 @@ public final class StatementRule {
             case INSERT:
                 return deriveInsertStatementRule(lexer);
             case SELECT:
+            case TABLE:
             case VALUES:
                 return deriveSimpleTableRule(lexer);
             default:

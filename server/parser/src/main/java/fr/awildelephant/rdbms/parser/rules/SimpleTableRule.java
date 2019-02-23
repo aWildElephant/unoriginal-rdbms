@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
+import static fr.awildelephant.rdbms.parser.rules.ExplicitTableRule.deriveExplicitTableRule;
 import static fr.awildelephant.rdbms.parser.rules.QuerySpecificationRule.deriveQuerySpecificationRule;
 import static fr.awildelephant.rdbms.parser.rules.TableValueConstructorRule.deriveTableValueConstructorRule;
 
@@ -20,6 +21,8 @@ final class SimpleTableRule {
         switch (nextToken.type()) {
             case SELECT:
                 return deriveQuerySpecificationRule(lexer);
+            case TABLE:
+                return deriveExplicitTableRule(lexer);
             case VALUES:
                 return deriveTableValueConstructorRule(lexer);
             default:
