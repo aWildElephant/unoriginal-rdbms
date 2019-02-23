@@ -35,6 +35,7 @@ public enum TokenType {
     NOT,
     NULL,
     OR,
+    ORDER,
     PLUS,
     REFERENCES,
     RIGHT_PAREN,

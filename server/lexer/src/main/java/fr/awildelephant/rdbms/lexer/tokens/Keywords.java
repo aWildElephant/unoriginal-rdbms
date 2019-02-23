@@ -23,6 +23,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUM;
@@ -287,6 +288,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return OR;
+        }
+    },
+    ORDER_TOKEN {
+        @Override
+        public String text() {
+            return "order";
+        }
+
+        @Override
+        public TokenType type() {
+            return ORDER;
         }
     },
     REFERENCES_TOKEN {
