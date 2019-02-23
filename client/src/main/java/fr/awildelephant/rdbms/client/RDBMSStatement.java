@@ -11,7 +11,7 @@ public class RDBMSStatement extends AbstractStatement {
 
     private RDBMS system;
     private boolean isClosed;
-    private ResultSet lastResult;
+    private RDBMSResultSet lastResult;
 
     RDBMSStatement(RDBMS system) {
         this.system = system;
@@ -26,6 +26,8 @@ public class RDBMSStatement extends AbstractStatement {
 
             return false;
         }
+
+        closeLastResultSet();
 
         lastResult = new RDBMSResultSet(table.schema(), table.iterator());
 
@@ -50,8 +52,17 @@ public class RDBMSStatement extends AbstractStatement {
     @Override
     public void close() {
         if (!isClosed) {
+            closeLastResultSet();
+
+            lastResult = null;
             system = null;
             isClosed = true;
+        }
+    }
+
+    private void closeLastResultSet() {
+        if (lastResult != null) {
+            lastResult.close();
         }
     }
 
