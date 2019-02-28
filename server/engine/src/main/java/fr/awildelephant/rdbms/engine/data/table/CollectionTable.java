@@ -11,7 +11,7 @@ public class CollectionTable implements Table {
     private final Schema schema;
     private final Collection<Record> records;
 
-    CollectionTable(Schema schema, Collection<Record> records) {
+    public CollectionTable(Schema schema, Collection<Record> records) {
         this.schema = schema;
         this.records = records;
     }

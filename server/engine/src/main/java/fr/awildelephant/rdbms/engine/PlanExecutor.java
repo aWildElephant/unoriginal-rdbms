@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.FilterOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
+import fr.awildelephant.rdbms.engine.operators.SortOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
@@ -19,6 +20,7 @@ import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 
 import java.util.Map;
@@ -48,15 +50,15 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
     }
 
     @Override
+    public Stream<Table> visit(BaseTableLop baseTable) {
+        return Stream.of(tables.get(baseTable.name()));
+    }
+
+    @Override
     public Stream<Table> visit(BreakdownLop breakdownNode) {
         final BreakdownOperator operator = new BreakdownOperator(breakdownNode.breakdowns());
 
         return apply(breakdownNode.input()).flatMap(operator::compute);
-    }
-
-    @Override
-    public Stream<Table> visit(BaseTableLop baseTable) {
-        return Stream.of(tables.get(baseTable.name()));
     }
 
     @Override
@@ -74,14 +76,6 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
     }
 
     @Override
-    public Stream<Table> visit(TableConstructorLop tableConstructor) {
-        final TableConstructorOperator operator = new TableConstructorOperator(tableConstructor.matrix(),
-                                                                               tableConstructor.schema());
-
-        return Stream.of(operator.compute(null));
-    }
-
-    @Override
     public Stream<Table> visit(MapLop mapNode) {
         final MapOperator operator = new MapOperator(mapNode.operations(), mapNode.schema());
 
@@ -93,5 +87,20 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
         final ProjectionOperator operator = new ProjectionOperator(projectionNode.schema());
 
         return apply(projectionNode.input()).map(operator::compute);
+    }
+
+    @Override
+    public Stream<Table> visit(SortLop sortNode) {
+        final SortOperator operator = new SortOperator(sortNode.schema(), sortNode.columns());
+
+        return apply(sortNode.input()).map(operator::compute);
+    }
+
+    @Override
+    public Stream<Table> visit(TableConstructorLop tableConstructor) {
+        final TableConstructorOperator operator = new TableConstructorOperator(tableConstructor.matrix(),
+                                                                               tableConstructor.schema());
+
+        return Stream.of(operator.compute(null));
     }
 }

@@ -16,6 +16,14 @@ public final class OrderBy implements AST {
         return new OrderBy(input, sortSpecification);
     }
 
+    public AST input() {
+        return input;
+    }
+
+    public SortSpecificationList sortSpecification() {
+        return sortSpecification;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

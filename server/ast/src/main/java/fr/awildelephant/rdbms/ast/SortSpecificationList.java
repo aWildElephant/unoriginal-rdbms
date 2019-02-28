@@ -15,6 +15,10 @@ public final class SortSpecificationList implements AST {
         return new SortSpecificationList(columns);
     }
 
+    public List<ColumnName> columns() {
+        return columns;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
