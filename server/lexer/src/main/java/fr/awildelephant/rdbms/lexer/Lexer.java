@@ -195,6 +195,7 @@ public final class Lexer {
         return (codePoint >= 'a' && codePoint <= 'z')
                 || (codePoint >= 'A' && codePoint <= 'Z')
                 || (codePoint >= '0' && codePoint <= '9')
-                || codePoint == '.';
+                || codePoint == '.'
+                || codePoint == '_';
     }
 }

@@ -26,4 +26,9 @@ class IdentifierLexingTest {
     void it_should_match_an_identifier_with_a_digit() {
         assertLexing("column1", new IdentifierToken("column1"));
     }
+
+    @Test
+    void it_should_match_an_identifier_with_an_underscore() {
+        assertLexing("column_1", new IdentifierToken("column_1"));
+    }
 }
