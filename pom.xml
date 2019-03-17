@@ -14,6 +14,7 @@
         <module>feature-tests</module>
         <module>server</module>
         <module>tpch-tests</module>
+        <module>csv-loader</module>
     </modules>
 
     <properties>
