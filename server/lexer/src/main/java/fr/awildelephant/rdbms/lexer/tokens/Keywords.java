@@ -9,6 +9,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COUNT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DAY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
@@ -18,6 +19,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INSERT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTERVAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
@@ -136,6 +138,17 @@ public enum Keywords implements Token {
             return DATE;
         }
     },
+    DAY_TOKEN {
+        @Override
+        public String text() {
+            return "day";
+        }
+
+        @Override
+        public TokenType type() {
+            return DAY;
+        }
+    },
     DECIMAL_TOKEN {
         @Override
         public String text() {
@@ -233,6 +246,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return INTEGER;
+        }
+    },
+    INTERVAL_TOKEN {
+        @Override
+        public String text() {
+            return "interval";
+        }
+
+        @Override
+        public TokenType type() {
+            return INTERVAL;
         }
     },
     INTO_TOKEN {

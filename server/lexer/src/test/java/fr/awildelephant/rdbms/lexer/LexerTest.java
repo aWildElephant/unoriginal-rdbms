@@ -2,15 +2,18 @@ package fr.awildelephant.rdbms.lexer;
 
 import fr.awildelephant.rdbms.lexer.tokens.IdentifierToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
+import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
 import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.lexer.LexingTestHelper.assertLexing;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.COUNT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.CREATE_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.Keywords.DAY_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.FALSE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.FROM_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.INSERT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.INTEGER_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.Keywords.INTERVAL_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.INTO_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.SELECT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TABLE_TOKEN;
@@ -85,5 +88,17 @@ class LexerTest {
                      TRUE_TOKEN,
                      COMMA_TOKEN,
                      FALSE_TOKEN);
+    }
+
+    @Test
+    void it_should_tokenize_an_interval_literal() {
+        assertLexing("INTERVAL '120' DAY (3)",
+
+                     INTERVAL_TOKEN,
+                     new TextLiteralToken("120"),
+                     DAY_TOKEN,
+                     LEFT_PAREN_TOKEN,
+                     new IntegerLiteralToken(3),
+                     RIGHT_PAREN_TOKEN);
     }
 }

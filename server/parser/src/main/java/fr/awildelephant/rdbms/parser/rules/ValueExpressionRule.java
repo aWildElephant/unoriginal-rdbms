@@ -15,6 +15,7 @@ import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.Interval.interval;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
@@ -22,9 +23,11 @@ import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DAY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 
@@ -38,10 +41,6 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
-            case DATE:
-                lexer.consumeNextToken();
-
-                return cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
             case TEXT_LITERAL:
                 return deriveTextLiteral(lexer);
             case MINUS:
@@ -93,6 +92,23 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
+            case DATE:
+                lexer.consumeNextToken();
+
+                return cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
+            case INTERVAL:
+                lexer.consumeNextToken();
+
+                final String intervalString = ((TextLiteralToken) consumeAndExpect(TEXT_LITERAL, lexer)).content();
+
+                consumeAndExpect(DAY, lexer);
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final int precision = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return interval(intervalString, precision);
             case DECIMAL_LITERAL:
                 return deriveDecimalLiteral(lexer);
             case INTEGER_LITERAL:
