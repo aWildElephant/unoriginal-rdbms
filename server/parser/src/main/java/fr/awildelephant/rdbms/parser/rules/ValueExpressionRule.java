@@ -15,7 +15,7 @@ import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
-import static fr.awildelephant.rdbms.ast.value.Interval.interval;
+import static fr.awildelephant.rdbms.ast.value.IntervalLiteral.intervalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
@@ -114,7 +114,7 @@ final class ValueExpressionRule {
                     consumeAndExpect(RIGHT_PAREN, lexer);
                 }
 
-                return interval(intervalString, precision);
+                return intervalLiteral(intervalString, precision);
             case DECIMAL_LITERAL:
                 return deriveDecimalLiteral(lexer);
             case INTEGER_LITERAL:

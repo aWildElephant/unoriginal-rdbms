@@ -5,18 +5,18 @@ import fr.awildelephant.rdbms.ast.ASTVisitor;
 
 import java.util.Objects;
 
-public final class Interval implements AST {
+public final class IntervalLiteral implements AST {
 
     private final String intervalString;
     private final Integer precision;
 
-    private Interval(String intervalString, Integer precision) {
+    private IntervalLiteral(String intervalString, Integer precision) {
         this.intervalString = intervalString;
         this.precision = precision;
     }
 
-    public static Interval interval(String intervalString, Integer precision) {
-        return new Interval(intervalString, precision);
+    public static IntervalLiteral intervalLiteral(String intervalString, Integer precision) {
+        return new IntervalLiteral(intervalString, precision);
     }
 
     @Override
@@ -31,11 +31,11 @@ public final class Interval implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Interval)) {
+        if (!(obj instanceof IntervalLiteral)) {
             return false;
         }
 
-        final Interval other = (Interval) obj;
+        final IntervalLiteral other = (IntervalLiteral) obj;
 
         return Objects.equals(intervalString, other.intervalString)
                 && Objects.equals(precision, other.precision);

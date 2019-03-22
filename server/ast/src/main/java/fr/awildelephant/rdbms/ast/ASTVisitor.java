@@ -8,7 +8,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
-import fr.awildelephant.rdbms.ast.value.Interval;
+import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
@@ -65,7 +65,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(IntegerLiteral integerLiteral);
 
-    T visit(Interval interval);
+    T visit(IntervalLiteral intervalLiteral);
 
     T visit(LessOrEqual lessOrEqual);
 
