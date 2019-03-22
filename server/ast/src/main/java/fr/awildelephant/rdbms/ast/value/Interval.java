@@ -8,14 +8,14 @@ import java.util.Objects;
 public final class Interval implements AST {
 
     private final String intervalString;
-    private final int precision;
+    private final Integer precision;
 
-    private Interval(String intervalString, int precision) {
+    private Interval(String intervalString, Integer precision) {
         this.intervalString = intervalString;
         this.precision = precision;
     }
 
-    public static Interval interval(String intervalString, int precision) {
+    public static Interval interval(String intervalString, Integer precision) {
         return new Interval(intervalString, precision);
     }
 
@@ -38,6 +38,6 @@ public final class Interval implements AST {
         final Interval other = (Interval) obj;
 
         return Objects.equals(intervalString, other.intervalString)
-                && precision == other.precision;
+                && Objects.equals(precision, other.precision);
     }
 }

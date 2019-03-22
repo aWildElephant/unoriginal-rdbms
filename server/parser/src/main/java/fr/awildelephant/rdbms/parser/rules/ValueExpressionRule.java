@@ -30,6 +30,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 
 final class ValueExpressionRule {
 
@@ -102,11 +103,16 @@ final class ValueExpressionRule {
                 final String intervalString = ((TextLiteralToken) consumeAndExpect(TEXT_LITERAL, lexer)).content();
 
                 consumeAndExpect(DAY, lexer);
-                consumeAndExpect(LEFT_PAREN, lexer);
 
-                final int precision = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
+                Integer precision = null;
 
-                consumeAndExpect(RIGHT_PAREN, lexer);
+                if (nextTokenIs(LEFT_PAREN, lexer)) {
+                    lexer.consumeNextToken();
+
+                    precision = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
+
+                    consumeAndExpect(RIGHT_PAREN, lexer);
+                }
 
                 return interval(intervalString, precision);
             case DECIMAL_LITERAL:

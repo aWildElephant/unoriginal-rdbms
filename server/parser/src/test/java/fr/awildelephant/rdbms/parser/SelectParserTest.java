@@ -1,26 +1,19 @@
 package fr.awildelephant.rdbms.parser;
 
-import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
-import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.OrderBy.orderBy;
-import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.SortSpecificationList.sortSpecificationList;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
-import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
-import static fr.awildelephant.rdbms.ast.value.Interval.interval;
-import static fr.awildelephant.rdbms.ast.value.Minus.minus;
-import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
 import static java.util.Collections.singletonList;
@@ -83,12 +76,5 @@ class SelectParserTest {
                       select(columns("column1"),
                              orderBy(tableName("test"),
                                      sortSpecificationList(List.of(columnName("column2"), columnName("column3"))))));
-    }
-
-    @Test
-    void it_should_parse_a_select_query_with_an_interval() {
-        assertParsing("VALUES (date '2019-03-21' - INTERVAL '7' DAY (3))",
-
-                      rows(row(minus(cast(textLiteral("2019-03-21"), ColumnDefinition.DATE), interval("7", 3)))));
     }
 }
