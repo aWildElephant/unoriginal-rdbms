@@ -11,10 +11,8 @@
 
     <modules>
         <module>client</module>
-        <module>feature-tests</module>
         <module>server</module>
-        <module>tpch-tests</module>
-        <module>csv-loader</module>
+        <module>testing</module>
     </modules>
 
     <properties>

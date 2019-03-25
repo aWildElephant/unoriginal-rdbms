@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>rdbms</artifactId>
         <groupId>fr.awildelephant</groupId>
+        <artifactId>rdbms-testing</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>tpch-tests</artifactId>
-    <name>RDBMS :: TPC-H tests</name>
+    <artifactId>rdbms-tpch-tests</artifactId>
+    <name>${testing.fancyName} :: TPC-H tests</name>
 </project>
