@@ -21,5 +21,16 @@
         <module>csv-loader</module>
         <module>feature-tests</module>
         <module>tpch-tests</module>
+        <module>test-commons</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-test-commons</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

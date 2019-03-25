@@ -1,14 +1,13 @@
 package fr.awildelephant.rdbms.features;
 
 import cucumber.api.java8.En;
-import fr.awildelephant.rdbms.client.RDBMSDriver;
+import fr.awildelephant.rdbms.cucumber.step.definitions.Checker;
+import fr.awildelephant.rdbms.cucumber.step.definitions.RDBMSTestWrapper;
 import io.cucumber.datatable.DataTable;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -18,16 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StepDefs implements En {
 
-    private final Connection connection;
-    private Statement lastStatement;
-    private SQLException lastException;
+    private final RDBMSTestWrapper testWrapper;
 
     public StepDefs() throws SQLException {
 
-        connection = new RDBMSDriver().connect("jdbc:rdbms:mem:feature-tests", null);
+        testWrapper = new RDBMSTestWrapper("feature-tests");
 
         Given("^the table (\\w+)$", (String name, DataTable content) -> {
-            forwardExceptionIfPresent();
+            testWrapper.forwardExceptionIfPresent();
 
             final List<String> columnNames = content.row(0);
             final List<String> columnDefinitions = content.row(1);
@@ -44,7 +41,7 @@ public class StepDefs implements En {
             }
             createTableBuilder.append(");");
 
-            execute(createTableBuilder.toString());
+            testWrapper.execute(createTableBuilder.toString());
 
             for (List<String> row : content.rows(2).asLists()) {
                 final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name)
@@ -70,22 +67,22 @@ public class StepDefs implements En {
 
                 insertIntoBuilder.append(");");
 
-                execute(insertIntoBuilder.toString());
+                testWrapper.execute(insertIntoBuilder.toString());
             }
         });
 
-        When("I execute the query", this::execute);
+        When("I execute the query", testWrapper::execute);
 
         Then("I expect the result set", this::assertResult);
 
         Then("^table (\\w+) should be$", (String name, DataTable content) -> {
-            execute("SELECT * FROM " + name);
+            testWrapper.execute("SELECT * FROM " + name);
 
             assertResult(content);
         });
 
         Then("^there is no table named (\\w+)$", (String name) -> {
-            execute("SELECT * FROM " + name);
+            testWrapper.execute("SELECT * FROM " + name);
 
             assertException("Table not found: " + name);
         });
@@ -94,6 +91,8 @@ public class StepDefs implements En {
     }
 
     private void assertException(String expectedErrorMessage) {
+        final SQLException lastException = testWrapper.lastException();
+
         assertNotNull(lastException, "No exception was thrown");
 
         final String actualErrorMessage = lastException.getMessage();
@@ -102,9 +101,9 @@ public class StepDefs implements En {
     }
 
     private void assertResult(DataTable table) throws Exception {
-        forwardExceptionIfPresent();
+        testWrapper.forwardExceptionIfPresent();
 
-        final ResultSet lastResult = lastStatement.getResultSet();
+        final ResultSet lastResult = testWrapper.getStatement().getResultSet();
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
@@ -150,35 +149,6 @@ public class StepDefs implements En {
 
         for (int i = 0; i < numberOfColumns; i++) {
             assertEquals(expectedColumnNames.get(i), metaData.getColumnName(i + 1), "Column name mismatch");
-        }
-    }
-
-    private void forwardExceptionIfPresent() throws SQLException {
-        if (lastException != null) {
-            throw lastException;
-        }
-    }
-
-    private void execute(String query) throws SQLException {
-        forwardExceptionIfPresent();
-
-        try {
-            reset();
-
-            final Statement statement = connection.createStatement();
-
-            statement.execute(query);
-
-            lastStatement = statement;
-        } catch (SQLException e) {
-            lastException = e;
-        }
-    }
-
-    private void reset() throws SQLException {
-        if (lastStatement != null) {
-            lastStatement.close();
-            lastStatement = null;
         }
     }
 }

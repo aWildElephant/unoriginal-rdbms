@@ -9,37 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rdbms-feature-tests</artifactId>
-    <name>${testing.fancyName} :: Feature tests</name>
-
-    <properties>
-        <jar.skipIfEmpty>true</jar.skipIfEmpty>
-        <maven.install.skip>true</maven.install.skip>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
+    <artifactId>rdbms-test-commons</artifactId>
+    <name>${testing.fancyName} :: Test commons</name>
 
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-client</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-test-commons</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

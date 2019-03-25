@@ -11,4 +11,12 @@
 
     <artifactId>rdbms-tpch-tests</artifactId>
     <name>${testing.fancyName} :: TPC-H tests</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-test-commons</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

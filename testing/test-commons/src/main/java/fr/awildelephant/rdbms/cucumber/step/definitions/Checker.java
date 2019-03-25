@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.features;
+package fr.awildelephant.rdbms.cucumber.step.definitions;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -19,7 +19,7 @@ public enum Checker {
 
     BOOLEAN {
         @Override
-        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception {
+        public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception {
             final boolean actualBoolean = actual.getBoolean(columnPosition);
             if ("null".equalsIgnoreCase(expected) || "unknown".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull());
@@ -30,7 +30,7 @@ public enum Checker {
     },
     DATE {
         @Override
-        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException, ParseException {
+        public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException, ParseException {
             final Date actualDate = actual.getDate(columnPosition);
             final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualDate);
 
@@ -43,7 +43,7 @@ public enum Checker {
     },
     DECIMAL {
         @Override
-        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
+        public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final BigDecimal actualDecimal = actual.getBigDecimal(columnPosition);
             final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualDecimal);
 
@@ -56,7 +56,7 @@ public enum Checker {
     },
     INTEGER {
         @Override
-        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
+        public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final int actualInt = actual.getInt(columnPosition);
             final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualInt);
 
@@ -69,7 +69,7 @@ public enum Checker {
     },
     TEXT {
         @Override
-        void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
+        public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final String actualString = actual.getString(columnPosition);
             final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualString);
 
@@ -99,5 +99,5 @@ public enum Checker {
         return () -> "Row " + rowIndex + " column " + columnIndex + " : expected " + expected + " but got " + actual;
     }
 
-    abstract void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception;
+    public abstract void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception;
 }
