@@ -19,6 +19,10 @@ public final class IntervalLiteral implements AST {
         return new IntervalLiteral(intervalString, precision);
     }
 
+    public String intervalString() {
+        return intervalString;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

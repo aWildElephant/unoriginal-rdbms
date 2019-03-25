@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.data.value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Period;
 
 public interface DomainValue {
 
@@ -14,6 +15,8 @@ public interface DomainValue {
     BigDecimal getBigDecimal();
 
     LocalDate getLocalDate();
+
+    Period getPeriod();
 
     String getString();
 }

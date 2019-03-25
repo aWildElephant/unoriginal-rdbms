@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.data.value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Period;
 
 public abstract class AbstractValue implements DomainValue {
 
@@ -27,6 +28,11 @@ public abstract class AbstractValue implements DomainValue {
 
     @Override
     public LocalDate getLocalDate() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Period getPeriod() {
         throw new UnsupportedOperationException();
     }
 

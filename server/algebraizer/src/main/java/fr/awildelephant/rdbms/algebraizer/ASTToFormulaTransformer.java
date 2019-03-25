@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.And;
@@ -10,6 +11,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
@@ -24,19 +26,22 @@ import fr.awildelephant.rdbms.evaluator.operation.Reference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
 
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
+import static fr.awildelephant.rdbms.data.value.IntervalValue.intervalValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.evaluator.operation.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
 import static fr.awildelephant.rdbms.evaluator.operation.DateCastOperation.dateCastOperation;
+import static fr.awildelephant.rdbms.evaluator.operation.DateIntervalAddition.dateIntervalAddition;
+import static fr.awildelephant.rdbms.evaluator.operation.DateIntervalSubstraction.dateIntervalSubstraction;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalMultiplication.decimalMultiplication;
@@ -51,9 +56,12 @@ import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.equalComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessOrEqualComparison;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
+import static fr.awildelephant.rdbms.schema.Domain.DATE;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
+import static fr.awildelephant.rdbms.schema.Domain.INTERVAL;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
+import static java.lang.Integer.parseInt;
 
 public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
 
@@ -93,7 +101,7 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
 
     @Override
     public Operation visit(Cast cast) {
-        if (cast.targetType() != DATE) {
+        if (cast.targetType() != ColumnDefinition.DATE) {
             throw new UnsupportedOperationException("Unsupported cast to type " + cast.targetType());
         }
 
@@ -148,6 +156,13 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
     }
 
     @Override
+    public Operation visit(IntervalLiteral intervalLiteral) {
+        final Period period = Period.ofDays(parseInt(intervalLiteral.intervalString()));
+
+        return constant(intervalValue(period), INTERVAL);
+    }
+
+    @Override
     public Operation visit(LessOrEqual lessOrEqual) {
         final Operation left = apply(lessOrEqual.left());
         final Operation right = apply(lessOrEqual.right());
@@ -164,7 +179,15 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
             return decimalSubtraction(left, right);
         }
 
-        return integerSubtraction(left, right);
+        if (left.domain() == INTEGER && right.domain() == INTEGER) {
+            return integerSubtraction(left, right);
+        }
+
+        if (left.domain() == Domain.DATE && right.domain() == INTERVAL) {
+            return dateIntervalSubstraction(left, right);
+        }
+
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -206,7 +229,15 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
             return decimalAddition(left, right);
         }
 
-        return integerAddition(left, right);
+        if (left.domain() == INTEGER && right.domain() == INTEGER) {
+            return integerAddition(left, right);
+        }
+
+        if (left.domain() == DATE && right.domain() == INTERVAL) {
+            return dateIntervalAddition(left, right);
+        }
+
+        throw new UnsupportedOperationException();
     }
 
     @Override

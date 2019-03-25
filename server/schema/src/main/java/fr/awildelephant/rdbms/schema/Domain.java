@@ -5,5 +5,6 @@ public enum Domain {
     DATE,
     DECIMAL,
     INTEGER,
+    INTERVAL,
     TEXT
 }

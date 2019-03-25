@@ -92,7 +92,7 @@ public enum Checker {
     }
 
     public static Checker checkerFor(String typeName) {
-        return Checker.valueOf(typeName);
+        return Checker.valueOf(typeName.toUpperCase());
     }
 
     private static Supplier<String> errorMessage(int rowIndex, int columnIndex, String expected, Object actual) {
