@@ -31,7 +31,7 @@ public final class MapLop extends AbstractLop {
         int index = inputColumns.size();
 
         for (Formula operation : operations) {
-            outputColumns.add(new Column(index, operation.outputName(), operation.outputType(), false));
+            outputColumns.add(new Column(index++, operation.outputName(), operation.outputType(), false));
         }
 
         return new Schema(outputColumns);
