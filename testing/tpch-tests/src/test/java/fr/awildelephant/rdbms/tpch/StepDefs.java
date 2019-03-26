@@ -27,14 +27,17 @@ public class StepDefs implements En {
 
         testWrapper = new RDBMSTestWrapper("feature-tests");
 
-        Given("^the TPC-H (\\w+) table$", (String tableName) -> {
+        Given("^I create the TPC-H (\\w+) table$", (String tableName) -> {
             testWrapper.execute(createTableQuery(tableName));
 
             testWrapper.forwardExceptionIfPresent();
+        });
 
-            // TODO
+        Given("^I load (\\w+) scale factor (\\d+) data", (String tableName, Integer scaleFactor) -> {
+            // TODO: absolute path lol
+            // TODO; proper error handling if the table/the scale factor is not found
             final File compressedCsvDataFile = new File(
-                    "/home/etienne/Code/rdbms/testing/tpch-tests/data/1/" + tableName + ".tbl.gz");
+                    "/home/etienne/Code/rdbms/testing/tpch-tests/data/" + scaleFactor + "/" + tableName + ".tbl.gz");
 
             new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
         });

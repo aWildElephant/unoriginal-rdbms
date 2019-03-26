@@ -2,7 +2,8 @@ Feature: TPC-H queries
 
   Background: TPC-H dataset
 
-    Given the TPC-H lineitem table
+    Given I create the TPC-H lineitem table
+    And I load lineitem scale factor 1 data
 
   Scenario: I execute TPC-H Q1
 
