@@ -1,15 +1,15 @@
 package fr.awildelephant.rdbms.features;
 
 import cucumber.api.java8.En;
-import fr.awildelephant.rdbms.cucumber.step.definitions.Checker;
-import fr.awildelephant.rdbms.cucumber.step.definitions.RDBMSTestWrapper;
+import fr.awildelephant.rdbms.test.commons.ExpectedResult;
+import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
 import io.cucumber.datatable.DataTable;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
+import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -111,44 +111,10 @@ public class StepDefs implements En {
 
         final List<String> expectedColumnNames = expectedResult.get(0);
         final List<String> expectedColumnTypes = expectedResult.get(1);
-
-        assertColumnNames(lastResult.getMetaData(), expectedColumnNames);
-
-        final List<Checker> columnCheckers = expectedColumnTypes.stream()
-                                                                .map(Checker::checkerFor)
-                                                                .collect(toList());
         final List<List<String>> rows = expectedResult.subList(2, expectedResult.size());
 
-        final int numberOfExpectedRows = rows.size();
+        final ExpectedResult expected = new ExpectedResult(expectedColumnNames, expectedColumnTypes, rows);
 
-        int i = 0;
-
-        while (i < numberOfExpectedRows) {
-            assertTrue(lastResult.next(), "Expected " + numberOfExpectedRows + " rows but got " + i);
-
-            final List<String> row = rows.get(i);
-
-            for (int j = 0; j < row.size(); j++) {
-                columnCheckers.get(j).check(lastResult, i + 1, j + 1, row.get(j));
-            }
-
-            i++;
-        }
-
-        while (lastResult.next()) {
-            i++;
-        }
-
-        assertEquals(numberOfExpectedRows, i, "Expected " + numberOfExpectedRows + " rows but got " + i);
-    }
-
-    private void assertColumnNames(ResultSetMetaData metaData, List<String> expectedColumnNames) throws SQLException {
-        final int numberOfColumns = metaData.getColumnCount();
-
-        assertEquals(expectedColumnNames.size(), numberOfColumns, "Number of columns");
-
-        for (int i = 0; i < numberOfColumns; i++) {
-            assertEquals(expectedColumnNames.get(i), metaData.getColumnName(i + 1), "Column name mismatch");
-        }
+        assertThat(lastResult).isExpectedResult(expected);
     }
 }

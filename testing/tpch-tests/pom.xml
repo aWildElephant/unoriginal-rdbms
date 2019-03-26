@@ -12,11 +12,54 @@
     <artifactId>rdbms-tpch-tests</artifactId>
     <name>${testing.fancyName} :: TPC-H tests</name>
 
+    <profiles>
+        <profile>
+            <id>tpch</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                        <configuration>
+                            <argLine>-Xms4g -Xmx8g</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>skip-tpch</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-test-commons</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-csv-loader</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
         </dependency>
     </dependencies>
 </project>

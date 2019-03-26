@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.cucumber.step.definitions;
+package fr.awildelephant.rdbms.test.commons;
 
 import java.math.BigDecimal;
 import java.sql.Date;

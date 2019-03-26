@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.cucumber.step.definitions;
+package fr.awildelephant.rdbms.test.commons;
 
 import fr.awildelephant.rdbms.client.RDBMSDriver;
 
@@ -54,5 +54,9 @@ public class RDBMSTestWrapper {
             lastStatement.close();
             lastStatement = null;
         }
+    }
+
+    public Connection connection() {
+        return connection;
     }
 }
