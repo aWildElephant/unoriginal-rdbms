@@ -20,10 +20,16 @@ Feature: TPC-H queries
       AVG(l_extendedprice) AS avg_price,
       AVG(l_discount) AS avg_disc,
       COUNT(*) AS count_order
-    FROM lineitem
-    WHERE l_shipdate <= date('1998-12-01') - INTERVAL '90' DAY (3)
-    GROUP BY l_returnflag, l_linestatus
-    ORDER BY l_returnflag, l_linestatus;
+    FROM
+      lineitem
+    WHERE
+      l_shipdate <= date '1998-12-01' - INTERVAL '90' DAY (3)
+    GROUP BY
+      l_returnflag,
+      l_linestatus
+    ORDER BY
+      l_returnflag,
+      l_linestatus;
     """
 
     Then I expect the result
