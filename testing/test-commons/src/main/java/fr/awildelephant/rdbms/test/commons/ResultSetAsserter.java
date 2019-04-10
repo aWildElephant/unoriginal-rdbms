@@ -21,6 +21,7 @@ public final class ResultSetAsserter {
         return new ResultSetAsserter(resultSet);
     }
 
+    // TODO: actual check column types
     public void isExpectedResult(ExpectedResult expected) throws Exception {
         assertColumnNames(resultSet.getMetaData(), expected.columnNames());
 

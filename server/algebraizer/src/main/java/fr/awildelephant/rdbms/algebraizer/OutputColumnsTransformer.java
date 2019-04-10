@@ -66,29 +66,29 @@ final class OutputColumnsTransformer {
             if (isFormula(aggregateFreeOutputColumn)) {
                 mapsOverAggregates.add(aggregateFreeOutputColumn);
             }
+        }
 
-            for (AST aggregate : aggregateExtractor.collectedAggregates()) {
-                if (aggregate instanceof CountStar) {
-                    aggregates.add(new CountStarAggregate());
-                } else if (aggregate instanceof Avg) {
-                    final AST avgInput = ((Avg) aggregate).input();
+        for (AST aggregate : aggregateExtractor.collectedAggregates()) {
+            if (aggregate instanceof CountStar) {
+                aggregates.add(new CountStarAggregate());
+            } else if (aggregate instanceof Avg) {
+                final AST avgInput = ((Avg) aggregate).input();
 
-                    if (!(avgInput instanceof ColumnName)) {
-                        mapsBelowAggregates.add(avgInput);
-                    }
-
-                    aggregates.add(new AvgAggregate(columnNameResolver.apply(avgInput)));
-                } else if (aggregate instanceof Sum) {
-                    final AST sumInput = ((Sum) aggregate).input();
-
-                    if (!(sumInput instanceof ColumnName)) {
-                        mapsBelowAggregates.add(sumInput);
-                    }
-
-                    aggregates.add(new SumAggregate(columnNameResolver.apply(sumInput)));
-                } else {
-                    throw new UnsupportedOperationException();
+                if (!(avgInput instanceof ColumnName)) {
+                    mapsBelowAggregates.add(avgInput);
                 }
+
+                aggregates.add(new AvgAggregate(columnNameResolver.apply(avgInput)));
+            } else if (aggregate instanceof Sum) {
+                final AST sumInput = ((Sum) aggregate).input();
+
+                if (!(sumInput instanceof ColumnName)) {
+                    mapsBelowAggregates.add(sumInput);
+                }
+
+                aggregates.add(new SumAggregate(columnNameResolver.apply(sumInput)));
+            } else {
+                throw new UnsupportedOperationException();
             }
         }
 

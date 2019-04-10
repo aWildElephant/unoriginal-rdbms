@@ -33,7 +33,7 @@ public class ProjectionOperator implements Operator<Table, Table> {
     private Record projectTuple(Record record) {
         final DomainValue[] data = new DomainValue[outputToInputIndex.length];
 
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < outputToInputIndex.length; i++) {
             data[i] = record.get(outputToInputIndex[i]);
         }
 
@@ -45,7 +45,7 @@ public class ProjectionOperator implements Operator<Table, Table> {
         final int[] mapping = new int[outputColumns.size()];
 
         for (String column : outputColumns) {
-            mapping[outputSchema.indexOf(column)] = inputSchema.indexOf(column);
+            mapping[outputSchema.indexOf(column)] = inputSchema.indexOf(column) - 1;
         }
 
         return mapping;

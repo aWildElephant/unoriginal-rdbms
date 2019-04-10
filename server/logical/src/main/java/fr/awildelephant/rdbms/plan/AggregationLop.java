@@ -7,7 +7,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
+import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 
 public class AggregationLop extends AbstractLop {
 
@@ -30,7 +30,8 @@ public class AggregationLop extends AbstractLop {
         for (int i = 0; i < aggregates.size(); i++) {
             final Aggregate aggregate = aggregates.get(i);
 
-            aggregateColumns.add(new Column(firstIndex + i, aggregate.outputName(), INTEGER, !aggregate.outputIsNullable()));
+            aggregateColumns
+                    .add(new Column(firstIndex + i, aggregate.outputName(), DECIMAL, !aggregate.outputIsNullable()));
         }
 
         return inputSchema.extend(aggregateColumns);
