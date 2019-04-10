@@ -26,20 +26,11 @@ public class SortOperator implements Operator<Table, Table> {
         final List<Record> sortedList = new ArrayList<>(inputTable.numberOfTuples());
 
         for (Record record : inputTable) {
-            insertInCorrectPosition(record, sortedList);
+            sortedList.add(record);
         }
+
+        sortedList.sort(comparator);
 
         return new CollectionTable(inputTable.schema(), sortedList);
-    }
-
-    private void insertInCorrectPosition(Record record, List<Record> sortedList) {
-        for (int i = 0; i < sortedList.size(); i++) {
-            if (comparator.compare(record, sortedList.get(i)) < 0) {
-                sortedList.add(i, record);
-                return;
-            }
-        }
-
-        sortedList.add(record);
     }
 }
