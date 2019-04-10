@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("Executor");
 
     private final Map<String, ManagedTable> tables;
 
@@ -52,7 +52,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             final Table output = operator.compute(input);
 
-            LOGGER.info("{} - AggregateOperator - outputSize: {}}", operatorId, output.numberOfTuples());
+            LOGGER.info("{} - AggregateOperator - outputSize: {}", operatorId, output.numberOfTuples());
 
             return output;
 
@@ -69,7 +69,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             final Table output = operator.compute(input);
 
-            LOGGER.info("{} - RenameOperator - outputSize: {}}", operatorId, output.numberOfTuples());
+            LOGGER.info("{} - RenameOperator - outputSize: {}", operatorId, output.numberOfTuples());
 
             return output;
 
@@ -119,7 +119,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             final Table output = operator.compute(input);
 
-            LOGGER.info("{} - DistinctOperator - outputSize: {}}", operatorId, output.numberOfTuples());
+            LOGGER.info("{} - DistinctOperator - outputSize: {}", operatorId, output.numberOfTuples());
 
             return output;
 
@@ -136,7 +136,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             final Table output = operator.compute(input);
 
-            LOGGER.info("{} - FilterOperator - outputSize: {}}", operatorId, output.numberOfTuples());
+            LOGGER.info("{} - FilterOperator - outputSize: {}", operatorId, output.numberOfTuples());
 
             return output;
 
@@ -153,7 +153,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             final Table output = operator.compute(input);
 
-            LOGGER.info("{} - MapOperator - outputSize: {}}", operatorId, output.numberOfTuples());
+            LOGGER.info("{} - MapOperator - outputSize: {}", operatorId, output.numberOfTuples());
 
             return output;
 
@@ -170,7 +170,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             final Table output = operator.compute(input);
 
-            LOGGER.info("{} - ProjectOperator - outputSize: {}}", operatorId, output.numberOfTuples());
+            LOGGER.info("{} - ProjectOperator - outputSize: {}", operatorId, output.numberOfTuples());
 
             return output;
 
