@@ -10,9 +10,6 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Insertion sort implementation.
- */
 public class SortOperator implements Operator<Table, Table> {
 
     private final MultipleColumnsComparator comparator;
