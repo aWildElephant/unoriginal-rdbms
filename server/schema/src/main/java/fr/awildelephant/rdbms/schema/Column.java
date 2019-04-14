@@ -16,6 +16,9 @@ public final class Column {
         this.notNull = notNull;
     }
 
+    /**
+     * The index of the column in its table, starting from 0
+     */
     public int index() {
         return index;
     }

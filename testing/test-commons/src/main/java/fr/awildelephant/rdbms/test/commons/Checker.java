@@ -32,7 +32,7 @@ public enum Checker {
         @Override
         public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException, ParseException {
             final Date actualDate = actual.getDate(columnPosition);
-            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualDate);
+            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition);
 
             if ("null".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull(), messageSupplier);
@@ -45,7 +45,7 @@ public enum Checker {
         @Override
         public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final BigDecimal actualDecimal = actual.getBigDecimal(columnPosition);
-            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualDecimal);
+            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition);
 
             if ("null".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull(), messageSupplier);
@@ -58,7 +58,7 @@ public enum Checker {
         @Override
         public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final int actualInt = actual.getInt(columnPosition);
-            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualInt);
+            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition);
 
             if ("null".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull(), messageSupplier);
@@ -71,7 +71,7 @@ public enum Checker {
         @Override
         public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final String actualString = actual.getString(columnPosition);
-            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualString);
+            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition);
 
             if (actual.wasNull()) {
                 assertTrue("null".equalsIgnoreCase(expected), messageSupplier);
@@ -95,8 +95,8 @@ public enum Checker {
         return Checker.valueOf(typeName.toUpperCase());
     }
 
-    private static Supplier<String> errorMessage(int rowIndex, int columnIndex, String expected, Object actual) {
-        return () -> "Row " + rowIndex + " column " + columnIndex + " : expected " + expected + " but got " + actual;
+    private static Supplier<String> errorMessage(int rowIndex, int columnIndex) {
+        return () -> "Row " + rowIndex + " column " + columnIndex + ": value mismatch";
     }
 
     public abstract void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception;

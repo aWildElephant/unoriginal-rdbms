@@ -36,7 +36,7 @@ public final class ResultSetAsserter {
         int i = 0;
 
         while (i < numberOfExpectedRows) {
-            assertTrue(resultSet.next(), "Expected " + numberOfExpectedRows + " rows but got " + i);
+            assertTrue(resultSet.next(), "Row count mismatch");
 
             final List<String> row = rows.get(i);
 
@@ -51,7 +51,7 @@ public final class ResultSetAsserter {
             i++;
         }
 
-        assertEquals(numberOfExpectedRows, i, "Expected " + numberOfExpectedRows + " rows but got " + i);
+        assertEquals(numberOfExpectedRows, i, "Column count mismatch");
     }
 
     private void assertColumnNames(ResultSetMetaData metaData, List<String> expectedColumnNames) throws SQLException {
