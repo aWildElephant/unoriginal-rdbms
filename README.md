@@ -10,7 +10,7 @@ This project will not have any distinguishing feature. Its sole purpose is to al
 
 - Fix TODOs
 - Support concurrent queries, probably by having a global queue and executing them one at a time
-- Improve loading speed of the TPC-H scale factor 1 dataset (currently around 1 minute)
+- Improve loading speed of the TPC-H scale factor 1 dataset (currently around 2 minute)
 - Support runnin as a standalone server
 - Support TPC-H Q2
 
