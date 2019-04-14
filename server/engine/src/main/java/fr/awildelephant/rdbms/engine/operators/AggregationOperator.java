@@ -10,7 +10,7 @@ import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.MathContext;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
@@ -100,8 +100,7 @@ public class AggregationOperator implements Operator<Table, Table> {
         if (accumulator == null) {
             return nullValue();
         } else {
-            // TODO: rounding au pif
-            return decimalValue(accumulator.divide(BigDecimal.valueOf(numberOfNotNullValues), RoundingMode.FLOOR));
+            return decimalValue(accumulator.divide(BigDecimal.valueOf(numberOfNotNullValues), MathContext.DECIMAL64));
         }
     }
 
