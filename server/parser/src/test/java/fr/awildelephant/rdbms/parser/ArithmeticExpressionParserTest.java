@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
-import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;

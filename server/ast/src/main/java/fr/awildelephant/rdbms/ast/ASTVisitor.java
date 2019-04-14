@@ -79,8 +79,6 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Or or);
 
-    T visit(OrderBy orderBy);
-
     T visit(Plus plus);
 
     T visit(Row row);
@@ -89,7 +87,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Sum sum);
 
-    T visit(Select select);
+    T visit(SortedSelect sortedSelect);
 
     T visit(SortSpecificationList sortSpecificationList);
 

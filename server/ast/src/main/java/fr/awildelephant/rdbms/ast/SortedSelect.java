@@ -5,18 +5,24 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 import java.util.Objects;
 
-public final class Select implements AST {
+public final class SortedSelect implements AST {
 
     private final List<? extends AST> outputColumns;
+    private final SortSpecificationList sorting;
     private final AST inputTable;
 
-    private Select(List<? extends AST> outputColumns, AST inputTable) {
+    private SortedSelect(List<? extends AST> outputColumns, SortSpecificationList sorting, AST inputTable) {
         this.outputColumns = outputColumns;
+        this.sorting = sorting;
         this.inputTable = inputTable;
     }
 
-    public static Select select(List<? extends AST> output, AST inputTable) {
-        return new Select(output, inputTable);
+    public static SortedSelect select(List<? extends AST> output, AST inputTable) {
+        return sortedSelect(output, null, inputTable);
+    }
+
+    public static SortedSelect sortedSelect(List<? extends AST> output, SortSpecificationList sorting, AST inputTable) {
+        return new SortedSelect(output, sorting, inputTable);
     }
 
     public List<? extends AST> outputColumns() {
@@ -25,6 +31,10 @@ public final class Select implements AST {
 
     public AST inputTable() {
         return inputTable;
+    }
+
+    public SortSpecificationList sorting() {
+        return sorting;
     }
 
     @Override
@@ -36,24 +46,26 @@ public final class Select implements AST {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("outputColumns", outputColumns)
+                .append("sorting", sorting)
                 .append("inputTable", inputTable)
                 .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(outputColumns, inputTable);
+        return Objects.hash(outputColumns, sorting, inputTable);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Select)) {
+        if (!(obj instanceof SortedSelect)) {
             return false;
         }
 
-        final Select other = (Select) obj;
+        final SortedSelect other = (SortedSelect) obj;
 
         return Objects.equals(outputColumns, other.outputColumns)
+                && Objects.equals(sorting, other.sorting)
                 && Objects.equals(inputTable, other.inputTable);
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
-import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;

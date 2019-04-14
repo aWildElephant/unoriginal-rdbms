@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.engine;
 
+import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
@@ -15,6 +16,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
+import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.LopVisitor;
@@ -25,11 +27,16 @@ import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import static java.util.stream.Collectors.toList;
 
 public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
@@ -93,7 +100,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
             final UUID operatorId = UUID.randomUUID();
             LOGGER.info("{} - BreakdownOperator - inputSize: {}", operatorId, input.numberOfTuples());
 
-            final List<Table> output = operator.compute(input).collect(Collectors.toList());
+            final List<Table> output = operator.compute(input).collect(toList());
 
             if (output.isEmpty()) {
                 throw new UnsupportedOperationException("Grouping on an empty table is not supported");
@@ -107,6 +114,23 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             return output.stream();
         });
+    }
+
+    @Override
+    public Stream<Table> visit(CollectLop collectNode) {
+        final List<Table> tables = apply(collectNode.input()).collect(toList());
+
+        final int totalNumberOfTuples = tables.stream().mapToInt(Table::numberOfTuples).sum();
+
+        final Table output = simpleTable(collectNode.schema(), totalNumberOfTuples);
+
+        for (Table table : tables) {
+            for (Record record : table) {
+                output.add(record);
+            }
+        }
+
+        return Stream.of(output);
     }
 
     @Override

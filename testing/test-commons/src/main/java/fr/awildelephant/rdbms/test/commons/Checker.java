@@ -9,9 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
+import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // TODO: we try to get a value before checking DomainValue#wasNull: how bad will the error message be ?
@@ -50,8 +52,20 @@ public enum Checker {
             if ("null".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull(), messageSupplier);
             } else {
-                assertEquals(new BigDecimal(expected), actualDecimal, messageSupplier);
+                assertFalse(actual.wasNull(), messageSupplier);
+
+                // TODO: we might want to be able to tweak decimal comparison with a step: use 1% rule for TPC-H tests and compareTo == 0 for the rest
+                final boolean isAcceptable = validateDecimalValue(actualDecimal.doubleValue(), parseDouble(expected));
+
+                assertTrue(isAcceptable, messageSupplier);
             }
+        }
+
+        /**
+         * Validates that the result is within 1% of the validation data as specified in section 2.1.3.5 of the TPC-H specs
+         */
+        private boolean validateDecimalValue(double actual, double expected) {
+            return 0.99 * expected <= actual && actual <= 1.01 * expected;
         }
     },
     INTEGER {

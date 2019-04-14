@@ -152,11 +152,6 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(OrderBy orderBy) {
-        return defaultVisit(orderBy);
-    }
-
-    @Override
     public T visit(Plus plus) {
         return defaultVisit(plus);
     }
@@ -172,8 +167,8 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(Select select) {
-        return defaultVisit(select);
+    public T visit(SortedSelect sortedSelect) {
+        return defaultVisit(sortedSelect);
     }
 
     @Override

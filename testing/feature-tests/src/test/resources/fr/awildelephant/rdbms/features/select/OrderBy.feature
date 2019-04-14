@@ -43,3 +43,24 @@ Feature: Order by
       | France  |
       | Ireland |
       | Lebanon |
+
+  Scenario: I order and group by the same column
+
+    Given the table test
+      | a    | b       |
+      | TEXT | INTEGER |
+      | b    | 2       |
+      | a    | 1       |
+      | b    | 3       |
+      | b    | 4       |
+
+    When I execute the query
+      """
+      SELECT a, count(*) FROM test GROUP BY a ORDER BY a
+      """
+
+    Then I expect the result set
+      | a    | count(*) |
+      | TEXT | INTEGER  |
+      | a    | 1        |
+      | b    | 3        |

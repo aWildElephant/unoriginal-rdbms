@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;

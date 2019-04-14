@@ -3,13 +3,16 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.SortSpecificationList;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
@@ -34,15 +37,17 @@ final class OutputColumnsTransformer {
 
     private LogicalOperator input;
     private List<AST> outputColumns;
+    private final SortSpecificationList sorting;
 
-    private OutputColumnsTransformer(final LogicalOperator input, final List<? extends AST> outputColumns) {
+    private OutputColumnsTransformer(final LogicalOperator input, final List<? extends AST> outputColumns, final SortSpecificationList sorting) {
         this.input = input;
         this.outputColumns = new ArrayList<>(outputColumns);
+        this.sorting = sorting;
         this.columnNameResolver = new ColumnNameResolver();
     }
 
-    static LogicalOperator transformOutputColumns(final LogicalOperator input, final List<? extends AST> outputColumns) {
-        return new OutputColumnsTransformer(input, outputColumns).transform();
+    static LogicalOperator transformOutputColumns(final LogicalOperator input, final List<? extends AST> outputColumns, final SortSpecificationList sorting) {
+        return new OutputColumnsTransformer(input, outputColumns, sorting).transform();
     }
 
     private LogicalOperator transform() {
@@ -110,6 +115,14 @@ final class OutputColumnsTransformer {
                                                                            columnNameResolver.apply(map)))
                                                  .collect(toList()),
                                input);
+        }
+
+        if (sorting != null) {
+            if (!aggregates.isEmpty()) {
+                input = new CollectLop(input);
+            }
+
+            input = new SortLop(input, sorting.columns());
         }
 
         final ProjectionLop projection = new ProjectionLop(outputColumnNames, input);

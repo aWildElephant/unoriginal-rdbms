@@ -7,7 +7,7 @@ import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.InsertInto;
-import fr.awildelephant.rdbms.ast.Select;
+import fr.awildelephant.rdbms.ast.SortedSelect;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.engine.Engine;
@@ -59,8 +59,8 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     }
 
     @Override
-    public Table visit(Select select) {
-        return executeReadQuery(select);
+    public Table visit(SortedSelect sortedSelect) {
+        return executeReadQuery(sortedSelect);
     }
 
     @Override

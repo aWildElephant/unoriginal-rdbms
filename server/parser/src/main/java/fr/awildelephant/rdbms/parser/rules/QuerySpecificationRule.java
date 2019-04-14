@@ -2,16 +2,15 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
-import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
+import fr.awildelephant.rdbms.ast.SortedSelect;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
-import static fr.awildelephant.rdbms.ast.OrderBy.orderBy;
-import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.SortedSelect.sortedSelect;
 import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
@@ -60,17 +59,17 @@ final class QuerySpecificationRule {
             input = groupBy(input, groupingSpecification);
         }
 
+        SortSpecificationList sortSpecificationList = null;
+
         if (nextTokenIs(ORDER, lexer)) {
             lexer.consumeNextToken();
 
             consumeAndExpect(BY, lexer);
 
-            final SortSpecificationList sortSpecificationList = deriveSortSpecification(lexer);
-
-            input = orderBy(input, sortSpecificationList);
+            sortSpecificationList = deriveSortSpecification(lexer);
         }
 
-        final Select select = select(outputColumns, input);
+        final SortedSelect select = sortedSelect(outputColumns, sortSpecificationList, input);
 
         if (distinct) {
             return distinct(select);

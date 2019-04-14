@@ -4,9 +4,8 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.GroupBy;
-import fr.awildelephant.rdbms.ast.OrderBy;
 import fr.awildelephant.rdbms.ast.Row;
-import fr.awildelephant.rdbms.ast.Select;
+import fr.awildelephant.rdbms.ast.SortedSelect;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.Where;
@@ -18,7 +17,6 @@ import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 
 import java.util.ArrayList;
@@ -47,13 +45,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(OrderBy orderBy) {
-        return new SortLop(apply(orderBy.input()), orderBy.sortSpecification().columns());
-    }
-
-    @Override
-    public LogicalOperator visit(Select select) {
-        return transformOutputColumns(apply(select.inputTable()), select.outputColumns());
+    public LogicalOperator visit(SortedSelect sortedSelect) {
+        return transformOutputColumns(apply(sortedSelect.inputTable()), sortedSelect.outputColumns(),
+                                      sortedSelect.sorting());
     }
 
     @Override

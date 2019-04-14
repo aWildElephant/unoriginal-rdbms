@@ -7,7 +7,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
 import static fr.awildelephant.rdbms.ast.GroupingSetsList.groupingSetsList;
-import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
