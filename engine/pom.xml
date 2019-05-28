@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>fr.awildelephant</groupId>
+        <artifactId>rdbms</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>rdbms-engine</artifactId>
+    <name>${engine.fancyName}</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <engine.fancyName>${project.fancyName} :: Engine</engine.fancyName>
+    </properties>
+
+    <modules>
+        <module>algebraizer</module>
+        <module>ast</module>
+        <module>formula</module>
+        <module>glue</module>
+        <module>lexer</module>
+        <module>logical</module>
+        <module>parser</module>
+        <module>schema</module>
+        <module>storage</module>
+        <module>value</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-algebraizer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-ast</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-formula</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-lexer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-logical</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-schema</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-storage</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-parser</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-value</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

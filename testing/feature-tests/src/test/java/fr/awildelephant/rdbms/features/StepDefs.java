@@ -13,7 +13,6 @@ import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StepDefs implements En {
 

@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
-import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -100,7 +99,7 @@ public enum Checker {
     private static SimpleDateFormat iso8601DateFormat() {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-        format.setTimeZone(TimeZone.getTimeZone(UTC));
+        format.setTimeZone(TimeZone.getDefault());
 
         return format;
     }

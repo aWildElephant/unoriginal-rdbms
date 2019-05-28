@@ -13,68 +13,32 @@
     <name>${server.fancyName}</name>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>standalone</module>
+        <module>arguments</module>
+        <module>rpc</module>
+        <module>driver</module>
+    </modules>
+
     <properties>
         <server.fancyName>${project.fancyName} :: Server</server.fancyName>
     </properties>
-
-    <modules>
-        <module>algebraizer</module>
-        <module>ast</module>
-        <module>engine</module>
-        <module>formula</module>
-        <module>lexer</module>
-        <module>logical</module>
-        <module>parser</module>
-        <module>schema</module>
-        <module>value</module>
-        <module>glue</module>
-    </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-algebraizer</artifactId>
+                <artifactId>rdbms-arguments</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-ast</artifactId>
+                <artifactId>rdbms-rpc-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-formula</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-lexer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-logical</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-parser</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-schema</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.awildelephant</groupId>
-                <artifactId>rdbms-value</artifactId>
+                <artifactId>rdbms-rpc-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

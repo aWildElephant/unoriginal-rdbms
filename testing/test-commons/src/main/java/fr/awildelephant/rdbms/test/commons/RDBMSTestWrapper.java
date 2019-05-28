@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.test.commons;
 
-import fr.awildelephant.rdbms.client.RDBMSDriver;
+import fr.awildelephant.rdbms.embedded.Driver;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ public class RDBMSTestWrapper {
     private SQLException lastException;
 
     public RDBMSTestWrapper(String identifier) throws SQLException {
-        connection = new RDBMSDriver().connect(String.format(CONNECTION_STRING, identifier), null);
+        connection = new Driver().connect(String.format(CONNECTION_STRING, identifier), null);
     }
 
     public void execute(String query) throws SQLException {

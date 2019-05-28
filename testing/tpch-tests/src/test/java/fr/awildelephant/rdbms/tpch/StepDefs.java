@@ -52,7 +52,7 @@ public class StepDefs implements En {
                                        .getResourceAsStream(String.format(SCHEMA_PATH, tableName));
 
         if (stream == null) {
-            throw new NoSuchElementException("Table " + tableName + " is not a known TPC-H table");
+            throw new NoSuchElementException("ResultProxy " + tableName + " is not a known TPC-H table");
         }
 
         try (final Scanner scanner = new Scanner(stream).useDelimiter("\\A")) {

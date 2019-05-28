@@ -21,11 +21,6 @@
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-client</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-test-commons</artifactId>
             <scope>test</scope>
         </dependency>
