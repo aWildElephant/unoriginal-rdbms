@@ -12,6 +12,7 @@ import static fr.awildelephant.rdbms.ast.SortSpecificationList.sortSpecification
 import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.SortedSelect.sortedSelect;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
+import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
@@ -38,7 +39,7 @@ class SelectParserTest {
     void it_should_parse_a_select_star_statement() {
         assertParsing("SELECT * FROM z",
 
-                      select(singletonList(asterisk()), tableName("z")));
+                      select(List.of(asterisk()), tableName("z")));
     }
 
     @Test
@@ -76,5 +77,12 @@ class SelectParserTest {
                       sortedSelect(columns("column1"),
                                    sortSpecificationList(List.of(columnName("column2"), columnName("column3"))),
                                    tableName("test")));
+    }
+
+    @Test
+    void it_should_parse_a_select_query_with_several_tables() {
+        assertParsing("SELECT * FROM one, two, three",
+
+                      select(List.of(asterisk()), tableReferenceList(List.of(tableName("one"), tableName("two"), tableName("three")))));
     }
 }

@@ -95,6 +95,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(TableName tableName);
 
+    T visit(TableReferenceList tableReferenceList);
+
     T visit(TextLiteral textLiteral);
 
     T visit(Where where);
