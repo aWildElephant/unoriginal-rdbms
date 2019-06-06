@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
 import fr.awildelephant.rdbms.engine.operators.AliasOperator;
 import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
+import fr.awildelephant.rdbms.engine.operators.CartesianProductOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.FilterOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
@@ -16,6 +17,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
@@ -111,6 +113,15 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
             return output.stream();
         });
+    }
+
+    @Override
+    public Stream<Table> visit(CartesianProductLop cartesianProductNode) {
+        final CartesianProductOperator operator = new CartesianProductOperator(cartesianProductNode.schema());
+
+        return apply(cartesianProductNode.leftInput())
+                .flatMap(left -> apply(cartesianProductNode.rightInput())
+                        .map(right -> operator.compute(left, right)));
     }
 
     @Override

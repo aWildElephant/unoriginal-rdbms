@@ -17,7 +17,6 @@ import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
-import static java.util.Collections.singletonList;
 
 class SelectParserTest {
 
@@ -83,6 +82,9 @@ class SelectParserTest {
     void it_should_parse_a_select_query_with_several_tables() {
         assertParsing("SELECT * FROM one, two, three",
 
-                      select(List.of(asterisk()), tableReferenceList(List.of(tableName("one"), tableName("two"), tableName("three")))));
+                      select(List.of(asterisk()),
+                             tableReferenceList(tableName("one"),
+                                                tableName("two"),
+                                                List.of(tableName("three")))));
     }
 }

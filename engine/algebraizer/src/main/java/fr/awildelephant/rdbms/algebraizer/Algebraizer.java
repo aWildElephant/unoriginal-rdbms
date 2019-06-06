@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.GroupBy;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.SortedSelect;
 import fr.awildelephant.rdbms.ast.TableName;
+import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.Where;
 import fr.awildelephant.rdbms.engine.Storage;
@@ -14,6 +15,7 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
@@ -56,6 +58,20 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Table table = storage.get(name);
 
         return new BaseTableLop(name, table.schema());
+    }
+
+    @Override
+    public LogicalOperator visit(TableReferenceList tableReferenceList) {
+        final LogicalOperator left = apply(tableReferenceList.first());
+        final LogicalOperator right = apply(tableReferenceList.second());
+
+        CartesianProductLop cartesianProduct = new CartesianProductLop(left, right);
+
+        for (AST other : tableReferenceList.others()) {
+            cartesianProduct = new CartesianProductLop(cartesianProduct, apply(other));
+        }
+
+        return cartesianProduct;
     }
 
     @Override

@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.schema;
 
 import java.util.Objects;
 
+// TODO: split the index and the rest of the fields
 public final class Column {
 
     private final int index;

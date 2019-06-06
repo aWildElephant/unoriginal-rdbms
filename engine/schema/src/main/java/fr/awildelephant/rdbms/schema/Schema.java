@@ -15,12 +15,18 @@ public final class Schema {
     private final Map<String, Column> columnIndex;
 
     public Schema(List<Column> columns) {
-        final int numberOfAttributes = columns.size();
+        final int numberOfColumns = columns.size();
+        final List<Column> reindexedColumns = new ArrayList<>(numberOfColumns);
 
-        final Map<String, Column> indexedAttributes = new HashMap<>(numberOfAttributes);
-        final String[] nameList = new String[numberOfAttributes];
+        for (int i = 0; i < numberOfColumns; i++) {
+            final Column column = columns.get(i);
+            reindexedColumns.add(new Column(i, column.name(), column.domain(), column.notNull()));
+        }
 
-        for (Column column : columns) {
+        final Map<String, Column> indexedAttributes = new HashMap<>(numberOfColumns);
+        final String[] nameList = new String[numberOfColumns];
+
+        for (Column column : reindexedColumns) {
             nameList[column.index()] = column.name();
             indexedAttributes.put(column.name(), column);
         }

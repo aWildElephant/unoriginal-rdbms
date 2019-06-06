@@ -1,6 +1,5 @@
 Feature: Cartesian product
 
-  @todo
   Scenario: I query the cartesian product of two tables
 
     Given the table firstnames

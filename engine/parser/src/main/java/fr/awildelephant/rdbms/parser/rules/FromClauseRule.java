@@ -11,6 +11,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.TableReferenceRule.deriveTableReferenceRule;
 
 final class FromClauseRule {
 
@@ -21,21 +22,28 @@ final class FromClauseRule {
     static AST deriveFromClauseRule(final Lexer lexer) {
         consumeAndExpect(FROM, lexer);
 
-        final AST tableReference = TableReferenceRule.deriveTableReferenceRule(lexer);
+        final AST tableReference = deriveTableReferenceRule(lexer);
 
         if (!nextTokenIs(COMMA, lexer)) {
             return tableReference;
         }
 
-        final List<AST> tableReferences = new ArrayList<>();
-        tableReferences.add(tableReference);
+        lexer.consumeNextToken();
+
+        final AST secondTableReference = deriveTableReferenceRule(lexer);
+
+        if (!nextTokenIs(COMMA, lexer)) {
+            return tableReferenceList(tableReference, secondTableReference, List.of());
+        }
+
+        final List<AST> additionalTableReferences = new ArrayList<>();
 
         do {
             lexer.consumeNextToken();
 
-            tableReferences.add(TableReferenceRule.deriveTableReferenceRule(lexer));
+            additionalTableReferences.add(deriveTableReferenceRule(lexer));
         } while (nextTokenIs(COMMA, lexer));
 
-        return tableReferenceList(tableReferences);
+        return tableReferenceList(tableReference, secondTableReference, additionalTableReferences);
     }
 }

@@ -29,4 +29,6 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
     T visit(SortLop sortLop);
 
     T visit(TableConstructorLop tableConstructor);
+
+    T visit(CartesianProductLop cartesianProductNode);
 }

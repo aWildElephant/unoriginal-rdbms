@@ -7,14 +7,30 @@ import java.util.Objects;
 
 public final class TableReferenceList implements AST {
 
-    private final List<AST> tableReferences;
+    private final AST first;
+    private final AST second;
+    private final List<AST> others;
 
-    private TableReferenceList(List<AST> tableReferences) {
-        this.tableReferences = tableReferences;
+    private TableReferenceList(AST first, AST second, List<AST> others) {
+        this.first = first;
+        this.second = second;
+        this.others = others;
     }
 
-    public static TableReferenceList tableReferenceList(List<AST> tableReferences) {
-        return new TableReferenceList(tableReferences);
+    public static TableReferenceList tableReferenceList(AST first, AST second, List<AST> others) {
+        return new TableReferenceList(first, second, others);
+    }
+
+    public AST first() {
+        return first;
+    }
+
+    public AST second() {
+        return second;
+    }
+
+    public List<AST> others() {
+        return others;
     }
 
     @Override
@@ -24,12 +40,16 @@ public final class TableReferenceList implements AST {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("tableReferences", tableReferences).toString();
+        return new ToStringBuilder(this)
+                .append("first", first)
+                .append("second", second)
+                .append("others", others)
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(tableReferences);
+        return Objects.hash(first, second, others);
     }
 
     @Override
@@ -40,6 +60,8 @@ public final class TableReferenceList implements AST {
 
         final TableReferenceList other = (TableReferenceList) obj;
 
-        return Objects.equals(tableReferences, other.tableReferences);
+        return Objects.equals(first, other.first)
+                && Objects.equals(second, other.second)
+                && Objects.equals(others, other.others);
     }
 }
