@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.BOOLEAN;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DECIMAL;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.INTEGER;
@@ -106,7 +107,9 @@ class CreateTableParserTest {
     void it_should_parse_a_create_table_query_with_a_foreign_key_constraint_definition_on_several_columns() {
         final TableElementList elements = tableElementList().addColumn("a", INTEGER)
                                                             .addColumn("b", INTEGER)
-                                                            .addForeignKeyConstraint(Set.of("a", "b"), "other", Set.of("c", "d"))
+                                                            .addForeignKeyConstraint(Set.of("a", "b"),
+                                                                                     "other",
+                                                                                     Set.of("c", "d"))
                                                             .build();
 
         assertParsing("CREATE TABLE test (a INTEGER, b INTEGER, FOREIGN KEY (a, b) REFERENCES other(c, d))",
@@ -140,6 +143,16 @@ class CreateTableParserTest {
                                                             .build();
 
         assertParsing("CREATE TABLE test (a DATE)",
+
+                      createTable(tableName("test"), elements));
+    }
+
+    @Test
+    void it_should_parse_a_create_table_query_with_a_boolean_column() {
+        final TableElementList elements = tableElementList().addColumn("a", BOOLEAN)
+                                                            .build();
+
+        assertParsing("CREATE TABLE test (a BOOLEAN)",
 
                       createTable(tableName("test"), elements));
     }

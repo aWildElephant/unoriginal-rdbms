@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.BOOLEAN;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DECIMAL;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.INTEGER;
@@ -85,6 +86,8 @@ final class TableCreator {
 
     private static Domain domainOf(int columnType) {
         switch (columnType) {
+            case BOOLEAN:
+                return Domain.BOOLEAN;
             case DATE:
                 return Domain.DATE;
             case DECIMAL:

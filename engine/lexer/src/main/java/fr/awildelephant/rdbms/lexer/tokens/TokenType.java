@@ -5,6 +5,7 @@ public enum TokenType {
     AS,
     ASTERISK,
     AVG,
+    BOOLEAN,
     BY,
     CAST,
     CHAR,
@@ -50,6 +51,7 @@ public enum TokenType {
     TEXT_LITERAL,
     TRUE,
     UNIQUE,
+    UNKNOWN,
     VALUES,
     VARCHAR,
     WHERE

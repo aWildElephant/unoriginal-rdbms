@@ -99,6 +99,8 @@ final class TableElementRule {
 
     private static int columnType(final Token columnTypeToken, final Lexer lexer) {
         switch (columnTypeToken.type()) {
+            case BOOLEAN:
+                return ColumnDefinition.BOOLEAN;
             case CHAR:
                 ignoreLengthInformation(lexer);
 

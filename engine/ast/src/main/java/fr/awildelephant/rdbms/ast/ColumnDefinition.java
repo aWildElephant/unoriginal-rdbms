@@ -5,10 +5,11 @@ import java.util.Objects;
 public final class ColumnDefinition implements AST {
 
     // TODO: use java.sql.Types?
-    public static final int DATE = 0;
-    public static final int INTEGER = 1;
-    public static final int TEXT = 2;
-    public static final int DECIMAL = 3;
+    public static final int BOOLEAN = 0;
+    public static final int DATE = 1;
+    public static final int INTEGER = 2;
+    public static final int TEXT = 3;
+    public static final int DECIMAL = 4;
 
     private final String columnName;
     private final int columnType;

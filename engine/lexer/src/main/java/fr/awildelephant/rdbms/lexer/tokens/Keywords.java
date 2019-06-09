@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.lexer.tokens;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AVG;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BOOLEAN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
@@ -33,6 +34,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TRUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNIQUE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNKNOWN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
@@ -70,6 +72,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return AVG;
+        }
+    },
+    BOOLEAN_TOKEN {
+        @Override
+        public String text() {
+            return "boolean";
+        }
+
+        @Override
+        public TokenType type() {
+            return BOOLEAN;
         }
     },
     BY_TOKEN {
@@ -411,6 +424,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return VALUES;
+        }
+    },
+    UNKNOWN_TOKEN {
+        @Override
+        public String text() {
+            return "unknown";
+        }
+
+        @Override
+        public TokenType type() {
+            return UNKNOWN;
         }
     },
     VARCHAR_TOKEN {

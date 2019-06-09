@@ -3,9 +3,9 @@ Feature: Create table
   Scenario: I create an empty table with a single integer column
 
     When I execute the query
-      """
-      CREATE TABLE test (a INTEGER)
-      """
+    """
+    CREATE TABLE test (a INTEGER)
+    """
 
     Then table test should be
       | a       |
@@ -14,9 +14,9 @@ Feature: Create table
   Scenario: I create an empty table with text columns
 
     When I execute the query
-      """
-      CREATE TABLE test (a TEXT, b CHAR(8), c VARCHAR(8))
-      """
+    """
+    CREATE TABLE test (a TEXT, b CHAR(8), c VARCHAR(8))
+    """
 
     Then table test should be
       | a    | b    | c    |
@@ -25,10 +25,21 @@ Feature: Create table
   Scenario: I create an empty table with a date column
 
     When I execute the query
-      """
-      CREATE TABLE test (a INTEGER UNIQUE NOT NULL, b DATE)
-      """
+    """
+    CREATE TABLE test (a INTEGER UNIQUE NOT NULL, b DATE)
+    """
 
     Then table test should be
       | a       | b    |
       | INTEGER | DATE |
+
+  Scenario: I create an empty table with a boolean column
+
+    When I execute the query
+    """
+    CREATE TABLE test (a BOOLEAN)
+    """
+
+    Then table test should be
+      | a       |
+      | BOOLEAN |

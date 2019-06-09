@@ -99,6 +99,10 @@ final class BooleanValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return BooleanLiteral.FALSE;
+            case UNKNOWN:
+                lexer.consumeNextToken();
+
+                return BooleanLiteral.UNKNOWN;
             case IDENTIFIER:
                 return deriveColumnReference(lexer);
             default:
