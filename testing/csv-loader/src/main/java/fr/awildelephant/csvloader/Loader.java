@@ -14,7 +14,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.StringJoiner;
+import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
 public class Loader {
@@ -32,15 +32,17 @@ public class Loader {
 
         final ProgressLogger logger = new ProgressLogger();
 
-        try (final CSVParser parser = CSVFormat.DEFAULT.withDelimiter('|').parse(fileReader)) {
+        final int numberOfRowsPerInsert = 10_000;
 
+        try (final CSVParser parser = CSVFormat.DEFAULT.withDelimiter('|').parse(fileReader)) {
             logger.start();
 
-            for (CSVRecord record : parser) {
+            final Iterator<CSVRecord> records = parser.iterator();
+
+            while (records.hasNext()) {
                 try (final Statement statement = connection.createStatement()) {
-                    final String insertQuery = createInsertQuery(tableName, record, types);
-                    statement.execute(insertQuery);
-                    logger.log(1);
+                    statement.execute(createInsertQuery(tableName, records, types, numberOfRowsPerInsert));
+                    logger.log(numberOfRowsPerInsert);
                 }
             }
         }
@@ -70,22 +72,57 @@ public class Loader {
         return types;
     }
 
-    private String createInsertQuery(String tableName, CSVRecord record, int[] types) {
-        final StringJoiner queryBuilder = new StringJoiner(", ", "INSERT INTO " + tableName + " VALUES (", ")");
+    private String createInsertQuery(String tableName, Iterator<CSVRecord> records, int[] types, int size) {
+        final StringBuilder queryBuilder = new StringBuilder("INSERT INTO ");
+        queryBuilder.append(tableName);
+        queryBuilder.append(" VALUES");
 
-        for (int i = 0; i < types.length; i++) {
-            switch (types[i]) {
-                case Types.VARCHAR:
-                    queryBuilder.add("'" + record.get(i) + "'");
-                    break;
-                case Types.DATE:
-                    queryBuilder.add("date '" + record.get(i) + "'");
-                    break;
-                default:
-                    queryBuilder.add(record.get(i));
+        boolean commaSeparatorNeeded = false;
+
+        int numberOfRows = 0;
+
+        do {
+            if (commaSeparatorNeeded) {
+                queryBuilder.append(',');
             }
-        }
+
+            buildRow(queryBuilder, records.next(), types);
+
+            commaSeparatorNeeded = true;
+            numberOfRows++;
+        } while (records.hasNext() && numberOfRows < size);
 
         return queryBuilder.toString();
+    }
+
+    private void buildRow(StringBuilder queryBuilder, CSVRecord record, int[] types) {
+        queryBuilder.append('(');
+
+        boolean commaSeparatorNeeded = false;
+
+        for (int j = 0; j < types.length; j++) {
+            if (commaSeparatorNeeded) {
+                queryBuilder.append(',');
+            }
+
+            switch (types[j]) {
+                case Types.VARCHAR:
+                    queryBuilder.append('\'');
+                    queryBuilder.append(record.get(j));
+                    queryBuilder.append('\'');
+                    break;
+                case Types.DATE:
+                    queryBuilder.append("date '");
+                    queryBuilder.append(record.get(j));
+                    queryBuilder.append('\'');
+                    break;
+                default:
+                    queryBuilder.append(record.get(j));
+            }
+
+            commaSeparatorNeeded = true;
+        }
+
+        queryBuilder.append(')');
     }
 }
