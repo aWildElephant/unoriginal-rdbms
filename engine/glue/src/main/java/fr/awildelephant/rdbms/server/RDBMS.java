@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +22,9 @@ public final class RDBMS {
     public RDBMS() {
         final Storage storage = new Storage();
         final Algebraizer algebraizer = new Algebraizer(storage);
+        final Optimizer optimizer = new Optimizer();
 
-        dispatcher = new QueryDispatcher(storage, algebraizer);
+        dispatcher = new QueryDispatcher(storage, algebraizer, optimizer);
     }
 
     private static AST parse(final String query) {

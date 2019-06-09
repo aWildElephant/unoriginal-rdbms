@@ -12,6 +12,8 @@ import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
 
 import static fr.awildelephant.rdbms.server.Inserter.insertRows;
 import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
@@ -20,10 +22,12 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     private final Storage storage;
     private final Algebraizer algebraizer;
+    private final Optimizer optimizer;
 
-    QueryDispatcher(final Storage storage, final Algebraizer algebraizer) {
+    QueryDispatcher(Storage storage, Algebraizer algebraizer, Optimizer optimizer) {
         this.storage = storage;
         this.algebraizer = algebraizer;
+        this.optimizer = optimizer;
     }
 
     @Override
@@ -74,7 +78,9 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     }
 
     private Table executeReadQuery(AST ast) {
-        return storage.execute(algebraizer.apply(ast));
+        final LogicalOperator rawPlan = algebraizer.apply(ast);
+        final LogicalOperator optimizedPlan = optimizer.optimize(rawPlan);
+        return storage.execute(optimizedPlan);
     }
 
     @Override

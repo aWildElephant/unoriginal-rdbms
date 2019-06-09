@@ -28,6 +28,7 @@
         <module>schema</module>
         <module>storage</module>
         <module>value</module>
+        <module>optimizer</module>
     </modules>
 
     <dependencyManagement>
@@ -55,6 +56,11 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-logical</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-optimizer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
