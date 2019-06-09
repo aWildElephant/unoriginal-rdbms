@@ -1,4 +1,4 @@
-Feature: TPC-H queries
+Feature: TPC-H Q1
 
   Background: TPC-H dataset
 
