@@ -23,6 +23,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PLUS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SOLIDUS_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.WILDCARD_TOKEN;
 import static java.lang.Integer.parseInt;
 
 public final class Lexer {
@@ -99,6 +100,8 @@ public final class Lexer {
                 return COMMA_TOKEN;
             case ';':
                 return SEMICOLON_TOKEN;
+            case '?':
+                return WILDCARD_TOKEN;
             case '\'':
                 return matchTextLiteral();
             case '0':

@@ -12,6 +12,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.PLUS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SEMICOLON;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SOLIDUS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WILDCARD;
 
 public enum StaticToken implements Token {
 
@@ -145,6 +146,17 @@ public enum StaticToken implements Token {
         @Override
         public TokenType type() {
             return SOLIDUS;
+        }
+    },
+    WILDCARD_TOKEN {
+        @Override
+        public String text() {
+            return "?";
+        }
+
+        @Override
+        public TokenType type() {
+            return WILDCARD;
         }
     }
 }

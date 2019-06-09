@@ -54,5 +54,6 @@ public enum TokenType {
     UNKNOWN,
     VALUES,
     VARCHAR,
-    WHERE
+    WHERE,
+    WILDCARD
 }
