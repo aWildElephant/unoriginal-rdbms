@@ -33,6 +33,11 @@ public final class Equal implements AST {
     }
 
     @Override
+    public String toString() {
+        return left + " = " + right;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(left, right);
     }

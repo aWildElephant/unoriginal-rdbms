@@ -5,18 +5,18 @@ import fr.awildelephant.rdbms.ast.ASTVisitor;
 
 import java.util.Objects;
 
-public final class And implements AST {
+public final class Less implements AST {
 
     private final AST left;
     private final AST right;
 
-    private And(AST left, AST right) {
+    private Less(AST left, AST right) {
         this.left = left;
         this.right = right;
     }
 
-    public static And and(AST left, AST right) {
-        return new And(left, right);
+    public static Less less(AST left, AST right) {
+        return new Less(left, right);
     }
 
     public AST left() {
@@ -34,7 +34,7 @@ public final class And implements AST {
 
     @Override
     public String toString() {
-        return left + " and " + right;
+        return left + " < " + right;
     }
 
     @Override
@@ -44,11 +44,11 @@ public final class And implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof And)) {
+        if (!(obj instanceof Less)) {
             return false;
         }
 
-        final And other = (And) obj;
+        final Less other = (Less) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

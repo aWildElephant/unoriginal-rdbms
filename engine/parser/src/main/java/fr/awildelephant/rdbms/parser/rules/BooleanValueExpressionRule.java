@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
+import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
 import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
@@ -70,6 +71,10 @@ final class BooleanValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return equal(left, deriveValueExpressionRule(lexer));
+            case LESS:
+                lexer.consumeNextToken();
+
+                return less(left, deriveValueExpressionRule(lexer));
             case LESS_OR_EQUAL:
                 lexer.consumeNextToken();
 

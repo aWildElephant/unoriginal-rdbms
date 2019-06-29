@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
+import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
@@ -54,6 +55,7 @@ import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperati
 import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.equalComparison;
+import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessOrEqualComparison;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static fr.awildelephant.rdbms.schema.Domain.DATE;
@@ -160,6 +162,14 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         final Period period = Period.ofDays(parseInt(intervalLiteral.intervalString()));
 
         return constant(intervalValue(period), INTERVAL);
+    }
+
+    @Override
+    public Operation visit(Less less) {
+        final Operation left = apply(less.left());
+        final Operation right = apply(less.right());
+
+        return lessComparison(left, right);
     }
 
     @Override

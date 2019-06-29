@@ -28,6 +28,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
+import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
@@ -46,9 +47,21 @@ final class ValueExpressionRule {
                 return deriveTextLiteral(lexer);
             case MINUS:
                 lexer.consumeNextToken();
-                final IntegerLiteralToken integerValue = (IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer);
 
-                return integerLiteral(-integerValue.value());
+                final Token value = lexer.consumeNextToken();
+
+                switch (value.type()) {
+                    case INTEGER_LITERAL:
+                        final IntegerLiteralToken integerValue = (IntegerLiteralToken) value;
+
+                        return integerLiteral(-integerValue.value());
+                    case DECIMAL_LITERAL:
+                        final DecimalLiteralToken decimalValue = (DecimalLiteralToken) value;
+
+                        return decimalLiteral(decimalValue.value().negate());
+                    default:
+                        throw unexpectedToken(value);
+                }
             default:
                 return deriveNumericValueExpression(lexer);
         }
