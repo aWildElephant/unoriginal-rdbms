@@ -19,6 +19,14 @@ public final class Greater implements AST {
         return new Greater(left, right);
     }
 
+    public AST left() {
+        return left;
+    }
+
+    public AST right() {
+        return right;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

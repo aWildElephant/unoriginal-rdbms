@@ -10,6 +10,7 @@ import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
+import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -150,6 +151,14 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         final Operation right = apply(equal.right());
 
         return equalComparison(left, right);
+    }
+
+    @Override
+    public Operation visit(Greater greater) {
+        final Operation left = apply(greater.left());
+        final Operation right = apply(greater.right());
+
+        return lessComparison(right, left);
     }
 
     @Override
