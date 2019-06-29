@@ -15,6 +15,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.END_OF_FILE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.EQUAL_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.GREATER_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_OR_EQUAL_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_TOKEN;
@@ -86,6 +87,8 @@ public final class Lexer {
                 }
 
                 return LESS_TOKEN;
+            case '>':
+                return GREATER_TOKEN;
             case '/':
                 return SOLIDUS_TOKEN;
             case '+':

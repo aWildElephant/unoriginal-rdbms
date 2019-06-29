@@ -23,6 +23,7 @@ public enum TokenType {
     FALSE,
     FOREIGN,
     FROM,
+    GREATER,
     GROUP,
     IDENTIFIER,
     INSERT,

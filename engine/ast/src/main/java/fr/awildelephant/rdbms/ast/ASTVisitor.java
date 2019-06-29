@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
+import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -57,6 +58,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(DropTable dropTable);
 
     T visit(Equal equal);
+
+    T visit(Greater greater);
 
     T visit(GroupBy groupBy);
 

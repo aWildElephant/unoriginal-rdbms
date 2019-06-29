@@ -11,6 +11,7 @@ import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
+import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
@@ -54,5 +55,11 @@ class BooleanExpressionParserTest {
     void it_should_parse_a_less_than_comparison() {
         assertParsing("VALUES (a < 42)",
                       rows(row(less(columnName("a"), integerLiteral(42)))));
+    }
+
+    @Test
+    void it_should_parse_a_greater_than_comparison() {
+        assertParsing("VALUES (a > 9000)",
+                      rows(row(greater(columnName("a"), integerLiteral(9000)))));
     }
 }
