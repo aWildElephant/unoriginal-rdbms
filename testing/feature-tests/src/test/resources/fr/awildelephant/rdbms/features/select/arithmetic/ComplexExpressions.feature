@@ -14,7 +14,6 @@ Feature: Complex expressions
     """
 
     # TODO: we should expect 1 + (a + 1) / (b * 2.0)
-
     Then I expect the result set
       | 1 + a + 1 / b * 2 |
       | DECIMAL           |

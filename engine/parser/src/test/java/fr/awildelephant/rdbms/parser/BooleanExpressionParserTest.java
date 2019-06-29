@@ -62,4 +62,11 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (a > 9000)",
                       rows(row(greater(columnName("a"), integerLiteral(9000)))));
     }
+
+    @Test
+    void it_should_parse_a_comparison_between_two_columns_followed_by_another_comparison() {
+        assertParsing("VALUES (a = b AND c = 0)",
+                      rows(row(and(equal(columnName("a"), columnName("b")),
+                                   equal(columnName("c"), integerLiteral(0))))));
+    }
 }

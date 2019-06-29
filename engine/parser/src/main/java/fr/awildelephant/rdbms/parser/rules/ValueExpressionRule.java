@@ -29,7 +29,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
-import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
+import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 
@@ -46,21 +46,22 @@ final class ValueExpressionRule {
             case TEXT_LITERAL:
                 return deriveTextLiteral(lexer);
             case MINUS:
+                // TODO: très mauvais
                 lexer.consumeNextToken();
 
-                final Token value = lexer.consumeNextToken();
+                final Token numericValueToNegate = lexer.consumeNextToken();
 
-                switch (value.type()) {
+                switch (numericValueToNegate.type()) {
                     case INTEGER_LITERAL:
-                        final IntegerLiteralToken integerValue = (IntegerLiteralToken) value;
+                        final IntegerLiteralToken integerValue = (IntegerLiteralToken) numericValueToNegate;
 
                         return integerLiteral(-integerValue.value());
                     case DECIMAL_LITERAL:
-                        final DecimalLiteralToken decimalValue = (DecimalLiteralToken) value;
+                        final DecimalLiteralToken decimalValue = (DecimalLiteralToken) numericValueToNegate;
 
                         return decimalLiteral(decimalValue.value().negate());
                     default:
-                        throw unexpectedToken(value);
+                        throw unexpectedToken(numericValueToNegate);
                 }
             default:
                 return deriveNumericValueExpression(lexer);
@@ -103,9 +104,17 @@ final class ValueExpressionRule {
     }
 
     private static AST deriveFactor(Lexer lexer) {
-        final TokenType nextType = lexer.lookupNextToken().type();
+        final Token nextToken = lexer.lookupNextToken();
 
-        switch (nextType) {
+        switch (nextToken.type()) {
+            case LEFT_PAREN:
+                lexer.consumeNextToken();
+
+                final AST parenthesizedExpression = deriveNumericValueExpression(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return parenthesizedExpression;
             case DATE:
                 lexer.consumeNextToken();
 
@@ -161,8 +170,10 @@ final class ValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return sum(sumInput);
+            case IDENTIFIER:
+                return deriveColumnReference(lexer);
             default:
-                return deriveBooleanValueExpressionRule(lexer);
+                throw unexpectedToken(nextToken);
         }
     }
 

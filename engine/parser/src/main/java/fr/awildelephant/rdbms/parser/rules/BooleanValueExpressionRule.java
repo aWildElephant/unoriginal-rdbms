@@ -16,8 +16,6 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
-import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
-import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpressionRule;
@@ -96,7 +94,7 @@ final class BooleanValueExpressionRule {
             case LEFT_PAREN:
                 lexer.consumeNextToken();
 
-                final AST parenthesizedValueExpression = deriveValueExpressionRule(lexer);
+                final AST parenthesizedValueExpression = deriveBooleanValueExpressionRule(lexer);
 
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
@@ -113,10 +111,8 @@ final class BooleanValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return BooleanLiteral.UNKNOWN;
-            case IDENTIFIER:
-                return deriveColumnReference(lexer);
             default:
-                throw unexpectedToken(nextToken);
+                return deriveValueExpressionRule(lexer);
         }
     }
 }

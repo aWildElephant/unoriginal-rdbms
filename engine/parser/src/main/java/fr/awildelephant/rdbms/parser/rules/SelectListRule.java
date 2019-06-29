@@ -26,7 +26,7 @@ final class SelectListRule {
             return singletonList(asterisk());
         }
 
-        final LinkedList<AST> selectList = new LinkedList<>();
+        final List<AST> selectList = new LinkedList<>();
 
         selectList.add(deriveDerivedColumn(lexer));
 
