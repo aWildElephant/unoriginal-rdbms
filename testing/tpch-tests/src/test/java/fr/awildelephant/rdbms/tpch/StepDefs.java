@@ -8,6 +8,7 @@ import io.cucumber.datatable.DataTable;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StepDefs implements En {
 
+    private static final String TPCH_DATA_DIRECTORY = "TPCH_DATA_DIRECTORY";
     private static final String SCHEMA_PATH = "/schema/%s.sql";
 
     private final RDBMSTestWrapper testWrapper;
@@ -34,10 +36,14 @@ public class StepDefs implements En {
         });
 
         Given("^I load (\\w+) scale factor (\\d+) data", (String tableName, Integer scaleFactor) -> {
-            // TODO: absolute path lol
-            // TODO; proper error handling if the table/the scale factor is not found
-            final File compressedCsvDataFile = new File(
-                    "/home/etienne/Code/rdbms/testing/tpch-tests/data/" + scaleFactor + "/" + tableName + ".tbl.gz");
+            final String tpchDataDirectory = System.getenv(TPCH_DATA_DIRECTORY);
+
+            if (tpchDataDirectory == null) {
+                throw new MissingEnvironmentVariableException(TPCH_DATA_DIRECTORY);
+            }
+
+            final File compressedCsvDataFile = Paths
+                    .get(tpchDataDirectory, String.valueOf(scaleFactor), tableName + ".tbl.gz").toFile();
 
             new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
         });
