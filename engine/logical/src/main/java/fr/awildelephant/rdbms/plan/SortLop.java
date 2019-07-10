@@ -1,25 +1,25 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.SortSpecification;
 
 import java.util.List;
 
 public class SortLop extends AbstractLop {
 
     private final LogicalOperator input;
-    private final List<ColumnName> columns;
+    private final List<SortSpecification> columns;
 
-    public SortLop(LogicalOperator input, List<ColumnName> columns) {
+    public SortLop(LogicalOperator input, List<SortSpecification> sortSpecificationList) {
         super(input.schema());
         this.input = input;
-        this.columns = columns;
+        this.columns = sortSpecificationList;
     }
 
     public LogicalOperator input() {
         return input;
     }
 
-    public List<ColumnName> columns() {
+    public List<SortSpecification> columns() {
         return columns;
     }
 

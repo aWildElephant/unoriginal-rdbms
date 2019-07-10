@@ -1,16 +1,14 @@
 package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.ColumnName;
-import fr.awildelephant.rdbms.ast.SortSpecificationList;
+import fr.awildelephant.rdbms.ast.OrderingSpecification;
+import fr.awildelephant.rdbms.ast.SortSpecification;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static fr.awildelephant.rdbms.ast.SortSpecificationList.sortSpecificationList;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
+import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
+import static fr.awildelephant.rdbms.ast.OrderingSpecification.DESCENDING;
+import static fr.awildelephant.rdbms.ast.SortSpecification.sortSpecification;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 
 final class SortSpecificationRule {
 
@@ -18,17 +16,22 @@ final class SortSpecificationRule {
 
     }
 
-    static SortSpecificationList deriveSortSpecification(final Lexer lexer) {
-        final List<ColumnName> columns = new ArrayList<>();
+    static SortSpecification deriveSortSpecification(Lexer lexer) {
+        final ColumnName columnName = deriveColumnReference(lexer);
 
-        columns.add(deriveColumnReference(lexer));
+        return sortSpecification(columnName, deriveOrderingSpecification(lexer));
+    }
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
-            columns.add(deriveColumnReference(lexer));
+    private static OrderingSpecification deriveOrderingSpecification(Lexer lexer) {
+        switch (lexer.lookupNextToken().type()) {
+            case ASC:
+                lexer.consumeNextToken();
+                break;
+            case DESC:
+                lexer.consumeNextToken();
+                return DESCENDING;
         }
 
-        return sortSpecificationList(columns);
+        return ASCENDING;
     }
 }

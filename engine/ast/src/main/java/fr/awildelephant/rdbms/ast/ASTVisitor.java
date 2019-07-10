@@ -95,6 +95,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(SortedSelect sortedSelect);
 
+    T visit(SortSpecification sortSpecification);
+
     T visit(SortSpecificationList sortSpecificationList);
 
     T visit(TableElementList tableElementList);

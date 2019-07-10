@@ -8,6 +8,9 @@ import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
+import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
+import static fr.awildelephant.rdbms.ast.OrderingSpecification.DESCENDING;
+import static fr.awildelephant.rdbms.ast.SortSpecification.sortSpecification;
 import static fr.awildelephant.rdbms.ast.SortSpecificationList.sortSpecificationList;
 import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.SortedSelect.sortedSelect;
@@ -71,10 +74,12 @@ class SelectParserTest {
 
     @Test
     void it_should_parse_a_select_query_with_an_order_by_clause() {
-        assertParsing("SELECT column1 FROM test ORDER BY column2, column3",
+        assertParsing("SELECT column1 FROM test ORDER BY column1 ASC, column2, column3 DESC",
 
                       sortedSelect(columns("column1"),
-                                   sortSpecificationList(List.of(columnName("column2"), columnName("column3"))),
+                                   sortSpecificationList(List.of(sortSpecification(columnName("column1"), ASCENDING),
+                                                                 sortSpecification(columnName("column2"), ASCENDING),
+                                                                 sortSpecification(columnName("column3"), DESCENDING))),
                                    tableName("test")));
     }
 

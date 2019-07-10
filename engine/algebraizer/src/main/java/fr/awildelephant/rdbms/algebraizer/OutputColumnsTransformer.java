@@ -117,6 +117,12 @@ final class OutputColumnsTransformer {
                                input);
         }
 
+        input = new ProjectionLop(outputColumnNames, input);
+
+        if (!aliasing.isEmpty()) {
+            input = aliasOperator(alias(aliasing), input);
+        }
+
         if (sorting != null) {
             if (!aggregates.isEmpty()) {
                 input = new CollectLop(input);
@@ -125,13 +131,7 @@ final class OutputColumnsTransformer {
             input = new SortLop(input, sorting.columns());
         }
 
-        final ProjectionLop projection = new ProjectionLop(outputColumnNames, input);
-
-        if (!aliasing.isEmpty()) {
-            return aliasOperator(alias(aliasing), projection);
-        }
-
-        return projection;
+        return input;
     }
 
     private void validateColumnReferences() {

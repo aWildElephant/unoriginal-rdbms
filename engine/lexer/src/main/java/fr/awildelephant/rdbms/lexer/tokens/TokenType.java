@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.lexer.tokens;
 public enum TokenType {
     AND,
     AS,
+    ASC,
     ASTERISK,
     AVG,
     BOOLEAN,
@@ -16,6 +17,7 @@ public enum TokenType {
     DAY,
     DECIMAL,
     DECIMAL_LITERAL,
+    DESC,
     DISTINCT,
     DROP,
     END_OF_FILE,

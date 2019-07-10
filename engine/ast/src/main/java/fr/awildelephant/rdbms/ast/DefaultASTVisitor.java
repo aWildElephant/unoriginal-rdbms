@@ -184,6 +184,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(SortSpecification sortSpecification) {
+        return defaultVisit(sortSpecification);
+    }
+
+    @Override
     public T visit(SortSpecificationList sortSpecificationList) {
         return defaultVisit(sortSpecificationList);
     }

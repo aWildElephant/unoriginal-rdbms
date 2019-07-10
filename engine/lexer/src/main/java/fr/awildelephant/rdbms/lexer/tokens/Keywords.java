@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.lexer.tokens;
 
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASC;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AVG;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BOOLEAN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
@@ -12,6 +13,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DAY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DESC;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
@@ -61,6 +63,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return AS;
+        }
+    },
+    ASC_TOKEN {
+        @Override
+        public String text() {
+            return "asc";
+        }
+
+        @Override
+        public TokenType type() {
+            return ASC;
         }
     },
     AVG_TOKEN {
@@ -171,6 +184,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return DECIMAL;
+        }
+    },
+    DESC_TOKEN {
+        @Override
+        public String text() {
+            return "desc";
+        }
+
+        @Override
+        public TokenType type() {
+            return DESC;
         }
     },
     DISTINCT_TOKEN {

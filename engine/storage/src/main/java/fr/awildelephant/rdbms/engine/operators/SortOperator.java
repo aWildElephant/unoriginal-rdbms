@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.operators;
 
-import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.SortSpecification;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.CollectionTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
@@ -14,8 +14,8 @@ public class SortOperator implements Operator<Table, Table> {
 
     private final MultipleColumnsComparator comparator;
 
-    public SortOperator(Schema inputSchema, List<ColumnName> columns) {
-        comparator = new MultipleColumnsComparator(inputSchema, columns);
+    public SortOperator(Schema inputSchema, List<SortSpecification> sortSpecificationList) {
+        comparator = new MultipleColumnsComparator(inputSchema, sortSpecificationList);
     }
 
     @Override

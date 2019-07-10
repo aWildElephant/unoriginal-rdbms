@@ -21,6 +21,29 @@ Feature: Order by
       | 2       |
       | 3       |
 
+  Scenario: I order a table by a single not null integer column in descending order
+
+    Given the table test
+      | a                |
+      | INTEGER NOT NULL |
+      | 4                |
+      | 1                |
+      | 2                |
+      | 3                |
+
+    When I execute the query
+      """
+      SELECT * FROM test ORDER BY a DESC
+      """
+
+    Then I expect the result set
+      | a       |
+      | INTEGER |
+      | 4       |
+      | 3       |
+      | 2       |
+      | 1       |
+
   Scenario: I order a table by a single not null text column
 
     Given the table test

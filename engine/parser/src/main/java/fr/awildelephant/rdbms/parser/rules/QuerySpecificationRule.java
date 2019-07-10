@@ -24,7 +24,7 @@ import static fr.awildelephant.rdbms.parser.rules.GroupingSpecificationRule.deri
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.SelectListRule.deriveSelectListRule;
-import static fr.awildelephant.rdbms.parser.rules.SortSpecificationRule.deriveSortSpecification;
+import static fr.awildelephant.rdbms.parser.rules.SortSpecificationListRule.deriveSortSpecificationList;
 
 final class QuerySpecificationRule {
 
@@ -66,7 +66,7 @@ final class QuerySpecificationRule {
 
             consumeAndExpect(BY, lexer);
 
-            sortSpecificationList = deriveSortSpecification(lexer);
+            sortSpecificationList = deriveSortSpecificationList(lexer);
         }
 
         final SortedSelect select = sortedSelect(outputColumns, sortSpecificationList, input);

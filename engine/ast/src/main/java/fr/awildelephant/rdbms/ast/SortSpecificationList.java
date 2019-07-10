@@ -1,22 +1,24 @@
 package fr.awildelephant.rdbms.ast;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.List;
 import java.util.Objects;
 
 public final class SortSpecificationList implements AST {
 
-    private final List<ColumnName> columns;
+    private final List<SortSpecification> sortSpecificationList;
 
-    private SortSpecificationList(List<ColumnName> columns) {
-        this.columns = columns;
+    private SortSpecificationList(List<SortSpecification> sortSpecificationList) {
+        this.sortSpecificationList = sortSpecificationList;
     }
 
-    public static SortSpecificationList sortSpecificationList(List<ColumnName> columns) {
+    public static SortSpecificationList sortSpecificationList(List<SortSpecification> columns) {
         return new SortSpecificationList(columns);
     }
 
-    public List<ColumnName> columns() {
-        return columns;
+    public List<SortSpecification> columns() {
+        return sortSpecificationList;
     }
 
     @Override
@@ -25,8 +27,15 @@ public final class SortSpecificationList implements AST {
     }
 
     @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append(sortSpecificationList)
+                .toString();
+    }
+
+    @Override
     public int hashCode() {
-        return Objects.hashCode(columns);
+        return Objects.hashCode(sortSpecificationList);
     }
 
     @Override
@@ -37,6 +46,6 @@ public final class SortSpecificationList implements AST {
 
         final SortSpecificationList other = (SortSpecificationList) obj;
 
-        return Objects.equals(columns, other.columns);
+        return Objects.equals(sortSpecificationList, other.sortSpecificationList);
     }
 }
