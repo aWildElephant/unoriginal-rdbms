@@ -114,6 +114,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(InnerJoin innerJoin) {
+        return defaultVisit(innerJoin);
+    }
+
+    @Override
     public T visit(InsertInto insertInto) {
         return defaultVisit(insertInto);
     }

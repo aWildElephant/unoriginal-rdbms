@@ -20,13 +20,16 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INNER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INSERT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTERVAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
@@ -263,6 +266,17 @@ public enum Keywords implements Token {
             return GROUP;
         }
     },
+    INNER_TOKEN {
+        @Override
+        public String text() {
+            return "inner";
+        }
+
+        @Override
+        public TokenType type() {
+            return INNER;
+        }
+    },
     INSERT_TOKEN {
         @Override
         public String text() {
@@ -307,6 +321,17 @@ public enum Keywords implements Token {
             return INTO;
         }
     },
+    JOIN_TOKEN {
+        @Override
+        public String text() {
+            return "join";
+        }
+
+        @Override
+        public TokenType type() {
+            return JOIN;
+        }
+    },
     KEY_TOKEN {
         @Override
         public String text() {
@@ -338,6 +363,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return NULL;
+        }
+    },
+    ON_TOKEN {
+        @Override
+        public String text() {
+            return "on";
+        }
+
+        @Override
+        public TokenType type() {
+            return ON;
         }
     },
     OR_TOKEN {

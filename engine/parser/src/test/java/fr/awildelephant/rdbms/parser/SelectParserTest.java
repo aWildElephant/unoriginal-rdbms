@@ -8,6 +8,7 @@ import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
+import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.DESCENDING;
 import static fr.awildelephant.rdbms.ast.SortSpecification.sortSpecification;
@@ -18,6 +19,7 @@ import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
+import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
 
@@ -91,5 +93,16 @@ class SelectParserTest {
                              tableReferenceList(tableName("one"),
                                                 tableName("two"),
                                                 List.of(tableName("three")))));
+    }
+
+    @Test
+    void it_should_parse_an_inner_join_in_a_select_query() {
+        assertParsing("SELECT * FROM table1 INNER JOIN table2 on column1 = column2",
+
+                      select(List.of(asterisk()),
+                             innerJoin(tableName("table1"),
+                                       tableName("table2"),
+                                       equal(columnName("column1"),
+                                             columnName("column2")))));
     }
 }

@@ -65,6 +65,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(GroupingSetsList groupingSetsList);
 
+    T visit(InnerJoin innerJoin);
+
     T visit(InsertInto insertInto);
 
     T visit(IntegerLiteral integerLiteral);
