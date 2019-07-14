@@ -18,6 +18,18 @@ public final class InnerJoin implements AST {
         return new InnerJoin(leftTable, rightTable, joinSpecification);
     }
 
+    public AST leftTable() {
+        return leftTable;
+    }
+
+    public AST rightTable() {
+        return rightTable;
+    }
+
+    public AST joinSpecification() {
+        return joinSpecification;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

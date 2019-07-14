@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
 import fr.awildelephant.rdbms.engine.operators.CartesianProductOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.FilterOperator;
+import fr.awildelephant.rdbms.engine.operators.InnerJoinOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.SortOperator;
@@ -21,6 +22,8 @@ import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
@@ -173,6 +176,17 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
             return output;
 
         });
+    }
+
+    @Override
+    public Stream<Table> visit(InnerJoinLop innerJoinLop) {
+        final LogicalOperator leftInput = innerJoinLop.leftInput();
+        final LogicalOperator rightInput = innerJoinLop.rightInput();
+
+        final InnerJoinOperator operator = new InnerJoinOperator(innerJoinLop.joinSpecification(), leftInput.schema(),
+                                                                 rightInput.schema(), innerJoinLop.schema());
+
+        return apply(leftInput).flatMap(left -> apply(rightInput).map(right -> operator.compute(left, right)));
     }
 
     @Override

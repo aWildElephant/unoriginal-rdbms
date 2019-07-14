@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.GroupBy;
+import fr.awildelephant.rdbms.ast.InnerJoin;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.SortedSelect;
 import fr.awildelephant.rdbms.ast.TableName;
@@ -18,11 +19,14 @@ import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
@@ -47,6 +51,17 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     }
 
     @Override
+    public LogicalOperator visit(InnerJoin innerJoin) {
+        final LogicalOperator leftInput = apply(innerJoin.leftTable());
+        final LogicalOperator rightInput = apply(innerJoin.rightTable());
+
+        final Schema outputSchema = joinOutputSchema(leftInput.schema(), rightInput.schema());
+
+        return new InnerJoinLop(leftInput, rightInput, createFormula(innerJoin.joinSpecification(), outputSchema, null),
+                                outputSchema);
+    }
+
+    @Override
     public LogicalOperator visit(SortedSelect sortedSelect) {
         return transformOutputColumns(apply(sortedSelect.inputTable()), sortedSelect.outputColumns(),
                                       sortedSelect.sorting());
@@ -62,13 +77,17 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(TableReferenceList tableReferenceList) {
-        final LogicalOperator left = apply(tableReferenceList.first());
-        final LogicalOperator right = apply(tableReferenceList.second());
+        final LogicalOperator firstInput = apply(tableReferenceList.first());
+        final LogicalOperator secondInput = apply(tableReferenceList.second());
 
-        CartesianProductLop cartesianProduct = new CartesianProductLop(left, right);
+        Schema outputSchema = joinOutputSchema(firstInput.schema(), secondInput.schema());
+
+        CartesianProductLop cartesianProduct = new CartesianProductLop(firstInput, secondInput, outputSchema);
 
         for (AST other : tableReferenceList.others()) {
-            cartesianProduct = new CartesianProductLop(cartesianProduct, apply(other));
+            final LogicalOperator otherInput = apply(other);
+            outputSchema = joinOutputSchema(cartesianProduct.schema(), otherInput.schema());
+            cartesianProduct = new CartesianProductLop(cartesianProduct, otherInput, outputSchema);
         }
 
         return cartesianProduct;
@@ -104,5 +123,10 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     @Override
     public LogicalOperator defaultVisit(AST node) {
         throw new IllegalStateException();
+    }
+
+    private static Schema joinOutputSchema(Schema leftSchema, Schema rightSchema) {
+        return leftSchema
+                .extend(rightSchema.columnNames().stream().map(rightSchema::column).collect(Collectors.toList()));
     }
 }

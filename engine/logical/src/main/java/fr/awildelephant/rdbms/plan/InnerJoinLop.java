@@ -1,17 +1,20 @@
 package fr.awildelephant.rdbms.plan;
 
+import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.schema.Schema;
 
-public class CartesianProductLop extends AbstractLop {
+public class InnerJoinLop extends AbstractLop {
 
     private final LogicalOperator leftInput;
     private final LogicalOperator rightInput;
+    private final Formula joinSpecification;
 
-    public CartesianProductLop(LogicalOperator leftInput, LogicalOperator rightInput, Schema outputSchema) {
+    public InnerJoinLop(LogicalOperator leftInput, LogicalOperator rightInput, Formula joinSpecification, Schema outputSchema) {
         super(outputSchema);
 
         this.leftInput = leftInput;
         this.rightInput = rightInput;
+        this.joinSpecification = joinSpecification;
     }
 
     public LogicalOperator leftInput() {
@@ -20,6 +23,10 @@ public class CartesianProductLop extends AbstractLop {
 
     public LogicalOperator rightInput() {
         return rightInput;
+    }
+
+    public Formula joinSpecification() {
+        return joinSpecification;
     }
 
     @Override
