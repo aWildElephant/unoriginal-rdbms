@@ -20,6 +20,7 @@ import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
+import fr.awildelephant.rdbms.ast.value.Placeholder;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.evaluator.Formula;
@@ -237,6 +238,11 @@ public class ASTToFormulaTransformer extends DefaultASTVisitor<Operation> {
         final Operation right = apply(or.right());
 
         return orOperation(left, right);
+    }
+
+    @Override
+    public Operation visit(Placeholder placeholder) {
+        throw new UnsupportedOperationException("Placeholders are not yet supported");
     }
 
     @Override

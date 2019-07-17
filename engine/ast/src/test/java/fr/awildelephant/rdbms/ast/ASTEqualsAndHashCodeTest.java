@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Placeholder;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +25,7 @@ class ASTEqualsAndHashCodeTest {
     }
 
     private static Stream<Class<? extends AST>> implementationsOfAST() {
-        final Set<Class> exceptions = Set.of(Asterisk.class, CountStar.class, NullLiteral.class);
+        final Set<Class> exceptions = Set.of(Asterisk.class, CountStar.class, NullLiteral.class, Placeholder.class);
 
         return new Reflections("fr.awildelephant.rdbms.ast")
                 .getSubTypesOf(AST.class)

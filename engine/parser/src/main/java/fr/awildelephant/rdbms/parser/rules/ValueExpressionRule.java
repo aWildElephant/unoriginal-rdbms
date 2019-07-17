@@ -19,6 +19,7 @@ import static fr.awildelephant.rdbms.ast.value.IntervalLiteral.intervalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
+import static fr.awildelephant.rdbms.ast.value.Placeholder.placeholder;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
@@ -172,6 +173,10 @@ final class ValueExpressionRule {
                 return sum(sumInput);
             case IDENTIFIER:
                 return deriveColumnReference(lexer);
+            case QUESTION_MARK:
+                lexer.consumeNextToken();
+
+                return placeholder();
             default:
                 throw unexpectedToken(nextToken);
         }

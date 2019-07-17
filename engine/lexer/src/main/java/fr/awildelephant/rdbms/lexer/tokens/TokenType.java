@@ -46,6 +46,7 @@ public enum TokenType {
     OR,
     ORDER,
     PLUS,
+    QUESTION_MARK,
     REFERENCES,
     RIGHT_PAREN,
     SELECT,
@@ -60,6 +61,5 @@ public enum TokenType {
     UNKNOWN,
     VALUES,
     VARCHAR,
-    WHERE,
-    WILDCARD
+    WHERE
 }

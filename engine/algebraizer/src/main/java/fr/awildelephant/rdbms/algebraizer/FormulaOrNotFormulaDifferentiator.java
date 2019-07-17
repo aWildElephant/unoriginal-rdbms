@@ -18,6 +18,7 @@ import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
+import fr.awildelephant.rdbms.ast.value.Placeholder;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
@@ -109,6 +110,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     @Override
     public Boolean visit(Or or) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(Placeholder placeholder) {
         return TRUE;
     }
 
