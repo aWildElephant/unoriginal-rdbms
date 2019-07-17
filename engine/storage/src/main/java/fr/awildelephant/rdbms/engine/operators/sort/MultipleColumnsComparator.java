@@ -27,6 +27,10 @@ public class MultipleColumnsComparator implements RecordComparator {
 
     private RecordComparator comparatorForDomain(Column column) {
         switch (column.domain()) {
+            case DATE:
+                return new DateColumnComparator(column.index());
+            case DECIMAL:
+                return new DecimalColumnComparator(column.index());
             case INTEGER:
                 return new IntegerColumnComparator(column.index());
             case TEXT:
