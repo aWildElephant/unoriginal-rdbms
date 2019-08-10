@@ -27,6 +27,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTERVAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIMIT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
@@ -342,6 +343,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return KEY;
+        }
+    },
+    LIKE_TOKEN {
+        @Override
+        public String text() {
+            return "like";
+        }
+
+        @Override
+        public TokenType type() {
+            return LIKE;
         }
     },
     LIMIT_TOKEN {
