@@ -1,8 +1,9 @@
 package fr.awildelephant.rdbms.data.value;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
-public class DateValue extends AbstractValue {
+public final class DateValue extends AbstractValue {
 
     private final LocalDate value;
 
@@ -17,5 +18,21 @@ public class DateValue extends AbstractValue {
     @Override
     public LocalDate getLocalDate() {
         return value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof DateValue)) {
+            return false;
+        }
+
+        final DateValue other = (DateValue) obj;
+
+        return Objects.equals(value, other.value);
     }
 }

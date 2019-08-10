@@ -17,13 +17,14 @@ import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fr.awildelephant.rdbms.algebraizer.ASTToFormulaTransformer.createFormula;
+import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
 import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
 import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
@@ -98,11 +99,14 @@ final class OutputColumnsTransformer {
         }
 
         if (!mapsBelowAggregates.isEmpty()) {
-            input = new MapLop(mapsBelowAggregates.stream()
-                                                  .map(map -> createFormula(map, input.schema(),
-                                                                            columnNameResolver.apply(map)))
-                                                  .collect(toList()),
-                               input);
+            final List<ValueExpression> valueExpressions = mapsBelowAggregates
+                    .stream()
+                    .map(map -> createValueExpression(map, input.schema()))
+                    .collect(toList());
+
+            final List<String> outputNames = mapsBelowAggregates.stream().map(columnNameResolver).collect(toList());
+
+            input = new MapLop(input, valueExpressions, outputNames);
         }
 
         if (!aggregates.isEmpty()) {
@@ -110,14 +114,17 @@ final class OutputColumnsTransformer {
         }
 
         if (!mapsOverAggregates.isEmpty()) {
-            input = new MapLop(mapsOverAggregates.stream()
-                                                 .map(map -> createFormula(map, input.schema(),
-                                                                           columnNameResolver.apply(map)))
-                                                 .collect(toList()),
-                               input);
+            final List<ValueExpression> valueExpressions = mapsOverAggregates
+                    .stream()
+                    .map(map -> createValueExpression(map, input.schema()))
+                    .collect(toList());
+
+            final List<String> outputNames = mapsOverAggregates.stream().map(columnNameResolver).collect(toList());
+
+            input = new MapLop(input, valueExpressions, outputNames);
         }
 
-        input = new ProjectionLop(outputColumnNames, input);
+        input = new ProjectionLop(input, outputColumnNames);
 
         if (!aliasing.isEmpty()) {
             input = aliasOperator(alias(aliasing), input);

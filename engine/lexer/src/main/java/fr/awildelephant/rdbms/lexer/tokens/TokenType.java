@@ -39,6 +39,7 @@ public enum TokenType {
     LEFT_PAREN,
     LESS,
     LESS_OR_EQUAL,
+    LIMIT,
     MINUS,
     NOT,
     NULL,

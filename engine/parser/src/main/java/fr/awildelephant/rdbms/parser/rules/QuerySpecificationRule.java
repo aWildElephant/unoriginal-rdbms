@@ -3,18 +3,21 @@ package fr.awildelephant.rdbms.parser.rules;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
-import fr.awildelephant.rdbms.ast.SortedSelect;
 import fr.awildelephant.rdbms.lexer.Lexer;
+import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
 
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
+import static fr.awildelephant.rdbms.ast.Limit.limit;
 import static fr.awildelephant.rdbms.ast.SortedSelect.sortedSelect;
 import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIMIT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
@@ -69,13 +72,21 @@ final class QuerySpecificationRule {
             sortSpecificationList = deriveSortSpecificationList(lexer);
         }
 
-        final SortedSelect select = sortedSelect(outputColumns, sortSpecificationList, input);
+        input = sortedSelect(outputColumns, sortSpecificationList, input);
 
         if (distinct) {
-            return distinct(select);
+            input = distinct(input);
         }
 
-        return select;
+        if (nextTokenIs(LIMIT, lexer)) {
+            lexer.consumeNextToken();
+
+            final int limit = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
+
+            input = limit(input, limit);
+        }
+
+        return input;
     }
 
     private static boolean consumeIfDistinct(Lexer lexer) {

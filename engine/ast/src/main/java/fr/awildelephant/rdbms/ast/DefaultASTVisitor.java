@@ -145,6 +145,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(Limit limit) {
+        return defaultVisit(limit);
+    }
+
+    @Override
     public T visit(Minus minus) {
         return defaultVisit(minus);
     }

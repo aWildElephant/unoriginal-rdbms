@@ -1,31 +1,31 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.evaluator.Formula;
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Schema;
 
 public class InnerJoinLop extends AbstractLop {
 
-    private final LogicalOperator leftInput;
-    private final LogicalOperator rightInput;
-    private final Formula joinSpecification;
+    private final LogicalOperator left;
+    private final LogicalOperator right;
+    private final ValueExpression joinSpecification;
 
-    public InnerJoinLop(LogicalOperator leftInput, LogicalOperator rightInput, Formula joinSpecification, Schema outputSchema) {
+    public InnerJoinLop(LogicalOperator left, LogicalOperator right, ValueExpression joinSpecification, Schema outputSchema) {
         super(outputSchema);
 
-        this.leftInput = leftInput;
-        this.rightInput = rightInput;
+        this.left = left;
+        this.right = right;
         this.joinSpecification = joinSpecification;
     }
 
-    public LogicalOperator leftInput() {
-        return leftInput;
+    public LogicalOperator left() {
+        return left;
     }
 
-    public LogicalOperator rightInput() {
-        return rightInput;
+    public LogicalOperator right() {
+        return right;
     }
 
-    public Formula joinSpecification() {
+    public ValueExpression joinSpecification() {
         return joinSpecification;
     }
 

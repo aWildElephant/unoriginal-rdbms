@@ -14,13 +14,23 @@ public final class Alias {
         return new Alias(aliases);
     }
 
-    public String get(String original) {
-        final String alias = aliases.get(original);
+    public String get(String name) {
+        final String alias = aliases.get(name);
 
         if (alias == null) {
-            return original;
+            return name;
         }
 
         return alias;
+    }
+
+    public String revert(String name) {
+        for (Map.Entry<String, String> entry : aliases.entrySet()) {
+            if (name.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+
+        return name;
     }
 }

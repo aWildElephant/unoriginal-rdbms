@@ -5,47 +5,61 @@ import fr.awildelephant.csvloader.Loader;
 import fr.awildelephant.rdbms.test.commons.ExpectedResult;
 import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
 import io.cucumber.datatable.DataTable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.Set;
 
 import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StepDefs implements En {
 
+    private static final Logger LOGGER = LogManager.getLogger(StepDefs.class);
     private static final String TPCH_DATA_DIRECTORY = "TPCH_DATA_DIRECTORY";
     private static final String SCHEMA_PATH = "/schema/%s.sql";
 
-    private final RDBMSTestWrapper testWrapper;
+    private static RDBMSTestWrapper testWrapper;
+    private static Set<String> createdTables;
+    private static Set<String> loadedTables;
 
     public StepDefs() throws SQLException {
+        if (testWrapper == null) {
+            LOGGER.info("Creating test wrapper");
+            testWrapper = new RDBMSTestWrapper("tpch");
+            loadedTables = new HashSet<>();
+        } else {
+            LOGGER.info("Reusing existing test wrapper");
+        }
 
-        testWrapper = new RDBMSTestWrapper("feature-tests");
-
-        Given("^I create the TPC-H (\\w+) table$", (String tableName) -> {
-            testWrapper.execute(createTableQuery(tableName));
-
-            testWrapper.forwardExceptionIfPresent();
-        });
-
-        Given("^I load (\\w+) scale factor (\\d+) data", (String tableName, Integer scaleFactor) -> {
+        Given("^I load (\\w+) scale factor (\\d+)", (String tableName, Integer scaleFactor) -> {
             final String tpchDataDirectory = System.getenv(TPCH_DATA_DIRECTORY);
 
             if (tpchDataDirectory == null) {
                 throw new MissingEnvironmentVariableException(TPCH_DATA_DIRECTORY);
             }
 
-            final File compressedCsvDataFile = Paths
-                    .get(tpchDataDirectory, String.valueOf(scaleFactor), tableName + ".tbl.gz").toFile();
+            if (loadedTables.add(tableName)) {
+                testWrapper.execute(createTableQuery(tableName));
 
-            new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
+                testWrapper.forwardExceptionIfPresent();
+
+                final File compressedCsvDataFile = Paths
+                        .get(tpchDataDirectory, String.valueOf(scaleFactor), tableName + ".tbl.gz").toFile();
+
+                new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
+            } else {
+                LOGGER.info("Table {} is already loaded", tableName);
+            }
         });
 
         When("^I execute the query$", testWrapper::execute);

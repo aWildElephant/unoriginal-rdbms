@@ -16,6 +16,8 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
 
     T visit(BreakdownLop breakdownNode);
 
+    T visit(CartesianProductLop cartesianProductNode);
+
     T visit(CollectLop collectNode);
 
     T visit(DistinctLop distinctNode);
@@ -24,6 +26,8 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
 
     T visit(InnerJoinLop innerJoinLop);
 
+    T visit(LimitLop limitLop);
+
     T visit(MapLop mapNode);
 
     T visit(ProjectionLop projectionNode);
@@ -31,6 +35,4 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
     T visit(SortLop sortLop);
 
     T visit(TableConstructorLop tableConstructor);
-
-    T visit(CartesianProductLop cartesianProductNode);
 }

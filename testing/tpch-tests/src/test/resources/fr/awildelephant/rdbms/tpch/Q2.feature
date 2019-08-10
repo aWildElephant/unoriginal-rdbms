@@ -3,16 +3,11 @@ Feature: TPC-H Q2
 
   Background: TPC-H dataset
 
-    Given I create the TPC-H nation table
-    And I create the TPC-H part table
-    And I create the TPC-H partsupp table
-    And I create the TPC-H region table
-    And I create the TPC-H supplier table
-    And I load nation scale factor 1 data
-    And I load part scale factor 1 data
-    And I load partsupp scale factor 1 data
-    And I load region scale factor 1 data
-    And I load supplier scale factor 1 data
+    Given I load nation scale factor 1
+    And I load part scale factor 1
+    And I load partsupp scale factor 1
+    And I load region scale factor 1
+    And I load supplier scale factor 1
 
   Scenario: I execute TPC-H Q2
 

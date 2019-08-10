@@ -7,7 +7,6 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class ResultSetAsserter {
 
@@ -35,9 +34,7 @@ public final class ResultSetAsserter {
 
         int i = 0;
 
-        while (i < numberOfExpectedRows) {
-            assertTrue(resultSet.next(), "Row count mismatch");
-
+        while (i < numberOfExpectedRows && resultSet.next()) {
             final List<String> row = rows.get(i);
 
             for (int j = 0; j < row.size(); j++) {
@@ -51,13 +48,13 @@ public final class ResultSetAsserter {
             i++;
         }
 
-        assertEquals(numberOfExpectedRows, i, "Column count mismatch");
+        assertEquals(numberOfExpectedRows, i, "Row count mismatch");
     }
 
     private void assertColumnNames(ResultSetMetaData metaData, List<String> expectedColumnNames) throws SQLException {
         final int numberOfColumns = metaData.getColumnCount();
 
-        assertEquals(expectedColumnNames.size(), numberOfColumns, "Number of columns");
+        assertEquals(expectedColumnNames.size(), numberOfColumns, "Column count mismatch");
 
         for (int i = 0; i < numberOfColumns; i++) {
             assertEquals(expectedColumnNames.get(i), metaData.getColumnName(i + 1), "Column name mismatch");

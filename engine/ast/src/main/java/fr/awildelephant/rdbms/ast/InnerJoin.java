@@ -4,26 +4,26 @@ import java.util.Objects;
 
 public final class InnerJoin implements AST {
 
-    private final AST leftTable;
-    private final AST rightTable;
+    private final AST left;
+    private final AST right;
     private final AST joinSpecification;
 
-    private InnerJoin(AST leftTable, AST rightTable, AST joinSpecification) {
-        this.leftTable = leftTable;
-        this.rightTable = rightTable;
+    private InnerJoin(AST left, AST right, AST joinSpecification) {
+        this.left = left;
+        this.right = right;
         this.joinSpecification = joinSpecification;
     }
 
-    public static InnerJoin innerJoin(AST leftTable, AST rightTable, AST joinSpecification) {
-        return new InnerJoin(leftTable, rightTable, joinSpecification);
+    public static InnerJoin innerJoin(AST left, AST right, AST joinSpecification) {
+        return new InnerJoin(left, right, joinSpecification);
     }
 
-    public AST leftTable() {
-        return leftTable;
+    public AST left() {
+        return left;
     }
 
-    public AST rightTable() {
-        return rightTable;
+    public AST right() {
+        return right;
     }
 
     public AST joinSpecification() {
@@ -37,7 +37,7 @@ public final class InnerJoin implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(leftTable, rightTable, joinSpecification);
+        return Objects.hash(left, right, joinSpecification);
     }
 
     @Override
@@ -48,8 +48,8 @@ public final class InnerJoin implements AST {
 
         final InnerJoin other = (InnerJoin) obj;
 
-        return Objects.equals(leftTable, other.leftTable)
-                && Objects.equals(rightTable, other.rightTable)
+        return Objects.equals(left, other.left)
+                && Objects.equals(right, other.right)
                 && Objects.equals(joinSpecification, other.joinSpecification);
     }
 }

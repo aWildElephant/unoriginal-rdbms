@@ -78,6 +78,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(LessOrEqual lessOrEqual);
 
+    T visit(Limit limit);
+
     T visit(Minus minus);
 
     T visit(Multiply multiply);

@@ -9,6 +9,7 @@ import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
+import static fr.awildelephant.rdbms.ast.Limit.limit;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.DESCENDING;
 import static fr.awildelephant.rdbms.ast.SortSpecification.sortSpecification;
@@ -104,5 +105,12 @@ class SelectParserTest {
                                        tableName("table2"),
                                        equal(columnName("column1"),
                                              columnName("column2")))));
+    }
+
+    @Test
+    void it_should_parse_a_select_query_with_a_limit() {
+        assertParsing("SELECT * FROM test LIMIT 3",
+
+                      limit(select(List.of(asterisk()), tableName("test")), 3));
     }
 }

@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.GroupBy;
 import fr.awildelephant.rdbms.ast.InnerJoin;
+import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.SortedSelect;
 import fr.awildelephant.rdbms.ast.TableName;
@@ -13,22 +14,23 @@ import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.Where;
 import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static fr.awildelephant.rdbms.algebraizer.ASTToFormulaTransformer.createFormula;
+import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
 import static fr.awildelephant.rdbms.engine.data.table.system.NothingSystemTable.EMPTY_SCHEMA;
 
@@ -52,13 +54,20 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(InnerJoin innerJoin) {
-        final LogicalOperator leftInput = apply(innerJoin.leftTable());
-        final LogicalOperator rightInput = apply(innerJoin.rightTable());
+        final LogicalOperator leftInput = apply(innerJoin.left());
+        final LogicalOperator rightInput = apply(innerJoin.right());
 
         final Schema outputSchema = joinOutputSchema(leftInput.schema(), rightInput.schema());
 
-        return new InnerJoinLop(leftInput, rightInput, createFormula(innerJoin.joinSpecification(), outputSchema, null),
+        return new InnerJoinLop(leftInput,
+                                rightInput,
+                                createValueExpression(innerJoin.joinSpecification(), outputSchema),
                                 outputSchema);
+    }
+
+    @Override
+    public LogicalOperator visit(Limit limit) {
+        return new LimitLop(apply(limit.input()), limit.limit());
     }
 
     @Override
@@ -95,17 +104,17 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Values values) {
-        final List<List<Formula>> matrix = new ArrayList<>();
+        final List<List<ValueExpression>> matrix = new ArrayList<>();
 
         for (Row row : values.rows()) {
             final List<AST> expressions = row.values();
-            final List<Formula> formulas = new ArrayList<>();
+            final List<ValueExpression> valueExpressions = new ArrayList<>();
 
-            for (int i = 0; i < expressions.size(); i++) {
-                formulas.add(createFormula(expressions.get(i), EMPTY_SCHEMA, "column" + (i + 1)));
+            for (AST expression : expressions) {
+                valueExpressions.add(createValueExpression(expression, EMPTY_SCHEMA));
             }
 
-            matrix.add(formulas);
+            matrix.add(valueExpressions);
         }
 
         return new TableConstructorLop(matrix);
@@ -115,7 +124,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     public LogicalOperator visit(Where where) {
         final LogicalOperator input = apply(where.input());
 
-        final Formula filter = createFormula(where.filter(), input.schema(), "<filter>");
+        final ValueExpression filter = createValueExpression(where.filter(), input.schema());
 
         return new FilterLop(input, filter);
     }

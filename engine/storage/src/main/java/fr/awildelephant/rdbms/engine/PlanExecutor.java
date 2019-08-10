@@ -9,11 +9,15 @@ import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
 import fr.awildelephant.rdbms.engine.operators.CartesianProductOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.FilterOperator;
-import fr.awildelephant.rdbms.engine.operators.InnerJoinOperator;
+import fr.awildelephant.rdbms.engine.operators.InnerHashJoinOperator;
+import fr.awildelephant.rdbms.engine.operators.InnerNestedLoopJoinOperator;
+import fr.awildelephant.rdbms.engine.operators.JoinOperator;
+import fr.awildelephant.rdbms.engine.operators.LimitOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.SortOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
+import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
@@ -23,12 +27,17 @@ import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.Variable;
+import fr.awildelephant.rdbms.schema.Schema;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,10 +46,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.engine.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static java.util.stream.Collectors.toList;
 
-public class PlanExecutor implements LopVisitor<Stream<Table>> {
+public final class PlanExecutor implements LopVisitor<Stream<Table>> {
 
     private static final Logger LOGGER = LogManager.getLogger("Executor");
 
@@ -163,7 +173,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
     @Override
     public Stream<Table> visit(FilterLop filter) {
-        final FilterOperator operator = new FilterOperator(filter.filter());
+        final FilterOperator operator = new FilterOperator(createFormula(filter.filter()));
 
         return apply(filter.input()).map(input -> {
             final UUID operatorId = UUID.randomUUID();
@@ -174,24 +184,85 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
             LOGGER.info("{} - FilterOperator - outputSize: {}", operatorId, output.numberOfTuples());
 
             return output;
-
         });
     }
 
     @Override
     public Stream<Table> visit(InnerJoinLop innerJoinLop) {
-        final LogicalOperator leftInput = innerJoinLop.leftInput();
-        final LogicalOperator rightInput = innerJoinLop.rightInput();
+        final LogicalOperator leftInput = innerJoinLop.left();
+        final LogicalOperator rightInput = innerJoinLop.right();
 
-        final InnerJoinOperator operator = new InnerJoinOperator(innerJoinLop.joinSpecification(), leftInput.schema(),
-                                                                 rightInput.schema(), innerJoinLop.schema());
+        final JoinOperator operator = chooseJoinOperator(innerJoinLop, leftInput.schema(), rightInput.schema());
 
-        return apply(leftInput).flatMap(left -> apply(rightInput).map(right -> operator.compute(left, right)));
+        return apply(leftInput).flatMap(left -> apply(rightInput).map(right -> {
+            final UUID operatorId = UUID.randomUUID();
+            LOGGER.info("{} - InnerJoinOperator - leftSize: {}, rightSize: {}", operatorId, left.numberOfTuples(),
+                        right.numberOfTuples());
+
+            final Table output = operator.compute(left, right);
+
+            LOGGER.info("{} - InnerJoinOperator - outputSize: {}", operatorId, output.numberOfTuples());
+
+            return output;
+        }));
+    }
+
+    private JoinOperator chooseJoinOperator(InnerJoinLop innerJoinLop, Schema leftInputSchema, Schema rightInputSchema) {
+        final ValueExpression joinSpecification = innerJoinLop.joinSpecification();
+
+        if (joinSpecification instanceof EqualExpression) {
+            final EqualExpression equalExpression = (EqualExpression) joinSpecification;
+
+            if (equalExpression.left() instanceof Variable && equalExpression.right() instanceof Variable) {
+                final String firstVariable = ((Variable) equalExpression.left()).name();
+                final String secondVariable = ((Variable) equalExpression.right()).name();
+
+                final List<String> leftInputColumns = leftInputSchema.columnNames();
+                final List<String> rightInputColumns = rightInputSchema.columnNames();
+
+                final Schema outputSchema = innerJoinLop.schema();
+                if (leftInputColumns.contains(firstVariable) && rightInputColumns.contains(secondVariable)) {
+                    return new InnerHashJoinOperator(firstVariable, secondVariable, outputSchema);
+                } else if (leftInputColumns.contains(secondVariable) && rightInputColumns.contains(firstVariable)) {
+                    return new InnerHashJoinOperator(secondVariable, firstVariable, outputSchema);
+                }
+            }
+        }
+
+        return createNestedLoopJoinOperator(innerJoinLop, leftInputSchema, rightInputSchema);
+    }
+
+    private InnerNestedLoopJoinOperator createNestedLoopJoinOperator(InnerJoinLop innerJoinLop, Schema leftInputSchema, Schema rightInputSchema) {
+        return new InnerNestedLoopJoinOperator(createFormula(innerJoinLop.joinSpecification()),
+                                               leftInputSchema,
+                                               rightInputSchema,
+                                               innerJoinLop.schema());
+    }
+
+    @Override
+    public Stream<Table> visit(LimitLop limitLop) {
+        final LimitOperator operator = new LimitOperator(limitLop.limit());
+
+        return apply(limitLop.input()).map(input -> {
+            final UUID operatorId = UUID.randomUUID();
+            LOGGER.info("{} - LimitOperator - inputSize: {}", operatorId, input.numberOfTuples());
+
+            final Table output = operator.compute(input);
+
+            LOGGER.info("{} - LimitOperator - outputSize: {}", operatorId, output.numberOfTuples());
+
+            return output;
+        });
     }
 
     @Override
     public Stream<Table> visit(MapLop mapNode) {
-        final MapOperator operator = new MapOperator(mapNode.operations(), mapNode.schema());
+        final List<Formula> formulas = mapNode.expressions()
+                                              .stream()
+                                              .map(ValueExpressionToFormulaTransformer::createFormula)
+                                              .collect(toList());
+
+        final MapOperator operator = new MapOperator(formulas, mapNode.schema());
 
         return apply(mapNode.input()).map(input -> {
             final UUID operatorId = UUID.randomUUID();
@@ -225,7 +296,7 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
     @Override
     public Stream<Table> visit(SortLop sortNode) {
-        final SortOperator operator = new SortOperator(sortNode.schema(), sortNode.columns());
+        final SortOperator operator = new SortOperator(sortNode.schema(), sortNode.sortSpecificationList());
 
         return apply(sortNode.input()).map(input -> {
             final UUID operatorId = UUID.randomUUID();
@@ -242,8 +313,14 @@ public class PlanExecutor implements LopVisitor<Stream<Table>> {
 
     @Override
     public Stream<Table> visit(TableConstructorLop tableConstructor) {
-        final TableConstructorOperator operator = new TableConstructorOperator(tableConstructor.matrix(),
-                                                                               tableConstructor.schema());
+        final List<List<Formula>> formulas = tableConstructor.matrix()
+                                                             .stream()
+                                                             .map(row -> row.stream()
+                                                                            .map(ValueExpressionToFormulaTransformer::createFormula)
+                                                                            .collect(toList()))
+                                                             .collect(toList());
+
+        final TableConstructorOperator operator = new TableConstructorOperator(formulas, tableConstructor.schema());
 
         LOGGER.info("TableConstructor");
 

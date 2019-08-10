@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.evaluator.Formula;
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -9,20 +9,23 @@ import java.util.List;
 
 public final class MapLop extends AbstractLop {
 
-    private final List<Formula> operations;
     private final LogicalOperator input;
+    private final List<ValueExpression> expressions;
+    private final List<String> expressionsOutputNames;
 
-    public MapLop(List<Formula> operations, LogicalOperator input) {
-        super(buildOutputSchema(operations, input.schema()));
+    public MapLop(LogicalOperator input, List<ValueExpression> expressions, List<String> expressionsOutputNames) {
+        super(buildOutputSchema(expressions, expressionsOutputNames, input.schema()));
 
-        this.operations = operations;
+        this.expressions = expressions;
+        this.expressionsOutputNames = expressionsOutputNames;
         this.input = input;
+
     }
 
-    private static Schema buildOutputSchema(List<Formula> operations, Schema schema) {
+    private static Schema buildOutputSchema(List<ValueExpression> valueExpressions, List<String> outputNames, Schema schema) {
         final List<String> inputColumns = schema.columnNames();
 
-        final List<Column> outputColumns = new ArrayList<>(inputColumns.size() + operations.size());
+        final List<Column> outputColumns = new ArrayList<>(inputColumns.size() + valueExpressions.size());
 
         for (String columnName : inputColumns) {
             outputColumns.add(schema.column(columnName));
@@ -30,19 +33,23 @@ public final class MapLop extends AbstractLop {
 
         int index = inputColumns.size();
 
-        for (Formula operation : operations) {
-            outputColumns.add(new Column(index++, operation.outputName(), operation.outputType(), false));
+        for (int i = 0; i < valueExpressions.size(); i++) {
+            outputColumns.add(new Column(index++, outputNames.get(i), valueExpressions.get(i).domain(), false));
         }
 
         return new Schema(outputColumns);
     }
 
-    public List<Formula> operations() {
-        return operations;
-    }
-
     public LogicalOperator input() {
         return input;
+    }
+
+    public List<ValueExpression> expressions() {
+        return expressions;
+    }
+
+    public List<String> expressionsOutputNames() {
+        return expressionsOutputNames;
     }
 
     @Override

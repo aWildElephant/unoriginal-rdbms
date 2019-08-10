@@ -15,11 +15,36 @@
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-formula</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-schema</artifactId>
         </dependency>
         <dependency>
             <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-formula</artifactId>
+            <artifactId>rdbms-value</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>nl.jqno.equalsverifier</groupId>
+            <artifactId>equalsverifier</artifactId>
         </dependency>
     </dependencies>
 </project>
