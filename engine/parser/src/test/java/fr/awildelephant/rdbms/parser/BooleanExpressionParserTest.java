@@ -15,6 +15,7 @@ import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
+import static fr.awildelephant.rdbms.ast.value.Like.like;
 import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
@@ -68,5 +69,19 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (a = b AND c = 0)",
                       rows(row(and(equal(columnName("a"), columnName("b")),
                                    equal(columnName("c"), integerLiteral(0))))));
+    }
+
+    @Test
+    void it_should_parse_a_like_filter() {
+        assertParsing("VALUES (a LIKE '.boub%')",
+
+                      rows(row(like(columnName("a"), textLiteral(".boub%")))));
+    }
+
+    @Test
+    void it_should_parse_a_not_like_filter() {
+        assertParsing("VALUES (a NOT LIKE '.boub%')",
+
+                      rows(row(not(like(columnName("a"), textLiteral(".boub%"))))));
     }
 }

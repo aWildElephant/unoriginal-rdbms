@@ -10,9 +10,11 @@ import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
+import static fr.awildelephant.rdbms.ast.value.Like.like;
 import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
@@ -82,6 +84,16 @@ final class BooleanValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return lessOrEqual(left, deriveValueExpressionRule(lexer));
+            case LIKE:
+                lexer.consumeNextToken();
+
+                return like(left, deriveValueExpressionRule(lexer));
+            case NOT:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(LIKE, lexer);
+
+                return not(like(left, deriveValueExpressionRule(lexer)));
             default:
                 return left;
         }
