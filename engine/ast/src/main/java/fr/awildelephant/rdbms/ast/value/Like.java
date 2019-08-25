@@ -8,16 +8,24 @@ import java.util.Objects;
 
 public final class Like implements AST {
 
-    private final AST value;
+    private final AST input;
     private final AST pattern;
 
-    private Like(AST value, AST pattern) {
-        this.value = value;
+    private Like(AST input, AST pattern) {
+        this.input = input;
         this.pattern = pattern;
     }
 
-    public static Like like(AST value, AST pattern) {
-        return new Like(value, pattern);
+    public static Like like(AST input, AST pattern) {
+        return new Like(input, pattern);
+    }
+
+    public AST input() {
+        return input;
+    }
+
+    public AST pattern() {
+        return pattern;
     }
 
     @Override
@@ -28,14 +36,14 @@ public final class Like implements AST {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("value", value)
+                .append("input", input)
                 .append("pattern", pattern)
                 .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value, pattern);
+        return Objects.hash(input, pattern);
     }
 
     @Override
@@ -46,7 +54,7 @@ public final class Like implements AST {
 
         final Like other = (Like) obj;
 
-        return Objects.equals(value, other.value)
+        return Objects.equals(input, other.input)
                 && Objects.equals(pattern, other.pattern);
     }
 }

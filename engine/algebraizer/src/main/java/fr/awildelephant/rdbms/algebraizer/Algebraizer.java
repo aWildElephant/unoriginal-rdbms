@@ -104,6 +104,8 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Values values) {
+        // TODO: use the SchemaValidator to check that all referenced columns exist
+
         final List<List<ValueExpression>> matrix = new ArrayList<>();
 
         for (Row row : values.rows()) {
@@ -122,6 +124,8 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Where where) {
+        // TODO: use the SchemaValidator to check that all referenced columns exist
+
         final LogicalOperator input = apply(where.input());
 
         final ValueExpression filter = createValueExpression(where.filter(), input.schema());

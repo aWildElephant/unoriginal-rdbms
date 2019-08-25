@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
@@ -38,6 +39,7 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerAddition.integer
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerDivision.integerDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.integerSubtraction;
+import static fr.awildelephant.rdbms.evaluator.operation.LikePredicate.likePredicate;
 import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
@@ -153,6 +155,14 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
         final Operation right = apply(lessOrEqual.right());
 
         return lessOrEqualComparison(left, right);
+    }
+
+    @Override
+    public Operation visit(LikeExpression like) {
+        final Operation value = apply(like.input());
+        final Operation pattern = apply(like.pattern());
+
+        return likePredicate(value, pattern);
     }
 
     @Override

@@ -53,6 +53,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(LikeExpression like) {
+        return defaultVisit(like);
+    }
+
+    @Override
     public T visit(MultiplyExpression multiply) {
         return defaultVisit(multiply);
     }

@@ -10,6 +10,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
@@ -28,6 +29,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterEx
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression.greaterOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression.multiplyExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.NotExpression.notExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
@@ -90,6 +92,11 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
     @Override
     public ValueExpression visit(LessOrEqualExpression lessOrEqual) {
         return lessOrEqualExpression(apply(lessOrEqual.left()), apply(lessOrEqual.right()));
+    }
+
+    @Override
+    public ValueExpression visit(LikeExpression like) {
+        return likeExpression(apply(like.input()), apply(like.pattern()));
     }
 
     @Override

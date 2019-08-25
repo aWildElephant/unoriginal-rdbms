@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
+import fr.awildelephant.rdbms.ast.value.Like;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
@@ -46,6 +47,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpres
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression.multiplyExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.NotExpression.notExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
@@ -176,6 +178,23 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         final ValueExpression right = apply(lessOrEqual.right());
 
         return lessOrEqualExpression(left, right);
+    }
+
+    @Override
+    public ValueExpression visit(Like like) {
+        final ValueExpression input = apply(like.input());
+
+        if (!input.domain().canBeUsedAs(TEXT)) {
+            throw new UnsupportedOperationException();
+        }
+
+        final ValueExpression pattern = apply(like.pattern());
+
+        if (!input.domain().canBeUsedAs(TEXT)) {
+            throw new UnsupportedOperationException();
+        }
+
+        return likeExpression(input, pattern);
     }
 
     @Override
