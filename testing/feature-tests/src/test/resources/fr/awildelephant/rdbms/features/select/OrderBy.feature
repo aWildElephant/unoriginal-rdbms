@@ -70,12 +70,12 @@ Feature: Order by
   Scenario: I order and group by the same column
 
     Given the table test
-      | a    | b       |
-      | TEXT | INTEGER |
-      | b    | 2       |
-      | a    | 1       |
-      | b    | 3       |
-      | b    | 4       |
+      | a             | b                |
+      | TEXT NOT NULL | INTEGER NOT NULL |
+      | b             | 2                |
+      | a             | 1                |
+      | b             | 3                |
+      | b             | 4                |
 
     When I execute the query
       """
@@ -87,3 +87,29 @@ Feature: Order by
       | TEXT | INTEGER  |
       | a    | 1        |
       | b    | 3        |
+
+  # TODO: implement NULLS FIRST/NULLS LAST ? (sql 2003)
+  @todo
+  Scenario: I order by an integer column with a null value
+
+    Given the table test
+      | a       |
+      | INTEGER |
+      | 3       |
+      | 2       |
+      | null    |
+      | 0       |
+
+    When I execute the query
+    """
+    SELECT a FROM test ORDER BY a ASC
+    """
+
+    Then I expect the result set
+      | a       |
+      | INTEGER |
+      | null    |
+      | 0       |
+      | 2       |
+      | 3       |
+
