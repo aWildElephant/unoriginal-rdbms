@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.plan.aggregation;
 
-public class AvgAggregate implements Aggregate {
+public class MinAggregate implements Aggregate {
 
     private final String inputName;
 
-    public AvgAggregate(String inputName) {
+    public MinAggregate(String inputName) {
         this.inputName = inputName;
     }
 
@@ -19,7 +19,7 @@ public class AvgAggregate implements Aggregate {
 
     @Override
     public String outputName() {
-        return "avg(" + inputName + ")";
+        return "min(" + inputName + ")";
     }
 
 }

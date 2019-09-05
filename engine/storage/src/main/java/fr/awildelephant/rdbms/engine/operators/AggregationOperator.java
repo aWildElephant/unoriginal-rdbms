@@ -3,10 +3,17 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.operators.sort.DateColumnComparator;
+import fr.awildelephant.rdbms.engine.operators.sort.DecimalColumnComparator;
+import fr.awildelephant.rdbms.engine.operators.sort.IntegerColumnComparator;
+import fr.awildelephant.rdbms.engine.operators.sort.RecordComparator;
+import fr.awildelephant.rdbms.engine.operators.sort.TextColumnComparator;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
+import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
@@ -70,6 +77,8 @@ public class AggregationOperator implements Operator<Table, Table> {
             return computeAvgAggregate(((AvgAggregate) aggregate).inputName(), inputTable);
         } else if (aggregate instanceof CountStarAggregate) {
             return computeCountStarAggregation(inputTable);
+        } else if (aggregate instanceof MinAggregate) {
+            return computeMinAggregate(((MinAggregate) aggregate).inputName(), inputTable);
         } else if (aggregate instanceof SumAggregate) {
             return computeSumAggregate(((SumAggregate) aggregate).inputName(), inputTable);
         } else {
@@ -101,6 +110,44 @@ public class AggregationOperator implements Operator<Table, Table> {
             return nullValue();
         } else {
             return decimalValue(accumulator.divide(BigDecimal.valueOf(numberOfNotNullValues), MathContext.DECIMAL64));
+        }
+    }
+
+    private DomainValue computeMinAggregate(String inputName, Table inputTable) {
+        final Column column = inputTable.schema().column(inputName);
+        final int columnIndex = column.index();
+
+        final RecordComparator comparator;
+        // TODO: create a factory method for this
+        switch (column.domain()) {
+            case DATE:
+                comparator = new DateColumnComparator(columnIndex);
+                break;
+            case DECIMAL:
+                comparator = new DecimalColumnComparator(columnIndex);
+                break;
+            case INTEGER:
+                comparator = new IntegerColumnComparator(columnIndex);
+                break;
+            case TEXT:
+                comparator = new TextColumnComparator(columnIndex);
+                break;
+            default:
+                throw new UnsupportedOperationException(); // TODO 8)
+        }
+
+        Record minRecord = null;
+
+        for (Record record : inputTable) {
+            if (minRecord == null || comparator.compare(record, minRecord) < 0) {
+                minRecord = record;
+            }
+        }
+
+        if (minRecord == null) {
+            return nullValue();
+        } else {
+            return minRecord.get(columnIndex);
         }
     }
 

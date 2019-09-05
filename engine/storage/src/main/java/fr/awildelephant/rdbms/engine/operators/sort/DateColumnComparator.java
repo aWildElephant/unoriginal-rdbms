@@ -6,7 +6,7 @@ public class DateColumnComparator implements RecordComparator {
 
     private final int index;
 
-    DateColumnComparator(int index) {
+    public DateColumnComparator(int index) {
         this.index = index;
     }
 

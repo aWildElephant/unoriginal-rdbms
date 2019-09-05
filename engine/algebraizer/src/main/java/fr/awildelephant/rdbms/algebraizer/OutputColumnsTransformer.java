@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.CountStar;
+import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.CollectLop;
@@ -16,6 +17,7 @@ import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
@@ -85,6 +87,14 @@ final class OutputColumnsTransformer {
                 }
 
                 aggregates.add(new AvgAggregate(columnNameResolver.apply(avgInput)));
+            } else if (aggregate instanceof Min) {
+                final AST minInput = ((Min) aggregate).input();
+
+                if (!(minInput instanceof ColumnName)) {
+                    mapsBelowAggregates.add(minInput);
+                }
+
+                aggregates.add(new MinAggregate(columnNameResolver.apply(minInput)));
             } else if (aggregate instanceof Sum) {
                 final AST sumInput = ((Sum) aggregate).input();
 

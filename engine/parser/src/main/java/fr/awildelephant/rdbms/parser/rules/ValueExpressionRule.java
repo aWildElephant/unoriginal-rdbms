@@ -16,6 +16,7 @@ import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.IntervalLiteral.intervalLiteral;
+import static fr.awildelephant.rdbms.ast.value.Min.min;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
@@ -162,6 +163,15 @@ final class ValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return countStar();
+            case MIN:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final AST minInput = deriveValueExpressionRule(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return min(minInput);
             case SUM:
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);

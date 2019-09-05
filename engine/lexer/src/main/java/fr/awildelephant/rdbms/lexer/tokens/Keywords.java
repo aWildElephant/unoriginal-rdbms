@@ -29,6 +29,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIMIT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
@@ -365,6 +366,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return LIMIT;
+        }
+    },
+    MIN_TOKEN {
+        @Override
+        public String text() {
+            return "min";
+        }
+
+        @Override
+        public TokenType type() {
+            return MIN;
         }
     },
     NOT_TOKEN {

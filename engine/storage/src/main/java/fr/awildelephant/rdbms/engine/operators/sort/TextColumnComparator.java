@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.engine.data.record.Record;
 public class TextColumnComparator implements RecordComparator {
     private final int index;
 
-    TextColumnComparator(int index) {
+    public TextColumnComparator(int index) {
         this.index = index;
     }
 

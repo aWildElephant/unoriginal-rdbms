@@ -1,11 +1,19 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
+import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
 public class AggregationLop extends AbstractLop {
 
@@ -28,12 +36,27 @@ public class AggregationLop extends AbstractLop {
         for (int i = 0; i < aggregates.size(); i++) {
             final Aggregate aggregate = aggregates.get(i);
 
-            aggregateColumns
-                    .add(new Column(firstIndex + i, aggregate.outputName(), aggregate.outputType(),
-                                    !aggregate.outputIsNullable()));
+            final Domain outputType = outputType(inputSchema, aggregate);
+
+            aggregateColumns.add(new Column(firstIndex + i, aggregate.outputName(), outputType,
+                                            !aggregate.outputIsNullable()));
         }
 
         return inputSchema.extend(aggregateColumns);
+    }
+
+    private static Domain outputType(Schema inputSchema, Aggregate aggregate) {
+        if (aggregate instanceof CountStarAggregate) {
+            return INTEGER;
+        } else if (aggregate instanceof AvgAggregate) {
+            return DECIMAL;
+        } else if (aggregate instanceof MinAggregate) {
+            return inputSchema.column(((MinAggregate) aggregate).inputName()).domain();
+        } else if (aggregate instanceof SumAggregate) {
+            return inputSchema.column(((SumAggregate) aggregate).inputName()).domain();
+        }
+
+        throw new UnsupportedOperationException();
     }
 
     public List<Aggregate> aggregates() {

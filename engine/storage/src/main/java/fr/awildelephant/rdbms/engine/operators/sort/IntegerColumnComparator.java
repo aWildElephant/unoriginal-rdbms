@@ -6,7 +6,7 @@ public class IntegerColumnComparator implements RecordComparator {
 
     private final int index;
 
-    IntegerColumnComparator(int index) {
+    public IntegerColumnComparator(int index) {
         this.index = index;
     }
 

@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
@@ -107,6 +108,13 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
         final String pattern = apply(like.pattern());
 
         return input + " LIKE " + pattern;
+    }
+
+    @Override
+    public String visit(Min min) {
+        final String input = apply(min.input());
+
+        return "min(" + input + ")";
     }
 
     @Override

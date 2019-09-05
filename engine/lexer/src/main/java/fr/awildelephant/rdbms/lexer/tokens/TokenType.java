@@ -41,6 +41,7 @@ public enum TokenType {
     LESS_OR_EQUAL,
     LIKE,
     LIMIT,
+    MIN,
     MINUS,
     NOT,
     NULL,

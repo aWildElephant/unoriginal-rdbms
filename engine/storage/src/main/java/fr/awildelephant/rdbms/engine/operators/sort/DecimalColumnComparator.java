@@ -7,7 +7,7 @@ public class DecimalColumnComparator implements RecordComparator {
 
     private final int index;
 
-    DecimalColumnComparator(int index) {
+    public DecimalColumnComparator(int index) {
         this.index = index;
     }
 
