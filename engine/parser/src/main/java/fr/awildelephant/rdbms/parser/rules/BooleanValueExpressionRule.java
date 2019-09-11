@@ -20,7 +20,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
-import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpressionRule;
+import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpression;
 
 final class BooleanValueExpressionRule {
 
@@ -71,29 +71,29 @@ final class BooleanValueExpressionRule {
             case EQUAL:
                 lexer.consumeNextToken();
 
-                return equal(left, deriveValueExpressionRule(lexer));
+                return equal(left, deriveValueExpression(lexer));
             case GREATER:
                 lexer.consumeNextToken();
 
-                return greater(left, deriveValueExpressionRule(lexer));
+                return greater(left, deriveValueExpression(lexer));
             case LESS:
                 lexer.consumeNextToken();
 
-                return less(left, deriveValueExpressionRule(lexer));
+                return less(left, deriveValueExpression(lexer));
             case LESS_OR_EQUAL:
                 lexer.consumeNextToken();
 
-                return lessOrEqual(left, deriveValueExpressionRule(lexer));
+                return lessOrEqual(left, deriveValueExpression(lexer));
             case LIKE:
                 lexer.consumeNextToken();
 
-                return like(left, deriveValueExpressionRule(lexer));
+                return like(left, deriveValueExpression(lexer));
             case NOT:
                 lexer.consumeNextToken();
 
                 consumeAndExpect(LIKE, lexer);
 
-                return not(like(left, deriveValueExpressionRule(lexer)));
+                return not(like(left, deriveValueExpression(lexer)));
             default:
                 return left;
         }
@@ -124,7 +124,7 @@ final class BooleanValueExpressionRule {
 
                 return BooleanLiteral.UNKNOWN;
             default:
-                return deriveValueExpressionRule(lexer);
+                return deriveValueExpression(lexer);
         }
     }
 }

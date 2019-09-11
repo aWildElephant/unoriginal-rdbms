@@ -9,13 +9,13 @@ import static fr.awildelephant.rdbms.parser.rules.ExplicitTableRule.deriveExplic
 import static fr.awildelephant.rdbms.parser.rules.QuerySpecificationRule.deriveQuerySpecificationRule;
 import static fr.awildelephant.rdbms.parser.rules.TableValueConstructorRule.deriveTableValueConstructorRule;
 
-final class SimpleTableRule {
+final class QueryExpressionRule {
 
-    private SimpleTableRule() {
+    private QueryExpressionRule() {
 
     }
 
-    static AST deriveSimpleTableRule(final Lexer lexer) {
+    static AST deriveQueryExpression(final Lexer lexer) {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {

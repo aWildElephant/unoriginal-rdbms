@@ -29,11 +29,13 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DAY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 
 final class ValueExpressionRule {
 
@@ -41,7 +43,7 @@ final class ValueExpressionRule {
 
     }
 
-    static AST deriveValueExpressionRule(final Lexer lexer) {
+    static AST deriveValueExpression(final Lexer lexer) {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
@@ -110,13 +112,7 @@ final class ValueExpressionRule {
 
         switch (nextToken.type()) {
             case LEFT_PAREN:
-                lexer.consumeNextToken();
-
-                final AST parenthesizedExpression = deriveNumericValueExpression(lexer);
-
-                consumeAndExpect(RIGHT_PAREN, lexer);
-
-                return parenthesizedExpression;
+                return deriveParenthesizedValueExpression(lexer);
             case DATE:
                 lexer.consumeNextToken();
 
@@ -151,7 +147,7 @@ final class ValueExpressionRule {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
 
-                final AST avgInput = deriveValueExpressionRule(lexer);
+                final AST avgInput = deriveValueExpression(lexer);
 
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
@@ -167,7 +163,7 @@ final class ValueExpressionRule {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
 
-                final AST minInput = deriveValueExpressionRule(lexer);
+                final AST minInput = deriveValueExpression(lexer);
 
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
@@ -176,7 +172,7 @@ final class ValueExpressionRule {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
 
-                final AST sumInput = deriveValueExpressionRule(lexer);
+                final AST sumInput = deriveValueExpression(lexer);
 
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
@@ -190,6 +186,21 @@ final class ValueExpressionRule {
             default:
                 throw unexpectedToken(nextToken);
         }
+    }
+
+    private static AST deriveParenthesizedValueExpression(Lexer lexer) {
+        consumeAndExpect(LEFT_PAREN, lexer);
+
+        final AST input;
+        if (nextTokenIs(SELECT, lexer)) {
+            input = deriveQueryExpression(lexer);
+        } else {
+            input = deriveValueExpression(lexer);
+        }
+
+        consumeAndExpect(RIGHT_PAREN, lexer);
+
+        return input;
     }
 
     private static AST deriveDecimalLiteral(Lexer lexer) {

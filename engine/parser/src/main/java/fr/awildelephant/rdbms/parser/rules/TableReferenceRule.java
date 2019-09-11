@@ -12,7 +12,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
-import static fr.awildelephant.rdbms.parser.rules.SimpleTableRule.deriveSimpleTableRule;
+import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
 
 final class TableReferenceRule {
@@ -41,7 +41,7 @@ final class TableReferenceRule {
         if (nextTokenIs(LEFT_PAREN, lexer)) {
             consumeAndExpect(LEFT_PAREN, lexer);
 
-            final AST input = deriveSimpleTableRule(lexer);
+            final AST input = deriveQueryExpression(lexer);
 
             consumeAndExpect(RIGHT_PAREN, lexer);
 
