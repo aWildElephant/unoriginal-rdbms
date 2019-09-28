@@ -85,12 +85,15 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     @Override
     public ValueExpression visit(BooleanLiteral booleanLiteral) {
         final DomainValue value;
-        if (booleanLiteral == BooleanLiteral.TRUE) {
-            value = trueValue();
-        } else if (booleanLiteral == BooleanLiteral.FALSE) {
-            value = falseValue();
-        } else {
-            throw new UnsupportedOperationException("Not yet implemented"); // TODO
+        switch (booleanLiteral) {
+            case TRUE:
+                value = trueValue();
+                break;
+            case FALSE:
+                value = falseValue();
+                break;
+            default:
+                value = nullValue();
         }
 
         return constantExpression(value, BOOLEAN);

@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
+import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
 import static fr.awildelephant.rdbms.engine.data.table.system.NothingSystemTable.EMPTY_SCHEMA;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
@@ -104,8 +105,6 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Values values) {
-        // TODO: use the SchemaValidator to check that all referenced columns exist
-
         final List<List<ValueExpression>> matrix = new ArrayList<>();
 
         for (Row row : values.rows()) {
@@ -113,6 +112,8 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             final List<ValueExpression> valueExpressions = new ArrayList<>();
 
             for (AST expression : expressions) {
+                schemaValidator(EMPTY_SCHEMA).apply(expression);
+
                 valueExpressions.add(createValueExpression(expression, EMPTY_SCHEMA));
             }
 
@@ -124,13 +125,16 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Where where) {
-        // TODO: use the SchemaValidator to check that all referenced columns exist
-
+        final AST filter = where.filter();
         final LogicalOperator input = apply(where.input());
 
-        final ValueExpression filter = createValueExpression(where.filter(), input.schema());
+        final Schema inputSchema = input.schema();
 
-        return new FilterLop(input, filter);
+        schemaValidator(inputSchema).apply(filter);
+
+        final ValueExpression expression = createValueExpression(filter, inputSchema);
+
+        return new FilterLop(input, expression);
     }
 
     @Override

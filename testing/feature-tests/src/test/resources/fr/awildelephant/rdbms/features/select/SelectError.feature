@@ -44,3 +44,15 @@ Feature: Select errors
       """
       Column not found: n
       """
+
+  Scenario: I reference a column that doesn't exist in the where clause of a select query
+
+    When I execute the query
+    """
+    SELECT * FROM (VALUES (1)) WHERE zoinks = 9001
+    """
+
+    Then I expect an error with the message
+    """
+    Column not found: zoinks
+    """

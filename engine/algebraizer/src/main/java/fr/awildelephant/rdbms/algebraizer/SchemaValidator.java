@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
@@ -128,6 +129,11 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(IntegerLiteral integerLiteral) {
+        return null;
+    }
+
+    @Override
+    public Void visit(IntervalLiteral intervalLiteral) {
         return null;
     }
 
