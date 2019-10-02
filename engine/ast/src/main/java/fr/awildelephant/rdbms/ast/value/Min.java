@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.ast.ASTVisitor;
 
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class Min implements AST {
 
     private final AST input;
@@ -24,6 +26,13 @@ public final class Min implements AST {
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append(input)
+                .toString();
     }
 
     @Override

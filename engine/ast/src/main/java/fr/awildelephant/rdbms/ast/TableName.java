@@ -2,6 +2,8 @@ package fr.awildelephant.rdbms.ast;
 
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class TableName implements AST {
 
     private final String name;
@@ -25,7 +27,9 @@ public final class TableName implements AST {
 
     @Override
     public String toString() {
-        return name;
+        return toStringBuilder(this)
+                .append(name)
+                .toString();
     }
 
     @Override

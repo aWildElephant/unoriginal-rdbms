@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.ast.ASTVisitor;
 
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class And implements AST {
 
     private final AST left;
@@ -34,7 +36,10 @@ public final class And implements AST {
 
     @Override
     public String toString() {
-        return left + " and " + right;
+        return toStringBuilder(this)
+                .append("left", left)
+                .append("right", right)
+                .toString();
     }
 
     @Override

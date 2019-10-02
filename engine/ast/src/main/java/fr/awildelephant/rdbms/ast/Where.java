@@ -2,6 +2,8 @@ package fr.awildelephant.rdbms.ast;
 
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class Where implements AST {
 
     private final AST input;
@@ -27,6 +29,14 @@ public final class Where implements AST {
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("filter", filter)
+                .toString();
     }
 
     @Override
