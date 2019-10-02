@@ -18,7 +18,6 @@ import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
-import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
+import static fr.awildelephant.rdbms.algebraizer.FilterTransformer.transformFilter;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
 import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
 import static fr.awildelephant.rdbms.engine.data.table.system.NothingSystemTable.EMPTY_SCHEMA;
@@ -125,16 +125,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Where where) {
-        final AST filter = where.filter();
-        final LogicalOperator input = apply(where.input());
-
-        final Schema inputSchema = input.schema();
-
-        schemaValidator(inputSchema).apply(filter);
-
-        final ValueExpression expression = createValueExpression(filter, inputSchema);
-
-        return new FilterLop(input, expression);
+        return transformFilter(apply(where.input()), where.filter());
     }
 
     @Override
