@@ -227,6 +227,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(TableAlias tableAlias) {
+        return defaultVisit(tableAlias);
+    }
+
+    @Override
     public T visit(TableElementList tableElementList) {
         return defaultVisit(tableElementList);
     }

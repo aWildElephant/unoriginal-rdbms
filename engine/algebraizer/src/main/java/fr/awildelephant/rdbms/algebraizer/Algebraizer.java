@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.ast.InnerJoin;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.SortedSelect;
+import fr.awildelephant.rdbms.ast.TableAlias;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
@@ -75,6 +76,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     public LogicalOperator visit(SortedSelect sortedSelect) {
         return transformOutputColumns(apply(sortedSelect.inputTable()), sortedSelect.outputColumns(),
                                       sortedSelect.sorting());
+    }
+
+    @Override
+    public LogicalOperator visit(TableAlias tableAlias) {
+        throw new UnsupportedOperationException("Table alias not yet implemented");
     }
 
     @Override
