@@ -1,6 +1,6 @@
 Feature: I select a constant value from a table
 
-  @todo # Remove system.nothing. Support "VALUES ()"?
+  @todo # system.nothing has been removed. Support "VALUES ()"?
   Scenario: I select an integer constant from an empty table
 
     When I execute the query

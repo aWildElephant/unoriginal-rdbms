@@ -34,9 +34,11 @@ import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer
 import static fr.awildelephant.rdbms.algebraizer.FilterTransformer.transformFilter;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
 import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
-import static fr.awildelephant.rdbms.engine.data.table.system.NothingSystemTable.EMPTY_SCHEMA;
+import static java.util.Collections.emptyList;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
+
+    private static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final Storage storage;
 

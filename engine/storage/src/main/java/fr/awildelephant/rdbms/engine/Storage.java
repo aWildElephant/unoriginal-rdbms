@@ -3,7 +3,6 @@ package fr.awildelephant.rdbms.engine;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.system.NothingSystemTable;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
 import java.util.HashMap;
@@ -13,10 +12,6 @@ import java.util.Optional;
 public final class Storage {
 
     private final Map<String, ManagedTable> tables = new HashMap<>();
-
-    public Storage() {
-        tables.put("system.nothing", new NothingSystemTable());
-    }
 
     public void create(final String tableName, final ManagedTable table) {
         tables.put(tableName, table);
