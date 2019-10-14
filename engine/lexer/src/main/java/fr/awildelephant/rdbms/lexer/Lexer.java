@@ -20,6 +20,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_OR_EQUAL_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.MINUS_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PERIOD_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PLUS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.QUESTION_MARK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
@@ -105,6 +106,8 @@ public final class Lexer {
                 return SEMICOLON_TOKEN;
             case '?':
                 return QUESTION_MARK_TOKEN;
+            case '.':
+                return PERIOD_TOKEN;
             case '\'':
                 return matchTextLiteral();
             case '0':
@@ -201,7 +204,6 @@ public final class Lexer {
         return (codePoint >= 'a' && codePoint <= 'z')
                 || (codePoint >= 'A' && codePoint <= 'Z')
                 || (codePoint >= '0' && codePoint <= '9')
-                || codePoint == '.'
                 || codePoint == '_';
     }
 }

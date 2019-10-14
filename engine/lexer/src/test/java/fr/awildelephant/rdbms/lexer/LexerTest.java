@@ -23,6 +23,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.Keywords.VALUES_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PERIOD_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
 
@@ -100,5 +101,16 @@ class LexerTest {
                      LEFT_PAREN_TOKEN,
                      new IntegerLiteralToken(3),
                      RIGHT_PAREN_TOKEN);
+    }
+
+    @Test
+    void it_should_tokenize_an_identifier_chain() {
+        assertLexing("one.two.three",
+
+                     new IdentifierToken("one"),
+                     PERIOD_TOKEN,
+                     new IdentifierToken("two"),
+                     PERIOD_TOKEN,
+                     new IdentifierToken("three"));
     }
 }

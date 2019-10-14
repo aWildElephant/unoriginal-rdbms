@@ -9,6 +9,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LESS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LESS_OR_EQUAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MINUS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.PERIOD;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.PLUS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.QUESTION_MARK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
@@ -114,6 +115,17 @@ public enum StaticToken implements Token {
         @Override
         public TokenType type() {
             return MINUS;
+        }
+    },
+    PERIOD_TOKEN {
+        @Override
+        public String text() {
+            return ".";
+        }
+
+        @Override
+        public TokenType type() {
+            return PERIOD;
         }
     },
     PLUS_TOKEN {
