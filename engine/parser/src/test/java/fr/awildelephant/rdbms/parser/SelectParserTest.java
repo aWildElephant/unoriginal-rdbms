@@ -23,6 +23,7 @@ import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
+import static fr.awildelephant.rdbms.parser.ParserTestHelper.identifierChain;
 
 class SelectParserTest {
 
@@ -113,5 +114,12 @@ class SelectParserTest {
         assertParsing("SELECT * FROM test LIMIT 3",
 
                       limit(select(List.of(asterisk()), tableName("test")), 3));
+    }
+
+    @Test
+    void it_should_parse_a_qualified_column_reference() {
+        assertParsing("SELECT test.a FROM test",
+
+                      select(List.of(identifierChain("test", "a")), tableName("test")));
     }
 }

@@ -8,7 +8,6 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.ast.IdentifierChain.identifierChain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 final class ParserTestHelper {
@@ -29,5 +28,15 @@ final class ParserTestHelper {
         }
 
         return columnNames;
+    }
+
+    static IdentifierChain identifierChain(String... identifiers) {
+        final IdentifierChain.IdentifierChainBuilder builder = IdentifierChain.builder();
+
+        for (String identifier : identifiers) {
+            builder.add(identifier);
+        }
+
+        return builder.build();
     }
 }

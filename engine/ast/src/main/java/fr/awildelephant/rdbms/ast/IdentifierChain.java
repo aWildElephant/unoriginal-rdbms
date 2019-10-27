@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,11 +13,11 @@ public final class IdentifierChain implements AST {
     }
 
     public static IdentifierChain identifierChain(String identifier) {
-        return identifierChain(List.of(identifier));
+        return new IdentifierChain(List.of(identifier));
     }
 
-    public static IdentifierChain identifierChain(List<String> chain) {
-        return new IdentifierChain(chain);
+    public static IdentifierChainBuilder builder() {
+        return new IdentifierChainBuilder();
     }
 
     public List<String> identifiers() {
@@ -46,5 +47,18 @@ public final class IdentifierChain implements AST {
         final IdentifierChain other = (IdentifierChain) obj;
 
         return Objects.equals(identifiers, other.identifiers);
+    }
+
+    public static final class IdentifierChainBuilder {
+
+        private final List<String> identifiers = new ArrayList<>();
+
+        public void add(String identifier) {
+            identifiers.add(identifier);
+        }
+
+        public IdentifierChain build() {
+            return new IdentifierChain(identifiers);
+        }
     }
 }
