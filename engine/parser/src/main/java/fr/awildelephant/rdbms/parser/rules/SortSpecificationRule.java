@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.parser.rules;
 
-import fr.awildelephant.rdbms.ast.ColumnReference;
+import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.OrderingSpecification;
 import fr.awildelephant.rdbms.ast.SortSpecification;
 import fr.awildelephant.rdbms.lexer.Lexer;
@@ -17,9 +17,9 @@ final class SortSpecificationRule {
     }
 
     static SortSpecification deriveSortSpecification(Lexer lexer) {
-        final ColumnReference columnReference = deriveColumnReference(lexer);
+        final ColumnName columnName = deriveColumnReference(lexer);
 
-        return sortSpecification(columnReference, deriveOrderingSpecification(lexer));
+        return sortSpecification(columnName, deriveOrderingSpecification(lexer));
     }
 
     private static OrderingSpecification deriveOrderingSpecification(Lexer lexer) {

@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
@@ -35,7 +36,7 @@ public final class LikeExpression implements ValueExpression {
     }
 
     @Override
-    public Stream<String> variables() {
+    public Stream<ColumnReference> variables() {
         return Stream.concat(input.variables(), pattern.variables());
     }
 

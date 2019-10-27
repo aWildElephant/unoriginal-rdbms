@@ -1,15 +1,18 @@
 package fr.awildelephant.rdbms.plan.aggregation;
 
+import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
+
 public class AvgAggregate implements Aggregate {
 
-    private final String inputName;
+    private final ColumnReference input;
 
-    public AvgAggregate(String inputName) {
-        this.inputName = inputName;
+    public AvgAggregate(ColumnReference input) {
+        this.input = input;
     }
 
-    public String inputName() {
-        return inputName;
+    public ColumnReference input() {
+        return input;
     }
 
     @Override
@@ -18,8 +21,8 @@ public class AvgAggregate implements Aggregate {
     }
 
     @Override
-    public String outputName() {
-        return "avg(" + inputName + ")";
+    public ColumnReference outputName() {
+        return new UnqualifiedColumnReference("avg(" + input.fullName() + ")");
     }
 
 }

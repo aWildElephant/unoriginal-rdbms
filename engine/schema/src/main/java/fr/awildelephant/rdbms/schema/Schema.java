@@ -7,12 +7,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 public final class Schema {
 
-    private final List<String> columnNames;
-    private final Map<String, Column> columnIndex;
+    private final List<ColumnReference> allColumns;
+    private final Map<String, Map<String, Column>> columnIndex;
 
     public Schema(List<Column> columns) {
         final int numberOfColumns = columns.size();
@@ -23,78 +22,123 @@ public final class Schema {
             reindexedColumns.add(new Column(i, column.name(), column.domain(), column.notNull()));
         }
 
-        final Map<String, Column> indexedAttributes = new HashMap<>(numberOfColumns);
-        final String[] nameList = new String[numberOfColumns];
+        columnIndex = new HashMap<>();
+        allColumns = new ArrayList<>();
 
         for (Column column : reindexedColumns) {
-            nameList[column.index()] = column.name();
-            indexedAttributes.put(column.name(), column);
+            final ColumnReference columnReference = column.name();
+            allColumns.add(columnReference);
+            columnIndex.compute(columnReference.name(), (unused, tables) -> {
+                if (tables == null) {
+                    tables = new HashMap<>();
+                }
+
+                tables.put(columnReference.table().orElse(""), column);
+
+                return tables;
+            });
+        }
+    }
+
+    public List<ColumnReference> columnNames() {
+        return allColumns;
+    }
+
+    public Column column(String name) {
+        final Map<String, Column> tables = columnIndex.get(name);
+
+        if (tables == null || tables.isEmpty()) {
+            throw new IllegalArgumentException("Column not found: " + name);
         }
 
-        columnNames = List.of(nameList);
-        columnIndex = indexedAttributes;
+        if (tables.size() > 1) {
+            throw new IllegalArgumentException("Ambiguous column name: " + name);
+        }
+
+        return tables.values().iterator().next();
     }
 
-    private Schema(List<String> columnNames, Map<String, Column> columnIndex) {
-        this.columnNames = columnNames;
-        this.columnIndex = columnIndex;
+    public Column column(String tableName, String columnName) {
+        final Map<String, Column> tables = columnIndex.get(columnName);
+
+        if (tables == null || tables.isEmpty()) {
+            throw new IllegalArgumentException("Column not found: " + tableName + '.' + columnName);
+        }
+
+        final Column column = tables.get(tableName);
+
+        if (column == null) {
+            throw new IllegalArgumentException("Column not found: " + tableName + '.' + columnName);
+        }
+
+        return column;
     }
 
-    public List<String> columnNames() {
-        return columnNames;
+    public Column column(ColumnReference columnReference) {
+        return columnReference.table()
+                              .map(qualifier -> column(qualifier, columnReference.name()))
+                              .orElseGet(() -> column(columnReference.name()));
     }
 
-    public Column column(String attributeName) {
-        return columnIndex.get(attributeName);
-    }
-
-    public boolean contains(String attributeName) {
-        return columnIndex.containsKey(attributeName);
+    public boolean contains(ColumnReference columnReference) {
+        try {
+            column(columnReference);
+            return true;
+        } catch (IllegalArgumentException unused) {
+            return false;
+        }
     }
 
     public int indexOf(String attributeName) {
-        return columnIndex.get(attributeName).index();
+        return column(attributeName).index();
+    }
+
+    public int indexOf(ColumnReference columnReference) {
+        return column(columnReference).index();
     }
 
     public int numberOfAttributes() {
-        return columnIndex.size();
+        return allColumns.size();
     }
 
-    public Schema project(List<String> names) {
-        final HashMap<String, Column> newIndex = new HashMap<>(names.size());
+    public Schema project(List<ColumnReference> references) {
+        final List<Column> projection = new ArrayList<>();
 
         int i = 0;
-        for (String name : names) {
-            final Column column = columnIndex.get(name);
+        for (ColumnReference reference : references) {
+            final Column column = reference.table()
+                                           .map(qualifier -> column(qualifier, reference.name()))
+                                           .orElseGet(() -> column(reference.name()));
 
             if (column == null) {
-                throw new IllegalStateException("Column `" + name + "` not found. Available columns " + columnNames);
+                throw new IllegalStateException(
+                        "Column `" + reference + "` not found. Available columns " + this.allColumns);
             }
 
-            newIndex.put(name, new Column(i, column.name(), column.domain(), column.notNull()));
+            projection.add(new Column(i, column.name(), column.domain(), column.notNull()));
             i = i + 1;
         }
 
-        return new Schema(names, newIndex);
+        return new Schema(projection);
     }
 
     public Schema alias(Alias alias) {
-        final Map<String, Column> newColumnIndex = columnIndex.entrySet()
-                                                              .stream()
-                                                              .collect(toMap(entry -> alias.get(entry.getKey()), Map.Entry::getValue));
+        final List<Column> columns = allColumns.stream()
+                                               .map(this::column)
+                                               .map(column -> new Column(column.index(),
+                                                                         alias.get(column.name()),
+                                                                         column.domain(),
+                                                                         column.notNull()))
+                                               .collect(toList());
 
-        final List<String> newColumnNames = columnNames.stream()
-                                                       .map(alias::get)
-                                                       .collect(toList());
-
-        return new Schema(newColumnNames, newColumnIndex);
+        return new Schema(columns);
     }
 
     public Schema extend(List<Column> newColumns) {
-        final ArrayList<Column> allColumns = new ArrayList<>(columnNames.size() + newColumns.size());
+        final ArrayList<Column> allColumns = new ArrayList<>(this.allColumns.size() + newColumns.size());
 
-        for (String columnName : columnNames) {
-            allColumns.add(column(columnName));
+        for (ColumnReference columnReference : this.allColumns) {
+            allColumns.add(column(columnReference));
         }
 
         allColumns.addAll(newColumns);
@@ -104,7 +148,7 @@ public final class Schema {
 
     @Override
     public int hashCode() {
-        return Objects.hash(columnIndex, columnNames);
+        return Objects.hash(columnIndex, allColumns);
     }
 
     @Override
@@ -115,7 +159,7 @@ public final class Schema {
 
         final Schema other = (Schema) obj;
 
-        return Objects.equals(columnNames, other.columnNames)
+        return Objects.equals(allColumns, other.allColumns)
                 && Objects.equals(columnIndex, other.columnIndex);
     }
 }

@@ -2,18 +2,18 @@ package fr.awildelephant.rdbms.ast;
 
 import java.util.Objects;
 
-public final class QualifiedColumnReference implements ColumnReference {
+public final class QualifiedColumnName implements ColumnName {
 
     private final String qualifier;
     private final String name;
 
-    private QualifiedColumnReference(String qualifier, String name) {
+    private QualifiedColumnName(String qualifier, String name) {
         this.qualifier = qualifier;
         this.name = name;
     }
 
-    public static QualifiedColumnReference qualifiedColumnReference(String qualifier, String name) {
-        return new QualifiedColumnReference(qualifier, name);
+    public static QualifiedColumnName qualifiedColumnName(String qualifier, String name) {
+        return new QualifiedColumnName(qualifier, name);
     }
 
     public String qualifier() {
@@ -37,11 +37,11 @@ public final class QualifiedColumnReference implements ColumnReference {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof QualifiedColumnReference)) {
+        if (!(obj instanceof QualifiedColumnName)) {
             return false;
         }
 
-        final QualifiedColumnReference other = (QualifiedColumnReference) obj;
+        final QualifiedColumnName other = (QualifiedColumnName) obj;
 
         return Objects.equals(qualifier, other.qualifier)
                 && Objects.equals(name, other.name);

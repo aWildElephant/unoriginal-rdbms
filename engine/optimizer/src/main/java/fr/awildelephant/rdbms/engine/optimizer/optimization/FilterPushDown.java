@@ -18,6 +18,8 @@ import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,10 +49,10 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(AggregationLop aggregationNode) {
-        final List<String> aggregatesColumns = aggregationNode.aggregates()
-                                                              .stream()
-                                                              .map(Aggregate::outputName)
-                                                              .collect(toList());
+        final List<ColumnReference> aggregatesColumns = aggregationNode.aggregates()
+                                                                       .stream()
+                                                                       .map(Aggregate::outputName)
+                                                                       .collect(toList());
 
         final List<ValueExpression> filtersOnAggregates = new ArrayList<>();
         final List<ValueExpression> filtersOnInput = new ArrayList<>();
@@ -117,13 +119,13 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(MapLop mapNode) {
-        final List<String> mapsColumnNames = mapNode.expressionsOutputNames();
+        final Schema schema = mapNode.schema();
 
         final List<ValueExpression> filtersOnMapColumns = new ArrayList<>();
         final List<ValueExpression> filtersOnInput = new ArrayList<>();
 
         for (ValueExpression filter : filters) {
-            if (filter.variables().anyMatch(mapsColumnNames::contains)) {
+            if (filter.variables().anyMatch(schema::contains)) {
                 filtersOnMapColumns.add(filter);
             } else {
                 filtersOnInput.add(filter);
@@ -167,14 +169,14 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         final Collection<ValueExpression> rightFilters = new ArrayList<>();
         final Collection<ValueExpression> joinFilters = new ArrayList<>();
 
-        final Collection<String> leftColumns = cartesianProduct.leftInput().schema().columnNames();
-        final Collection<String> rightColumns = cartesianProduct.rightInput().schema().columnNames();
+        final Schema leftSchema = cartesianProduct.leftInput().schema();
+        final Schema rightSchema = cartesianProduct.rightInput().schema();
 
         for (ValueExpression filter : filters) {
-            final List<String> requiredVariables = filter.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = filter.variables().collect(toList());
 
-            final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftColumns::contains);
-            final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightColumns::contains);
+            final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftSchema::contains);
+            final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightSchema::contains);
 
             if (!requiresLeftInput) {
                 rightFilters.add(filter);

@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.operators.values;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.evaluator.Values;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 public class JoinValues implements Values {
@@ -24,11 +25,13 @@ public class JoinValues implements Values {
     }
 
     @Override
-    public DomainValue valueOf(String identifier) {
-        if (leftSchema.contains(identifier)) {
-            return leftRecord.get(leftSchema.indexOf(identifier));
+    public DomainValue valueOf(ColumnReference column) {
+        try {
+            return leftRecord.get(leftSchema.indexOf(column));
+        } catch (IllegalArgumentException unused) {
+            // NOP
         }
 
-        return rightRecord.get(rightSchema.indexOf(identifier));
+        return rightRecord.get(rightSchema.indexOf(column));
     }
 }

@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.rpc.generated.RDBMSGrpc;
 import fr.awildelephant.rdbms.rpc.generated.Rdbms;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.RDBMS;
 import io.grpc.stub.StreamObserver;
@@ -53,11 +54,15 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
 
         final Schema schema = table.schema();
 
-        for (String columnName : schema.columnNames()) {
+        for (ColumnReference columnReference : schema.columnNames()) {
             final Rdbms.QueryResult.Column.Builder columnBuilder = Rdbms.QueryResult.Column.newBuilder();
 
-            columnBuilder.setName(columnName);
-            columnBuilder.setType(getType(schema, columnName));
+            final String fullName = columnReference.table()
+                                                   .map(tableName -> tableName + '.' + columnReference.name())
+                                                   .orElseGet(columnReference::name);
+
+            columnBuilder.setName(fullName);
+            columnBuilder.setType(getType(schema, columnReference));
 
             queryResultBuilder.addSchema(columnBuilder);
         }
@@ -69,8 +74,8 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
         return queryResultBuilder;
     }
 
-    private Rdbms.QueryResult.Type getType(Schema schema, String columnName) {
-        switch (schema.column(columnName).domain()) {
+    private Rdbms.QueryResult.Type getType(Schema schema, ColumnReference columnReference) {
+        switch (schema.column(columnReference).domain()) {
             case BOOLEAN:
                 return Rdbms.QueryResult.Type.BOOLEAN;
             case DECIMAL:

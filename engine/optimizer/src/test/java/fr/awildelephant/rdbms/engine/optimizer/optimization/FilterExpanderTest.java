@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.FilterExpander.expandFilters;
@@ -16,9 +17,9 @@ class FilterExpanderTest {
 
     @Test
     void it_should_transform_an_and_expression_to_two_expressions() {
-        final Variable a = variable("a", Domain.INTEGER);
-        final Variable b = variable("b", Domain.INTEGER);
-        final Variable c = variable("c", Domain.INTEGER);
+        final Variable a = variable(new UnqualifiedColumnReference("a"), Domain.INTEGER);
+        final Variable b = variable(new UnqualifiedColumnReference("b"), Domain.INTEGER);
+        final Variable c = variable(new UnqualifiedColumnReference("c"), Domain.INTEGER);
 
         final EqualExpression leftFilter = equalExpression(a, b);
         final EqualExpression rightFilter = equalExpression(b, c);

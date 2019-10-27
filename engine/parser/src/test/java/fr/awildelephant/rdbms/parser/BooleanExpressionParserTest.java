@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.ast.Row.row;
-import static fr.awildelephant.rdbms.ast.UnqualifiedColumnReference.unqualifiedColumnReference;
+import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
@@ -49,40 +49,40 @@ class BooleanExpressionParserTest {
     @Test
     void it_should_parse_a_less_than_or_equal_to_comparison() {
         assertParsing("VALUES(birthday <= date '2000-01-01')",
-                      rows(row(lessOrEqual(unqualifiedColumnReference("birthday"),
+                      rows(row(lessOrEqual(unqualifiedColumnName("birthday"),
                                            cast(textLiteral("2000-01-01"), DATE)))));
     }
 
     @Test
     void it_should_parse_a_less_than_comparison() {
         assertParsing("VALUES (a < 42)",
-                      rows(row(less(unqualifiedColumnReference("a"), integerLiteral(42)))));
+                      rows(row(less(unqualifiedColumnName("a"), integerLiteral(42)))));
     }
 
     @Test
     void it_should_parse_a_greater_than_comparison() {
         assertParsing("VALUES (a > 9000)",
-                      rows(row(greater(unqualifiedColumnReference("a"), integerLiteral(9000)))));
+                      rows(row(greater(unqualifiedColumnName("a"), integerLiteral(9000)))));
     }
 
     @Test
     void it_should_parse_a_comparison_between_two_columns_followed_by_another_comparison() {
         assertParsing("VALUES (a = b AND c = 0)",
-                      rows(row(and(equal(unqualifiedColumnReference("a"), unqualifiedColumnReference("b")),
-                                   equal(unqualifiedColumnReference("c"), integerLiteral(0))))));
+                      rows(row(and(equal(unqualifiedColumnName("a"), unqualifiedColumnName("b")),
+                                   equal(unqualifiedColumnName("c"), integerLiteral(0))))));
     }
 
     @Test
     void it_should_parse_a_like_filter() {
         assertParsing("VALUES (a LIKE '.boub%')",
 
-                      rows(row(like(unqualifiedColumnReference("a"), textLiteral(".boub%")))));
+                      rows(row(like(unqualifiedColumnName("a"), textLiteral(".boub%")))));
     }
 
     @Test
     void it_should_parse_a_not_like_filter() {
         assertParsing("VALUES (a NOT LIKE '.boub%')",
 
-                      rows(row(not(like(unqualifiedColumnReference("a"), textLiteral(".boub%"))))));
+                      rows(row(not(like(unqualifiedColumnName("a"), textLiteral(".boub%"))))));
     }
 }

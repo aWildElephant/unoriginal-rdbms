@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -15,11 +16,11 @@ import static fr.awildelephant.rdbms.engine.operators.JoinUtils.joinRecords;
 
 public class InnerHashJoinOperator implements JoinOperator {
 
-    private final String leftJoinColumn;
-    private final String rightJoinColumn;
+    private final ColumnReference leftJoinColumn;
+    private final ColumnReference rightJoinColumn;
     private final Schema outputSchema;
 
-    public InnerHashJoinOperator(String leftJoinColumn, String rightJoinColumn, Schema outputSchema) {
+    public InnerHashJoinOperator(ColumnReference leftJoinColumn, ColumnReference rightJoinColumn, Schema outputSchema) {
         this.leftJoinColumn = leftJoinColumn;
         this.rightJoinColumn = rightJoinColumn;
         this.outputSchema = outputSchema;
@@ -46,7 +47,7 @@ public class InnerHashJoinOperator implements JoinOperator {
         return outputTable;
     }
 
-    private Map<DomainValue, List<Record>> hash(Table table, String column) {
+    private Map<DomainValue, List<Record>> hash(Table table, ColumnReference column) {
         final int index = table.schema().column(column).index();
 
         // TODO: utiliser un index de la table si possible

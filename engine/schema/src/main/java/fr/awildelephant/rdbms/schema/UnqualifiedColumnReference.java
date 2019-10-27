@@ -1,17 +1,19 @@
-package fr.awildelephant.rdbms.ast;
+package fr.awildelephant.rdbms.schema;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class UnqualifiedColumnReference implements ColumnReference {
 
     private final String name;
 
-    private UnqualifiedColumnReference(String name) {
+    public UnqualifiedColumnReference(String name) {
         this.name = name;
     }
 
-    public static UnqualifiedColumnReference unqualifiedColumnReference(String name) {
-        return new UnqualifiedColumnReference(name);
+    @Override
+    public Optional<String> table() {
+        return Optional.empty();
     }
 
     @Override
@@ -20,8 +22,13 @@ public final class UnqualifiedColumnReference implements ColumnReference {
     }
 
     @Override
-    public <T> T accept(ASTVisitor<T> visitor) {
-        return visitor.visit(this);
+    public String fullName() {
+        return name;
+    }
+
+    @Override
+    public ColumnReference renameColumn(String newColumnName) {
+        return new UnqualifiedColumnReference(newColumnName);
     }
 
     @Override

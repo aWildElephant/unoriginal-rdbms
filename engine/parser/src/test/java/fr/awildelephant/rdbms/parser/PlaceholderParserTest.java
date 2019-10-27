@@ -9,7 +9,7 @@ import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
-import static fr.awildelephant.rdbms.ast.UnqualifiedColumnReference.unqualifiedColumnReference;
+import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
@@ -30,6 +30,6 @@ class PlaceholderParserTest {
         assertParsing("SELECT * FROM test WHERE a = ?",
 
                       select(List.of(asterisk()),
-                             where(tableName("test"), equal(unqualifiedColumnReference("a"), placeholder()))));
+                             where(tableName("test"), equal(unqualifiedColumnName("a"), placeholder()))));
     }
 }

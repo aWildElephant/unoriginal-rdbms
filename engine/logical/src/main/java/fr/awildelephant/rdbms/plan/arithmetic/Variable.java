@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
@@ -7,19 +8,19 @@ import java.util.stream.Stream;
 
 public final class Variable implements ValueExpression {
 
-    private final String name;
+    private final ColumnReference name;
     private final Domain domain;
 
-    private Variable(String name, Domain domain) {
+    private Variable(ColumnReference name, Domain domain) {
         this.name = name;
         this.domain = domain;
     }
 
-    public static Variable variable(String name, Domain domain) {
+    public static Variable variable(ColumnReference name, Domain domain) {
         return new Variable(name, domain);
     }
 
-    public String name() {
+    public ColumnReference name() {
         return name;
     }
 
@@ -29,7 +30,7 @@ public final class Variable implements ValueExpression {
     }
 
     @Override
-    public Stream<String> variables() {
+    public Stream<ColumnReference> variables() {
         return Stream.of(name);
     }
 

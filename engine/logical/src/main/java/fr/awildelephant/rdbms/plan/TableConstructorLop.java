@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public final class TableConstructorLop extends AbstractLop {
             final ValueExpression formula = firstRow.get(i);
 
             // TODO: try to determine whether or not the formula is nullable
-            columns.add(new Column(i, "column" + (i + 1), formula.domain(), true));
+            columns.add(new Column(i, new UnqualifiedColumnReference("column" + (i + 1)), formula.domain(), true));
         }
 
         return new Schema(columns);

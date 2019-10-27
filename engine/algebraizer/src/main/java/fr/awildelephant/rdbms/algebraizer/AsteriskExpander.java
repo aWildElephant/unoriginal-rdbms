@@ -2,11 +2,14 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
+import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.UnqualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.stream.Stream;
+
+import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
+import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 
 public final class AsteriskExpander extends DefaultASTVisitor<Stream<AST>> {
 
@@ -20,7 +23,10 @@ public final class AsteriskExpander extends DefaultASTVisitor<Stream<AST>> {
     public Stream<AST> visit(Asterisk asterisk) {
         return inputSchema.columnNames()
                           .stream()
-                          .map(UnqualifiedColumnReference::unqualifiedColumnReference);
+                          .map(columnName -> columnName.table()
+                                  .<ColumnName>map(qualifier -> qualifiedColumnName(qualifier,
+                                                                                    columnName.name()))
+                                  .orElseGet(() -> unqualifiedColumnName(columnName.name())));
     }
 
     @Override

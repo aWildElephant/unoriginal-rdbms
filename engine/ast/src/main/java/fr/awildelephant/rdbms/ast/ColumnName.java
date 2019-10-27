@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
-public interface ColumnReference extends AST {
+public interface ColumnName extends AST {
 
     String name();
 }

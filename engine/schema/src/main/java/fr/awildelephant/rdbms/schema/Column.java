@@ -6,11 +6,11 @@ import java.util.Objects;
 public final class Column {
 
     private final int index;
-    private final String name;
+    private final ColumnReference name;
     private final Domain domain;
     private final boolean notNull;
 
-    public Column(int index, String name, Domain domain, boolean notNull) {
+    public Column(int index, ColumnReference name, Domain domain, boolean notNull) {
         this.name = name;
         this.domain = domain;
         this.index = index;
@@ -24,7 +24,7 @@ public final class Column {
         return index;
     }
 
-    public String name() {
+    public ColumnReference name() {
         return name;
     }
 

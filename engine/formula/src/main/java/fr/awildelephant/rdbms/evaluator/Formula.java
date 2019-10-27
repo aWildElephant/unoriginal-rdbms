@@ -3,15 +3,16 @@ package fr.awildelephant.rdbms.evaluator;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.evaluator.operation.Reference;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.Map;
 
 public class Formula {
 
     private final Operation operation;
-    private final Map<String, Reference> references;
+    private final Map<ColumnReference, Reference> references;
 
-    public Formula(Operation operation, Map<String, Reference> references) {
+    public Formula(Operation operation, Map<ColumnReference, Reference> references) {
         this.operation = operation;
         this.references = references;
     }

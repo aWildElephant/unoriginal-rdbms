@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.List;
@@ -41,11 +42,11 @@ public class ProjectionOperator implements Operator<Table, Table> {
     }
 
     private int[] buildRelativeMapping(Schema inputSchema) {
-        final List<String> outputColumns = outputSchema.columnNames();
-        final int[] mapping = new int[outputColumns.size()];
+        final List<ColumnReference> outputColumnReferences = outputSchema.columnNames();
+        final int[] mapping = new int[outputColumnReferences.size()];
 
-        for (String column : outputColumns) {
-            mapping[outputSchema.indexOf(column)] = inputSchema.indexOf(column);
+        for (ColumnReference columnReference : outputColumnReferences) {
+            mapping[outputSchema.indexOf(columnReference)] = inputSchema.indexOf(columnReference);
         }
 
         return mapping;

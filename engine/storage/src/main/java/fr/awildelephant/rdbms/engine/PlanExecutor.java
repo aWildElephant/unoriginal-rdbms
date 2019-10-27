@@ -37,6 +37,7 @@ import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -214,16 +215,13 @@ public final class PlanExecutor implements LopVisitor<Stream<Table>> {
             final EqualExpression equalExpression = (EqualExpression) joinSpecification;
 
             if (equalExpression.left() instanceof Variable && equalExpression.right() instanceof Variable) {
-                final String firstVariable = ((Variable) equalExpression.left()).name();
-                final String secondVariable = ((Variable) equalExpression.right()).name();
-
-                final List<String> leftInputColumns = leftInputSchema.columnNames();
-                final List<String> rightInputColumns = rightInputSchema.columnNames();
+                final ColumnReference firstVariable = ((Variable) equalExpression.left()).name();
+                final ColumnReference secondVariable = ((Variable) equalExpression.right()).name();
 
                 final Schema outputSchema = innerJoinLop.schema();
-                if (leftInputColumns.contains(firstVariable) && rightInputColumns.contains(secondVariable)) {
+                if (leftInputSchema.contains(firstVariable) && rightInputSchema.contains(secondVariable)) {
                     return new InnerHashJoinOperator(firstVariable, secondVariable, outputSchema);
-                } else if (leftInputColumns.contains(secondVariable) && rightInputColumns.contains(firstVariable)) {
+                } else if (leftInputSchema.contains(secondVariable) && rightInputSchema.contains(firstVariable)) {
                     return new InnerHashJoinOperator(secondVariable, firstVariable, outputSchema);
                 }
             }

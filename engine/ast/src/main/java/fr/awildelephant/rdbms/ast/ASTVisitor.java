@@ -98,7 +98,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Plus plus);
 
-    T visit(QualifiedColumnReference qualifiedColumnReference);
+    T visit(QualifiedColumnName qualifiedColumnReference);
 
     T visit(Row row);
 
@@ -120,7 +120,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(TextLiteral textLiteral);
 
-    T visit(UnqualifiedColumnReference unqualifiedColumnReference);
+    T visit(UnqualifiedColumnName unqualifiedColumnReference);
 
     T visit(Values values);
 

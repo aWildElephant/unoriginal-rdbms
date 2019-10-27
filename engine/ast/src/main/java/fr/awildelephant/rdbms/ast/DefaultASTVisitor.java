@@ -192,7 +192,7 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(QualifiedColumnReference qualifiedColumnReference) {
+    public T visit(QualifiedColumnName qualifiedColumnReference) {
         return defaultVisit(qualifiedColumnReference);
     }
 
@@ -252,7 +252,7 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(UnqualifiedColumnReference unqualifiedColumnReference) {
+    public T visit(UnqualifiedColumnName unqualifiedColumnReference) {
         return defaultVisit(unqualifiedColumnReference);
     }
 

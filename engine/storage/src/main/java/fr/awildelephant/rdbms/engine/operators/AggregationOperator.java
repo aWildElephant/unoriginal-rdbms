@@ -14,6 +14,7 @@ import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
@@ -74,19 +75,19 @@ public class AggregationOperator implements Operator<Table, Table> {
 
     private DomainValue computeAggregation(Aggregate aggregate, Table inputTable) {
         if (aggregate instanceof AvgAggregate) {
-            return computeAvgAggregate(((AvgAggregate) aggregate).inputName(), inputTable);
+            return computeAvgAggregate(((AvgAggregate) aggregate).input(), inputTable);
         } else if (aggregate instanceof CountStarAggregate) {
             return computeCountStarAggregation(inputTable);
         } else if (aggregate instanceof MinAggregate) {
-            return computeMinAggregate(((MinAggregate) aggregate).inputName(), inputTable);
+            return computeMinAggregate(((MinAggregate) aggregate).input(), inputTable);
         } else if (aggregate instanceof SumAggregate) {
-            return computeSumAggregate(((SumAggregate) aggregate).inputName(), inputTable);
+            return computeSumAggregate(((SumAggregate) aggregate).input(), inputTable);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
-    private DomainValue computeAvgAggregate(String inputName, Table inputTable) {
+    private DomainValue computeAvgAggregate(ColumnReference inputName, Table inputTable) {
         final int inputIndex = outputSchema.indexOf(inputName);
         BigDecimal accumulator = null;
         int numberOfNotNullValues = 0;
@@ -113,7 +114,7 @@ public class AggregationOperator implements Operator<Table, Table> {
         }
     }
 
-    private DomainValue computeMinAggregate(String inputName, Table inputTable) {
+    private DomainValue computeMinAggregate(ColumnReference inputName, Table inputTable) {
         final Column column = inputTable.schema().column(inputName);
         final int columnIndex = column.index();
 
@@ -151,7 +152,7 @@ public class AggregationOperator implements Operator<Table, Table> {
         }
     }
 
-    private DomainValue computeSumAggregate(String inputName, Table inputTable) {
+    private DomainValue computeSumAggregate(ColumnReference inputName, Table inputTable) {
         final int inputIndex = outputSchema.indexOf(inputName);
         BigDecimal accumulator = null;
 

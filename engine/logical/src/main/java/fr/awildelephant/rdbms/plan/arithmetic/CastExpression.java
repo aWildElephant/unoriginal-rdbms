@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
@@ -29,7 +30,7 @@ public final class CastExpression implements ValueExpression {
     }
 
     @Override
-    public Stream<String> variables() {
+    public Stream<ColumnReference> variables() {
         return input.variables();
     }
 

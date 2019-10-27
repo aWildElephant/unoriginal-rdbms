@@ -1,4 +1,3 @@
-@todo
 Feature: Qualified column names
 
   Background: a table
@@ -31,3 +30,15 @@ Feature: Qualified column names
     """
     Column not found: employer.name
     """
+
+  Scenario: I qualify a column in an average aggregate
+
+    When I execute the query
+    """
+    SELECT min(employee.name) FROM employee
+    """
+
+    Then I expect the result set
+      | min(employee.name) |
+      | TEXT               |
+      | Etienne            |

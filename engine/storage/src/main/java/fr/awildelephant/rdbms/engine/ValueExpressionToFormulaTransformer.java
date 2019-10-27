@@ -21,6 +21,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.HashMap;
@@ -54,7 +55,7 @@ import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
 public final class ValueExpressionToFormulaTransformer implements ValueExpressionVisitor<Operation> {
 
-    private Map<String, Reference> references = new HashMap<>();
+    private Map<ColumnReference, Reference> references = new HashMap<>();
 
     static Formula createFormula(ValueExpression expression) {
         final ValueExpressionToFormulaTransformer transformer = new ValueExpressionToFormulaTransformer();

@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
 import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -65,19 +66,19 @@ final class TableCreator {
     }
 
     private static void checkColumnExist(String columnName, Schema schema) {
-        if (!schema.contains(columnName)) {
-            throw new IllegalArgumentException("Column not found: " + columnName);
-        }
+        schema.column(columnName);
     }
 
     private static List<Column> attributesOf(CreateTable createTable) {
+        final String tableName = createTable.tableName().name();
         final TableElementList elements = createTable.tableElementList();
         final List<ColumnDefinition> columnDefinitions = elements.columns();
         final ArrayList<Column> columns = new ArrayList<>(columnDefinitions.size());
 
         int i = 0;
         for (ColumnDefinition element : columnDefinitions) {
-            columns.add(new Column(i, element.columnName(), domainOf(element.columnType()), false));
+            columns.add(new Column(i, new QualifiedColumnReference(tableName, element.columnName()),
+                                   domainOf(element.columnType()), false));
             i = i + 1;
         }
 

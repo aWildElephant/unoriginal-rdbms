@@ -48,7 +48,7 @@ public class TableProxy implements ResultProxy {
 
     @Override
     public String columnName(int column) {
-        return schema.columnNames().get(column);
+        return schema.columnNames().get(column).name();
     }
 
     @Override

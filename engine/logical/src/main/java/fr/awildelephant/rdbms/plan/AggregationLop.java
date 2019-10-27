@@ -38,8 +38,8 @@ public class AggregationLop extends AbstractLop {
 
             final Domain outputType = outputType(inputSchema, aggregate);
 
-            aggregateColumns.add(new Column(firstIndex + i, aggregate.outputName(), outputType,
-                                            !aggregate.outputIsNullable()));
+            aggregateColumns
+                    .add(new Column(firstIndex + i, aggregate.outputName(), outputType, !aggregate.outputIsNullable()));
         }
 
         return inputSchema.extend(aggregateColumns);
@@ -51,9 +51,9 @@ public class AggregationLop extends AbstractLop {
         } else if (aggregate instanceof AvgAggregate) {
             return DECIMAL;
         } else if (aggregate instanceof MinAggregate) {
-            return inputSchema.column(((MinAggregate) aggregate).inputName()).domain();
+            return inputSchema.column(((MinAggregate) aggregate).input()).domain();
         } else if (aggregate instanceof SumAggregate) {
-            return inputSchema.column(((SumAggregate) aggregate).inputName()).domain();
+            return inputSchema.column(((SumAggregate) aggregate).input()).domain();
         }
 
         throw new UnsupportedOperationException();

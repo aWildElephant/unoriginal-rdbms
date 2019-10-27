@@ -14,23 +14,26 @@ public final class Alias {
         return new Alias(aliases);
     }
 
-    public String get(String name) {
-        final String alias = aliases.get(name);
+    public ColumnReference get(ColumnReference original) {
+        final String columnName = original.name();
+        final String aliasedColumnName = aliases.get(columnName);
 
-        if (alias == null) {
-            return name;
+        if (aliasedColumnName == null) {
+            return original;
         }
 
-        return alias;
+        return original.renameColumn(aliasedColumnName);
     }
 
-    public String revert(String name) {
+    public ColumnReference revert(ColumnReference aliased) {
+        final String columnName = aliased.name();
+
         for (Map.Entry<String, String> entry : aliases.entrySet()) {
-            if (name.equals(entry.getValue())) {
-                return entry.getKey();
+            if (columnName.equals(entry.getValue())) {
+                return aliased.renameColumn(entry.getValue());
             }
         }
 
-        return name;
+        return aliased;
     }
 }

@@ -2,7 +2,9 @@ package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +25,20 @@ public final class MapLop extends AbstractLop {
     }
 
     private static Schema buildOutputSchema(List<ValueExpression> valueExpressions, List<String> outputNames, Schema schema) {
-        final List<String> inputColumns = schema.columnNames();
+        // TODO: can we use Schema#extend
+        final List<ColumnReference> inputColumns = schema.columnNames();
 
         final List<Column> outputColumns = new ArrayList<>(inputColumns.size() + valueExpressions.size());
 
-        for (String columnName : inputColumns) {
-            outputColumns.add(schema.column(columnName));
+        for (ColumnReference columnReference : inputColumns) {
+            outputColumns.add(schema.column(columnReference));
         }
 
         int index = inputColumns.size();
 
         for (int i = 0; i < valueExpressions.size(); i++) {
-            outputColumns.add(new Column(index++, outputNames.get(i), valueExpressions.get(i).domain(), false));
+            outputColumns.add(new Column(index++, new UnqualifiedColumnReference(outputNames.get(i)),
+                                         valueExpressions.get(i).domain(), false));
         }
 
         return new Schema(outputColumns);

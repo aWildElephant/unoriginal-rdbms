@@ -5,8 +5,8 @@ import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.QualifiedColumnReference;
-import fr.awildelephant.rdbms.ast.UnqualifiedColumnReference;
+import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -203,12 +203,8 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     }
 
     @Override
-    public Void visit(QualifiedColumnReference qualifiedColumnReference) {
-        final String name = qualifiedColumnReference.name();
-
-        if (!inputSchema.contains(name)) {
-            throw new IllegalStateException("Column not found: " + name);
-        }
+    public Void visit(QualifiedColumnName qualifiedColumnReference) {
+        inputSchema.column(qualifiedColumnReference.qualifier(), qualifiedColumnReference.name());
 
         return null;
     }
@@ -221,12 +217,8 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     }
 
     @Override
-    public Void visit(UnqualifiedColumnReference unqualifiedColumnReference) {
-        final String name = unqualifiedColumnReference.name();
-
-        if (!inputSchema.contains(name)) {
-            throw new IllegalStateException("Column not found: " + name);
-        }
+    public Void visit(UnqualifiedColumnName unqualifiedColumnReference) {
+        inputSchema.column(unqualifiedColumnReference.name());
 
         return null;
     }

@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
+import fr.awildelephant.rdbms.schema.ColumnReference;
+
 import java.util.stream.Stream;
 
 public abstract class BinaryExpression implements ValueExpression {
@@ -13,7 +15,7 @@ public abstract class BinaryExpression implements ValueExpression {
     }
 
     @Override
-    public Stream<String> variables() {
+    public Stream<ColumnReference> variables() {
         return Stream.concat(left.variables(), right.variables());
     }
 

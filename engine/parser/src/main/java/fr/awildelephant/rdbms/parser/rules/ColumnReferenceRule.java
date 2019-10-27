@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.parser.rules;
 
-import fr.awildelephant.rdbms.ast.ColumnReference;
+import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
-import static fr.awildelephant.rdbms.ast.QualifiedColumnReference.qualifiedColumnReference;
-import static fr.awildelephant.rdbms.ast.UnqualifiedColumnReference.unqualifiedColumnReference;
+import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
+import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.PERIOD;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
@@ -15,15 +15,15 @@ final class ColumnReferenceRule {
 
     }
 
-    static ColumnReference deriveColumnReference(Lexer lexer) {
+    static ColumnName deriveColumnReference(Lexer lexer) {
         final String firstIdentifier = consumeIdentifier(lexer);
 
         if (!nextTokenIs(PERIOD, lexer)) {
-            return unqualifiedColumnReference(firstIdentifier);
+            return unqualifiedColumnName(firstIdentifier);
         }
 
         lexer.consumeNextToken();
 
-        return qualifiedColumnReference(firstIdentifier, consumeIdentifier(lexer));
+        return qualifiedColumnName(firstIdentifier, consumeIdentifier(lexer));
     }
 }

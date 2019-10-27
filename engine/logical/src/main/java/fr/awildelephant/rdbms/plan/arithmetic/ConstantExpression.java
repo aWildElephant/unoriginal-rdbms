@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
@@ -30,7 +31,7 @@ public final class ConstantExpression implements ValueExpression {
     }
 
     @Override
-    public Stream<String> variables() {
+    public Stream<ColumnReference> variables() {
         return Stream.of();
     }
 

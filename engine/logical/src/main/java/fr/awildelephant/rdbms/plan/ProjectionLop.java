@@ -1,13 +1,15 @@
 package fr.awildelephant.rdbms.plan;
 
+import fr.awildelephant.rdbms.schema.ColumnReference;
+
 import java.util.List;
 
 public class ProjectionLop extends AbstractLop {
 
     private final LogicalOperator input;
-    private final List<String> outputColumns;
+    private final List<ColumnReference> outputColumns;
 
-    public ProjectionLop(LogicalOperator input, List<String> outputColumns) {
+    public ProjectionLop(LogicalOperator input, List<ColumnReference> outputColumns) {
         super(input.schema().project(outputColumns));
         this.input = input;
         this.outputColumns = outputColumns;
@@ -17,7 +19,7 @@ public class ProjectionLop extends AbstractLop {
         return input;
     }
 
-    public List<String> outputColumns() {
+    public List<ColumnReference> outputColumns() {
         return outputColumns;
     }
 

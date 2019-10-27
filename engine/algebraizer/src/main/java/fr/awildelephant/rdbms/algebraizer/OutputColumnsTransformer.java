@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
-import fr.awildelephant.rdbms.ast.ColumnReference;
+import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.CountStar;
@@ -20,6 +20,7 @@ import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import static java.util.stream.Collectors.toList;
 final class OutputColumnsTransformer {
 
     private final ColumnNameResolver columnNameResolver;
+    private final ColumnReferenceTransformer columnReferenceTransformer;
 
     private LogicalOperator input;
     private List<AST> outputColumns;
@@ -47,6 +49,7 @@ final class OutputColumnsTransformer {
         this.outputColumns = new ArrayList<>(outputColumns);
         this.sorting = sorting;
         this.columnNameResolver = new ColumnNameResolver();
+        this.columnReferenceTransformer = new ColumnReferenceTransformer(this.columnNameResolver);
     }
 
     static LogicalOperator transformOutputColumns(final LogicalOperator input, final List<? extends AST> outputColumns, final SortSpecificationList sorting) {
@@ -60,7 +63,7 @@ final class OutputColumnsTransformer {
 
         expandAsterisks();
 
-        final List<String> outputColumnNames = collectProjectedColumnNames();
+        final List<ColumnReference> outputColumnReferences = collectProjectedColumnNames();
 
         final AggregationsExtractor aggregateExtractor = aggregationsExtractor(columnNameResolver);
 
@@ -82,27 +85,27 @@ final class OutputColumnsTransformer {
             } else if (aggregate instanceof Avg) {
                 final AST avgInput = ((Avg) aggregate).input();
 
-                if (!(avgInput instanceof ColumnReference)) {
+                if (!(avgInput instanceof ColumnName)) {
                     mapsBelowAggregates.add(avgInput);
                 }
 
-                aggregates.add(new AvgAggregate(columnNameResolver.apply(avgInput)));
+                aggregates.add(new AvgAggregate(columnReferenceTransformer.apply(avgInput)));
             } else if (aggregate instanceof Min) {
                 final AST minInput = ((Min) aggregate).input();
 
-                if (!(minInput instanceof ColumnReference)) {
+                if (!(minInput instanceof ColumnName)) {
                     mapsBelowAggregates.add(minInput);
                 }
 
-                aggregates.add(new MinAggregate(columnNameResolver.apply(minInput)));
+                aggregates.add(new MinAggregate(columnReferenceTransformer.apply(minInput)));
             } else if (aggregate instanceof Sum) {
                 final AST sumInput = ((Sum) aggregate).input();
 
-                if (!(sumInput instanceof ColumnReference)) {
+                if (!(sumInput instanceof ColumnName)) {
                     mapsBelowAggregates.add(sumInput);
                 }
 
-                aggregates.add(new SumAggregate(columnNameResolver.apply(sumInput)));
+                aggregates.add(new SumAggregate(columnReferenceTransformer.apply(sumInput)));
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -134,7 +137,7 @@ final class OutputColumnsTransformer {
             input = new MapLop(input, valueExpressions, outputNames);
         }
 
-        input = new ProjectionLop(input, outputColumnNames);
+        input = new ProjectionLop(input, outputColumnReferences);
 
         if (!aliasing.isEmpty()) {
             input = aliasOperator(alias(aliasing), input);
@@ -185,9 +188,13 @@ final class OutputColumnsTransformer {
                                      .collect(toList());
     }
 
-    private List<String> collectProjectedColumnNames() {
-        return outputColumns.stream()
-                            .map(columnNameResolver)
-                            .collect(toList());
+    private List<ColumnReference> collectProjectedColumnNames() {
+        final List<ColumnReference> outputColumnsReferences = new ArrayList<>(outputColumns.size());
+
+        for (AST column : outputColumns) {
+            outputColumnsReferences.add(columnReferenceTransformer.apply(column));
+        }
+
+        return outputColumnsReferences;
     }
 }

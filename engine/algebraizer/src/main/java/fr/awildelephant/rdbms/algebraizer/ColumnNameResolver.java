@@ -2,8 +2,8 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.QualifiedColumnReference;
-import fr.awildelephant.rdbms.ast.UnqualifiedColumnReference;
+import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -153,7 +153,7 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     }
 
     @Override
-    public String visit(QualifiedColumnReference qualifiedColumnReference) {
+    public String visit(QualifiedColumnName qualifiedColumnReference) {
         return qualifiedColumnReference.qualifier() + '.' + qualifiedColumnReference.name();
     }
 
@@ -168,7 +168,7 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     }
 
     @Override
-    public String visit(UnqualifiedColumnReference unqualifiedColumnReference) {
+    public String visit(UnqualifiedColumnName unqualifiedColumnReference) {
         return unqualifiedColumnReference.name();
     }
 

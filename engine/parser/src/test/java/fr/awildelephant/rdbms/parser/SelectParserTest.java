@@ -11,14 +11,14 @@ import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
 import static fr.awildelephant.rdbms.ast.Limit.limit;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.DESCENDING;
-import static fr.awildelephant.rdbms.ast.QualifiedColumnReference.qualifiedColumnReference;
+import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.SortSpecification.sortSpecification;
 import static fr.awildelephant.rdbms.ast.SortSpecificationList.sortSpecificationList;
 import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.SortedSelect.sortedSelect;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
-import static fr.awildelephant.rdbms.ast.UnqualifiedColumnReference.unqualifiedColumnReference;
+import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
@@ -59,7 +59,7 @@ class SelectParserTest {
     void it_should_parse_a_select_with_a_column_alias() {
         assertParsing("SELECT a AS b FROM test",
 
-                      select(List.of(columnAlias(unqualifiedColumnReference("a"), "b")), tableName("test")));
+                      select(List.of(columnAlias(unqualifiedColumnName("a"), "b")), tableName("test")));
     }
 
     @Test
@@ -82,9 +82,9 @@ class SelectParserTest {
 
                       sortedSelect(columns("column1"),
                                    sortSpecificationList(
-                                           List.of(sortSpecification(unqualifiedColumnReference("column1"), ASCENDING),
-                                                   sortSpecification(unqualifiedColumnReference("column2"), ASCENDING),
-                                                   sortSpecification(unqualifiedColumnReference("column3"),
+                                           List.of(sortSpecification(unqualifiedColumnName("column1"), ASCENDING),
+                                                   sortSpecification(unqualifiedColumnName("column2"), ASCENDING),
+                                                   sortSpecification(unqualifiedColumnName("column3"),
                                                                      DESCENDING))),
                                    tableName("test")));
     }
@@ -106,8 +106,8 @@ class SelectParserTest {
                       select(List.of(asterisk()),
                              innerJoin(tableName("table1"),
                                        tableName("table2"),
-                                       equal(unqualifiedColumnReference("column1"),
-                                             unqualifiedColumnReference("column2")))));
+                                       equal(unqualifiedColumnName("column1"),
+                                             unqualifiedColumnName("column2")))));
     }
 
     @Test
@@ -121,6 +121,6 @@ class SelectParserTest {
     void it_should_parse_a_qualified_column_reference() {
         assertParsing("SELECT test.a FROM test",
 
-                      select(List.of(qualifiedColumnReference("test", "a")), tableName("test")));
+                      select(List.of(qualifiedColumnName("test", "a")), tableName("test")));
     }
 }

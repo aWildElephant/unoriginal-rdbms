@@ -4,8 +4,8 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.QualifiedColumnReference;
-import fr.awildelephant.rdbms.ast.UnqualifiedColumnReference;
+import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -28,7 +28,9 @@ import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.time.Period;
 
@@ -118,8 +120,9 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     }
 
     @Override
-    public ValueExpression visit(QualifiedColumnReference qualifiedColumnReference) {
-        final String columnName = qualifiedColumnReference.name();
+    public ValueExpression visit(QualifiedColumnName qualifiedColumnReference) {
+        final QualifiedColumnReference columnName = new QualifiedColumnReference(qualifiedColumnReference.qualifier(),
+                                                                                 qualifiedColumnReference.name());
 
         return variable(columnName, inputSchema.column(columnName).domain());
     }
@@ -289,8 +292,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     }
 
     @Override
-    public ValueExpression visit(UnqualifiedColumnReference unqualifiedColumnReference) {
-        final String columnName = unqualifiedColumnReference.name();
+    public ValueExpression visit(UnqualifiedColumnName unqualifiedColumnReference) {
+        final UnqualifiedColumnReference columnName = new UnqualifiedColumnReference(unqualifiedColumnReference.name());
 
         return variable(columnName, inputSchema.column(columnName).domain());
     }

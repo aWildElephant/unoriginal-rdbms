@@ -8,7 +8,7 @@ import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
 import static fr.awildelephant.rdbms.ast.GroupingSetsList.groupingSetsList;
 import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
-import static fr.awildelephant.rdbms.ast.UnqualifiedColumnReference.unqualifiedColumnReference;
+import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
@@ -20,7 +20,7 @@ class GroupByParserTest {
         assertParsing("SELECT COUNT(*) FROM test GROUP BY a",
 
                       select(List.of(countStar()),
-                             groupBy(tableName("test"), groupingSetsList(List.of(unqualifiedColumnReference("a"))))));
+                             groupBy(tableName("test"), groupingSetsList(List.of(unqualifiedColumnName("a"))))));
     }
 
     @Test
