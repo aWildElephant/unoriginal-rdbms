@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.IdentifierChain;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -43,8 +43,8 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     }
 
     @Override
-    public String visit(ColumnName columnName) {
-        return columnName.name();
+    public String visit(IdentifierChain identifierChain) {
+        return identifierChain.last();
     }
 
     @Override

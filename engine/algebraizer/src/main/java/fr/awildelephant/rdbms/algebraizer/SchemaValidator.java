@@ -4,8 +4,8 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
-import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.IdentifierChain;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -83,17 +83,6 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     }
 
     @Override
-    public Void visit(ColumnName columnName) {
-        final String name = columnName.name();
-
-        if (!inputSchema.contains(name)) {
-            throw new IllegalStateException("Column not found: " + name);
-        }
-
-        return null;
-    }
-
-    @Override
     public Void visit(CountStar countStar) {
         return null;
     }
@@ -123,6 +112,17 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     public Void visit(Greater greater) {
         apply(greater.left());
         apply(greater.right());
+
+        return null;
+    }
+
+    @Override
+    public Void visit(IdentifierChain identifierChain) {
+        final String name = identifierChain.last();
+
+        if (!inputSchema.contains(name)) {
+            throw new IllegalStateException("Column not found: " + name);
+        }
 
         return null;
     }

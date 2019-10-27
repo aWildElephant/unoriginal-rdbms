@@ -3,8 +3,8 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
-import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.IdentifierChain;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -117,8 +117,10 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     }
 
     @Override
-    public ValueExpression visit(ColumnName columnName) {
-        return variable(columnName.name(), inputSchema.column(columnName.name()).domain());
+    public ValueExpression visit(IdentifierChain identifierChain) {
+        final String columnName = identifierChain.last();
+
+        return variable(columnName, inputSchema.column(columnName).domain());
     }
 
     @Override

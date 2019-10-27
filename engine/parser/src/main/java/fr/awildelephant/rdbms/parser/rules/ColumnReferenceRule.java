@@ -1,9 +1,9 @@
 package fr.awildelephant.rdbms.parser.rules;
 
-import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.IdentifierChain;
 import fr.awildelephant.rdbms.lexer.Lexer;
 
-import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
+import static fr.awildelephant.rdbms.ast.IdentifierChain.identifierChain;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 
 final class ColumnReferenceRule {
@@ -12,7 +12,7 @@ final class ColumnReferenceRule {
 
     }
 
-    static ColumnName deriveColumnReference(Lexer lexer) {
-        return columnName(consumeIdentifier(lexer));
+    static IdentifierChain deriveColumnReference(Lexer lexer) {
+        return identifierChain(consumeIdentifier(lexer));
     }
 }

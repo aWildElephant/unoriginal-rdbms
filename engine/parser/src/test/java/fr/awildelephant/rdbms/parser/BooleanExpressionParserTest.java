@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
-import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
+import static fr.awildelephant.rdbms.ast.IdentifierChain.identifierChain;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.And.and;
@@ -49,39 +49,39 @@ class BooleanExpressionParserTest {
     @Test
     void it_should_parse_a_less_than_or_equal_to_comparison() {
         assertParsing("VALUES(birthday <= date '2000-01-01')",
-                      rows(row(lessOrEqual(columnName("birthday"), cast(textLiteral("2000-01-01"), DATE)))));
+                      rows(row(lessOrEqual(identifierChain("birthday"), cast(textLiteral("2000-01-01"), DATE)))));
     }
 
     @Test
     void it_should_parse_a_less_than_comparison() {
         assertParsing("VALUES (a < 42)",
-                      rows(row(less(columnName("a"), integerLiteral(42)))));
+                      rows(row(less(identifierChain("a"), integerLiteral(42)))));
     }
 
     @Test
     void it_should_parse_a_greater_than_comparison() {
         assertParsing("VALUES (a > 9000)",
-                      rows(row(greater(columnName("a"), integerLiteral(9000)))));
+                      rows(row(greater(identifierChain("a"), integerLiteral(9000)))));
     }
 
     @Test
     void it_should_parse_a_comparison_between_two_columns_followed_by_another_comparison() {
         assertParsing("VALUES (a = b AND c = 0)",
-                      rows(row(and(equal(columnName("a"), columnName("b")),
-                                   equal(columnName("c"), integerLiteral(0))))));
+                      rows(row(and(equal(identifierChain("a"), identifierChain("b")),
+                                   equal(identifierChain("c"), integerLiteral(0))))));
     }
 
     @Test
     void it_should_parse_a_like_filter() {
         assertParsing("VALUES (a LIKE '.boub%')",
 
-                      rows(row(like(columnName("a"), textLiteral(".boub%")))));
+                      rows(row(like(identifierChain("a"), textLiteral(".boub%")))));
     }
 
     @Test
     void it_should_parse_a_not_like_filter() {
         assertParsing("VALUES (a NOT LIKE '.boub%')",
 
-                      rows(row(not(like(columnName("a"), textLiteral(".boub%"))))));
+                      rows(row(not(like(identifierChain("a"), textLiteral(".boub%"))))));
     }
 }

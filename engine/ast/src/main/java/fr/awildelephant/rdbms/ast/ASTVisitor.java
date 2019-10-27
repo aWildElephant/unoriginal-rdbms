@@ -46,8 +46,6 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(ColumnDefinition columnDefinition);
 
-    T visit(ColumnName columnName);
-
     T visit(CountStar countStar);
 
     T visit(CreateTable createTable);
@@ -67,6 +65,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(GroupBy groupBy);
 
     T visit(GroupingSetsList groupingSetsList);
+
+    T visit(IdentifierChain identifierChain);
 
     T visit(InnerJoin innerJoin);
 

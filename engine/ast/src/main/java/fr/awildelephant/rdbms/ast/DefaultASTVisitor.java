@@ -62,11 +62,6 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(ColumnName columnName) {
-        return defaultVisit(columnName);
-    }
-
-    @Override
     public T visit(CountStar countStar) {
         return defaultVisit(countStar);
     }
@@ -114,6 +109,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(GroupingSetsList groupingSetsList) {
         return defaultVisit(groupingSetsList);
+    }
+
+    @Override
+    public T visit(IdentifierChain identifierChain) {
+        return defaultVisit(identifierChain);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
-import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
+import static fr.awildelephant.rdbms.ast.IdentifierChain.identifierChain;
 import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.SortedSelect.select;
@@ -30,6 +30,6 @@ class PlaceholderParserTest {
         assertParsing("SELECT * FROM test WHERE a = ?",
 
                       select(List.of(asterisk()),
-                             where(tableName("test"), equal(columnName("a"), placeholder()))));
+                             where(tableName("test"), equal(identifierChain("a"), placeholder()))));
     }
 }

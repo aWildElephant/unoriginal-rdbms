@@ -6,8 +6,8 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
-import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
+import static fr.awildelephant.rdbms.ast.IdentifierChain.identifierChain;
 import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
 import static fr.awildelephant.rdbms.ast.Limit.limit;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
@@ -58,7 +58,7 @@ class SelectParserTest {
     void it_should_parse_a_select_with_a_column_alias() {
         assertParsing("SELECT a AS b FROM test",
 
-                      select(List.of(columnAlias(columnName("a"), "b")), tableName("test")));
+                      select(List.of(columnAlias(identifierChain("a"), "b")), tableName("test")));
     }
 
     @Test
@@ -80,9 +80,10 @@ class SelectParserTest {
         assertParsing("SELECT column1 FROM test ORDER BY column1 ASC, column2, column3 DESC",
 
                       sortedSelect(columns("column1"),
-                                   sortSpecificationList(List.of(sortSpecification(columnName("column1"), ASCENDING),
-                                                                 sortSpecification(columnName("column2"), ASCENDING),
-                                                                 sortSpecification(columnName("column3"), DESCENDING))),
+                                   sortSpecificationList(
+                                           List.of(sortSpecification(identifierChain("column1"), ASCENDING),
+                                                   sortSpecification(identifierChain("column2"), ASCENDING),
+                                                   sortSpecification(identifierChain("column3"), DESCENDING))),
                                    tableName("test")));
     }
 
@@ -103,8 +104,8 @@ class SelectParserTest {
                       select(List.of(asterisk()),
                              innerJoin(tableName("table1"),
                                        tableName("table2"),
-                                       equal(columnName("column1"),
-                                             columnName("column2")))));
+                                       equal(identifierChain("column1"),
+                                             identifierChain("column2")))));
     }
 
     @Test

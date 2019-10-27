@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static fr.awildelephant.rdbms.ast.ColumnName.columnName;
+import static fr.awildelephant.rdbms.ast.IdentifierChain.identifierChain;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
@@ -42,14 +42,14 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
     public AST visit(Avg avg) {
         final String name = nameResolver.apply(avg);
         aggregates.put(name, avg);
-        return columnName(name);
+        return identifierChain(name);
     }
 
     @Override
     public AST visit(CountStar countStar) {
         final String name = nameResolver.apply(countStar);
         aggregates.put(name, countStar);
-        return columnName(name);
+        return identifierChain(name);
     }
 
     @Override
@@ -62,7 +62,7 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
         final String name = nameResolver.apply(min);
         aggregates.put(name, min);
 
-        return columnName(name);
+        return identifierChain(name);
     }
 
     @Override
@@ -84,7 +84,7 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
     public AST visit(Sum sum) {
         final String name = nameResolver.apply(sum);
         aggregates.put(name, sum);
-        return columnName(name);
+        return identifierChain(name);
     }
 
     @Override
