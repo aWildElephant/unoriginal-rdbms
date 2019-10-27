@@ -6,19 +6,19 @@ import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuil
 
 public final class SortSpecification implements AST {
 
-    private final IdentifierChain sortKey;
+    private final ColumnReference sortKey;
     private final OrderingSpecification ordering;
 
-    private SortSpecification(IdentifierChain sortKey, OrderingSpecification ordering) {
+    private SortSpecification(ColumnReference sortKey, OrderingSpecification ordering) {
         this.sortKey = sortKey;
         this.ordering = ordering;
     }
 
-    public static SortSpecification sortSpecification(IdentifierChain sortKey, OrderingSpecification ordering) {
+    public static SortSpecification sortSpecification(ColumnReference sortKey, OrderingSpecification ordering) {
         return new SortSpecification(sortKey, ordering);
     }
 
-    public IdentifierChain sortKey() {
+    public ColumnReference sortKey() {
         return sortKey;
     }
 

@@ -66,8 +66,6 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(GroupingSetsList groupingSetsList);
 
-    T visit(IdentifierChain identifierChain);
-
     T visit(InnerJoin innerJoin);
 
     T visit(InsertInto insertInto);
@@ -100,6 +98,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Plus plus);
 
+    T visit(QualifiedColumnReference qualifiedColumnReference);
+
     T visit(Row row);
 
     T visit(Sum sum);
@@ -119,6 +119,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(TableReferenceList tableReferenceList);
 
     T visit(TextLiteral textLiteral);
+
+    T visit(UnqualifiedColumnReference unqualifiedColumnReference);
 
     T visit(Values values);
 

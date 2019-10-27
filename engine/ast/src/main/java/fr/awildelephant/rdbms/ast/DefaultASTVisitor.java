@@ -112,11 +112,6 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(IdentifierChain identifierChain) {
-        return defaultVisit(identifierChain);
-    }
-
-    @Override
     public T visit(InnerJoin innerJoin) {
         return defaultVisit(innerJoin);
     }
@@ -197,6 +192,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(QualifiedColumnReference qualifiedColumnReference) {
+        return defaultVisit(qualifiedColumnReference);
+    }
+
+    @Override
     public T visit(Row row) {
         return defaultVisit(row);
     }
@@ -249,6 +249,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(TextLiteral textLiteral) {
         return defaultVisit(textLiteral);
+    }
+
+    @Override
+    public T visit(UnqualifiedColumnReference unqualifiedColumnReference) {
+        return defaultVisit(unqualifiedColumnReference);
     }
 
     @Override

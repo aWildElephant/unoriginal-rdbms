@@ -17,7 +17,7 @@ public class MultipleColumnsComparator implements RecordComparator {
 
     public MultipleColumnsComparator(Schema schema, List<SortSpecification> sortSpecificationList) {
         comparators = sortSpecificationList.stream().map(sortSpecification -> {
-            final Column column = schema.column(sortSpecification.sortKey().last());
+            final Column column = schema.column(sortSpecification.sortKey().name());
 
             final RecordComparator comparator = comparatorForDomain(column);
 

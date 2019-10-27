@@ -1,26 +1,33 @@
-package fr.awildelephant.rdbms.schema;
+package fr.awildelephant.rdbms.ast;
 
 import java.util.Objects;
-import java.util.Optional;
 
 public final class QualifiedColumnReference implements ColumnReference {
 
     private final String qualifier;
     private final String name;
 
-    public QualifiedColumnReference(String qualifier, String name) {
+    private QualifiedColumnReference(String qualifier, String name) {
         this.qualifier = qualifier;
         this.name = name;
     }
 
-    @Override
-    public Optional<String> qualifier() {
-        return Optional.of(qualifier);
+    public static QualifiedColumnReference qualifiedColumnReference(String qualifier, String name) {
+        return new QualifiedColumnReference(qualifier, name);
+    }
+
+    public String qualifier() {
+        return qualifier;
     }
 
     @Override
     public String name() {
         return name;
+    }
+
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 
     @Override

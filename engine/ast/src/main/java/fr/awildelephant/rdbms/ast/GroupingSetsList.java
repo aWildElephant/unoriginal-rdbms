@@ -6,18 +6,18 @@ import java.util.stream.Collectors;
 
 public final class GroupingSetsList implements AST {
 
-    private final List<IdentifierChain> columns;
+    private final List<ColumnReference> columns;
 
-    private GroupingSetsList(List<IdentifierChain> columns) {
+    private GroupingSetsList(List<ColumnReference> columns) {
         this.columns = columns;
     }
 
-    public static GroupingSetsList groupingSetsList(List<IdentifierChain> columns) {
+    public static GroupingSetsList groupingSetsList(List<ColumnReference> columns) {
         return new GroupingSetsList(columns);
     }
 
     public List<String> breakdowns() {
-        return columns.stream().map(IdentifierChain::last).collect(Collectors.toList());
+        return columns.stream().map(ColumnReference::name).collect(Collectors.toList());
     }
 
     @Override

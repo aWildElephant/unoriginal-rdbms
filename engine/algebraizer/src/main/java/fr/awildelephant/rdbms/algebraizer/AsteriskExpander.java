@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.IdentifierChain;
+import fr.awildelephant.rdbms.ast.UnqualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.stream.Stream;
@@ -20,7 +20,7 @@ public final class AsteriskExpander extends DefaultASTVisitor<Stream<AST>> {
     public Stream<AST> visit(Asterisk asterisk) {
         return inputSchema.columnNames()
                           .stream()
-                          .map(IdentifierChain::identifierChain);
+                          .map(UnqualifiedColumnReference::unqualifiedColumnReference);
     }
 
     @Override

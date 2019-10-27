@@ -2,7 +2,8 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.IdentifierChain;
+import fr.awildelephant.rdbms.ast.QualifiedColumnReference;
+import fr.awildelephant.rdbms.ast.UnqualifiedColumnReference;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -40,11 +41,6 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(BooleanLiteral booleanLiteral) {
         return booleanLiteral.toString().toLowerCase();
-    }
-
-    @Override
-    public String visit(IdentifierChain identifierChain) {
-        return identifierChain.last();
     }
 
     @Override
@@ -157,6 +153,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     }
 
     @Override
+    public String visit(QualifiedColumnReference qualifiedColumnReference) {
+        return qualifiedColumnReference.qualifier() + '.' + qualifiedColumnReference.name();
+    }
+
+    @Override
     public String visit(Sum sum) {
         return "sum(" + apply(sum.input()) + ")";
     }
@@ -164,6 +165,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(TextLiteral textLiteral) {
         return textLiteral.value();
+    }
+
+    @Override
+    public String visit(UnqualifiedColumnReference unqualifiedColumnReference) {
+        return unqualifiedColumnReference.name();
     }
 
     @Override

@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
-import fr.awildelephant.rdbms.ast.IdentifierChain;
+import fr.awildelephant.rdbms.ast.ColumnReference;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.CountStar;
@@ -82,7 +82,7 @@ final class OutputColumnsTransformer {
             } else if (aggregate instanceof Avg) {
                 final AST avgInput = ((Avg) aggregate).input();
 
-                if (!(avgInput instanceof IdentifierChain)) {
+                if (!(avgInput instanceof ColumnReference)) {
                     mapsBelowAggregates.add(avgInput);
                 }
 
@@ -90,7 +90,7 @@ final class OutputColumnsTransformer {
             } else if (aggregate instanceof Min) {
                 final AST minInput = ((Min) aggregate).input();
 
-                if (!(minInput instanceof IdentifierChain)) {
+                if (!(minInput instanceof ColumnReference)) {
                     mapsBelowAggregates.add(minInput);
                 }
 
@@ -98,7 +98,7 @@ final class OutputColumnsTransformer {
             } else if (aggregate instanceof Sum) {
                 final AST sumInput = ((Sum) aggregate).input();
 
-                if (!(sumInput instanceof IdentifierChain)) {
+                if (!(sumInput instanceof ColumnReference)) {
                     mapsBelowAggregates.add(sumInput);
                 }
 

@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
-import static fr.awildelephant.rdbms.ast.IdentifierChain.identifierChain;
 import static fr.awildelephant.rdbms.ast.SortedSelect.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
+import static fr.awildelephant.rdbms.ast.UnqualifiedColumnReference.unqualifiedColumnReference;
 import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Min.min;
@@ -21,8 +21,8 @@ class SubqueryParserTest {
 
                       select(List.of(asterisk()),
                              where(tableName("test"),
-                                   equal(identifierChain("a"),
-                                         select(List.of(min(identifierChain("b"))),
+                                   equal(unqualifiedColumnReference("a"),
+                                         select(List.of(min(unqualifiedColumnReference("b"))),
                                                 tableName("other"))))));
     }
 }

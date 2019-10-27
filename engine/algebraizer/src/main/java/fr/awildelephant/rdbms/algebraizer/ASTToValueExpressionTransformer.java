@@ -4,7 +4,8 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.IdentifierChain;
+import fr.awildelephant.rdbms.ast.QualifiedColumnReference;
+import fr.awildelephant.rdbms.ast.UnqualifiedColumnReference;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -117,8 +118,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     }
 
     @Override
-    public ValueExpression visit(IdentifierChain identifierChain) {
-        final String columnName = identifierChain.last();
+    public ValueExpression visit(QualifiedColumnReference qualifiedColumnReference) {
+        final String columnName = qualifiedColumnReference.name();
 
         return variable(columnName, inputSchema.column(columnName).domain());
     }
@@ -285,6 +286,13 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     @Override
     public ValueExpression visit(TextLiteral textLiteral) {
         return constantExpression(textValue(textLiteral.value()), TEXT);
+    }
+
+    @Override
+    public ValueExpression visit(UnqualifiedColumnReference unqualifiedColumnReference) {
+        final String columnName = unqualifiedColumnReference.name();
+
+        return variable(columnName, inputSchema.column(columnName).domain());
     }
 
     @Override
