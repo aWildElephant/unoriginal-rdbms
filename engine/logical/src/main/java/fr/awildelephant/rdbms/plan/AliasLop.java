@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.alias.Alias;
-import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
 
 public final class AliasLop extends AbstractLop {
 
@@ -13,11 +12,6 @@ public final class AliasLop extends AbstractLop {
 
         this.alias = alias;
         this.input = input;
-    }
-
-    // TODO: remove this
-    public static AliasLop aliasOperator(ColumnAlias alias, LogicalOperator input) {
-        return new AliasLop(input, alias);
     }
 
     public LogicalOperator input() {
