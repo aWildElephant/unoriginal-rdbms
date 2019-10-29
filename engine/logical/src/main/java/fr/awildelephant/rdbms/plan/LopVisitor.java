@@ -32,6 +32,8 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
 
     T visit(ProjectionLop projectionNode);
 
+    T visit(ScalarSubqueryLop scalarSubquery);
+
     T visit(SortLop sortLop);
 
     T visit(TableConstructorLop tableConstructor);

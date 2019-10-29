@@ -14,6 +14,7 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
@@ -140,6 +141,11 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     @Override
     public LogicalOperator visit(ProjectionLop projectionNode) {
         return new ProjectionLop(apply(projectionNode.input()), projectionNode.outputColumns());
+    }
+
+    @Override
+    public LogicalOperator visit(ScalarSubqueryLop scalarSubquery) {
+        return createFilterAbove(filters, scalarSubquery);
     }
 
     @Override

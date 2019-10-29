@@ -26,7 +26,8 @@ public final class TableConstructorLop extends AbstractLop {
             final ValueExpression formula = firstRow.get(i);
 
             // TODO: try to determine whether or not the formula is nullable
-            columns.add(new Column(i, new UnqualifiedColumnReference("column" + (i + 1)), formula.domain(), true));
+            columns.add(new Column(i, new UnqualifiedColumnReference("column" + (i + 1)), formula.domain(),
+                                   true, false));
         }
 
         return new Schema(columns);

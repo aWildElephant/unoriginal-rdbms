@@ -20,7 +20,7 @@ public final class Schema {
 
         for (int i = 0; i < numberOfColumns; i++) {
             final Column column = columns.get(i);
-            reindexedColumns.add(new Column(i, column.name(), column.domain(), column.notNull()));
+            reindexedColumns.add(new Column(i, column.name(), column.domain(), column.notNull(), column.system()));
         }
 
         columnIndex = new HashMap<>();
@@ -116,7 +116,7 @@ public final class Schema {
                         "Column `" + reference + "` not found. Available columns " + this.allColumns);
             }
 
-            projection.add(new Column(i, column.name(), column.domain(), column.notNull()));
+            projection.add(new Column(i, column.name(), column.domain(), column.notNull(), column.system()));
             i = i + 1;
         }
 
@@ -129,7 +129,8 @@ public final class Schema {
                                                .map(column -> new Column(column.index(),
                                                                          alias.apply(column.name()),
                                                                          column.domain(),
-                                                                         column.notNull()))
+                                                                         column.notNull(),
+                                                                         column.system()))
                                                .collect(toList());
 
         return new Schema(columns);

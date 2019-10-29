@@ -21,6 +21,7 @@ import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Placeholder;
 import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
@@ -101,6 +102,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(QualifiedColumnName qualifiedColumnReference);
 
     T visit(Row row);
+
+    T visit(ScalarSubquery scalarSubquery);
 
     T visit(Sum sum);
 

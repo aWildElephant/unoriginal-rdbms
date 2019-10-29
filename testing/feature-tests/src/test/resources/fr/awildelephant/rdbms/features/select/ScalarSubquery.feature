@@ -1,5 +1,20 @@
-@todo
 Feature: Scalar subquery
+
+  Scenario: I execute a query with a scalar subquery that has too many columns
+
+    Given the table test
+      | a       |
+      | INTEGER |
+
+    When I execute the query
+    """
+    SELECT * FROM test WHERE a = (SELECT 1, 2 FROM test)
+    """
+
+    Then I expect an error with the message
+    """
+    Scalar subquery cannot have more than one column
+    """
 
   Scenario: I execute a query with a scalar subquery in the where clause
 

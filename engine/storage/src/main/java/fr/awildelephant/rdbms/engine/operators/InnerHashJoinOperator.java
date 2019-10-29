@@ -24,7 +24,6 @@ public class InnerHashJoinOperator implements JoinOperator {
         this.leftJoinColumn = leftJoinColumn;
         this.rightJoinColumn = rightJoinColumn;
         this.outputSchema = outputSchema;
-
     }
 
     @Override

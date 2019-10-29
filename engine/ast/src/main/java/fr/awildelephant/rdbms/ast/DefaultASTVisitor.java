@@ -21,6 +21,7 @@ import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Placeholder;
 import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
@@ -199,6 +200,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(Row row) {
         return defaultVisit(row);
+    }
+
+    @Override
+    public T visit(ScalarSubquery scalarSubquery) {
+        return defaultVisit(scalarSubquery);
     }
 
     @Override

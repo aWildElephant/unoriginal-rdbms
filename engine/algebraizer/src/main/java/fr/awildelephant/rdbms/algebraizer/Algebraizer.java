@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.Where;
+import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.AliasLop;
@@ -23,6 +24,7 @@ import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -35,6 +37,7 @@ import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer
 import static fr.awildelephant.rdbms.algebraizer.FilterTransformer.transformFilter;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
 import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
+import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
 import static java.util.Collections.emptyList;
 
@@ -74,6 +77,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     @Override
     public LogicalOperator visit(Limit limit) {
         return new LimitLop(apply(limit.input()), limit.limit());
+    }
+
+    @Override
+    public LogicalOperator visit(ScalarSubquery scalarSubquery) {
+        return new ScalarSubqueryLop(apply(scalarSubquery.input()), scalarSubquery.id());
     }
 
     @Override
@@ -137,7 +145,25 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Where where) {
-        return transformFilter(apply(where.input()), where.filter());
+        final SubqueryExtractor subqueryExtractor = new SubqueryExtractor();
+        final AST filter = subqueryExtractor.apply(where.filter());
+
+        return transformFilter(mergeInputWithSubqueries(where.input(), subqueryExtractor.subqueries()), filter);
+    }
+
+    private LogicalOperator mergeInputWithSubqueries(AST input, List<AST> subqueries) {
+        final int numberOfSubqueries = subqueries.size();
+
+        switch (numberOfSubqueries) {
+            case 0:
+                return apply(input);
+            case 1:
+                return apply(tableReferenceList(input, subqueries.get(0), List.of()));
+            default:
+                return apply(tableReferenceList(input,
+                                                subqueries.get(0),
+                                                subqueries.subList(1, numberOfSubqueries - 1)));
+        }
     }
 
     @Override

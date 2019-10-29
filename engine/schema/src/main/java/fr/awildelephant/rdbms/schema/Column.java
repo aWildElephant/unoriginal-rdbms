@@ -9,12 +9,14 @@ public final class Column {
     private final ColumnReference name;
     private final Domain domain;
     private final boolean notNull;
+    private final boolean system;
 
-    public Column(int index, ColumnReference name, Domain domain, boolean notNull) {
+    public Column(int index, ColumnReference name, Domain domain, boolean notNull, boolean system) {
         this.name = name;
         this.domain = domain;
         this.index = index;
         this.notNull = notNull;
+        this.system = system;
     }
 
     /**
@@ -36,9 +38,13 @@ public final class Column {
         return notNull;
     }
 
+    public boolean system() {
+        return system;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(name, domain, index, notNull);
+        return Objects.hash(name, domain, index, notNull, system);
     }
 
     @Override
@@ -52,6 +58,7 @@ public final class Column {
         return index == other.index
                 && notNull == other.notNull
                 && domain == other.domain
+                && system == other.system
                 && Objects.equals(name, other.name);
     }
 }

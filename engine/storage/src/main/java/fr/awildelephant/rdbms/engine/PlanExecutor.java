@@ -32,6 +32,7 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
@@ -290,6 +291,27 @@ public final class PlanExecutor implements LopVisitor<Stream<Table>> {
             return output;
 
         });
+    }
+
+    @Override
+    public Stream<Table> visit(ScalarSubqueryLop scalarSubquery) {
+        final List<Table> tables = apply(scalarSubquery.input()).collect(toList());
+
+        final Table scalarResult = simpleTable(scalarSubquery.schema(), 1);
+
+        boolean foundOneRow = false;
+        for (Table table : tables) {
+            for (Record record : table) {
+                if (foundOneRow) {
+                    throw new IllegalArgumentException("Scalar subquery cannot have more than one row");
+                }
+
+                foundOneRow = true;
+                scalarResult.add(record);
+            }
+        }
+
+        return Stream.of(scalarResult);
     }
 
     @Override

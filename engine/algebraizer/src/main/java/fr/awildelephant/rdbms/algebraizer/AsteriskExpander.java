@@ -23,9 +23,9 @@ public final class AsteriskExpander extends DefaultASTVisitor<Stream<AST>> {
     public Stream<AST> visit(Asterisk asterisk) {
         return inputSchema.columnNames()
                           .stream()
+                          .filter(columnReference -> !inputSchema.column(columnReference).system())
                           .map(columnName -> columnName.table()
-                                  .<ColumnName>map(qualifier -> qualifiedColumnName(qualifier,
-                                                                                    columnName.name()))
+                                  .<ColumnName>map(qualifier -> qualifiedColumnName(qualifier, columnName.name()))
                                   .orElseGet(() -> unqualifiedColumnName(columnName.name())));
     }
 

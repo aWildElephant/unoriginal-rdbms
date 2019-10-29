@@ -15,6 +15,7 @@ public final class AliasLop extends AbstractLop {
         this.input = input;
     }
 
+    // TODO: remove this
     public static AliasLop aliasOperator(ColumnAlias alias, LogicalOperator input) {
         return new AliasLop(input, alias);
     }

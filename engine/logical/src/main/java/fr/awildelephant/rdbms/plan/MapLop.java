@@ -38,7 +38,7 @@ public final class MapLop extends AbstractLop {
 
         for (int i = 0; i < valueExpressions.size(); i++) {
             outputColumns.add(new Column(index++, new UnqualifiedColumnReference(outputNames.get(i)),
-                                         valueExpressions.get(i).domain(), false));
+                                         valueExpressions.get(i).domain(), false, false));
         }
 
         return new Schema(outputColumns);

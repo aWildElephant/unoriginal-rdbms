@@ -38,8 +38,8 @@ public class AggregationLop extends AbstractLop {
 
             final Domain outputType = outputType(inputSchema, aggregate);
 
-            aggregateColumns
-                    .add(new Column(firstIndex + i, aggregate.outputName(), outputType, !aggregate.outputIsNullable()));
+            aggregateColumns.add(new Column(firstIndex + i, aggregate.outputName(), outputType,
+                                            !aggregate.outputIsNullable(), false));
         }
 
         return inputSchema.extend(aggregateColumns);

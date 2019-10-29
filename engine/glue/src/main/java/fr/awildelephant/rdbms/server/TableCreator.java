@@ -78,7 +78,7 @@ final class TableCreator {
         int i = 0;
         for (ColumnDefinition element : columnDefinitions) {
             columns.add(new Column(i, new QualifiedColumnReference(tableName, element.columnName()),
-                                   domainOf(element.columnType()), false));
+                                   domainOf(element.columnType()), false, false));
             i = i + 1;
         }
 
