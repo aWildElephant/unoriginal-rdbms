@@ -29,7 +29,6 @@ import java.util.Optional;
 
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.FilterExpander.expandFilters;
-import static fr.awildelephant.rdbms.plan.AliasLop.aliasOperator;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -76,7 +75,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
         final List<ValueExpression> unaliasedFilters = filters.stream().map(unaliaser).collect(toList());
 
-        return aliasOperator(alias.alias(), new FilterPushDown(unaliasedFilters).apply(alias.input()));
+        return new AliasLop(new FilterPushDown(unaliasedFilters).apply(alias.input()), alias.alias());
     }
 
     @Override

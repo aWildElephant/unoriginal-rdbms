@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
@@ -122,11 +123,11 @@ public final class Schema {
         return new Schema(projection);
     }
 
-    public Schema alias(Alias alias) {
+    public Schema alias(Function<ColumnReference, ColumnReference> alias) {
         final List<Column> columns = allColumns.stream()
                                                .map(this::column)
                                                .map(column -> new Column(column.index(),
-                                                                         alias.get(column.name()),
+                                                                         alias.apply(column.name()),
                                                                          column.domain(),
                                                                          column.notNull()))
                                                .collect(toList());

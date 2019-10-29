@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
@@ -31,8 +32,7 @@ import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer
 import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
 import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
 import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
-import static fr.awildelephant.rdbms.plan.AliasLop.aliasOperator;
-import static fr.awildelephant.rdbms.schema.Alias.alias;
+import static fr.awildelephant.rdbms.plan.alias.ColumnAlias.columnAlias;
 import static java.util.stream.Collectors.toList;
 
 final class OutputColumnsTransformer {
@@ -140,7 +140,7 @@ final class OutputColumnsTransformer {
         input = new ProjectionLop(input, outputColumnReferences);
 
         if (!aliasing.isEmpty()) {
-            input = aliasOperator(alias(aliasing), input);
+            input = new AliasLop(input, columnAlias(aliasing));
         }
 
         if (sorting != null) {

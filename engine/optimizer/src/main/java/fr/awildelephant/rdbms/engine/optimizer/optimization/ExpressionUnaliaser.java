@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
+import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
@@ -18,7 +19,6 @@ import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
-import fr.awildelephant.rdbms.schema.Alias;
 
 import static fr.awildelephant.rdbms.plan.arithmetic.AddExpression.addExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
@@ -121,6 +121,6 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
 
     @Override
     public ValueExpression visit(Variable variable) {
-        return variable(alias.revert(variable.name()), variable.domain());
+        return variable(alias.unalias(variable.name()), variable.domain());
     }
 }

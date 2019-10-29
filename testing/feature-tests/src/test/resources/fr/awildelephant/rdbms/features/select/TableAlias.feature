@@ -1,4 +1,3 @@
-@todo
 Feature: Table alias
 
   Scenario: I select from an aliased table

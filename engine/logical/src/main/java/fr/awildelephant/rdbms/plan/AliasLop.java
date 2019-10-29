@@ -1,20 +1,21 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.schema.Alias;
+import fr.awildelephant.rdbms.plan.alias.Alias;
+import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
 
 public final class AliasLop extends AbstractLop {
 
     private final Alias alias;
     private final LogicalOperator input;
 
-    private AliasLop(LogicalOperator input, Alias alias) {
-        super(input.schema().alias(alias));
+    public AliasLop(LogicalOperator input, Alias alias) {
+        super(input.schema().alias(alias::alias));
 
         this.alias = alias;
         this.input = input;
     }
 
-    public static AliasLop aliasOperator(Alias alias, LogicalOperator input) {
+    public static AliasLop aliasOperator(ColumnAlias alias, LogicalOperator input) {
         return new AliasLop(input, alias);
     }
 

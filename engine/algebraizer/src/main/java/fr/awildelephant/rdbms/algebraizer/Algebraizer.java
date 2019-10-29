@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.Where;
 import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
@@ -34,6 +35,7 @@ import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer
 import static fr.awildelephant.rdbms.algebraizer.FilterTransformer.transformFilter;
 import static fr.awildelephant.rdbms.algebraizer.OutputColumnsTransformer.transformOutputColumns;
 import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
+import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
 import static java.util.Collections.emptyList;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
@@ -82,7 +84,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(TableAlias tableAlias) {
-        throw new UnsupportedOperationException("Table alias not yet implemented");
+        final LogicalOperator input = apply(tableAlias.input());
+
+        return new AliasLop(input, tableAlias(tableAlias.alias()));
     }
 
     @Override

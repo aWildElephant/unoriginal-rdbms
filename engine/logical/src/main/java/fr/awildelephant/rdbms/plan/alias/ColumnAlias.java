@@ -1,20 +1,23 @@
-package fr.awildelephant.rdbms.schema;
+package fr.awildelephant.rdbms.plan.alias;
+
+import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.Map;
 
-public final class Alias {
+public final class ColumnAlias implements Alias {
 
     private final Map<String, String> aliases;
 
-    private Alias(Map<String, String> aliases) {
+    private ColumnAlias(Map<String, String> aliases) {
         this.aliases = aliases;
     }
 
-    public static Alias alias(Map<String, String> aliases) {
-        return new Alias(aliases);
+    public static ColumnAlias columnAlias(Map<String, String> aliases) {
+        return new ColumnAlias(aliases);
     }
 
-    public ColumnReference get(ColumnReference original) {
+    @Override
+    public ColumnReference alias(ColumnReference original) {
         final String columnName = original.name();
         final String aliasedColumnName = aliases.get(columnName);
 
@@ -25,7 +28,8 @@ public final class Alias {
         return original.renameColumn(aliasedColumnName);
     }
 
-    public ColumnReference revert(ColumnReference aliased) {
+    @Override
+    public ColumnReference unalias(ColumnReference aliased) {
         final String columnName = aliased.name();
 
         for (Map.Entry<String, String> entry : aliases.entrySet()) {
