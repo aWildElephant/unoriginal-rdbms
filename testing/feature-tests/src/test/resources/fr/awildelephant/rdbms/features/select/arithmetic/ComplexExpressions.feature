@@ -19,3 +19,24 @@ Feature: Complex expressions
       | DECIMAL           |
       | 1.25              |
       | 3                 |
+
+  Scenario: I execute a formula the same column referenced several times
+
+    Given the table test
+      | a       |
+      | INTEGER |
+      | 1       |
+      | 2       |
+      | 3       |
+
+    When I execute the query
+    """
+    SELECT a * a FROM test
+    """
+
+    Then I expect the result set
+      | a * a   |
+      | INTEGER |
+      | 1       |
+      | 4       |
+      | 9       |

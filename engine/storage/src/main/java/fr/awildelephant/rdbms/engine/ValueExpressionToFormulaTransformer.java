@@ -214,10 +214,6 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
 
     @Override
     public Operation visit(Variable variable) {
-        final Reference reference = reference(variable.domain());
-
-        references.put(variable.name(), reference);
-
-        return reference;
+        return references.computeIfAbsent(variable.name(), unused -> reference(variable.domain()));
     }
 }
