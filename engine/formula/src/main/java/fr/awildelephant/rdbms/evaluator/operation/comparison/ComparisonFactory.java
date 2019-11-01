@@ -49,6 +49,8 @@ public final class ComparisonFactory {
 
         if (leftDomain == DATE && rightDomain == DATE) {
             return new DateDateLessOrEqualComparison(left, right);
+        } else if (leftDomain == INTEGER && rightDomain == INTEGER) {
+            return new IntegerIntegerLessOrEqualComparison(left, right);
         } else {
             throw new UnsupportedOperationException("Unsupported comparison: " + leftDomain + " <= " + rightDomain);
         }

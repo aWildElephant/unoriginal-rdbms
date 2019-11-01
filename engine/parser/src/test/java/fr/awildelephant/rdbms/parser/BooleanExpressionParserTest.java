@@ -12,6 +12,7 @@ import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
+import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
@@ -51,6 +52,14 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES(birthday <= date '2000-01-01')",
                       rows(row(lessOrEqual(unqualifiedColumnName("birthday"),
                                            cast(textLiteral("2000-01-01"), DATE)))));
+    }
+
+    @Test
+    void it_should_parse_a_greater_than_or_equal_to_comparison() {
+        assertParsing("VALUES(birthday >= date '2000-01-01')",
+
+                      rows(row(greaterOrEqual(unqualifiedColumnName("birthday"),
+                                              cast(textLiteral("2000-01-01"), DATE)))));
     }
 
     @Test

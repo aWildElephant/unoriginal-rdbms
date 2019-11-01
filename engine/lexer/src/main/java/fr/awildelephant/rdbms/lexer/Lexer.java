@@ -15,6 +15,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.END_OF_FILE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.EQUAL_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.GREATER_OR_EQUAL_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.GREATER_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_OR_EQUAL_TOKEN;
@@ -78,9 +79,7 @@ public final class Lexer {
             case '=':
                 return EQUAL_TOKEN;
             case '<':
-                final int nextCodePoint = input.get();
-
-                if (nextCodePoint == '=') {
+                if (input.get() == '=') {
                     // TODO: we tokenize "< =" to LESS_OR_EQUAL_TOKEN
                     input.next();
 
@@ -89,6 +88,12 @@ public final class Lexer {
 
                 return LESS_TOKEN;
             case '>':
+                if (input.get() == '=') {
+                    input.next();
+
+                    return GREATER_OR_EQUAL_TOKEN;
+                }
+
                 return GREATER_TOKEN;
             case '/':
                 return SOLIDUS_TOKEN;

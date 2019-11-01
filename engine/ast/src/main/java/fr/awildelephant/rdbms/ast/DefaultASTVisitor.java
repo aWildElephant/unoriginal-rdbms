@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.Greater;
+import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -100,6 +101,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(Greater greater) {
         return defaultVisit(greater);
+    }
+
+    @Override
+    public T visit(GreaterOrEqual greaterOrEqual) {
+        return defaultVisit(greaterOrEqual);
     }
 
     @Override

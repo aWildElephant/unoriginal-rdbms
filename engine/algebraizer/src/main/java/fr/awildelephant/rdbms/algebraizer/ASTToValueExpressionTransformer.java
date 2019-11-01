@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.Greater;
+import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -48,6 +49,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constant
 import static fr.awildelephant.rdbms.plan.arithmetic.DivideExpression.divideExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression.greaterOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
@@ -160,6 +162,13 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         return greaterExpression(left, right);
     }
 
+    @Override
+    public ValueExpression visit(GreaterOrEqual greaterOrEqual) {
+        final ValueExpression left = apply(greaterOrEqual.left());
+        final ValueExpression right = apply(greaterOrEqual.right());
+
+        return greaterOrEqualExpression(left, right);
+    }
 
     @Override
     public ValueExpression visit(IntegerLiteral integerLiteral) {

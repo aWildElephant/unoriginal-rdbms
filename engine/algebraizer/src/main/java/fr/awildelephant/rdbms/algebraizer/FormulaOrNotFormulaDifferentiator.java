@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.Greater;
+import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -71,6 +72,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     @Override
     public Boolean visit(Greater greater) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(GreaterOrEqual greaterOrEqual) {
         return TRUE;
     }
 

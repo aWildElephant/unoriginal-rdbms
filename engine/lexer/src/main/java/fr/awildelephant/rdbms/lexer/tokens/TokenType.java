@@ -26,6 +26,7 @@ public enum TokenType {
     FOREIGN,
     FROM,
     GREATER,
+    GREATER_OR_EQUAL,
     GROUP,
     IDENTIFIER,
     INNER,
