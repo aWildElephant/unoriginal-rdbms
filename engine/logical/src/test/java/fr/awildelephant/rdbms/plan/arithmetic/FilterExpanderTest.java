@@ -1,15 +1,12 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
+package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 import org.junit.jupiter.api.Test;
 
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
 import static org.assertj.core.api.Assertions.assertThat;
 

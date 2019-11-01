@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static java.util.stream.Collectors.toList;
 
 /**

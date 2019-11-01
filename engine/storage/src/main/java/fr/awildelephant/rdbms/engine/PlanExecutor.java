@@ -43,6 +43,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,6 +51,7 @@ import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.engine.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static java.util.stream.Collectors.toList;
 
 public final class PlanExecutor implements LopVisitor<Stream<Table>> {
@@ -210,25 +212,64 @@ public final class PlanExecutor implements LopVisitor<Stream<Table>> {
     }
 
     private JoinOperator chooseJoinOperator(InnerJoinLop innerJoinLop, Schema leftInputSchema, Schema rightInputSchema) {
-        final ValueExpression joinSpecification = innerJoinLop.joinSpecification();
+        final List<ValueExpression> expressions = expandFilters(innerJoinLop.joinSpecification());
 
-        if (joinSpecification instanceof EqualExpression) {
-            final EqualExpression equalExpression = (EqualExpression) joinSpecification;
+        if (canUseHashJoin(expressions)) {
+            return createHashJoinOperator(expressions, leftInputSchema, rightInputSchema, innerJoinLop.schema());
+        } else {
+            return createNestedLoopJoinOperator(innerJoinLop, leftInputSchema, rightInputSchema);
+        }
+    }
 
-            if (equalExpression.left() instanceof Variable && equalExpression.right() instanceof Variable) {
-                final ColumnReference firstVariable = ((Variable) equalExpression.left()).name();
-                final ColumnReference secondVariable = ((Variable) equalExpression.right()).name();
+    private boolean canUseHashJoin(List<ValueExpression> expressions) {
+        for (ValueExpression expression : expressions) {
+            if (!(expression instanceof EqualExpression)) {
+                return false;
+            }
 
-                final Schema outputSchema = innerJoinLop.schema();
-                if (leftInputSchema.contains(firstVariable) && rightInputSchema.contains(secondVariable)) {
-                    return new InnerHashJoinOperator(firstVariable, secondVariable, outputSchema);
-                } else if (leftInputSchema.contains(secondVariable) && rightInputSchema.contains(firstVariable)) {
-                    return new InnerHashJoinOperator(secondVariable, firstVariable, outputSchema);
-                }
+            final EqualExpression equalExpression = (EqualExpression) expression;
+
+            if (!(equalExpression.left() instanceof Variable) || !(equalExpression.right() instanceof Variable)) {
+                return false;
             }
         }
 
-        return createNestedLoopJoinOperator(innerJoinLop, leftInputSchema, rightInputSchema);
+        return true;
+    }
+
+    private JoinOperator createHashJoinOperator(List<ValueExpression> joinSpecification,
+                                                Schema leftInputSchema,
+                                                Schema rightInputSchema,
+                                                Schema outputSchema) {
+        final int numberOfEqualFilters = joinSpecification.size();
+
+        final List<ColumnReference> leftJoinColumns = new ArrayList<>(numberOfEqualFilters);
+        final List<ColumnReference> rightJoinColumns = new ArrayList<>(numberOfEqualFilters);
+
+        for (ValueExpression expression : joinSpecification) {
+            final EqualExpression equalExpression = (EqualExpression) expression;
+
+            final ColumnReference equalLeftMember = equalExpression.left().variables().findAny().orElseThrow();
+            final ColumnReference equalRightMember = equalExpression.right().variables().findAny().orElseThrow();
+
+            if (leftInputSchema.contains(equalLeftMember)) {
+                leftJoinColumns.add(equalLeftMember);
+                rightJoinColumns.add(equalRightMember);
+            } else {
+                leftJoinColumns.add(equalRightMember);
+                rightJoinColumns.add(equalLeftMember);
+            }
+        }
+
+        final int[] leftMapping = new int[numberOfEqualFilters];
+        final int[] rightMapping = new int[numberOfEqualFilters];
+
+        for (int i = 0; i < numberOfEqualFilters; i++) {
+            leftMapping[i] = leftInputSchema.indexOf(leftJoinColumns.get(i));
+            rightMapping[i] = rightInputSchema.indexOf(rightJoinColumns.get(i));
+        }
+
+        return new InnerHashJoinOperator(leftMapping, rightMapping, outputSchema);
     }
 
     private InnerNestedLoopJoinOperator createNestedLoopJoinOperator(InnerJoinLop innerJoinLop, Schema leftInputSchema, Schema rightInputSchema) {

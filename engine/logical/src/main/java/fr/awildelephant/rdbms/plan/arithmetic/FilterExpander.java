@@ -1,14 +1,10 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
-
-import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+package fr.awildelephant.rdbms.plan.arithmetic;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-final class FilterExpander extends DefaultValueExpressionVisitor<Stream<ValueExpression>> {
+public final class FilterExpander extends DefaultValueExpressionVisitor<Stream<ValueExpression>> {
 
     private static final FilterExpander INSTANCE = new FilterExpander();
 
@@ -16,7 +12,7 @@ final class FilterExpander extends DefaultValueExpressionVisitor<Stream<ValueExp
 
     }
 
-    static List<ValueExpression> expandFilters(ValueExpression expression) {
+    public static List<ValueExpression> expandFilters(ValueExpression expression) {
         return INSTANCE.apply(expression).collect(Collectors.toList());
     }
 

@@ -1,19 +1,17 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
-
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+package fr.awildelephant.rdbms.plan.arithmetic;
 
 import java.util.Iterator;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 
-final class FilterCollapser {
+public final class FilterCollapser {
 
     private FilterCollapser() {
 
     }
 
-    static Optional<ValueExpression> collapseFilters(Iterable<ValueExpression> filters) {
+    public static Optional<ValueExpression> collapseFilters(Iterable<ValueExpression> filters) {
         final Iterator<ValueExpression> filtersIterator = filters.iterator();
 
         if (!filtersIterator.hasNext()) {
