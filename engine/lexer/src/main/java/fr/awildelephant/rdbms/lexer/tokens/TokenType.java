@@ -6,6 +6,7 @@ public enum TokenType {
     ASC,
     ASTERISK,
     AVG,
+    BETWEEN,
     BOOLEAN,
     BY,
     CAST,

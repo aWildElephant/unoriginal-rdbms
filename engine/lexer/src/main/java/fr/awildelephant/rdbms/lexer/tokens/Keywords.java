@@ -4,6 +4,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASC;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AVG;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BETWEEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BOOLEAN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
@@ -92,6 +93,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return AVG;
+        }
+    },
+    BETWEEN_TOKEN {
+        @Override
+        public String text() {
+            return "between";
+        }
+
+        @Override
+        public TokenType type() {
+            return BETWEEN;
         }
     },
     BOOLEAN_TOKEN {

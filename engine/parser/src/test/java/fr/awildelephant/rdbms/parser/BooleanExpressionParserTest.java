@@ -8,6 +8,7 @@ import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.And.and;
+import static fr.awildelephant.rdbms.ast.value.Between.between;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
@@ -93,5 +94,12 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (a NOT LIKE '.boub%')",
 
                       rows(row(not(like(unqualifiedColumnName("a"), textLiteral(".boub%"))))));
+    }
+
+    @Test
+    void it_should_parse_a_boolean_filter() {
+        assertParsing("VALUES (a BETWEEN 0 AND 99)",
+
+                      rows(row(between(unqualifiedColumnName("a"), integerLiteral(0), integerLiteral(99)))));
     }
 }

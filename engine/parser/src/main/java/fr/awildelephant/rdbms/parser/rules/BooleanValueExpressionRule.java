@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import static fr.awildelephant.rdbms.ast.value.And.and;
+import static fr.awildelephant.rdbms.ast.value.Between.between;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
@@ -69,6 +70,16 @@ final class BooleanValueExpressionRule {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
+            case BETWEEN:
+                lexer.consumeNextToken();
+
+                final AST lowerBound = deriveValueExpression(lexer);
+
+                consumeAndExpect(AND, lexer);
+
+                final AST upperBound = deriveValueExpression(lexer);
+
+                return between(left, lowerBound, upperBound);
             case EQUAL:
                 lexer.consumeNextToken();
 
