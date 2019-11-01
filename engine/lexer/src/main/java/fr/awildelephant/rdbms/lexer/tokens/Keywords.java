@@ -46,6 +46,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNKNOWN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 
 public enum Keywords implements Token {
 
@@ -553,6 +554,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return WHERE;
+        }
+    },
+    YEAR_TOKEN {
+        @Override
+        public String text() {
+            return "year";
+        }
+
+        @Override
+        public TokenType type() {
+            return YEAR;
         }
     }
 }

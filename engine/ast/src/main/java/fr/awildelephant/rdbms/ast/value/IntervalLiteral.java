@@ -8,19 +8,25 @@ import java.util.Objects;
 public final class IntervalLiteral implements AST {
 
     private final String intervalString;
+    private final IntervalGranularity granularity;
     private final Integer precision;
 
-    private IntervalLiteral(String intervalString, Integer precision) {
+    private IntervalLiteral(String intervalString, IntervalGranularity granularity, Integer precision) {
         this.intervalString = intervalString;
+        this.granularity = granularity;
         this.precision = precision;
     }
 
-    public static IntervalLiteral intervalLiteral(String intervalString, Integer precision) {
-        return new IntervalLiteral(intervalString, precision);
+    public static IntervalLiteral intervalLiteral(String intervalString, IntervalGranularity granularity, Integer precision) {
+        return new IntervalLiteral(intervalString, granularity, precision);
     }
 
     public String intervalString() {
         return intervalString;
+    }
+
+    public IntervalGranularity granularity() {
+        return granularity;
     }
 
     @Override
@@ -30,7 +36,7 @@ public final class IntervalLiteral implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(intervalString, precision);
+        return Objects.hash(intervalString, granularity, precision);
     }
 
     @Override
@@ -41,7 +47,8 @@ public final class IntervalLiteral implements AST {
 
         final IntervalLiteral other = (IntervalLiteral) obj;
 
-        return Objects.equals(intervalString, other.intervalString)
+        return granularity == other.granularity
+                && Objects.equals(intervalString, other.intervalString)
                 && Objects.equals(precision, other.precision);
     }
 }

@@ -35,6 +35,7 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.time.Period;
 
+import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.YEAR_GRANULARITY;
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
@@ -177,7 +178,12 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(IntervalLiteral intervalLiteral) {
-        final Period period = Period.ofDays(parseInt(intervalLiteral.intervalString()));
+        final Period period;
+        if (intervalLiteral.granularity() == YEAR_GRANULARITY) {
+            period = Period.ofYears(parseInt(intervalLiteral.intervalString()));
+        } else {
+            period = Period.ofDays(parseInt(intervalLiteral.intervalString()));
+        }
 
         return constantExpression(intervalValue(period), INTERVAL);
     }
