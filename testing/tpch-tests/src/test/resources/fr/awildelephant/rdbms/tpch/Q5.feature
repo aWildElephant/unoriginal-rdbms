@@ -1,4 +1,3 @@
-@todo
 Feature: TPC-H Q5
 
   Background: TPC-H dataset
@@ -40,6 +39,12 @@ Feature: TPC-H Q5
       revenue desc;
     """
 
+    # Results retrieved from https://github.com/apache/impala/blob/master/testdata/workloads/tpch/queries/tpch-q5.test
     Then I expect the result
-      | n_name    | revenue     |
-      | INDONESIA | 55502041.17 |
+      | n_name    | revenue       |
+      | TEXT      | DECIMAL       |
+      | INDONESIA | 55502041.1697 |
+      | VIETNAM   | 55295086.9967 |
+      | CHINA     | 53724494.2566 |
+      | INDIA     | 52035512.0002 |
+      | JAPAN     | 45410175.6954 |

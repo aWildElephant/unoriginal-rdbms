@@ -24,6 +24,7 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 - prior to 2019-04-14: support stuff for TPC-H Q1, load TPC-H scale factor 1 dataset, improve muscle mass, etc.
 - 2019-04-14: TPC-H Q1 support (ran in around 13s)
 - 2019-08-10: TPC-H Q3 support
+- 2019-11-01: TPC-H Q5 support
 
 ## Next steps
 
