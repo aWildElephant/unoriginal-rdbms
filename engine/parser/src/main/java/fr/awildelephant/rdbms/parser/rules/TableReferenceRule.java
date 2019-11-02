@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
 import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IDENTIFIER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INNER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
@@ -52,11 +53,13 @@ final class TableReferenceRule {
             tablePrimary = deriveTableName(lexer);
         }
 
-        if (!nextTokenIs(AS, lexer)) {
-            return tablePrimary;
+        if (nextTokenIs(AS, lexer)) {
+            lexer.consumeNextToken();
         }
 
-        lexer.consumeNextToken();
+        if (!nextTokenIs(IDENTIFIER, lexer)) {
+            return tablePrimary;
+        }
 
         final String alias = consumeIdentifier(lexer);
 

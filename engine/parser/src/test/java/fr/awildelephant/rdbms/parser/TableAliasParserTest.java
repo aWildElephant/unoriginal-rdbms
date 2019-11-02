@@ -18,4 +18,11 @@ class TableAliasParserTest {
 
                       select(List.of(asterisk()), tableAlias(tableName("test"), "t")));
     }
+
+    @Test
+    void it_should_parse_a_select_query_with_a_table_alias_without_the_as_keyword() {
+        assertParsing("SELECT * FROM test t",
+
+                      select(List.of(asterisk()), tableAlias(tableName("test"), "t")));
+    }
 }
