@@ -59,7 +59,7 @@ final class OutputColumnsTransformer {
     private LogicalOperator transform() {
         validateColumnReferences();
 
-        final Map<String, String> aliasing = extractAliases();
+        final Map<String, Map<String, String>> aliasing = extractAliases();
 
         expandAsterisks();
 
@@ -160,8 +160,8 @@ final class OutputColumnsTransformer {
         outputColumns.forEach(validator::apply);
     }
 
-    private Map<String, String> extractAliases() {
-        final Map<String, String> aliasing = new HashMap<>();
+    private Map<String, Map<String, String>> extractAliases() {
+        final Map<String, Map<String, String>> aliasing = new HashMap<>();
 
         for (int i = 0; i < outputColumns.size(); i++) {
             final AST column = outputColumns.get(i);
@@ -169,9 +169,17 @@ final class OutputColumnsTransformer {
             if (column instanceof ColumnAlias) {
                 final ColumnAlias aliasedColumn = (ColumnAlias) column;
                 final AST unaliasedColumn = aliasedColumn.input();
-                final String unaliasedColumnName = columnNameResolver.apply(unaliasedColumn);
+                final ColumnReference unaliasedColumnReference = columnReferenceTransformer.apply(unaliasedColumn);
 
-                aliasing.put(unaliasedColumnName, aliasedColumn.alias());
+                aliasing.compute(unaliasedColumnReference.name(), (unused, aliases) -> {
+                    if (aliases == null) {
+                        aliases = new HashMap<>();
+                    }
+
+                    aliases.put(unaliasedColumnReference.table().orElse(""), aliasedColumn.alias());
+
+                    return aliases;
+                });
 
                 outputColumns.set(i, unaliasedColumn);
             }

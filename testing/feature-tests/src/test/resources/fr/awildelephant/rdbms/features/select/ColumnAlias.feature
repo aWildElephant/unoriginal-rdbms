@@ -52,7 +52,6 @@ Feature: Aliasing a column
       | INTEGER | INTEGER |
       | 1       | 1       |
 
-  @todo
   Scenario: I alias two columns with the same name from two different tables
 
     Given the table zero

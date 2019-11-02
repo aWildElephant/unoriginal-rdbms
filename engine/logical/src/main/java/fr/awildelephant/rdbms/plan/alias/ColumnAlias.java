@@ -3,41 +3,51 @@ package fr.awildelephant.rdbms.plan.alias;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.Map;
+import java.util.Optional;
 
 public final class ColumnAlias implements Alias {
 
-    private final Map<String, String> aliases;
+    private final Map<String, Map<String, String>> aliases;
 
-    private ColumnAlias(Map<String, String> aliases) {
+    private ColumnAlias(Map<String, Map<String, String>> aliases) {
         this.aliases = aliases;
     }
 
-    public static ColumnAlias columnAlias(Map<String, String> aliases) {
+    public static ColumnAlias columnAlias(Map<String, Map<String, String>> aliases) {
         return new ColumnAlias(aliases);
     }
 
     @Override
     public ColumnReference alias(ColumnReference original) {
-        final String columnName = original.name();
-        final String aliasedColumnName = aliases.get(columnName);
+        final Map<String, String> tables = this.aliases.get(original.name());
 
-        if (aliasedColumnName == null) {
+        if (tables == null) {
             return original;
         }
 
-        return original.renameColumn(aliasedColumnName);
+        final Optional<String> table = original.table();
+        if (table.isPresent()) {
+            final String alias = tables.get(table.get());
+            if (alias != null) {
+                return original.renameColumn(alias);
+            }
+        }
+
+        return original.renameColumn(tables.values().iterator().next());
     }
 
     @Override
     public ColumnReference unalias(ColumnReference aliased) {
-        final String columnName = aliased.name();
+        final String aliasedColumnName = aliased.name();
 
-        for (Map.Entry<String, String> entry : aliases.entrySet()) {
-            if (columnName.equals(entry.getValue())) {
-                return aliased.renameColumn(entry.getValue());
+        for (Map.Entry<String, Map<String, String>> aliasesByOriginalColumnName : aliases.entrySet()) {
+            for (Map.Entry<String, String> aliasByTable : aliasesByOriginalColumnName.getValue().entrySet()) {
+                if (aliasedColumnName.equals(aliasByTable.getValue())) {
+                    return aliased.renameColumn(aliasesByOriginalColumnName.getKey());
+                }
             }
         }
 
-        return aliased;
+        throw new IllegalStateException();
     }
 }
