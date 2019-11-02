@@ -49,14 +49,24 @@ public class StepDefs implements En {
                 for (int i = 0; i < columnNames.size(); i++) {
                     final String columnType = columnTypes.get(i);
 
-                    if (columnType.equalsIgnoreCase("TEXT")) {
-                        insertIntoBuilder.append('\'');
-                    }
+                    final String value = row.get(i);
 
-                    insertIntoBuilder.append(row.get(i));
+                    if (value.equalsIgnoreCase("null")) {
+                        insertIntoBuilder.append(value);
+                    } else {
+                        if (columnType.equalsIgnoreCase("DATE")) {
+                            insertIntoBuilder.append("date ");
+                        }
 
-                    if (columnType.equalsIgnoreCase("TEXT")) {
-                        insertIntoBuilder.append('\'');
+                        if (columnType.equalsIgnoreCase("TEXT") || columnType.equalsIgnoreCase("DATE")) {
+                            insertIntoBuilder.append('\'');
+                        }
+
+                        insertIntoBuilder.append(value);
+
+                        if (columnType.equalsIgnoreCase("TEXT") || columnType.equalsIgnoreCase("DATE")) {
+                            insertIntoBuilder.append('\'');
+                        }
                     }
 
                     if (i < columnNames.size() - 1) {

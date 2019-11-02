@@ -142,6 +142,11 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
     public Operation visit(ExtractYearExpression extractYear) {
         final Operation input = apply(extractYear.input());
 
+        final Domain inputDomain = input.domain();
+        if (!inputDomain.canBeUsedAs(DATE)) {
+            throw new UnsupportedOperationException("Cannot extract YEAR from incompatible type " + inputDomain);
+        }
+
         return extractYearOperation(input);
     }
 

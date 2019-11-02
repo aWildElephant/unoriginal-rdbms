@@ -158,7 +158,7 @@ final class ValueExpressionRule {
                 consumeAndExpect(LEFT_PAREN, lexer);
                 consumeAndExpect(YEAR, lexer);
                 consumeAndExpect(FROM, lexer);
-                final AST date = deriveDateValueExpression(lexer);
+                final AST date = deriveValueExpression(lexer);
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return extractYear(date);
