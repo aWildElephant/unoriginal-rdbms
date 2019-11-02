@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
+import fr.awildelephant.rdbms.ast.value.ExtractYear;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
@@ -64,6 +65,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(DropTable dropTable);
 
     T visit(Equal equal);
+
+    T visit(ExtractYear extractYear);
 
     T visit(Greater greater);
 

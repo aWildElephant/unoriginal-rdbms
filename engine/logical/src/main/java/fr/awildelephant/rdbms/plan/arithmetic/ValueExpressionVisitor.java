@@ -22,6 +22,8 @@ public interface ValueExpressionVisitor<T> extends Function<ValueExpression, T> 
 
     T visit(EqualExpression equal);
 
+    T visit(ExtractYearExpression extractYear);
+
     T visit(GreaterExpression greater);
 
     T visit(GreaterOrEqualExpression greaterOrEqual);

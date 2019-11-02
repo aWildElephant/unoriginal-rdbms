@@ -15,6 +15,7 @@ import static fr.awildelephant.rdbms.ast.value.Avg.avg;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
+import static fr.awildelephant.rdbms.ast.value.ExtractYear.extractYear;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.DAY_GRANULARITY;
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.YEAR_GRANULARITY;
@@ -28,11 +29,14 @@ import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -116,9 +120,7 @@ final class ValueExpressionRule {
             case LEFT_PAREN:
                 return deriveParenthesizedValueExpression(lexer);
             case DATE:
-                lexer.consumeNextToken();
-
-                return cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
+                return deriveDateValueExpression(lexer);
             case INTERVAL:
                 lexer.consumeNextToken();
 
@@ -150,6 +152,16 @@ final class ValueExpressionRule {
                 return intervalLiteral(intervalString, granularity, precision);
             case DECIMAL_LITERAL:
                 return deriveDecimalLiteral(lexer);
+            case EXTRACT:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(LEFT_PAREN, lexer);
+                consumeAndExpect(YEAR, lexer);
+                consumeAndExpect(FROM, lexer);
+                final AST date = deriveDateValueExpression(lexer);
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return extractYear(date);
             case INTEGER_LITERAL:
                 return deriveIntegerLiteral(lexer);
             case NULL:
@@ -199,6 +211,12 @@ final class ValueExpressionRule {
             default:
                 throw unexpectedToken(nextToken);
         }
+    }
+
+    private static AST deriveDateValueExpression(Lexer lexer) {
+        consumeAndExpect(DATE, lexer);
+
+        return cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
     }
 
     private static AST deriveParenthesizedValueExpression(Lexer lexer) {

@@ -23,6 +23,7 @@ public enum TokenType {
     DROP,
     END_OF_FILE,
     EQUAL,
+    EXTRACT,
     FALSE,
     FOREIGN,
     FROM,

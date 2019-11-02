@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
+import fr.awildelephant.rdbms.ast.value.ExtractYear;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
@@ -51,6 +52,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.CastExpression.castExpressi
 import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.DivideExpression.divideExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression.extractYearExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression.greaterOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
@@ -164,6 +166,13 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         final ValueExpression right = apply(equal.right());
 
         return equalExpression(left, right);
+    }
+
+    @Override
+    public ValueExpression visit(ExtractYear extractYear) {
+        final ValueExpression input = apply(extractYear.input());
+
+        return extractYearExpression(input);
     }
 
     @Override

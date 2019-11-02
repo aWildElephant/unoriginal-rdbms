@@ -38,6 +38,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(ExtractYearExpression extractYear) {
+        return defaultVisit(extractYear);
+    }
+
+    @Override
     public T visit(GreaterExpression greater) {
         return defaultVisit(greater);
     }

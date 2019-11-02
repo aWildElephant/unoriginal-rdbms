@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.DivideExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
@@ -27,6 +28,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression.betweenEx
 import static fr.awildelephant.rdbms.plan.arithmetic.CastExpression.castExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.DivideExpression.divideExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression.extractYearExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression.greaterOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
@@ -79,6 +81,11 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
     @Override
     public ValueExpression visit(EqualExpression equal) {
         return equalExpression(apply(equal.left()), apply(equal.right()));
+    }
+
+    @Override
+    public ValueExpression visit(ExtractYearExpression extractYear) {
+        return extractYearExpression(apply(extractYear.input()));
     }
 
     @Override

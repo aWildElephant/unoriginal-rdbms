@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
+import fr.awildelephant.rdbms.ast.value.ExtractYear;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
@@ -54,6 +55,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(CountStar countStar) {
         return "count(*)";
+    }
+
+    @Override
+    public String visit(ExtractYear extractYear) {
+        return "extract(year from " + apply(extractYear.input()) + ')';
     }
 
     @Override

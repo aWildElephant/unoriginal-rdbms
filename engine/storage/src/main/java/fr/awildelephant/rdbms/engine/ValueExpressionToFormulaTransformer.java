@@ -10,6 +10,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.DivideExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
@@ -37,6 +38,7 @@ import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimal
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalMultiplication.decimalMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalSubtraction.decimalSubtraction;
+import static fr.awildelephant.rdbms.evaluator.operation.ExtractYearOperation.extractYearOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerAddition.integerAddition;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerDivision.integerDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
@@ -134,6 +136,13 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
         final Operation right = apply(equal.right());
 
         return equalComparison(left, right);
+    }
+
+    @Override
+    public Operation visit(ExtractYearExpression extractYear) {
+        final Operation input = apply(extractYear.input());
+
+        return extractYearOperation(input);
     }
 
     @Override
