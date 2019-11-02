@@ -47,7 +47,7 @@ Feature: TPC-H Q7
       supp_nation,
       cust_nation,
       l_year
-      order by
+    ORDER BY
       supp_nation,
       cust_nation,
       l_year
