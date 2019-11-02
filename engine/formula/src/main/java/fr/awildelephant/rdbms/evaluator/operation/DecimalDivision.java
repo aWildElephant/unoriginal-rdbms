@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
@@ -43,7 +43,7 @@ public class DecimalDivision extends BinaryOperation {
             throw new IllegalStateException("Division by zero");
         }
 
-        return decimalValue(leftBigDecimalValue.divide(rightBigDecimalValue, MathContext.UNLIMITED));
+        return decimalValue(leftBigDecimalValue.divide(rightBigDecimalValue, 7, RoundingMode.HALF_UP));
     }
 
     @Override
