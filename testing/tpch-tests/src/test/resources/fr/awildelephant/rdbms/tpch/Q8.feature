@@ -1,12 +1,13 @@
-@todo
 Feature: TPC-H Q8
 
   Background: TPC-H dataset
 
-    Given I load nation scale factor 1
-    And I load customer scale factor 1
+    Given I load customer scale factor 1
     And I load lineitem scale factor 1
+    And I load nation scale factor 1
     And I load orders scale factor 1
+    And I load part scale factor 1
+    And I load region scale factor 1
     And I load supplier scale factor 1
 
   Scenario: I execute TPC-H Q8
@@ -34,16 +35,16 @@ Feature: TPC-H Q8
         nation n2,
         region
       WHERE
-      p_partkey = l_partkey
-      AND s_suppkey = l_suppkey
-      AND l_orderkey = o_orderkey
-      AND o_custkey = c_custkey
-      AND c_nationkey = n1.n_nationkey
-      AND n1.n_regionkey = r_regionkey
-      AND r_name = 'AMERICA'
-      AND s_nationkey = n2.n_nationkey
-      AND o_orderdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
-      AND p_type = 'ECONOMY ANODIZED STEEL'
+        p_partkey = l_partkey
+        AND s_suppkey = l_suppkey
+        AND l_orderkey = o_orderkey
+        AND o_custkey = c_custkey
+        AND c_nationkey = n1.n_nationkey
+        AND n1.n_regionkey = r_regionkey
+        AND r_name = 'AMERICA'
+        AND s_nationkey = n2.n_nationkey
+        AND o_orderdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
+        AND p_type = 'ECONOMY ANODIZED STEEL'
     ) AS all_nations
     GROUP BY
       o_year
