@@ -18,6 +18,7 @@ import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -170,6 +171,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(CartesianProductLop cartesianProduct) {
+        final Collection<ValueExpression> aboveFilters = new ArrayList<>();
         final Collection<ValueExpression> leftFilters = new ArrayList<>();
         final Collection<ValueExpression> rightFilters = new ArrayList<>();
         final Collection<ValueExpression> joinFilters = new ArrayList<>();
@@ -192,7 +194,11 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
             }
 
             if (requiresLeftInput && requiresRightInput) {
-                joinFilters.add(filter);
+                if (filter instanceof EqualExpression) {
+                    joinFilters.add(filter);
+                } else {
+                    aboveFilters.add(filter);
+                }
             }
         }
 
@@ -200,10 +206,18 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         final LogicalOperator rightInput = new FilterPushDown(rightFilters).apply(cartesianProduct.rightInput());
 
         final Optional<ValueExpression> collapsedJoinFilter = collapseFilters(joinFilters);
+
+        final LogicalOperator joinNode;
         if (collapsedJoinFilter.isPresent()) {
-            return new InnerJoinLop(leftInput, rightInput, collapsedJoinFilter.get(), cartesianProduct.schema());
+            joinNode = new InnerJoinLop(leftInput, rightInput, collapsedJoinFilter.get(), cartesianProduct.schema());
         } else {
-            return new CartesianProductLop(leftInput, rightInput, cartesianProduct.schema());
+            joinNode = new CartesianProductLop(leftInput, rightInput, cartesianProduct.schema());
         }
+
+        if (aboveFilters.isEmpty()) {
+            return joinNode;
+        }
+
+        return createFilterAbove(aboveFilters, joinNode);
     }
 }
