@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -45,6 +46,7 @@ import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.plan.arithmetic.AddExpression.addExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression.betweenExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.CastExpression.castExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.DivideExpression.divideExpression;
@@ -86,6 +88,15 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         final ValueExpression right = apply(and.right());
 
         return andExpression(left, right);
+    }
+
+    @Override
+    public ValueExpression visit(Between between) {
+        final ValueExpression value = apply(between.value());
+        final ValueExpression lowerBound = apply(between.lowerBound());
+        final ValueExpression upperBound = apply(between.upperBound());
+
+        return betweenExpression(value, lowerBound, upperBound);
     }
 
     @Override

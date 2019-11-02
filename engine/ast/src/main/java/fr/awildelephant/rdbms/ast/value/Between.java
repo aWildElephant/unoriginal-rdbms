@@ -43,4 +43,16 @@ public final class Between implements AST {
                 && Objects.equals(lowerBound, other.lowerBound)
                 && Objects.equals(upperBound, other.upperBound);
     }
+
+    public AST value() {
+        return value;
+    }
+
+    public AST lowerBound() {
+        return lowerBound;
+    }
+
+    public AST upperBound() {
+        return upperBound;
+    }
 }

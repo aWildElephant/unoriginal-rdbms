@@ -12,6 +12,8 @@ public interface ValueExpressionVisitor<T> extends Function<ValueExpression, T> 
 
     T visit(AndExpression and);
 
+    T visit(BetweenExpression between);
+
     T visit(CastExpression cast);
 
     T visit(ConstantExpression constant);

@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.evaluator.operation.Reference;
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.DivideExpression;
@@ -86,6 +87,15 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
     @Override
     public Operation visit(AndExpression and) {
         return andOperation(apply(and.left()), apply(and.right()));
+    }
+
+    @Override
+    public Operation visit(BetweenExpression between) {
+        final Operation value = apply(between.value());
+        final Operation lowerBound = apply(between.lowerBound());
+        final Operation upperBound = apply(between.upperBound());
+
+        return andOperation(lessOrEqualComparison(lowerBound, value), lessOrEqualComparison(value, upperBound));
     }
 
     @Override

@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
+import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -37,6 +38,12 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(Avg avg) {
         return "avg(" + apply(avg.input()) + ")";
+    }
+
+    @Override
+    public String visit(Between between) {
+        return apply(between.value()) + " between " + apply(between.lowerBound()) + " and "
+                + apply(between.upperBound());
     }
 
     @Override

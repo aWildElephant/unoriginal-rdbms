@@ -13,6 +13,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(BetweenExpression between) {
+        return defaultVisit(between);
+    }
+
+    @Override
     public T visit(CastExpression cast) {
         return defaultVisit(cast);
     }

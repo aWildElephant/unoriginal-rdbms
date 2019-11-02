@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
+import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
@@ -61,6 +62,15 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     @Override
     public Void visit(Avg avg) {
         apply(avg.input());
+
+        return null;
+    }
+
+    @Override
+    public Void visit(Between between) {
+        apply(between.value());
+        apply(between.lowerBound());
+        apply(between.upperBound());
 
         return null;
     }
