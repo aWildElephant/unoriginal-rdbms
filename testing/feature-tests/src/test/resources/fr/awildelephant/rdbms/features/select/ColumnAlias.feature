@@ -33,3 +33,44 @@ Feature: Aliasing a column
       | a       | b       |
       | INTEGER | INTEGER |
       | 2       | 1       |
+
+  @todo
+  Scenario: I alias the same column several times
+
+    Given the table test
+      | a       |
+      | INTEGER |
+      | 1       |
+
+    When I execute the query
+    """
+    SELECT a AS b, a AS c FROM test
+    """
+
+    Then I expect the result set
+      | b       | c       |
+      | INTEGER | INTEGER |
+      | 1       | 1       |
+
+  @todo
+  Scenario: I alias two columns with the same name from two different tables
+
+    Given the table zero
+      | a       |
+      | INTEGER |
+      | 0       |
+
+    Given the table one
+      | a       |
+      | INTEGER |
+      | 1       |
+
+    When I execute the query
+    """
+    SELECT zero.a AS zero, one.a AS one FROM zero, one
+    """
+
+    Then I expect the result set
+      | zero    | one     |
+      | INTEGER | INTEGER |
+      | 0       | 1       |
