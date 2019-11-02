@@ -1,4 +1,3 @@
-@todo
 Feature: TPC-H Q7
 
   Background: TPC-H dataset
@@ -53,7 +52,11 @@ Feature: TPC-H Q7
       l_year
     """
 
+    # Retrieved from https://github.com/apache/impala/blob/master/testdata/workloads/tpch/queries/tpch-q7.test
     Then I expect the result
-      | supp_nation | cust_nation | year    | revenue      |
-      | TEXT        | TEXT        | INTEGER | DECIMAL      |
-      | FRANCE      | GERMANY     | 1995    | 123141078.23 |
+      | supp_nation | cust_nation | l_year  | revenue       |
+      | TEXT        | TEXT        | INTEGER | DECIMAL       |
+      | FRANCE      | GERMANY     | 1995    | 54639732.7336 |
+      | FRANCE      | GERMANY     | 1996    | 54633083.3076 |
+      | GERMANY     | FRANCE      | 1995    | 52531746.6697 |
+      | GERMANY     | FRANCE      | 1996    | 52520549.0224 |
