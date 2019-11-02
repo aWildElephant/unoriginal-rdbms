@@ -51,6 +51,8 @@ public final class ComparisonFactory {
             return new DateDateLessOrEqualComparison(left, right);
         } else if (leftDomain == INTEGER && rightDomain == INTEGER) {
             return new IntegerIntegerLessOrEqualComparison(left, right);
+        } else if (leftDomain.canBeUsedAs(DECIMAL) && rightDomain.canBeUsedAs(DECIMAL)) {
+            return new DecimalLessOrEqualComparison(left, right);
         } else {
             throw new UnsupportedOperationException("Unsupported comparison: " + leftDomain + " <= " + rightDomain);
         }

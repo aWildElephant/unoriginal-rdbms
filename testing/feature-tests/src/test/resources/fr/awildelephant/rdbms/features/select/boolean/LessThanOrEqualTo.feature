@@ -23,3 +23,27 @@ Feature: Less than or equal to comparison
       | null    |
       | null    |
       | null    |
+
+  Scenario: I test that a decimal is less than or equal to another
+
+    When I execute the query
+      """
+      SELECT column1 <= column2 AS result FROM (VALUES
+        (0.99999999999, 1),
+        (0.99999999999, 0.99999999999),
+        (1.00000000001, 1),
+        (0.99999999999, null),
+        (null, 0.99999999999),
+        (null, null)
+      );
+      """
+
+    Then I expect the result set
+      | result  |
+      | BOOLEAN |
+      | true    |
+      | true    |
+      | false   |
+      | null    |
+      | null    |
+      | null    |
