@@ -46,7 +46,7 @@ public enum Checker {
         @Override
         public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final BigDecimal actualDecimal = actual.getBigDecimal(columnPosition);
-            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition);
+            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actual);
 
             if ("null".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull(), messageSupplier);
@@ -110,6 +110,10 @@ public enum Checker {
 
     private static Supplier<String> errorMessage(int rowIndex, int columnIndex) {
         return () -> "Row " + rowIndex + " column " + columnIndex + ": value mismatch";
+    }
+
+    private static Supplier<String> errorMessage(int rowIndex, int columnIndex, String expected, Object actual) {
+        return () -> "Row " + rowIndex + " column " + columnIndex + ": value mismatch, expected " + expected + " but was " + actual;
     }
 
     public abstract void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception;
