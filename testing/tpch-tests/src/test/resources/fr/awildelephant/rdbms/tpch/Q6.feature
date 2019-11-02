@@ -1,4 +1,3 @@
-@todo
 Feature: TPC-H Q6
 
   Background: TPC-H dataset
