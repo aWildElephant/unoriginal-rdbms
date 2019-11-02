@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.CaseWhenExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.DivideExpression;
@@ -25,6 +26,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 import static fr.awildelephant.rdbms.plan.arithmetic.AddExpression.addExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression.betweenExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.CaseWhenExpression.caseWhenExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.CastExpression.castExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.DivideExpression.divideExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
@@ -61,6 +63,14 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
     @Override
     public ValueExpression visit(BetweenExpression between) {
         return betweenExpression(apply(between.value()), apply(between.lowerBound()), apply(between.upperBound()));
+    }
+
+    @Override
+    public ValueExpression visit(CaseWhenExpression caseWhen) {
+        return caseWhenExpression(apply(caseWhen.condition()),
+                                  apply(caseWhen.thenExpression()),
+                                  apply(caseWhen.elseExpression()),
+                                  caseWhen.domain());
     }
 
     @Override

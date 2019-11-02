@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
+import fr.awildelephant.rdbms.ast.value.CaseWhen;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
@@ -48,6 +49,7 @@ import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.plan.arithmetic.AddExpression.addExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression.betweenExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.CaseWhenExpression.caseWhenExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.CastExpression.castExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.DivideExpression.divideExpression;
@@ -116,6 +118,33 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         }
 
         return constantExpression(value, BOOLEAN);
+    }
+
+    @Override
+    public ValueExpression visit(CaseWhen caseWhen) {
+        final ValueExpression condition = apply(caseWhen.condition());
+
+        if (condition.domain() != BOOLEAN) {
+            throw new IllegalArgumentException("The condition of a CASE WHEN expression must have BOOLEAN type");
+        }
+
+        final ValueExpression thenExpression = apply(caseWhen.thenExpression());
+        final ValueExpression elseExpression = apply(caseWhen.elseExpression());
+
+        final Domain thenDomain = thenExpression.domain();
+        final Domain elseDomain = elseExpression.domain();
+
+        final Domain outputDomain;
+        if (elseDomain.canBeUsedAs(thenDomain)) {
+            outputDomain = thenDomain;
+        } else if (thenDomain.canBeUsedAs(elseDomain)) {
+            outputDomain = elseDomain;
+        } else {
+            throw new IllegalArgumentException("Incompatible return type " + thenDomain + " for THEN branch and "
+                                                       + elseDomain + " for ELSE branch of CASE WHEN");
+        }
+
+        return caseWhenExpression(condition, thenExpression, elseExpression, outputDomain);
     }
 
     @Override

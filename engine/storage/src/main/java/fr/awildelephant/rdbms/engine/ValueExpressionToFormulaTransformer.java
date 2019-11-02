@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.evaluator.operation.Reference;
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.CaseWhenExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.DivideExpression;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static fr.awildelephant.rdbms.evaluator.operation.AndOperation.andOperation;
+import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
 import static fr.awildelephant.rdbms.evaluator.operation.DateCastOperation.dateCastOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.DateIntervalAddition.dateIntervalAddition;
@@ -98,6 +100,15 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
         final Operation upperBound = apply(between.upperBound());
 
         return andOperation(lessOrEqualComparison(lowerBound, value), lessOrEqualComparison(value, upperBound));
+    }
+
+    @Override
+    public Operation visit(CaseWhenExpression caseWhen) {
+        final Operation condition = apply(caseWhen.condition());
+        final Operation thenExpression = apply(caseWhen.thenExpression());
+        final Operation elseExpression = apply(caseWhen.elseExpression());
+
+        return caseWhenOperation(condition, thenExpression, elseExpression, caseWhen.domain());
     }
 
     @Override

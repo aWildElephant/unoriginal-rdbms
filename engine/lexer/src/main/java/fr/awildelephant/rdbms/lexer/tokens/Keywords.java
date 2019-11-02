@@ -7,6 +7,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AVG;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BETWEEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BOOLEAN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CASE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COUNT;
@@ -17,6 +18,8 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DESC;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ELSE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXTRACT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
@@ -42,11 +45,13 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.THEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TRUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNIQUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNKNOWN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 
@@ -127,6 +132,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return BY;
+        }
+    },
+    CASE_TOKEN {
+        @Override
+        public String text() {
+            return "case";
+        }
+
+        @Override
+        public TokenType type() {
+            return CASE;
         }
     },
     CAST_TOKEN {
@@ -237,6 +253,28 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return DROP;
+        }
+    },
+    ELSE_TOKEN {
+        @Override
+        public String text() {
+            return "else";
+        }
+
+        @Override
+        public TokenType type() {
+            return ELSE;
+        }
+    },
+    END_TOKEN {
+        @Override
+        public String text() {
+            return "end";
+        }
+
+        @Override
+        public TokenType type() {
+            return END;
         }
     },
     EXTRACT_TOKEN {
@@ -514,6 +552,17 @@ public enum Keywords implements Token {
             return TEXT;
         }
     },
+    THEN_TOKEN {
+        @Override
+        public String text() {
+            return "then";
+        }
+
+        @Override
+        public TokenType type() {
+            return THEN;
+        }
+    },
     TRUE_TOKEN {
         @Override
         public String text() {
@@ -567,6 +616,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return VARCHAR;
+        }
+    },
+    WHEN_TOKEN {
+        @Override
+        public String text() {
+            return "when";
+        }
+
+        @Override
+        public TokenType type() {
+            return WHEN;
         }
     },
     WHERE_TOKEN {

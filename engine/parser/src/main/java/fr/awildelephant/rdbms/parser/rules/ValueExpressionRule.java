@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.value.Avg.avg;
+import static fr.awildelephant.rdbms.ast.value.CaseWhen.caseWhen;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
@@ -30,14 +31,19 @@ import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ELSE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.THEN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
+import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
@@ -117,6 +123,24 @@ final class ValueExpressionRule {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
+            case CASE:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(WHEN, lexer);
+
+                final AST condition = deriveBooleanValueExpressionRule(lexer);
+
+                consumeAndExpect(THEN, lexer);
+
+                final AST thenExpression = deriveValueExpression(lexer);
+
+                consumeAndExpect(ELSE, lexer);
+
+                final AST elseExpression = deriveValueExpression(lexer);
+
+                consumeAndExpect(END, lexer);
+
+                return caseWhen(condition, thenExpression, elseExpression);
             case LEFT_PAREN:
                 return deriveParenthesizedValueExpression(lexer);
             case DATE:

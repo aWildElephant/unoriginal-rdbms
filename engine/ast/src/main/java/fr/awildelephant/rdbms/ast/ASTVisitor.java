@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
+import fr.awildelephant.rdbms.ast.value.CaseWhen;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -45,6 +46,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Between between);
 
     T visit(BooleanLiteral booleanLiteral);
+
+    T visit(CaseWhen caseWhen);
 
     T visit(Cast cast);
 

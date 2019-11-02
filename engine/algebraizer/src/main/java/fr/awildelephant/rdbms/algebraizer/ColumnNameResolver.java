@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
+import fr.awildelephant.rdbms.ast.value.CaseWhen;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -50,6 +51,12 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(BooleanLiteral booleanLiteral) {
         return booleanLiteral.toString().toLowerCase();
+    }
+
+    @Override
+    public String visit(CaseWhen caseWhen) {
+        return "case when " + apply(caseWhen.condition()) + " then " + apply(caseWhen.thenExpression()) + " else "
+                + apply(caseWhen.elseExpression());
     }
 
     @Override

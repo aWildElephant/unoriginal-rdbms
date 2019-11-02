@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
+import fr.awildelephant.rdbms.ast.value.CaseWhen;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -53,6 +54,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(BooleanLiteral booleanLiteral) {
         return defaultVisit(booleanLiteral);
+    }
+
+    @Override
+    public T visit(CaseWhen caseWhen) {
+        return defaultVisit(caseWhen);
     }
 
     @Override
