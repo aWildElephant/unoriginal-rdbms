@@ -33,7 +33,7 @@ public final class ComparisonFactory {
 
         if (leftDomain == INTEGER && rightDomain == INTEGER) {
             return new IntegerIntegerLessComparison(left, right);
-        } else if (leftDomain == DECIMAL && rightDomain == DECIMAL) {
+        } else if (leftDomain.canBeUsedAs(DECIMAL) && rightDomain.canBeUsedAs(DECIMAL)) {
             return new DecimalDecimalLessComparison(left, right);
         } else if (leftDomain == DATE && rightDomain == DATE) {
             return new DateDateLessComparison(left, right);

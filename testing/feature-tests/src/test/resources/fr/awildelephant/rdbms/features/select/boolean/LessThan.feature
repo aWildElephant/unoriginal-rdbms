@@ -71,3 +71,15 @@ Feature: Less than comparison
       | null    |
       | null    |
       | null    |
+
+  Scenario: I compare a decimal and an integer value
+
+    When I execute the query
+    """
+    VALUES (0.5 < 1)
+    """
+
+    Then I expect the result set
+      | column1 |
+      | BOOLEAN |
+      | true    |
