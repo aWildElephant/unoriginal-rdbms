@@ -14,10 +14,18 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 public class Loader {
+
+    private static final int NUMBER_OF_ROWS_PER_INSERT = 10_000;
 
     private final Connection connection;
 
@@ -25,27 +33,49 @@ public class Loader {
         this.connection = connection;
     }
 
-    public void load(File file, String tableName) throws SQLException, IOException {
+    public void load(File file, String tableName) throws InterruptedException, IOException, SQLException {
         final int[] types = columnsTypes(tableName);
 
         final BufferedReader fileReader = readGZIPFile(file);
 
         final ProgressLogger logger = new ProgressLogger();
 
-        final int numberOfRowsPerInsert = 10_000;
-
         try (final CSVParser parser = CSVFormat.DEFAULT.withDelimiter('|').parse(fileReader)) {
             logger.start();
 
             final Iterator<CSVRecord> records = parser.iterator();
 
+            final ExecutorService executor = Executors.newFixedThreadPool(8);
+
             while (records.hasNext()) {
-                try (final Statement statement = connection.createStatement()) {
-                    statement.execute(createInsertQuery(tableName, records, types, numberOfRowsPerInsert));
-                    logger.log(numberOfRowsPerInsert);
-                }
+                final List<CSVRecord> insertRecords = nextBlock(records);
+
+                executor.submit((Callable<Void>) () -> {
+                    try (final Statement statement = connection.createStatement()) {
+                        statement.execute(createInsertQuery(tableName, insertRecords, types));
+                        logger.log(insertRecords.size());
+                    }
+
+                    return null;
+                });
+            }
+
+            executor.shutdown();
+            if (!executor.awaitTermination(3, TimeUnit.MINUTES)) {
+                throw new IllegalStateException("Timeout while waiting insertion queries to complete");
             }
         }
+    }
+
+    private List<CSVRecord> nextBlock(Iterator<CSVRecord> records) {
+        final List<CSVRecord> list = new ArrayList<>(NUMBER_OF_ROWS_PER_INSERT);
+
+        int i = 0;
+        while (i++ < NUMBER_OF_ROWS_PER_INSERT && records.hasNext()) {
+            list.add(records.next());
+        }
+
+        return list;
     }
 
     private static BufferedReader readGZIPFile(File file) throws IOException {
@@ -72,25 +102,22 @@ public class Loader {
         return types;
     }
 
-    private String createInsertQuery(String tableName, Iterator<CSVRecord> records, int[] types, int size) {
+    private String createInsertQuery(String tableName, List<CSVRecord> records, int[] types) {
         final StringBuilder queryBuilder = new StringBuilder("INSERT INTO ");
         queryBuilder.append(tableName);
         queryBuilder.append(" VALUES");
 
         boolean commaSeparatorNeeded = false;
 
-        int numberOfRows = 0;
-
-        do {
+        for (CSVRecord record : records) {
             if (commaSeparatorNeeded) {
                 queryBuilder.append(',');
             }
 
-            buildRow(queryBuilder, records.next(), types);
+            buildRow(queryBuilder, record, types);
 
             commaSeparatorNeeded = true;
-            numberOfRows++;
-        } while (records.hasNext() && numberOfRows < size);
+        }
 
         return queryBuilder.toString();
     }

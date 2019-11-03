@@ -16,7 +16,7 @@ final class ProgressLogger {
         stopWatch = StopWatch.createStarted();
     }
 
-    void log(int numberOfRowsInserted) {
+    synchronized void log(int numberOfRowsInserted) {
         counter += numberOfRowsInserted;
 
         if (counter >= LOG_THRESHOLD) {
