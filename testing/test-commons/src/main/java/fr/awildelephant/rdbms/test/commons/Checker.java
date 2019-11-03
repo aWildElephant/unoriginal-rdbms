@@ -46,7 +46,7 @@ public enum Checker {
         @Override
         public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
             final BigDecimal actualDecimal = actual.getBigDecimal(columnPosition);
-            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actual);
+            final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition, expected, actualDecimal);
 
             if ("null".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull(), messageSupplier);
@@ -86,10 +86,14 @@ public enum Checker {
             final String actualString = actual.getString(columnPosition);
             final Supplier<String> messageSupplier = errorMessage(rowPosition, columnPosition);
 
-            if (actual.wasNull()) {
-                assertTrue("null".equalsIgnoreCase(expected), messageSupplier);
+            if ("null".equalsIgnoreCase(expected)) {
+                assertTrue(actual.wasNull(), messageSupplier);
             } else {
-                assertEquals(expected, actualString, messageSupplier);
+                if (expected.startsWith("\"") && expected.endsWith("\"")) {
+                    assertEquals(expected.substring(1, expected.length() - 1), actualString, messageSupplier);
+                } else {
+                    assertEquals(expected, actualString, messageSupplier);
+                }
             }
         }
     };
