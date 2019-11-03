@@ -1,13 +1,12 @@
 package fr.awildelephant.rdbms.engine;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public final class Storage {
 
@@ -36,20 +35,8 @@ public final class Storage {
     }
 
     public Table execute(final LogicalOperator logicalPlan) {
-        // TODO: will not work with concurrency
-        final Optional<Table> result = logicalPlan.accept(new PlanExecutor(tables)).reduce((first, second) -> {
-            for (Record record : second) {
-                first.add(record);
-            }
-
-            return first;
-        });
-
-        if (!result.isPresent()) {
-            throw new IllegalStateException();
-        }
-
-        return result.get();
+        // TODO: this is doo doo
+        return new PlanExecutor(tables).apply(new CollectLop(logicalPlan)).get(0);
     }
 
     private void checkTableFound(Table table, String tableName) {

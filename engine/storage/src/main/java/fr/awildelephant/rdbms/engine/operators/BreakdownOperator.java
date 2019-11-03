@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
-public class BreakdownOperator implements Operator<Table, Stream<Table>> {
+public class BreakdownOperator implements Operator<Table, List<Table>> {
 
     private final List<String> breakdowns;
 
@@ -22,7 +21,7 @@ public class BreakdownOperator implements Operator<Table, Stream<Table>> {
     }
 
     @Override
-    public Stream<Table> compute(Table inputTable) {
+    public List<Table> compute(Table inputTable) {
         final Schema schema = inputTable.schema();
 
         final int[] projectionOnBreakdowns = buildProjectionOnBreakdowns(schema, breakdowns);
@@ -48,7 +47,7 @@ public class BreakdownOperator implements Operator<Table, Stream<Table>> {
             bucket.add(record);
         }
 
-        return buckets.stream();
+        return buckets;
     }
 
     private static int[] buildProjectionOnBreakdowns(Schema schema, List<String> breakdowns) {
