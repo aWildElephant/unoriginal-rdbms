@@ -19,6 +19,7 @@ import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.ExtractYear.extractYear;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.DAY_GRANULARITY;
+import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.MONTH_GRANULARITY;
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.YEAR_GRANULARITY;
 import static fr.awildelephant.rdbms.ast.value.IntervalLiteral.intervalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Min.min;
@@ -155,6 +156,9 @@ final class ValueExpressionRule {
                 switch (yetAnotherToken.type()) {
                     case DAY:
                         granularity = DAY_GRANULARITY;
+                        break;
+                    case MONTH:
+                        granularity = MONTH_GRANULARITY;
                         break;
                     case YEAR:
                         granularity = YEAR_GRANULARITY;

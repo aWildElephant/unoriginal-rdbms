@@ -35,6 +35,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIMIT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MIN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MONTH;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
@@ -440,6 +441,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return MIN;
+        }
+    },
+    MONTH_TOKEN {
+        @Override
+        public String text() {
+            return "month";
+        }
+
+        @Override
+        public TokenType type() {
+            return MONTH;
         }
     },
     NOT_TOKEN {

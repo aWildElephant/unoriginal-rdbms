@@ -49,6 +49,7 @@ public enum TokenType {
     LIMIT,
     MIN,
     MINUS,
+    MONTH,
     NOT,
     NULL,
     ON,
