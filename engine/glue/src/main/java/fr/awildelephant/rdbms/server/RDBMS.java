@@ -17,14 +17,14 @@ public final class RDBMS {
 
     private static final Logger LOGGER = LogManager.getLogger("Monitoring");
 
-    private final QueryDispatcher dispatcher;
+    private final ConcurrentQueryExecutor executor;
 
     public RDBMS() {
         final Storage storage = new Storage();
         final Algebraizer algebraizer = new Algebraizer(storage);
         final Optimizer optimizer = new Optimizer();
 
-        dispatcher = new QueryDispatcher(storage, algebraizer, optimizer);
+        executor = new ConcurrentQueryExecutor(new QueryDispatcher(storage, algebraizer, optimizer));
     }
 
     private static AST parse(final String query) {
@@ -37,6 +37,6 @@ public final class RDBMS {
         final AST ast = parse(query);
         LOGGER.trace("Took {}ms to parse", currentTimeMillis() - start);
 
-        return dispatcher.apply(ast);
+        return executor.execute(ast);
     }
 }
