@@ -18,6 +18,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
@@ -220,6 +221,14 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
     @Override
     public Operation visit(NotExpression not) {
         return notOperation(apply(not.input()));
+    }
+
+    @Override
+    public Operation visit(NotEqualExpression notEqualExpression) {
+        final Operation left = apply(notEqualExpression.left());
+        final Operation right = apply(notEqualExpression.right());
+
+        return notOperation(equalComparison(left, right));
     }
 
     @Override

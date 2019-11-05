@@ -24,6 +24,7 @@ import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
+import fr.awildelephant.rdbms.ast.value.NotEqual;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
@@ -161,6 +162,14 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(Not not) {
         return "not " + apply(not.input());
+    }
+
+    @Override
+    public String visit(NotEqual notEqual) {
+        final String left = apply(notEqual.left());
+        final String right = apply(notEqual.right());
+
+        return left + " <> " + right;
     }
 
     @Override

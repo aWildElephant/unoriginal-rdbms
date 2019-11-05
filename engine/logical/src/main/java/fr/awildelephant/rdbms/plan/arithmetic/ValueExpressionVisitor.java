@@ -40,6 +40,8 @@ public interface ValueExpressionVisitor<T> extends Function<ValueExpression, T> 
 
     T visit(NotExpression not);
 
+    T visit(NotEqualExpression notEqual);
+
     T visit(OrExpression or);
 
     T visit(SubtractExpression subtract);

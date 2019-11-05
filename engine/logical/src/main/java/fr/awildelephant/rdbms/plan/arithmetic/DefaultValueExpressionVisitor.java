@@ -83,6 +83,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(NotEqualExpression notEqual) {
+        return defaultVisit(notEqual);
+    }
+
+    @Override
     public T visit(OrExpression or) {
         return defaultVisit(or);
     }

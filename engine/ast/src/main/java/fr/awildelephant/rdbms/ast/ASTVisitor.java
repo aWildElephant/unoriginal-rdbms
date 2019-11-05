@@ -21,6 +21,7 @@ import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
+import fr.awildelephant.rdbms.ast.value.NotEqual;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Placeholder;
@@ -102,6 +103,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Multiply multiply);
 
     T visit(Not not);
+
+    T visit(NotEqual notEqual);
 
     T visit(NullLiteral nullLiteral);
 

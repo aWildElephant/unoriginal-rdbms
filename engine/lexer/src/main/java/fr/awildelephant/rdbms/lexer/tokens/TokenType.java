@@ -51,6 +51,7 @@ public enum TokenType {
     MINUS,
     MONTH,
     NOT,
+    NOT_EQUAL,
     NULL,
     ON,
     OR,

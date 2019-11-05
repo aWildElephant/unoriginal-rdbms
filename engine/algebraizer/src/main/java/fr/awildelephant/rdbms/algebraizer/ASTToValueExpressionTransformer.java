@@ -24,6 +24,7 @@ import fr.awildelephant.rdbms.ast.value.Like;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
+import fr.awildelephant.rdbms.ast.value.NotEqual;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Placeholder;
@@ -60,6 +61,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpressi
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression.multiplyExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression.notEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.NotExpression.notExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression.subtractExpression;
@@ -313,6 +315,11 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     @Override
     public ValueExpression visit(Not not) {
         return notExpression(apply(not.input()));
+    }
+
+    @Override
+    public ValueExpression visit(NotEqual notEqual) {
+        return notEqualExpression(apply(notEqual.left()), apply(notEqual.right()));
     }
 
     @Override

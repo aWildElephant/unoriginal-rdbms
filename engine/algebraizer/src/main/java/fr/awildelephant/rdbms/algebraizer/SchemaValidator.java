@@ -28,6 +28,7 @@ import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
+import fr.awildelephant.rdbms.ast.value.NotEqual;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
@@ -214,6 +215,14 @@ public class SchemaValidator extends DefaultASTVisitor<Void> {
     @Override
     public Void visit(Not not) {
         apply(not.input());
+
+        return null;
+    }
+
+    @Override
+    public Void visit(NotEqual notEqual) {
+        apply(notEqual.left());
+        apply(notEqual.right());
 
         return null;
     }

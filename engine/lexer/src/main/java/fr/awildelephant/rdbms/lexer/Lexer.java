@@ -21,6 +21,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_OR_EQUAL_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.MINUS_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.NOT_EQUAL_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PERIOD_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PLUS_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.QUESTION_MARK_TOKEN;
@@ -84,6 +85,10 @@ public final class Lexer {
                     input.next();
 
                     return LESS_OR_EQUAL_TOKEN;
+                } else if (input.get() == '>') {
+                    input.next();
+
+                    return NOT_EQUAL_TOKEN;
                 }
 
                 return LESS_TOKEN;

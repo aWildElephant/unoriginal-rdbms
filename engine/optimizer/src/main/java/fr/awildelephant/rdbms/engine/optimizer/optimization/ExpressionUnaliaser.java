@@ -16,6 +16,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
@@ -37,6 +38,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpressi
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression.multiplyExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression.notEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.NotExpression.notExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression.subtractExpression;
@@ -131,6 +133,11 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
     @Override
     public ValueExpression visit(NotExpression not) {
         return notExpression(apply(not.input()));
+    }
+
+    @Override
+    public ValueExpression visit(NotEqualExpression notEqual) {
+        return notEqualExpression(apply(notEqual.left()), apply(notEqual.right()));
     }
 
     @Override
