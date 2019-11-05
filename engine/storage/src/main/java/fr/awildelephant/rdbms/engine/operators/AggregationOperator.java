@@ -25,6 +25,7 @@ import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
 public class AggregationOperator implements Operator<Table, Table> {
 
@@ -81,7 +82,12 @@ public class AggregationOperator implements Operator<Table, Table> {
         } else if (aggregate instanceof MinAggregate) {
             return computeMinAggregate(((MinAggregate) aggregate).input(), inputTable);
         } else if (aggregate instanceof SumAggregate) {
-            return computeSumAggregate(((SumAggregate) aggregate).input(), inputTable);
+            final ColumnReference inputColumn = ((SumAggregate) aggregate).input();
+            if (inputTable.schema().column(inputColumn).domain() == INTEGER) {
+                return computeIntegerSumAggregate(inputColumn, inputTable);
+            } else {
+                return computeDecimalSumAggregate(inputColumn, inputTable);
+            }
         } else {
             throw new UnsupportedOperationException();
         }
@@ -152,7 +158,31 @@ public class AggregationOperator implements Operator<Table, Table> {
         }
     }
 
-    private DomainValue computeSumAggregate(ColumnReference inputName, Table inputTable) {
+    private DomainValue computeIntegerSumAggregate(ColumnReference inputName, Table inputTable) {
+        final int inputIndex = outputSchema.indexOf(inputName);
+        Integer accumulator = null;
+
+        for (Record record : inputTable) {
+            final DomainValue value = record.get(inputIndex);
+
+            if (!value.isNull()) {
+                final int newValue = value.getInt();
+                if (accumulator == null) {
+                    accumulator = newValue;
+                } else {
+                    accumulator = accumulator + newValue;
+                }
+            }
+        }
+
+        if (accumulator == null) {
+            return nullValue();
+        } else {
+            return integerValue(accumulator);
+        }
+    }
+
+    private DomainValue computeDecimalSumAggregate(ColumnReference inputName, Table inputTable) {
         final int inputIndex = outputSchema.indexOf(inputName);
         BigDecimal accumulator = null;
 
