@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.ExtractYear;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
+import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -96,6 +97,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     @Override
     public Boolean visit(GreaterOrEqual greaterOrEqual) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(In in) {
         return TRUE;
     }
 

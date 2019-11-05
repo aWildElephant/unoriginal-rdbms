@@ -2,6 +2,8 @@ package fr.awildelephant.rdbms.parser;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.ast.Row.row;
@@ -14,6 +16,7 @@ import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
+import static fr.awildelephant.rdbms.ast.value.In.in;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
@@ -101,5 +104,13 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (a BETWEEN 0 AND 99)",
 
                       rows(row(between(unqualifiedColumnName("a"), integerLiteral(0), integerLiteral(99)))));
+    }
+
+    @Test
+    void it_should_parse_an_in_predicate() {
+        assertParsing("VALUES (a IN (1, 2, 3))",
+
+                      rows(row(in(unqualifiedColumnName("a"),
+                                  List.of(integerLiteral(1), integerLiteral(2), integerLiteral(3))))));
     }
 }

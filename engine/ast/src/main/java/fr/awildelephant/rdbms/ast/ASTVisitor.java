@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.ExtractYear;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
+import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -79,6 +80,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(GroupBy groupBy);
 
     T visit(GroupingSetsList groupingSetsList);
+
+    T visit(In in);
 
     T visit(InnerJoin innerJoin);
 

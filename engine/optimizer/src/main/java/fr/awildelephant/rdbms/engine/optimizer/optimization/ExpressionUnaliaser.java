@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.InExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
@@ -24,6 +25,9 @@ import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import static fr.awildelephant.rdbms.plan.arithmetic.AddExpression.addExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression.betweenExpression;
@@ -34,6 +38,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpres
 import static fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression.extractYearExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression.greaterOrEqualExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.InExpression.inExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
@@ -108,6 +113,17 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
     @Override
     public ValueExpression visit(GreaterOrEqualExpression greaterOrEqual) {
         return greaterOrEqualExpression(apply(greaterOrEqual.left()), apply(greaterOrEqual.right()));
+    }
+
+    @Override
+    public ValueExpression visit(InExpression in) {
+        final ValueExpression input = apply(in.input());
+        final Collection<ValueExpression> values = new ArrayList<>(in.values().size());
+        for (ValueExpression value : in.values()) {
+            values.add(apply(value));
+        }
+
+        return inExpression(input, values);
     }
 
     @Override

@@ -58,6 +58,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(InExpression in) {
+        return defaultVisit(in);
+    }
+
+    @Override
     public T visit(LessExpression less) {
         return defaultVisit(less);
     }

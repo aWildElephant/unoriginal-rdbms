@@ -8,16 +8,19 @@ import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.Greater;
+import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
+import fr.awildelephant.rdbms.ast.value.NotEqual;
 import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,12 +30,14 @@ import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
+import static fr.awildelephant.rdbms.ast.value.In.in;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
 import static fr.awildelephant.rdbms.ast.value.Like.like;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
 import static fr.awildelephant.rdbms.ast.value.Not.not;
+import static fr.awildelephant.rdbms.ast.value.NotEqual.notEqual;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.ScalarSubquery.scalarSubquery;
@@ -71,6 +76,17 @@ public final class SubqueryExtractor extends DefaultASTVisitor<AST> {
     }
 
     @Override
+    public AST visit(In in) {
+        final AST input = apply(in.input());
+        final Collection<AST> values = new ArrayList<>(in.values().size());
+        for (AST value : in.values()) {
+            values.add(apply(value));
+        }
+
+        return in(input, values);
+    }
+
+    @Override
     public AST visit(Less less) {
         return less(apply(less.left()), apply(less.right()));
     }
@@ -93,6 +109,11 @@ public final class SubqueryExtractor extends DefaultASTVisitor<AST> {
     @Override
     public AST visit(Not not) {
         return not(apply(not.input()));
+    }
+
+    @Override
+    public AST visit(NotEqual notEqual) {
+        return notEqual(apply(notEqual.left()), apply(notEqual.right()));
     }
 
     @Override

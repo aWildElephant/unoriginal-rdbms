@@ -34,6 +34,7 @@ public enum TokenType {
     GREATER_OR_EQUAL,
     GROUP,
     IDENTIFIER,
+    IN,
     INNER,
     INSERT,
     INTEGER,

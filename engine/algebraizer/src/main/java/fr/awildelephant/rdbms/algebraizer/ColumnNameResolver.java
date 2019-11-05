@@ -16,6 +16,7 @@ import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.ExtractYear;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
+import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
@@ -30,6 +31,8 @@ import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
+
+import java.util.StringJoiner;
 
 public final class ColumnNameResolver extends DefaultASTVisitor<String> {
 
@@ -110,6 +113,14 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
         final String right = apply(greaterOrEqual.right());
 
         return left + " >= " + right;
+    }
+
+    @Override
+    public String visit(In in) {
+        final StringJoiner joiner = new StringJoiner(",", apply(in.input()) + " in (", ")");
+        in.values().forEach(value -> joiner.add(apply(value)));
+
+        return joiner.toString();
     }
 
     @Override

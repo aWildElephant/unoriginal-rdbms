@@ -16,6 +16,7 @@ import fr.awildelephant.rdbms.ast.value.Equal;
 import fr.awildelephant.rdbms.ast.value.ExtractYear;
 import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
+import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
@@ -38,6 +39,8 @@ import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
@@ -57,6 +60,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpres
 import static fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression.extractYearExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression.greaterOrEqualExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.InExpression.inExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
@@ -219,6 +223,17 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         final ValueExpression right = apply(greaterOrEqual.right());
 
         return greaterOrEqualExpression(left, right);
+    }
+
+    @Override
+    public ValueExpression visit(In in) {
+        final ValueExpression input = apply(in.input());
+        final Collection<ValueExpression> values = new ArrayList<>(in.values().size());
+        for (AST value : in.values()) {
+            values.add(apply(value));
+        }
+
+        return inExpression(input, values);
     }
 
     @Override

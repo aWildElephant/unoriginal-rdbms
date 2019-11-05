@@ -25,6 +25,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INNER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INSERT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER;
@@ -331,6 +332,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return GROUP;
+        }
+    },
+    IN_TOKEN {
+        @Override
+        public String text() {
+            return "in";
+        }
+
+        @Override
+        public TokenType type() {
+            return IN;
         }
     },
     INNER_TOKEN {

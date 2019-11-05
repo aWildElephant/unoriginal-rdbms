@@ -14,6 +14,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.InExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
@@ -176,6 +177,24 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
         final Operation right = apply(greaterOrEqual.right());
 
         return lessOrEqualComparison(right, left);
+    }
+
+    @Override
+    public Operation visit(InExpression in) {
+        final Operation input = apply(in.input());
+
+        Operation inOperation = null;
+
+        for (ValueExpression value : in.values()) {
+            final Operation comparison = equalComparison(input, apply(value));
+            if (inOperation != null) {
+                inOperation = orOperation(inOperation, comparison);
+            } else {
+                inOperation = comparison;
+            }
+        }
+
+        return inOperation;
     }
 
     @Override

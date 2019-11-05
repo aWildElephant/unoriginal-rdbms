@@ -5,11 +5,15 @@ import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Between.between;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
+import static fr.awildelephant.rdbms.ast.value.In.in;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
 import static fr.awildelephant.rdbms.ast.value.Like.like;
@@ -17,6 +21,8 @@ import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.NotEqual.notEqual;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
@@ -93,6 +99,24 @@ final class BooleanValueExpressionRule {
                 lexer.consumeNextToken();
 
                 return greaterOrEqual(left, deriveValueExpression(lexer));
+            case IN:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final Collection<AST> values = new ArrayList<>();
+
+                values.add(deriveBooleanValueExpressionRule(lexer));
+
+                while (nextTokenIs(COMMA, lexer)) {
+                    lexer.consumeNextToken();
+
+                    values.add(deriveBooleanValueExpressionRule(lexer));
+                }
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return in(left, values);
             case LESS:
                 lexer.consumeNextToken();
 

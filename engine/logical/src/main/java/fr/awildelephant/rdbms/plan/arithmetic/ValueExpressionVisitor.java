@@ -30,6 +30,8 @@ public interface ValueExpressionVisitor<T> extends Function<ValueExpression, T> 
 
     T visit(GreaterOrEqualExpression greaterOrEqual);
 
+    T visit(InExpression in);
+
     T visit(LessExpression less);
 
     T visit(LessOrEqualExpression lessOrEqual);
