@@ -5,10 +5,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
-import static fr.awildelephant.rdbms.ast.SortedSelect.select;
+import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
-import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
@@ -20,7 +19,10 @@ class WhereParserTest {
         assertParsing("SELECT * FROM employee WHERE surname = 'Girard'",
 
                       select(List.of(asterisk()),
-                             where(tableName("employee"),
-                                   equal(unqualifiedColumnName("surname"), textLiteral("Girard")))));
+                             tableName("employee"),
+                             equal(unqualifiedColumnName("surname"), textLiteral("Girard")),
+                             null,
+                             null,
+                             null));
     }
 }

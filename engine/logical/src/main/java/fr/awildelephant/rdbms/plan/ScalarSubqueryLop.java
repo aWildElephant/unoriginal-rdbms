@@ -11,11 +11,13 @@ public final class ScalarSubqueryLop extends AbstractLop {
 
 
     private final LogicalOperator input;
+    private final String id;
 
     public ScalarSubqueryLop(LogicalOperator input, String id) {
         super(checkAndCreateSchema(input, id));
 
         this.input = input;
+        this.id = id;
     }
 
     private static Schema checkAndCreateSchema(LogicalOperator input, String id) {
@@ -33,6 +35,10 @@ public final class ScalarSubqueryLop extends AbstractLop {
 
     public LogicalOperator input() {
         return input;
+    }
+
+    public String id() {
+        return id;
     }
 
     @Override

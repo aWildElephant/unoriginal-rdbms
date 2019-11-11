@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.SortedSelect;
+import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Equal;
@@ -132,10 +132,10 @@ public final class SubqueryExtractor extends DefaultASTVisitor<AST> {
     }
 
     @Override
-    public AST visit(SortedSelect sortedSelect) {
+    public AST visit(Select select) {
         final String id = UUID.randomUUID().toString();
 
-        subqueries.add(scalarSubquery(sortedSelect, id));
+        subqueries.add(scalarSubquery(select, id));
 
         return unqualifiedColumnName(id);
     }

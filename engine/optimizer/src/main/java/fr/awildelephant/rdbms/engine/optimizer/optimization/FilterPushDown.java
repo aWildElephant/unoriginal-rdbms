@@ -146,7 +146,9 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(ScalarSubqueryLop scalarSubquery) {
-        return createFilterAbove(filters, scalarSubquery);
+        final LogicalOperator transformedSubquery = new FilterPushDown().apply(scalarSubquery.input());
+
+        return createFilterAbove(filters, new ScalarSubqueryLop(transformedSubquery, scalarSubquery.id()));
     }
 
     @Override

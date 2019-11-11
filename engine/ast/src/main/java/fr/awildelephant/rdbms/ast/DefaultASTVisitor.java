@@ -129,18 +129,8 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(GroupBy groupBy) {
-        return defaultVisit(groupBy);
-    }
-
-    @Override
     public T visit(GroupingSetsList groupingSetsList) {
         return defaultVisit(groupingSetsList);
-    }
-
-    @Override
-    public T visit(Having having) {
-        return defaultVisit(having);
     }
 
     @Override
@@ -254,8 +244,8 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(SortedSelect sortedSelect) {
-        return defaultVisit(sortedSelect);
+    public T visit(Select select) {
+        return defaultVisit(select);
     }
 
     @Override
@@ -301,11 +291,6 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(UnqualifiedColumnName unqualifiedColumnReference) {
         return defaultVisit(unqualifiedColumnReference);
-    }
-
-    @Override
-    public T visit(Where where) {
-        return defaultVisit(where);
     }
 
     public abstract T defaultVisit(AST node);

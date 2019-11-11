@@ -9,11 +9,8 @@ import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
-import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
-import static fr.awildelephant.rdbms.ast.Having.having;
 import static fr.awildelephant.rdbms.ast.Limit.limit;
-import static fr.awildelephant.rdbms.ast.SortedSelect.sortedSelect;
-import static fr.awildelephant.rdbms.ast.Where.where;
+import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
@@ -44,46 +41,53 @@ final class QuerySpecificationRule {
 
         final List<AST> outputColumns = deriveSelectListRule(lexer);
 
-        AST input = deriveFromClauseRule(lexer);
+        final AST fromClause = deriveFromClauseRule(lexer);
 
+        final AST whereClause;
         if (nextTokenIs(WHERE, lexer)) {
             lexer.consumeNextToken();
 
-            final AST filter = deriveBooleanValueExpressionRule(lexer);
-
-            input = where(input, filter);
+            whereClause = deriveBooleanValueExpressionRule(lexer);
+        } else {
+            whereClause = null;
         }
 
+        final GroupingSetsList groupByClause;
         if (nextTokenIs(GROUP, lexer)) {
             lexer.consumeNextToken();
 
             consumeAndExpect(BY, lexer);
 
-            final GroupingSetsList groupingSpecification = deriveGroupingSpecification(lexer);
-
-            input = groupBy(input, groupingSpecification);
+            groupByClause = deriveGroupingSpecification(lexer);
+        } else {
+            groupByClause = null;
         }
 
+        final AST havingClause;
         if (nextTokenIs(HAVING, lexer)) {
             lexer.consumeNextToken();
 
-            input = having(input, deriveBooleanValueExpressionRule(lexer));
+            havingClause = deriveBooleanValueExpressionRule(lexer);
+        } else {
+            havingClause = null;
         }
 
-        SortSpecificationList sortSpecificationList = null;
-
+        final SortSpecificationList orderByClause;
         if (nextTokenIs(ORDER, lexer)) {
             lexer.consumeNextToken();
 
             consumeAndExpect(BY, lexer);
 
-            sortSpecificationList = deriveSortSpecificationList(lexer);
+            orderByClause = deriveSortSpecificationList(lexer);
+        } else {
+            orderByClause = null;
         }
 
-        input = sortedSelect(outputColumns, sortSpecificationList, input);
+        // TODO: the order by clause can probably have its own AST node
+        AST output = select(outputColumns, fromClause, whereClause, groupByClause, havingClause, orderByClause);
 
         if (distinct) {
-            input = distinct(input);
+            output = distinct(output);
         }
 
         if (nextTokenIs(LIMIT, lexer)) {
@@ -91,10 +95,10 @@ final class QuerySpecificationRule {
 
             final int limit = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
 
-            input = limit(input, limit);
+            output = limit(output, limit);
         }
 
-        return input;
+        return output;
     }
 
     private static boolean consumeIfDistinct(Lexer lexer) {

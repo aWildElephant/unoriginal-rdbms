@@ -77,11 +77,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(GreaterOrEqual greaterOrEqual);
 
-    T visit(GroupBy groupBy);
-
     T visit(GroupingSetsList groupingSetsList);
-
-    T visit(Having having);
 
     T visit(In in);
 
@@ -127,7 +123,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Sum sum);
 
-    T visit(SortedSelect sortedSelect);
+    T visit(Select select);
 
     T visit(SortSpecification sortSpecification);
 
@@ -146,6 +142,4 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(UnqualifiedColumnName unqualifiedColumnReference);
 
     T visit(Values values);
-
-    T visit(Where where);
 }

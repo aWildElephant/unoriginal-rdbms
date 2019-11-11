@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.ast.SortedSelect.select;
+import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
@@ -22,14 +22,24 @@ class ArithmeticExpressionParserTest {
     void it_should_parse_an_addition() {
         assertParsing("SELECT a + 1 FROM test",
 
-                      select(List.of(plus(unqualifiedColumnName("a"), integerLiteral(1))), tableName("test")));
+                      select(List.of(plus(unqualifiedColumnName("a"), integerLiteral(1))),
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
     void it_should_parse_an_subtraction() {
         assertParsing("SELECT a - 1 FROM test",
 
-                      select(List.of(minus(unqualifiedColumnName("a"), integerLiteral(1))), tableName("test")));
+                      select(List.of(minus(unqualifiedColumnName("a"), integerLiteral(1))),
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
@@ -37,7 +47,11 @@ class ArithmeticExpressionParserTest {
         assertParsing("SELECT a * 42 FROM test",
 
                       select(List.of(multiply(unqualifiedColumnName("a"), integerLiteral(42))),
-                             tableName("test")));
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
@@ -45,7 +59,11 @@ class ArithmeticExpressionParserTest {
         assertParsing("SELECT a / 2. FROM test",
 
                       select(List.of(divide(unqualifiedColumnName("a"), decimalLiteral(BigDecimal.valueOf(2)))),
-                             tableName("test")));
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
@@ -54,7 +72,11 @@ class ArithmeticExpressionParserTest {
 
                       select(List.of(plus(unqualifiedColumnName("a"), multiply(unqualifiedColumnName("b"),
                                                                                unqualifiedColumnName("c")))),
-                             tableName("test")));
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
@@ -63,7 +85,11 @@ class ArithmeticExpressionParserTest {
 
                       select(List.of(plus(multiply(unqualifiedColumnName("a"), unqualifiedColumnName("b")),
                                           unqualifiedColumnName("c"))),
-                             tableName("test")));
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
@@ -71,7 +97,12 @@ class ArithmeticExpressionParserTest {
         assertParsing("SELECT a * 2 + b / 3 FROM test",
 
                       select(List.of(plus(multiply(unqualifiedColumnName("a"), integerLiteral(2)), divide(
-                              unqualifiedColumnName("b"), integerLiteral(3)))), tableName("test")));
+                              unqualifiedColumnName("b"), integerLiteral(3)))),
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
@@ -80,13 +111,17 @@ class ArithmeticExpressionParserTest {
 
                       select(List.of(multiply(integerLiteral(2), plus(unqualifiedColumnName("a"),
                                                                       unqualifiedColumnName("b")))),
-                             tableName("test")));
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 
     @Test
     void it_should_parse_a_negative_integer_value() {
         assertParsing("SELECT -1000 FROM test",
 
-                      select(List.of(integerLiteral(-1000)), tableName("test")));
+                      select(List.of(integerLiteral(-1000)), tableName("test"), null, null, null, null));
     }
 }
