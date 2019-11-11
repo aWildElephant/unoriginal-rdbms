@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.GroupBy;
+import fr.awildelephant.rdbms.ast.Having;
 import fr.awildelephant.rdbms.ast.InnerJoin;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.Row;
@@ -47,8 +48,17 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     private final Storage storage;
 
+    private final HavingClauseTransformer havingClauseTransformer;
+
     public Algebraizer(Storage storage) {
         this.storage = storage;
+
+        final ColumnNameResolver columnNameResolver = new ColumnNameResolver();
+        final ColumnReferenceTransformer columnReferenceTransformer = new ColumnReferenceTransformer(
+                columnNameResolver);
+        final ValuesTransformer valuesTransformer = new ValuesTransformer(columnNameResolver,
+                                                                          columnReferenceTransformer);
+        havingClauseTransformer = new HavingClauseTransformer(columnReferenceTransformer, valuesTransformer);
     }
 
     @Override
@@ -59,6 +69,15 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     @Override
     public LogicalOperator visit(GroupBy groupBy) {
         return new BreakdownLop(apply(groupBy.input()), groupBy.groupingSpecification().breakdowns());
+    }
+
+    @Override
+    public LogicalOperator visit(Having having) {
+        final SubqueryExtractor subqueryExtractor = new SubqueryExtractor();
+        final AST havingFilter = subqueryExtractor.apply(having.filter());
+        final LogicalOperator havingInput = mergeInputWithSubqueries(having.input(), subqueryExtractor.subqueries());
+
+        return havingClauseTransformer.transform(havingInput, havingFilter);
     }
 
     @Override

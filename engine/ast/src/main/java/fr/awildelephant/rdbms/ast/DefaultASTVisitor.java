@@ -139,6 +139,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(Having having) {
+        return defaultVisit(having);
+    }
+
+    @Override
     public T visit(In in) {
         return defaultVisit(in);
     }

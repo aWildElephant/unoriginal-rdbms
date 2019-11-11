@@ -2,25 +2,11 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
-import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
-import fr.awildelephant.rdbms.ast.value.Avg;
-import fr.awildelephant.rdbms.ast.value.CountStar;
-import fr.awildelephant.rdbms.ast.value.Min;
-import fr.awildelephant.rdbms.ast.value.Sum;
-import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
-import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
@@ -28,17 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
-import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
-import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
 import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
 import static fr.awildelephant.rdbms.plan.alias.ColumnAlias.columnAlias;
 import static java.util.stream.Collectors.toList;
 
 final class OutputColumnsTransformer {
 
-    private final ColumnNameResolver columnNameResolver;
     private final ColumnReferenceTransformer columnReferenceTransformer;
+    private final ValuesTransformer valuesTransformer;
 
     private LogicalOperator input;
     private List<AST> outputColumns;
@@ -48,8 +31,10 @@ final class OutputColumnsTransformer {
         this.input = input;
         this.outputColumns = new ArrayList<>(outputColumns);
         this.sorting = sorting;
-        this.columnNameResolver = new ColumnNameResolver();
-        this.columnReferenceTransformer = new ColumnReferenceTransformer(this.columnNameResolver);
+
+        final ColumnNameResolver columnNameResolver = new ColumnNameResolver();
+        this.columnReferenceTransformer = new ColumnReferenceTransformer(columnNameResolver);
+        this.valuesTransformer = new ValuesTransformer(columnNameResolver, columnReferenceTransformer);
     }
 
     static LogicalOperator transformOutputColumns(final LogicalOperator input, final List<? extends AST> outputColumns, final SortSpecificationList sorting) {
@@ -65,77 +50,7 @@ final class OutputColumnsTransformer {
 
         final List<ColumnReference> outputColumnReferences = collectProjectedColumnNames();
 
-        final AggregationsExtractor aggregateExtractor = aggregationsExtractor(columnNameResolver);
-
-        final ArrayList<AST> mapsBelowAggregates = new ArrayList<>();
-        final List<Aggregate> aggregates = new ArrayList<>();
-        final List<AST> mapsOverAggregates = new ArrayList<>();
-
-        for (AST column : outputColumns) {
-            final AST aggregateFreeOutputColumn = aggregateExtractor.apply(column);
-
-            if (isFormula(aggregateFreeOutputColumn)) {
-                mapsOverAggregates.add(aggregateFreeOutputColumn);
-            }
-        }
-
-        for (AST aggregate : aggregateExtractor.collectedAggregates()) {
-            if (aggregate instanceof CountStar) {
-                aggregates.add(new CountStarAggregate());
-            } else if (aggregate instanceof Avg) {
-                final AST avgInput = ((Avg) aggregate).input();
-
-                if (!(avgInput instanceof ColumnName)) {
-                    mapsBelowAggregates.add(avgInput);
-                }
-
-                aggregates.add(new AvgAggregate(columnReferenceTransformer.apply(avgInput)));
-            } else if (aggregate instanceof Min) {
-                final AST minInput = ((Min) aggregate).input();
-
-                if (!(minInput instanceof ColumnName)) {
-                    mapsBelowAggregates.add(minInput);
-                }
-
-                aggregates.add(new MinAggregate(columnReferenceTransformer.apply(minInput)));
-            } else if (aggregate instanceof Sum) {
-                final AST sumInput = ((Sum) aggregate).input();
-
-                if (!(sumInput instanceof ColumnName)) {
-                    mapsBelowAggregates.add(sumInput);
-                }
-
-                aggregates.add(new SumAggregate(columnReferenceTransformer.apply(sumInput)));
-            } else {
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        if (!mapsBelowAggregates.isEmpty()) {
-            final List<ValueExpression> valueExpressions = mapsBelowAggregates
-                    .stream()
-                    .map(map -> createValueExpression(map, input.schema()))
-                    .collect(toList());
-
-            final List<String> outputNames = mapsBelowAggregates.stream().map(columnNameResolver).collect(toList());
-
-            input = new MapLop(input, valueExpressions, outputNames);
-        }
-
-        if (!aggregates.isEmpty()) {
-            input = new AggregationLop(aggregates, input);
-        }
-
-        if (!mapsOverAggregates.isEmpty()) {
-            final List<ValueExpression> valueExpressions = mapsOverAggregates
-                    .stream()
-                    .map(map -> createValueExpression(map, input.schema()))
-                    .collect(toList());
-
-            final List<String> outputNames = mapsOverAggregates.stream().map(columnNameResolver).collect(toList());
-
-            input = new MapLop(input, valueExpressions, outputNames);
-        }
+        input = valuesTransformer.transform(input, outputColumns);
 
         input = new ProjectionLop(input, outputColumnReferences);
 
@@ -144,10 +59,6 @@ final class OutputColumnsTransformer {
         }
 
         if (sorting != null) {
-            if (!aggregates.isEmpty()) {
-                input = new CollectLop(input);
-            }
-
             input = new SortLop(input, sorting.columns());
         }
 

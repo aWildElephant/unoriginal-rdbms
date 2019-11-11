@@ -81,6 +81,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(GroupingSetsList groupingSetsList);
 
+    T visit(Having having);
+
     T visit(In in);
 
     T visit(InnerJoin innerJoin);

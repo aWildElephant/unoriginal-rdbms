@@ -10,12 +10,14 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.GroupBy.groupBy;
+import static fr.awildelephant.rdbms.ast.Having.having;
 import static fr.awildelephant.rdbms.ast.Limit.limit;
 import static fr.awildelephant.rdbms.ast.SortedSelect.sortedSelect;
 import static fr.awildelephant.rdbms.ast.Where.where;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.HAVING;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIMIT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
@@ -60,6 +62,12 @@ final class QuerySpecificationRule {
             final GroupingSetsList groupingSpecification = deriveGroupingSpecification(lexer);
 
             input = groupBy(input, groupingSpecification);
+        }
+
+        if (nextTokenIs(HAVING, lexer)) {
+            lexer.consumeNextToken();
+
+            input = having(input, deriveBooleanValueExpressionRule(lexer));
         }
 
         SortSpecificationList sortSpecificationList = null;

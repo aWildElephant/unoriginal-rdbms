@@ -33,6 +33,7 @@ public enum TokenType {
     GREATER,
     GREATER_OR_EQUAL,
     GROUP,
+    HAVING,
     IDENTIFIER,
     IN,
     INNER,
