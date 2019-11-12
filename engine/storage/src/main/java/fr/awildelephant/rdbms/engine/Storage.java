@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.engine;
 
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
 import java.util.HashMap;
@@ -35,8 +34,7 @@ public final class Storage {
     }
 
     public Table execute(final LogicalOperator logicalPlan) {
-        // TODO: this is doo doo
-        return new PlanExecutor(tables).apply(new CollectLop(logicalPlan)).get(0);
+        return new PlanExecutor(tables).apply(logicalPlan).get(0);
     }
 
     private void checkTableFound(Table table, String tableName) {
