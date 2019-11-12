@@ -31,6 +31,7 @@ import java.util.Optional;
 
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.plan.arithmetic.OrExpressionFactorizer.factorizeOrExpression;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -102,7 +103,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(FilterLop filter) {
-        final List<ValueExpression> allFilters = expandFilters(filter.filter());
+        final List<ValueExpression> allFilters = expandFilters(factorizeOrExpression(filter.filter()));
         allFilters.addAll(filters);
 
         return new FilterPushDown(allFilters).apply(filter.input());
