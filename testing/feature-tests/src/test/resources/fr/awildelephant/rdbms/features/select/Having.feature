@@ -1,4 +1,3 @@
-@todo
 Feature: I filter using the having clause
 
   Background: a table and some data
@@ -20,8 +19,9 @@ Feature: I filter using the having clause
 
     When I execute the query
       """
-      SELECT client_name
+      SELECT client.client_name
       FROM client INNER JOIN orders ON client.client_id = orders.client_id
+      GROUP BY client.client_id
       HAVING SUM(amount) > 20
       """
 

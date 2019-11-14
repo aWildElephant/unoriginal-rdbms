@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.ast;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public final class GroupingSetsList implements AST {
 
@@ -16,8 +15,8 @@ public final class GroupingSetsList implements AST {
         return new GroupingSetsList(columns);
     }
 
-    public List<String> breakdowns() {
-        return columns.stream().map(ColumnName::name).collect(Collectors.toList());
+    public List<ColumnName> breakdowns() {
+        return columns;
     }
 
     @Override

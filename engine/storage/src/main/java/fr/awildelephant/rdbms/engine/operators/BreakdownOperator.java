@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -14,9 +15,9 @@ import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
 public class BreakdownOperator implements Operator<Table, List<Table>> {
 
-    private final List<String> breakdowns;
+    private final List<ColumnReference> breakdowns;
 
-    public BreakdownOperator(List<String> breakdowns) {
+    public BreakdownOperator(List<ColumnReference> breakdowns) {
         this.breakdowns = breakdowns;
     }
 
@@ -50,7 +51,7 @@ public class BreakdownOperator implements Operator<Table, List<Table>> {
         return buckets;
     }
 
-    private static int[] buildProjectionOnBreakdowns(Schema schema, List<String> breakdowns) {
+    private static int[] buildProjectionOnBreakdowns(Schema schema, List<ColumnReference> breakdowns) {
         final int[] thing = new int[breakdowns.size()];
 
         for (int i = 0; i < breakdowns.size(); i++) {
