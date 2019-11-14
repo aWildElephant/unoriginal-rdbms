@@ -24,7 +24,7 @@ Feature: Greater than comparison
       | null    |
       | null    |
 
-  Scenario: I test that a decimal is less than another
+  Scenario: I test that a decimal is greater than another
 
     When I execute the query
       """
@@ -48,7 +48,7 @@ Feature: Greater than comparison
       | null    |
       | null    |
 
-  Scenario: I test that a date is less than another
+  Scenario: I test that a date is greater than another
 
     When I execute the query
       """
