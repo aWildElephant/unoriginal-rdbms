@@ -22,6 +22,7 @@ import static fr.awildelephant.rdbms.ast.value.NotEqual.notEqual;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
@@ -100,23 +101,7 @@ final class BooleanValueExpressionRule {
 
                 return greaterOrEqual(left, deriveValueExpression(lexer));
             case IN:
-                lexer.consumeNextToken();
-
-                consumeAndExpect(LEFT_PAREN, lexer);
-
-                final Collection<AST> values = new ArrayList<>();
-
-                values.add(deriveBooleanValueExpressionRule(lexer));
-
-                while (nextTokenIs(COMMA, lexer)) {
-                    lexer.consumeNextToken();
-
-                    values.add(deriveBooleanValueExpressionRule(lexer));
-                }
-
-                consumeAndExpect(RIGHT_PAREN, lexer);
-
-                return in(left, values);
+                return deriveInPredicate(left, lexer);
             case LESS:
                 lexer.consumeNextToken();
 
@@ -132,9 +117,13 @@ final class BooleanValueExpressionRule {
             case NOT:
                 lexer.consumeNextToken();
 
-                consumeAndExpect(LIKE, lexer);
+                if (nextTokenIs(IN, lexer)) {
+                    return not(deriveInPredicate(left, lexer));
+                } else {
+                    consumeAndExpect(LIKE, lexer);
 
-                return not(like(left, deriveValueExpression(lexer)));
+                    return not(like(left, deriveValueExpression(lexer)));
+                }
             case NOT_EQUAL:
                 lexer.consumeNextToken();
 
@@ -142,6 +131,26 @@ final class BooleanValueExpressionRule {
             default:
                 return left;
         }
+    }
+
+    private static AST deriveInPredicate(AST left, Lexer lexer) {
+        lexer.consumeNextToken();
+
+        consumeAndExpect(LEFT_PAREN, lexer);
+
+        final Collection<AST> values = new ArrayList<>();
+
+        values.add(deriveBooleanValueExpressionRule(lexer));
+
+        while (nextTokenIs(COMMA, lexer)) {
+            lexer.consumeNextToken();
+
+            values.add(deriveBooleanValueExpressionRule(lexer));
+        }
+
+        consumeAndExpect(RIGHT_PAREN, lexer);
+
+        return in(left, values);
     }
 
     private static AST deriveBooleanTestLeftInput(final Lexer lexer) {

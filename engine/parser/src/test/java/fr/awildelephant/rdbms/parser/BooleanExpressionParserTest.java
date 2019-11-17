@@ -113,4 +113,12 @@ class BooleanExpressionParserTest {
                       rows(row(in(unqualifiedColumnName("a"),
                                   List.of(integerLiteral(1), integerLiteral(2), integerLiteral(3))))));
     }
+
+    @Test
+    void it_should_parse_an_not_in_predicate() {
+        assertParsing("VALUES (a NOT IN (1, 2))",
+
+                      rows(row(not(in(unqualifiedColumnName("a"),
+                                      List.of(integerLiteral(1), integerLiteral(2)))))));
+    }
 }
