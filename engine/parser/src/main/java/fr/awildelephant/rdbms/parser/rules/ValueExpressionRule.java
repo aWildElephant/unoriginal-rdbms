@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.value.Avg.avg;
 import static fr.awildelephant.rdbms.ast.value.CaseWhen.caseWhen;
+import static fr.awildelephant.rdbms.ast.value.Count.count;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
@@ -32,6 +33,7 @@ import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ELSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
@@ -208,10 +210,27 @@ final class ValueExpressionRule {
             case COUNT:
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
-                consumeAndExpect(ASTERISK, lexer);
+
+                if (nextTokenIs(ASTERISK, lexer)) {
+                    lexer.consumeNextToken();
+                    consumeAndExpect(RIGHT_PAREN, lexer);
+
+                    return countStar();
+                }
+
+                final boolean distinct;
+                if (nextTokenIs(DISTINCT, lexer)) {
+                    lexer.consumeNextToken();
+                    distinct = true;
+                } else {
+                    distinct = false;
+                }
+
+                final AST input = deriveBooleanValueExpressionRule(lexer);
+
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
-                return countStar();
+                return count(distinct, input);
             case MIN:
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);

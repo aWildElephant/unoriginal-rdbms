@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CaseWhen;
+import fr.awildelephant.rdbms.ast.value.Count;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -61,6 +62,18 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     public String visit(CaseWhen caseWhen) {
         return "case when " + apply(caseWhen.condition()) + " then " + apply(caseWhen.thenExpression()) + " else "
                 + apply(caseWhen.elseExpression());
+    }
+
+    @Override
+    public String visit(Count count) {
+        final StringBuilder sb = new StringBuilder("count(");
+        if (count.distinct()) {
+            sb.append("distinct ");
+        }
+        sb.append(apply(count.input()));
+        sb.append(')');
+
+        return sb.toString();
     }
 
     @Override

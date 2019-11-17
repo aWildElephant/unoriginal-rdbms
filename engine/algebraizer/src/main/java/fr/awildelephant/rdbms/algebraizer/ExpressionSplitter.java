@@ -3,10 +3,12 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.value.Avg;
+import fr.awildelephant.rdbms.ast.value.Count;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
@@ -34,7 +36,17 @@ final class ExpressionSplitter {
         }
 
         for (AST aggregate : aggregationsExtractor.collectedAggregates()) {
-            if (aggregate instanceof CountStar) {
+            if (aggregate instanceof Count) {
+                final Count countAggregate = (Count) aggregate;
+                final AST countInput = countAggregate.input();
+
+                if (!(countInput instanceof ColumnName)) {
+                    collector.addMapBelowAggregates(countInput);
+                }
+
+                collector.addAggregate(
+                        new CountAggregate(columnReferenceTransformer.apply(countInput), countAggregate.distinct()));
+            } else if (aggregate instanceof CountStar) {
                 collector.addAggregate(new CountStarAggregate());
             } else if (aggregate instanceof Avg) {
                 final AST avgInput = ((Avg) aggregate).input();

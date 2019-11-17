@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.CaseWhen;
+import fr.awildelephant.rdbms.ast.value.Count;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -56,6 +57,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(ColumnAlias columnAlias);
 
     T visit(ColumnDefinition columnDefinition);
+
+    T visit(Count count);
 
     T visit(CountStar countStar);
 

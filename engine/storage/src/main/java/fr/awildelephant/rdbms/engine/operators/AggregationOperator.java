@@ -10,6 +10,7 @@ import fr.awildelephant.rdbms.engine.operators.sort.RecordComparator;
 import fr.awildelephant.rdbms.engine.operators.sort.TextColumnComparator;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
@@ -19,7 +20,9 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
@@ -77,6 +80,14 @@ public class AggregationOperator implements Operator<Table, Table> {
     private DomainValue computeAggregation(Aggregate aggregate, Table inputTable) {
         if (aggregate instanceof AvgAggregate) {
             return computeAvgAggregate(((AvgAggregate) aggregate).input(), inputTable);
+        } else if (aggregate instanceof CountAggregate) {
+            final CountAggregate countAggregate = (CountAggregate) aggregate;
+
+            if (countAggregate.distinct()) {
+                return computeCountDistinctAggregate(countAggregate.input(), inputTable);
+            } else {
+                return computeCountAggregate(countAggregate.input(), inputTable);
+            }
         } else if (aggregate instanceof CountStarAggregate) {
             return computeCountStarAggregation(inputTable);
         } else if (aggregate instanceof MinAggregate) {
@@ -91,6 +102,34 @@ public class AggregationOperator implements Operator<Table, Table> {
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    private DomainValue computeCountDistinctAggregate(ColumnReference inputName, Table inputTable) {
+        final int inputIndex = outputSchema.indexOf(inputName);
+        final Set<DomainValue> accumulator = new HashSet<>();
+
+        for (Record record : inputTable) {
+            final DomainValue value = record.get(inputIndex);
+
+            if (!value.isNull()) {
+                accumulator.add(value);
+            }
+        }
+
+        return integerValue(accumulator.size());
+    }
+
+    private DomainValue computeCountAggregate(ColumnReference inputName, Table inputTable) {
+        final int inputIndex = outputSchema.indexOf(inputName);
+        int count = 0;
+
+        for (Record record : inputTable) {
+            if (!record.get(inputIndex).isNull()) {
+                count++;
+            }
+        }
+
+        return integerValue(count);
     }
 
     private DomainValue computeAvgAggregate(ColumnReference inputName, Table inputTable) {

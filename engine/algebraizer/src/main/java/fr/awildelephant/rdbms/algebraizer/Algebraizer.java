@@ -114,7 +114,8 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final Optional<GroupingSetsList> groupByClause = select.groupByClause();
         if (groupByClause.isPresent()) {
-            plan = new BreakdownLop(plan, groupByClause.get().breakdowns().stream().map(columnReferenceTransformer)
+            plan = new BreakdownLop(plan, groupByClause.get().breakdowns().stream()
+                                                       .map(columnReferenceTransformer)
                                                        .collect(toList()));
         }
 

@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
@@ -46,7 +47,9 @@ public class AggregationLop extends AbstractLop {
     }
 
     private static Domain outputType(Schema inputSchema, Aggregate aggregate) {
-        if (aggregate instanceof CountStarAggregate) {
+        if (aggregate instanceof CountAggregate) {
+            return INTEGER;
+        } else if (aggregate instanceof CountStarAggregate) {
             return INTEGER;
         } else if (aggregate instanceof AvgAggregate) {
             return DECIMAL;

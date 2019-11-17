@@ -7,6 +7,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
+import static fr.awildelephant.rdbms.ast.value.Count.count;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.Min.min;
@@ -39,5 +40,17 @@ class AggregateParserTest {
         assertParsing("SELECT MIN(a) FROM test",
 
                       select(List.of(min(unqualifiedColumnName("a"))), tableName("test"), null, null, null, null));
+    }
+
+    @Test
+    void it_should_parse_a_count_distinct_aggregate() {
+        assertParsing("SELECT COUNT(DISTINCT a) FROM test",
+
+                      select(List.of(count(true, unqualifiedColumnName("a"))),
+                             tableName("test"),
+                             null,
+                             null,
+                             null,
+                             null));
     }
 }
