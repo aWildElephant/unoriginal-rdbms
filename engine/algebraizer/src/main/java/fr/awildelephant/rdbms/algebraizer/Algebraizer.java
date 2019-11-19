@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
-import static fr.awildelephant.rdbms.algebraizer.SchemaValidator.schemaValidator;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.plan.alias.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
@@ -278,8 +277,6 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             final List<ValueExpression> valueExpressions = new ArrayList<>();
 
             for (AST expression : expressions) {
-                schemaValidator(EMPTY_SCHEMA).apply(expression);
-
                 valueExpressions.add(createValueExpression(expression, EMPTY_SCHEMA));
             }
 
