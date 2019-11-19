@@ -6,9 +6,9 @@ import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class ScalarSubqueryLop extends AbstractLop {
-
 
     private final LogicalOperator input;
     private final String id;
@@ -44,5 +44,22 @@ public final class ScalarSubqueryLop extends AbstractLop {
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(input, id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ScalarSubqueryLop)) {
+            return false;
+        }
+
+        final ScalarSubqueryLop other = (ScalarSubqueryLop) obj;
+
+        return Objects.equals(input, other.input)
+                && Objects.equals(id, other.id);
     }
 }

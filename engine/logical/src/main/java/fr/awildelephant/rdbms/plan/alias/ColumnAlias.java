@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan.alias;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class ColumnAlias implements Alias {
@@ -49,5 +50,21 @@ public final class ColumnAlias implements Alias {
         }
 
         throw new IllegalStateException();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(aliases);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ColumnAlias)) {
+            return false;
+        }
+
+        final ColumnAlias other = (ColumnAlias) obj;
+
+        return Objects.equals(aliases, other.aliases);
     }
 }

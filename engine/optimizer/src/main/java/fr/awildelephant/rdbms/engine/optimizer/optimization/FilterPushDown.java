@@ -67,9 +67,10 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
             }
         }
 
-        return createFilterAbove(filtersOnAggregates, new AggregationLop(aggregationNode.aggregates(),
-                                                                         new FilterPushDown(filtersOnInput)
-                                                                                 .apply(aggregationNode.input())));
+        return createFilterAbove(filtersOnAggregates, new AggregationLop(new FilterPushDown(filtersOnInput)
+                                                                                 .apply(aggregationNode.input()),
+                                                                         aggregationNode.aggregates()
+        ));
     }
 
     @Override
@@ -78,7 +79,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
         final List<ValueExpression> unaliasedFilters = filters.stream().map(unaliaser).collect(toList());
 
-        return new AliasLop(new FilterPushDown(unaliasedFilters).apply(alias.input()), alias.alias());
+        return new AliasLop(alias.alias(), new FilterPushDown(unaliasedFilters).apply(alias.input()));
     }
 
     @Override

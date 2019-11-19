@@ -2,7 +2,9 @@ package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.schema.Schema;
 
-public class BaseTableLop extends AbstractLop {
+import java.util.Objects;
+
+public final class BaseTableLop extends AbstractLop {
 
     private final String name;
 
@@ -19,5 +21,21 @@ public class BaseTableLop extends AbstractLop {
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BaseTableLop)) {
+            return false;
+        }
+
+        final BaseTableLop other = (BaseTableLop) obj;
+
+        return Objects.equals(name, other.name);
     }
 }

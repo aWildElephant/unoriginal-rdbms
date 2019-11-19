@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class MapLop extends AbstractLop {
 
@@ -59,5 +60,23 @@ public final class MapLop extends AbstractLop {
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(input, expressions, expressionsOutputNames);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MapLop)) {
+            return false;
+        }
+
+        final MapLop other = (MapLop) obj;
+
+        return Objects.equals(input, other.input)
+                && Objects.equals(expressions, other.expressions)
+                && Objects.equals(expressionsOutputNames, other.expressionsOutputNames);
     }
 }

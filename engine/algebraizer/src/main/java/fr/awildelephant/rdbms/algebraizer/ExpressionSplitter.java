@@ -9,12 +9,12 @@ import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 
 import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
 import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
+import static fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate.countStarAggregate;
 
 final class ExpressionSplitter {
 
@@ -47,7 +47,7 @@ final class ExpressionSplitter {
                 collector.addAggregate(
                         new CountAggregate(columnReferenceTransformer.apply(countInput), countAggregate.distinct()));
             } else if (aggregate instanceof CountStar) {
-                collector.addAggregate(new CountStarAggregate());
+                collector.addAggregate(countStarAggregate());
             } else if (aggregate instanceof Avg) {
                 final AST avgInput = ((Avg) aggregate).input();
 

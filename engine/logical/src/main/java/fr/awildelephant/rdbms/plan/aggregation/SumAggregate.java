@@ -3,7 +3,9 @@ package fr.awildelephant.rdbms.plan.aggregation;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
-public class SumAggregate implements Aggregate {
+import java.util.Objects;
+
+public final class SumAggregate implements Aggregate {
 
     private final ColumnReference input;
 
@@ -25,4 +27,19 @@ public class SumAggregate implements Aggregate {
         return new UnqualifiedColumnReference("sum(" + input.fullName() + ")");
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(input);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SumAggregate)) {
+            return false;
+        }
+
+        final SumAggregate other = (SumAggregate) obj;
+
+        return Objects.equals(input, other.input);
+    }
 }

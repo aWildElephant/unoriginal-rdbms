@@ -151,7 +151,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final List<Aggregate> aggregates = havingAndOutputColumns.aggregates();
         if (!aggregates.isEmpty()) {
-            plan = new AggregationLop(aggregates, plan);
+            plan = new AggregationLop(plan, aggregates);
         }
 
         final List<AST> mapsAboveAggregates = havingAndOutputColumns.mapsAboveAggregates();
@@ -167,7 +167,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final Map<String, Map<String, String>> aliasing = aliasCollector.aliasing();
         if (!aliasing.isEmpty()) {
-            plan = new AliasLop(plan, columnAlias(aliasing));
+            plan = new AliasLop(columnAlias(aliasing), plan);
         }
 
         if (groupByClause.isPresent()) {
@@ -234,7 +234,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     public LogicalOperator visit(TableAlias tableAlias) {
         final LogicalOperator input = apply(tableAlias.input());
 
-        return new AliasLop(input, tableAlias(tableAlias.alias()));
+        return new AliasLop(tableAlias(tableAlias.alias()), input);
     }
 
     @Override

@@ -3,8 +3,9 @@ package fr.awildelephant.rdbms.plan;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.List;
+import java.util.Objects;
 
-public class BreakdownLop extends AbstractLop {
+public final class BreakdownLop extends AbstractLop {
 
     private final LogicalOperator input;
     private final List<ColumnReference> breakdowns;
@@ -16,16 +17,33 @@ public class BreakdownLop extends AbstractLop {
         this.breakdowns = breakdowns;
     }
 
-    public List<ColumnReference> breakdowns() {
-        return breakdowns;
-    }
-
     public LogicalOperator input() {
         return input;
+    }
+
+    public List<ColumnReference> breakdowns() {
+        return breakdowns;
     }
 
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(input, breakdowns);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BreakdownLop)) {
+            return false;
+        }
+
+        final BreakdownLop other = (BreakdownLop) obj;
+
+        return Objects.equals(input, other.input)
+                && Objects.equals(breakdowns, other.breakdowns);
     }
 }

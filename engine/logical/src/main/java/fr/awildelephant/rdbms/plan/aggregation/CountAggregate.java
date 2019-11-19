@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.plan.aggregation;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
+import java.util.Objects;
+
 public final class CountAggregate implements Aggregate {
 
     private final ColumnReference input;
@@ -37,5 +39,22 @@ public final class CountAggregate implements Aggregate {
         }
 
         return new UnqualifiedColumnReference(outputName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(distinct, input);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof CountAggregate)) {
+            return false;
+        }
+
+        final CountAggregate other = (CountAggregate) obj;
+
+        return distinct == other.distinct
+                && Objects.equals(input, other.input);
     }
 }

@@ -3,7 +3,17 @@ package fr.awildelephant.rdbms.plan.aggregation;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
-public class CountStarAggregate implements Aggregate {
+public final class CountStarAggregate implements Aggregate {
+
+    private static final CountStarAggregate INSTANCE = new CountStarAggregate();
+
+    private CountStarAggregate() {
+
+    }
+
+    public static CountStarAggregate countStarAggregate() {
+        return INSTANCE;
+    }
 
     @Override
     public boolean outputIsNullable() {

@@ -12,20 +12,21 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public class AggregationLop extends AbstractLop {
+public final class AggregationLop extends AbstractLop {
 
-    private final List<Aggregate> aggregates;
     private final LogicalOperator input;
+    private final List<Aggregate> aggregates;
 
-    public AggregationLop(List<Aggregate> aggregates, LogicalOperator input) {
+    public AggregationLop(LogicalOperator input, List<Aggregate> aggregates) {
         super(buildOutputSchema(input, aggregates));
 
-        this.aggregates = aggregates;
         this.input = input;
+        this.aggregates = aggregates;
     }
 
     private static Schema buildOutputSchema(LogicalOperator input, List<Aggregate> aggregates) {
@@ -62,16 +63,33 @@ public class AggregationLop extends AbstractLop {
         throw new UnsupportedOperationException();
     }
 
-    public List<Aggregate> aggregates() {
-        return aggregates;
-    }
-
     public LogicalOperator input() {
         return input;
+    }
+
+    public List<Aggregate> aggregates() {
+        return aggregates;
     }
 
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(input, aggregates);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof AggregationLop)) {
+            return false;
+        }
+
+        final AggregationLop other = (AggregationLop) obj;
+
+        return Objects.equals(input, other.input)
+                && Objects.equals(aggregates, other.aggregates);
     }
 }

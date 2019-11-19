@@ -1,6 +1,8 @@
 package fr.awildelephant.rdbms.plan;
 
-public class CollectLop extends AbstractLop {
+import java.util.Objects;
+
+public final class CollectLop extends AbstractLop {
 
     private final LogicalOperator input;
 
@@ -17,5 +19,21 @@ public class CollectLop extends AbstractLop {
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(input);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof CollectLop)) {
+            return false;
+        }
+
+        final CollectLop other = (CollectLop) obj;
+
+        return Objects.equals(input, other.input);
     }
 }

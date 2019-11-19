@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class TableConstructorLop extends AbstractLop {
 
@@ -40,5 +41,21 @@ public final class TableConstructorLop extends AbstractLop {
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(matrix);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TableConstructorLop)) {
+            return false;
+        }
+
+        final TableConstructorLop other = (TableConstructorLop) obj;
+
+        return Objects.equals(matrix, other.matrix);
     }
 }

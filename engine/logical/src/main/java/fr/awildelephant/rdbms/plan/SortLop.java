@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan;
 import fr.awildelephant.rdbms.ast.SortSpecification;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class SortLop extends AbstractLop {
 
@@ -26,5 +27,22 @@ public final class SortLop extends AbstractLop {
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(input, columns);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SortLop)) {
+            return false;
+        }
+
+        final SortLop other = (SortLop) obj;
+
+        return Objects.equals(input, other.input)
+                && Objects.equals(columns, other.columns);
     }
 }

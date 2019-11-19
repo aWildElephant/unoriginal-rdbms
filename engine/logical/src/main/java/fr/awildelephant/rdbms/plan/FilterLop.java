@@ -2,7 +2,9 @@ package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
-public class FilterLop extends AbstractLop {
+import java.util.Objects;
+
+public final class FilterLop extends AbstractLop {
 
     private final LogicalOperator input;
     private final ValueExpression filter;
@@ -24,5 +26,22 @@ public class FilterLop extends AbstractLop {
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(input, filter);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof FilterLop)) {
+            return false;
+        }
+
+        final FilterLop other = (FilterLop) obj;
+
+        return Objects.equals(input, other.input)
+                && Objects.equals(filter, other.filter);
     }
 }
