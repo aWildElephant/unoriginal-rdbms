@@ -19,6 +19,7 @@ import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.alias.TableAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
@@ -76,6 +77,10 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(AliasLop alias) {
+        if (alias.alias() instanceof TableAlias) {
+            return createFilterAbove(filters, alias); // Removing a table alias is not yet supported
+        }
+
         final ExpressionUnaliaser unaliaser = new ExpressionUnaliaser(alias.alias());
 
         final List<ValueExpression> unaliasedFilters = filters.stream().map(unaliaser).collect(toList());
@@ -161,8 +166,36 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(SubqueryExecutionLop subqueryExecutionLop) {
-        // TODO: we should try to unnest the subquery around here
-        return createFilterAbove(filters, subqueryExecutionLop);
+        final Schema inputSchema = subqueryExecutionLop.input().schema();
+        final Schema subquerySchema = subqueryExecutionLop.subquery().schema();
+
+        final Collection<ValueExpression> filtersOnSubquery = new ArrayList<>();
+        final Collection<ValueExpression> filtersOnInput = new ArrayList<>();
+        final Collection<ValueExpression> filtersOnBoth = new ArrayList<>();
+
+        for (ValueExpression filter : filters) {
+            final List<ColumnReference> requiredVariables = filter.variables().collect(toList());
+
+            final boolean requiresInput = requiredVariables.stream().anyMatch(inputSchema::contains);
+            final boolean requiresSubquery = requiredVariables.stream().anyMatch(subquerySchema::contains);
+
+            if (!requiresInput) {
+                filtersOnSubquery.add(filter);
+            }
+
+            if (!requiresSubquery) {
+                filtersOnInput.add(filter);
+            }
+
+            if (requiresInput && requiresSubquery) {
+                filtersOnBoth.add(filter);
+            }
+        }
+
+        return createFilterAbove(filtersOnBoth, new SubqueryExecutionLop(
+                new FilterPushDown(filtersOnInput).apply(subqueryExecutionLop.input()),
+                new FilterPushDown(filtersOnSubquery).apply(subqueryExecutionLop.subquery())
+        ));
     }
 
     @Override
