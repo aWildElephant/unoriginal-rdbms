@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class AddExpression extends BinaryExpression {
 
@@ -19,6 +20,11 @@ public final class AddExpression extends BinaryExpression {
 
     public Domain domain() {
         return domain;
+    }
+
+    @Override
+    public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
+        return new AddExpression(transformer.apply(left), transformer.apply(right), domain);
     }
 
     @Override

@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
@@ -44,6 +45,13 @@ public final class BetweenExpression implements ValueExpression {
     @Override
     public Stream<ColumnReference> variables() {
         return Stream.concat(value.variables(), Stream.concat(lowerBound.variables(), upperBound.variables()));
+    }
+
+    @Override
+    public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
+        return new BetweenExpression(transformer.apply(value),
+                                     transformer.apply(lowerBound),
+                                     transformer.apply(upperBound));
     }
 
     @Override

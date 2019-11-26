@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
@@ -31,6 +32,7 @@ import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SortLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -54,6 +56,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     private static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final Storage storage;
+    private final Schema outerQuerySchema;
 
     private final AliasExtractor aliasExtractor;
     private final ExpressionSplitter expressionSplitter;
@@ -61,12 +64,23 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     private final ColumnReferenceTransformer columnReferenceTransformer;
 
     public Algebraizer(Storage storage) {
-        this.storage = storage;
+        this(storage, EMPTY_SCHEMA);
+    }
 
+    public Algebraizer(Storage storage, Schema outerQuerySchema) {
+        this.storage = storage;
+        this.outerQuerySchema = outerQuerySchema;
+
+        // TODO: ne pas créer ces dépendances à chaque fois
         columnNameResolver = new ColumnNameResolver();
         columnReferenceTransformer = new ColumnReferenceTransformer(columnNameResolver);
         expressionSplitter = new ExpressionSplitter(columnNameResolver, columnReferenceTransformer);
         aliasExtractor = new AliasExtractor(columnReferenceTransformer);
+
+    }
+
+    private Algebraizer withOuterQuerySchema(Schema outerQuerySchema) {
+        return new Algebraizer(storage, outerQuerySchema);
     }
 
     @Override
@@ -83,7 +97,8 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         return new InnerJoinLop(leftInput,
                                 rightInput,
-                                createValueExpression(innerJoin.joinSpecification(), outputSchema),
+                                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema
+                                ),
                                 outputSchema);
     }
 
@@ -103,12 +118,29 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final Optional<AST> whereClause = select.whereClause();
         if (whereClause.isPresent()) {
-            final SubqueryExtractor subqueryExtractor = new SubqueryExtractor();
-            final AST whereFilter = subqueryExtractor.apply(whereClause.get());
+            // TODO: that is doo doo
+            if (whereClause.get() instanceof ColumnName) {
+                plan = createFilter(plan, whereClause.get());
+            } else {
+                final SplitExpressionCollector filter = new SplitExpressionCollector();
+                expressionSplitter.split(whereClause.get(), filter);
 
-            plan = mergeInputWithSubqueries(plan, subqueryExtractor.subqueries());
+                if (!filter.aggregates().isEmpty()) {
+                    throw new IllegalArgumentException("Aggregate are not allowed in the where clause");
+                }
 
-            plan = createFilter(plan, whereFilter);
+                final List<AST> subqueries = filter.subqueries();
+
+                if (!subqueries.isEmpty()) {
+                    final Algebraizer outerQueryAwareAlgebraizer = withOuterQuerySchema(plan.schema());
+
+                    for (AST subquery : subqueries) {
+                        plan = new SubqueryExecutionLop(plan, outerQueryAwareAlgebraizer.apply(subquery));
+                    }
+                }
+
+                plan = createFilter(plan, filter.mapsAboveAggregates().get(0));
+            }
         }
 
         final Optional<GroupingSetsList> groupByClause = select.groupByClause();
@@ -167,7 +199,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final Map<String, Map<String, String>> aliasing = aliasCollector.aliasing();
         if (!aliasing.isEmpty()) {
-            plan = new AliasLop(columnAlias(aliasing), plan);
+            plan = new AliasLop(plan, columnAlias(aliasing));
         }
 
         if (groupByClause.isPresent()) {
@@ -180,6 +212,14 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         }
 
         return plan;
+    }
+
+    private LogicalOperator joinSubquery(LogicalOperator plan, AST subquery) {
+        final Schema inputSchema = plan.schema();
+        final LogicalOperator otherInput = withOuterQuerySchema(inputSchema).apply(subquery);
+        final Schema outputSchema = joinOutputSchema(inputSchema, otherInput.schema());
+
+        return new CartesianProductLop(plan, otherInput, outputSchema);
     }
 
     private LogicalOperator createProjection(LogicalOperator input, List<AST> columns) {
@@ -214,7 +254,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final List<ValueExpression> valueExpressions = new ArrayList<>(expressions.size());
 
         for (AST expression : expressions) {
-            valueExpressions.add(createValueExpression(expression, input.schema()));
+            valueExpressions.add(createValueExpression(expression, input.schema(), outerQuerySchema));
         }
 
         return valueExpressions;
@@ -227,14 +267,17 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     }
 
     private LogicalOperator createFilter(LogicalOperator input, AST filter) {
-        return new FilterLop(input, createValueExpression(filter, input.schema()));
+        return new FilterLop(input, createValueExpression(filter,
+                                                          input.schema(),
+                                                          outerQuerySchema
+        ));
     }
 
     @Override
     public LogicalOperator visit(TableAlias tableAlias) {
         final LogicalOperator input = apply(tableAlias.input());
 
-        return new AliasLop(tableAlias(tableAlias.alias()), input);
+        return new AliasLop(input, tableAlias(tableAlias.alias()));
     }
 
     @Override
@@ -277,7 +320,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             final List<ValueExpression> valueExpressions = new ArrayList<>();
 
             for (AST expression : expressions) {
-                valueExpressions.add(createValueExpression(expression, EMPTY_SCHEMA));
+                valueExpressions.add(createValueExpression(expression, EMPTY_SCHEMA, outerQuerySchema));
             }
 
             matrix.add(valueExpressions);

@@ -4,24 +4,25 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class Variable implements ValueExpression {
 
-    private final ColumnReference name;
+    private final ColumnReference reference;
     private final Domain domain;
 
-    private Variable(ColumnReference name, Domain domain) {
-        this.name = name;
+    private Variable(ColumnReference reference, Domain domain) {
+        this.reference = reference;
         this.domain = domain;
     }
 
-    public static Variable variable(ColumnReference name, Domain domain) {
-        return new Variable(name, domain);
+    public static Variable variable(ColumnReference reference, Domain domain) {
+        return new Variable(reference, domain);
     }
 
     public ColumnReference name() {
-        return name;
+        return reference;
     }
 
     @Override
@@ -31,7 +32,12 @@ public final class Variable implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return Stream.of(name);
+        return Stream.of(reference);
+    }
+
+    @Override
+    public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
+        return this;
     }
 
     @Override
@@ -41,7 +47,7 @@ public final class Variable implements ValueExpression {
 
     @Override
     public int hashCode() {
-        return Objects.hash(domain, name);
+        return Objects.hash(domain, reference);
     }
 
     @Override
@@ -53,6 +59,6 @@ public final class Variable implements ValueExpression {
         final Variable other = (Variable) obj;
 
         return domain == other.domain
-                && Objects.equals(name, other.name);
+                && Objects.equals(reference, other.reference);
     }
 }

@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.plan;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class DistinctLop extends AbstractLop {
 
@@ -11,13 +12,18 @@ public final class DistinctLop extends AbstractLop {
         this.input = input;
     }
 
+    public LogicalOperator input() {
+        return input;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new DistinctLop(transformer.apply(input));
+    }
+
     @Override
     public <T> T accept(LopVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    public LogicalOperator input() {
-        return input;
     }
 
     @Override

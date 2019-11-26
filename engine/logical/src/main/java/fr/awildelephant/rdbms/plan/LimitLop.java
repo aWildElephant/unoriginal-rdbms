@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.plan;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class LimitLop extends AbstractLop {
 
@@ -20,6 +21,11 @@ public final class LimitLop extends AbstractLop {
 
     public int limit() {
         return limit;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new LimitLop(transformer.apply(input), limit);
     }
 
     @Override

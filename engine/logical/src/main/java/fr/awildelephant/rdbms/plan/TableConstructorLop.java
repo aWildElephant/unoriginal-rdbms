@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class TableConstructorLop extends AbstractLop {
 
@@ -36,6 +37,11 @@ public final class TableConstructorLop extends AbstractLop {
 
     public List<List<ValueExpression>> matrix() {
         return matrix;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return this;
     }
 
     @Override

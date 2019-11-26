@@ -3,8 +3,10 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
@@ -39,6 +41,16 @@ public final class InExpression implements ValueExpression {
     @Override
     public Stream<ColumnReference> variables() {
         return Stream.concat(input.variables(), values.stream().flatMap(ValueExpression::variables));
+    }
+
+    @Override
+    public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
+        final Collection<ValueExpression> transformedValues = new ArrayList<>(values.size());
+        for (ValueExpression value : values) {
+            transformedValues.add(transformer.apply(value));
+        }
+
+        return new InExpression(transformer.apply(input), transformedValues);
     }
 
     @Override

@@ -3,13 +3,14 @@ package fr.awildelephant.rdbms.plan;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class AliasLop extends AbstractLop {
 
     private final LogicalOperator input;
     private final Alias alias;
 
-    public AliasLop(Alias alias, LogicalOperator input) {
+    public AliasLop(LogicalOperator input, Alias alias) {
         super(input.schema().alias(alias::alias));
 
         this.input = input;
@@ -22,6 +23,11 @@ public final class AliasLop extends AbstractLop {
 
     public Alias alias() {
         return alias;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new AliasLop(transformer.apply(input), alias);
     }
 
     @Override

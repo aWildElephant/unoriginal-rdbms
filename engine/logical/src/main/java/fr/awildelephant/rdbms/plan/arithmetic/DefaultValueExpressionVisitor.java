@@ -98,6 +98,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(OuterQueryVariable outerQueryVariable) {
+        return defaultVisit(outerQueryVariable);
+    }
+
+    @Override
     public T visit(SubtractExpression subtract) {
         return defaultVisit(subtract);
     }

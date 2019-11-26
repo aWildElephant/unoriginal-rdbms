@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class ScalarSubqueryLop extends AbstractLop {
 
@@ -39,6 +40,11 @@ public final class ScalarSubqueryLop extends AbstractLop {
 
     public String id() {
         return id;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new ScalarSubqueryLop(transformer.apply(input), id);
     }
 
     @Override

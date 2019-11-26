@@ -16,6 +16,7 @@ import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SortLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
@@ -79,7 +80,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
         final List<ValueExpression> unaliasedFilters = filters.stream().map(unaliaser).collect(toList());
 
-        return new AliasLop(alias.alias(), new FilterPushDown(unaliasedFilters).apply(alias.input()));
+        return new AliasLop(new FilterPushDown(unaliasedFilters).apply(alias.input()), alias.alias());
     }
 
     @Override
@@ -137,8 +138,8 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
         return createFilterAbove(filtersOnMapColumns,
                                  new MapLop(new FilterPushDown(filtersOnInput).apply(mapNode.input()),
-                                            mapNode.expressions(), mapNode.expressionsOutputNames()
-                                 ));
+                                            mapNode.expressions(),
+                                            mapNode.expressionsOutputNames()));
     }
 
     @Override
@@ -156,6 +157,12 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     @Override
     public LogicalOperator visit(SortLop sortLop) {
         return new SortLop(apply(sortLop.input()), sortLop.sortSpecificationList());
+    }
+
+    @Override
+    public LogicalOperator visit(SubqueryExecutionLop subqueryExecutionLop) {
+        // TODO: we should try to unnest the subquery around here
+        return createFilterAbove(filters, subqueryExecutionLop);
     }
 
     @Override

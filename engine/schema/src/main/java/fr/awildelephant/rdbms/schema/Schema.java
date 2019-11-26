@@ -49,11 +49,11 @@ public final class Schema {
         final Map<String, Column> tables = columnIndex.get(name);
 
         if (tables == null || tables.isEmpty()) {
-            throw new IllegalArgumentException("Column not found: " + name);
+            throw new ColumnNotFoundException(name);
         }
 
         if (tables.size() > 1) {
-            throw new IllegalArgumentException("Ambiguous column name: " + name);
+            throw new AmbiguousColumnNameException(name);
         }
 
         return tables.values().iterator().next();
@@ -63,29 +63,29 @@ public final class Schema {
         final Map<String, Column> tables = columnIndex.get(columnName);
 
         if (tables == null || tables.isEmpty()) {
-            throw new IllegalArgumentException("Column not found: " + tableName + '.' + columnName);
+            throw new ColumnNotFoundException(tableName, columnName);
         }
 
         final Column column = tables.get(tableName);
 
         if (column == null) {
-            throw new IllegalArgumentException("Column not found: " + tableName + '.' + columnName);
+            throw new ColumnNotFoundException(tableName, columnName);
         }
 
         return column;
     }
 
-    public Column column(ColumnReference columnReference) {
-        return columnReference.table()
-                              .map(qualifier -> column(qualifier, columnReference.name()))
-                              .orElseGet(() -> column(columnReference.name()));
+    public Column column(ColumnReference reference) {
+        return reference.table()
+                        .map(qualifier -> column(qualifier, reference.name()))
+                        .orElseGet(() -> column(reference.name()));
     }
 
     public boolean contains(ColumnReference columnReference) {
         try {
             column(columnReference);
             return true;
-        } catch (IllegalArgumentException unused) {
+        } catch (ColumnNotFoundException unused) {
             return false;
         }
     }

@@ -1,6 +1,5 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
@@ -8,22 +7,22 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public final class ConstantExpression implements ValueExpression {
+public final class OuterQueryVariable implements ValueExpression {
 
-    private final DomainValue value;
+    private final ColumnReference reference;
     private final Domain domain;
 
-    private ConstantExpression(DomainValue value, Domain domain) {
-        this.value = value;
+    private OuterQueryVariable(ColumnReference reference, Domain domain) {
+        this.reference = reference;
         this.domain = domain;
     }
 
-    public static ConstantExpression constantExpression(DomainValue value, Domain domain) {
-        return new ConstantExpression(value, domain);
+    public static OuterQueryVariable outerQueryVariable(ColumnReference reference, Domain domain) {
+        return new OuterQueryVariable(reference, domain);
     }
 
-    public DomainValue value() {
-        return value;
+    public ColumnReference reference() {
+        return reference;
     }
 
     @Override
@@ -33,7 +32,7 @@ public final class ConstantExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return Stream.of();
+        return Stream.of(reference);
     }
 
     @Override
@@ -48,18 +47,18 @@ public final class ConstantExpression implements ValueExpression {
 
     @Override
     public int hashCode() {
-        return Objects.hash(domain, value);
+        return Objects.hash(reference, domain);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ConstantExpression)) {
+        if (!(obj instanceof OuterQueryVariable)) {
             return false;
         }
 
-        final ConstantExpression other = (ConstantExpression) obj;
+        final OuterQueryVariable other = (OuterQueryVariable) obj;
 
         return domain == other.domain
-                && Objects.equals(value, other.value);
+                && Objects.equals(reference, other.reference);
     }
 }

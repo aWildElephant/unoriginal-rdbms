@@ -1,0 +1,70 @@
+package fr.awildelephant.rdbms.engine.operators.subquery;
+
+import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.schema.Schema;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public final class LogicalOperatorOuterQueryReferenceReplacer extends DefaultLopVisitor<LogicalOperator> {
+
+    private final ValueExpressionOuterQueryReferenceReplacer valueExpressionReplacer;
+
+    public LogicalOperatorOuterQueryReferenceReplacer(Schema schema, Record record) {
+        valueExpressionReplacer = new ValueExpressionOuterQueryReferenceReplacer(schema, record);
+    }
+
+    @Override
+    public LogicalOperator visit(FilterLop filter) {
+        return new FilterLop(apply(filter.input()), valueExpressionReplacer.apply(filter.filter()));
+    }
+
+    @Override
+    public LogicalOperator visit(InnerJoinLop innerJoinLop) {
+        return new InnerJoinLop(apply(innerJoinLop.left()),
+                                apply(innerJoinLop.right()),
+                                valueExpressionReplacer.apply(innerJoinLop.joinSpecification()),
+                                innerJoinLop.schema());
+    }
+
+    @Override
+    public LogicalOperator visit(MapLop mapNode) {
+        final List<ValueExpression> expressions = mapNode.expressions();
+
+        final List<ValueExpression> transformedExpressions = new ArrayList<>(expressions.size());
+        for (ValueExpression expression : expressions) {
+            transformedExpressions.add(valueExpressionReplacer.apply(expression));
+        }
+
+        return new MapLop(apply(mapNode.input()), transformedExpressions, mapNode.expressionsOutputNames());
+    }
+
+    @Override
+    public LogicalOperator visit(TableConstructorLop tableConstructor) {
+        final List<List<ValueExpression>> matrix = tableConstructor.matrix();
+        final List<List<ValueExpression>> transformedMatrix = new ArrayList<>(matrix.size());
+        for (List<ValueExpression> row : matrix) {
+            final List<ValueExpression> transformedRow = new ArrayList<>(row.size());
+
+            for (ValueExpression expression : row) {
+                transformedRow.add(valueExpressionReplacer.apply(expression));
+            }
+
+            transformedMatrix.add(transformedRow);
+        }
+
+        return new TableConstructorLop(transformedMatrix);
+    }
+
+    @Override
+    public LogicalOperator defaultVisit(LogicalOperator operator) {
+        return operator.transformInputs(this);
+    }
+}

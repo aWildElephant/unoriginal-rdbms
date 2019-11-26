@@ -33,7 +33,6 @@ Feature: Subquery
       | INTEGER |
       | 10      |
 
-  @todo
   Scenario: I select employees with a salary higher than the average of their department using a correlated subquery
 
     Given the table Employee

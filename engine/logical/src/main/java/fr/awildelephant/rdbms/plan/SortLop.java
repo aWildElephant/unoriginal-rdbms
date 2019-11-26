@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.SortSpecification;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class SortLop extends AbstractLop {
 
@@ -22,6 +23,11 @@ public final class SortLop extends AbstractLop {
 
     public List<SortSpecification> sortSpecificationList() {
         return columns;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new SortLop(transformer.apply(input), columns);
     }
 
     @Override

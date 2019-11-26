@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class CartesianProductLop extends AbstractLop {
 
@@ -22,6 +23,11 @@ public final class CartesianProductLop extends AbstractLop {
 
     public LogicalOperator rightInput() {
         return rightInput;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new CartesianProductLop(transformer.apply(leftInput), transformer.apply(rightInput), schema());
     }
 
     @Override

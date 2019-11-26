@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
@@ -69,6 +70,11 @@ public final class AggregationLop extends AbstractLop {
 
     public List<Aggregate> aggregates() {
         return aggregates;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new AggregationLop(transformer.apply(input), aggregates);
     }
 
     @Override

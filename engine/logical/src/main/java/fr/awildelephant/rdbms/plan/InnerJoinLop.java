@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class InnerJoinLop extends AbstractLop {
 
@@ -29,6 +30,11 @@ public final class InnerJoinLop extends AbstractLop {
 
     public ValueExpression joinSpecification() {
         return joinSpecification;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new InnerJoinLop(transformer.apply(left), transformer.apply(right), joinSpecification, schema());
     }
 
     @Override

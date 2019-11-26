@@ -16,6 +16,7 @@ import fr.awildelephant.rdbms.engine.operators.LimitOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.SortOperator;
+import fr.awildelephant.rdbms.engine.operators.SubqueryExecutionOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.AggregationLop;
@@ -34,6 +35,7 @@ import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SortLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -427,6 +429,29 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         LOGGER.info("{} - ScalarOperator - outputSize: 1", operatorId);
 
         return List.of(output);
+    }
+
+    @Override
+    public List<Table> visit(SubqueryExecutionLop subqueryExecutionLop) {
+        final List<Table> inputPartitions = apply(subqueryExecutionLop.input());
+
+        final UUID operatorId = UUID.randomUUID();
+
+        LOGGER.info("{} - SubqueryOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
+
+        final SubqueryExecutionOperator operator = new SubqueryExecutionOperator(subqueryExecutionLop.subquery(),
+                                                                                 this,
+                                                                                 subqueryExecutionLop.schema());
+
+        final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
+
+        for (Table partition : inputPartitions) {
+            outputPartitions.add(operator.compute(partition));
+        }
+
+        LOGGER.info("{} - ScalarOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
+
+        return outputPartitions;
     }
 
     @Override

@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
@@ -38,6 +39,11 @@ public final class NotEqualExpression implements ValueExpression {
     @Override
     public Stream<ColumnReference> variables() {
         return Stream.concat(left.variables(), right.variables());
+    }
+
+    @Override
+    public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
+        return new NotEqualExpression(transformer.apply(left), transformer.apply(right));
     }
 
     @Override

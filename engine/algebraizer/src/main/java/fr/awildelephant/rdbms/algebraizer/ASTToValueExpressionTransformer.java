@@ -33,6 +33,8 @@ import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.schema.ColumnNotFoundException;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -68,6 +70,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression.multiply
 import static fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression.notEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.NotExpression.notExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable.outerQueryVariable;
 import static fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression.subtractExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
@@ -82,13 +85,15 @@ import static java.lang.Integer.parseInt;
 public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpression> {
 
     private final Schema inputSchema;
+    private final Schema outerQuerySchema;
 
-    private ASTToValueExpressionTransformer(Schema inputSchema) {
+    private ASTToValueExpressionTransformer(Schema inputSchema, Schema outerQuerySchema) {
         this.inputSchema = inputSchema;
+        this.outerQuerySchema = outerQuerySchema;
     }
 
-    static ValueExpression createValueExpression(AST tree, Schema inputSchema) {
-        return new ASTToValueExpressionTransformer(inputSchema).apply(tree);
+    static ValueExpression createValueExpression(AST tree, Schema inputSchema, Schema outerQuerySchema) {
+        return new ASTToValueExpressionTransformer(inputSchema, outerQuerySchema).apply(tree);
     }
 
     @Override
@@ -167,14 +172,6 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         }
 
         return castExpression(input, DATE);
-    }
-
-    @Override
-    public ValueExpression visit(QualifiedColumnName qualifiedColumnReference) {
-        final QualifiedColumnReference columnName = new QualifiedColumnReference(qualifiedColumnReference.qualifier(),
-                                                                                 qualifiedColumnReference.name());
-
-        return variable(columnName, inputSchema.column(columnName).domain());
     }
 
     @Override
@@ -377,15 +374,31 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     }
 
     @Override
+    public ValueExpression visit(QualifiedColumnName qualifiedColumnReference) {
+        final QualifiedColumnReference reference = new QualifiedColumnReference(qualifiedColumnReference.qualifier(),
+                                                                                qualifiedColumnReference.name());
+
+        return createVariable(reference);
+    }
+
+    @Override
     public ValueExpression visit(TextLiteral textLiteral) {
         return constantExpression(textValue(textLiteral.value()), TEXT);
     }
 
     @Override
     public ValueExpression visit(UnqualifiedColumnName unqualifiedColumnReference) {
-        final UnqualifiedColumnReference columnName = new UnqualifiedColumnReference(unqualifiedColumnReference.name());
+        final UnqualifiedColumnReference reference = new UnqualifiedColumnReference(unqualifiedColumnReference.name());
 
-        return variable(columnName, inputSchema.column(columnName).domain());
+        return createVariable(reference);
+    }
+
+    private ValueExpression createVariable(ColumnReference reference) {
+        try {
+            return variable(reference, inputSchema.column(reference).domain());
+        } catch (ColumnNotFoundException unused) {
+            return outerQueryVariable(reference, outerQuerySchema.column(reference).domain());
+        }
     }
 
     @Override

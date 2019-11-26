@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class FilterLop extends AbstractLop {
 
@@ -21,6 +22,11 @@ public final class FilterLop extends AbstractLop {
 
     public ValueExpression filter() {
         return filter;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new FilterLop(transformer.apply(input), filter);
     }
 
     @Override

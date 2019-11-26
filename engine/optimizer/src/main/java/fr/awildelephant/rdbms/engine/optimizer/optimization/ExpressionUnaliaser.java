@@ -20,6 +20,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpressionVisitor;
@@ -46,6 +47,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression.multiply
 import static fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression.notEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.NotExpression.notExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable.outerQueryVariable;
 import static fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression.subtractExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
 
@@ -159,6 +161,11 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
     @Override
     public ValueExpression visit(OrExpression or) {
         return orExpression(apply(or.left()), apply(or.right()));
+    }
+
+    @Override
+    public ValueExpression visit(OuterQueryVariable outerQueryVariable) {
+        return outerQueryVariable(alias.unalias(outerQueryVariable.reference()), outerQueryVariable.domain());
     }
 
     @Override

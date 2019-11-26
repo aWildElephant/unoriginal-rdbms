@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class BreakdownLop extends AbstractLop {
 
@@ -23,6 +24,11 @@ public final class BreakdownLop extends AbstractLop {
 
     public List<ColumnReference> breakdowns() {
         return breakdowns;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new BreakdownLop(transformer.apply(input), breakdowns);
     }
 
     @Override

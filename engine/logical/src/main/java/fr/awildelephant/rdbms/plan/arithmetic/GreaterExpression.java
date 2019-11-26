@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
@@ -16,10 +17,14 @@ public final class GreaterExpression extends BinaryExpression {
         return new GreaterExpression(left, right);
     }
 
-
     @Override
     public Domain domain() {
         return BOOLEAN;
+    }
+
+    @Override
+    public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
+        return new GreaterExpression(transformer.apply(left), transformer.apply(right));
     }
 
     @Override

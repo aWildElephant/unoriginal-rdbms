@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.plan;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class CollectLop extends AbstractLop {
 
@@ -14,6 +15,11 @@ public final class CollectLop extends AbstractLop {
 
     public LogicalOperator input() {
         return input;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new CollectLop(transformer.apply(input));
     }
 
     @Override

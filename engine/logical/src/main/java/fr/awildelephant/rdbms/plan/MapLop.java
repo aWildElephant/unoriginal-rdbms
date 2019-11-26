@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class MapLop extends AbstractLop {
 
@@ -22,7 +23,6 @@ public final class MapLop extends AbstractLop {
         this.expressions = expressions;
         this.expressionsOutputNames = expressionsOutputNames;
         this.input = input;
-
     }
 
     private static Schema buildOutputSchema(List<ValueExpression> valueExpressions, List<String> outputNames, Schema schema) {
@@ -55,6 +55,11 @@ public final class MapLop extends AbstractLop {
 
     public List<String> expressionsOutputNames() {
         return expressionsOutputNames;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return new MapLop(transformer.apply(input), expressions, expressionsOutputNames);
     }
 
     @Override

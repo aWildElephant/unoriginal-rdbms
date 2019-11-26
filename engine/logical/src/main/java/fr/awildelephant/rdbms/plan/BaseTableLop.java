@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class BaseTableLop extends AbstractLop {
 
@@ -16,6 +17,11 @@ public final class BaseTableLop extends AbstractLop {
 
     public String name() {
         return name;
+    }
+
+    @Override
+    public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
+        return this;
     }
 
     @Override

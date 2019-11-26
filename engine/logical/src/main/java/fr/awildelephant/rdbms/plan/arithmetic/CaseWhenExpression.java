@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class CaseWhenExpression implements ValueExpression {
@@ -45,6 +46,14 @@ public final class CaseWhenExpression implements ValueExpression {
     public Stream<ColumnReference> variables() {
         return Stream.concat(condition.variables(),
                              Stream.concat(thenExpression.variables(), elseExpression.variables()));
+    }
+
+    @Override
+    public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
+        return new CaseWhenExpression(transformer.apply(condition),
+                                      transformer.apply(thenExpression),
+                                      transformer.apply(elseExpression),
+                                      outputDomain);
     }
 
     @Override

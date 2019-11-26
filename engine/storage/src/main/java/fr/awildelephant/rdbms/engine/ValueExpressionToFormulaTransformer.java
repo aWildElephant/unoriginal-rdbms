@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.CaseWhenExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.DivideExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression;
@@ -22,9 +23,9 @@ import fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
@@ -60,7 +61,7 @@ import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 import static fr.awildelephant.rdbms.schema.Domain.INTERVAL;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
-public final class ValueExpressionToFormulaTransformer implements ValueExpressionVisitor<Operation> {
+public final class ValueExpressionToFormulaTransformer extends DefaultValueExpressionVisitor<Operation> {
 
     private Map<ColumnReference, Reference> references = new HashMap<>();
 
@@ -256,6 +257,12 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
     }
 
     @Override
+    public Operation visit(OuterQueryVariable outerQueryVariable) {
+        return references.computeIfAbsent(outerQueryVariable.reference(),
+                                          unused -> reference(outerQueryVariable.domain()));
+    }
+
+    @Override
     public Operation visit(SubtractExpression subtract) {
         final Operation left = apply(subtract.left());
         final Operation right = apply(subtract.right());
@@ -278,5 +285,10 @@ public final class ValueExpressionToFormulaTransformer implements ValueExpressio
     @Override
     public Operation visit(Variable variable) {
         return references.computeIfAbsent(variable.name(), unused -> reference(variable.domain()));
+    }
+
+    @Override
+    protected Operation defaultVisit(ValueExpression expression) {
+        throw new IllegalStateException();
     }
 }
