@@ -20,6 +20,8 @@ public final class ComparisonFactory {
 
         if (leftDomain == INTEGER && rightDomain == INTEGER) {
             return new IntegerIntegerEqualComparison(left, right);
+        } else if (leftDomain.canBeUsedAs(DECIMAL) && rightDomain.canBeUsedAs(DECIMAL)) {
+            return new DecimalDecimalEqualComparison(left, right);
         } else if (leftDomain == TEXT && rightDomain == TEXT) {
             return new TextTextEqualComparison(left, right);
         } else {
