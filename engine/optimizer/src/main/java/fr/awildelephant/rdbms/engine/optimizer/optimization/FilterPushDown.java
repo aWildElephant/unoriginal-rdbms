@@ -19,7 +19,6 @@ import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
-import fr.awildelephant.rdbms.plan.alias.TableAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
@@ -77,10 +76,6 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(AliasLop alias) {
-        if (alias.alias() instanceof TableAlias) {
-            return createFilterAbove(filters, alias); // Removing a table alias is not yet supported
-        }
-
         final ExpressionUnaliaser unaliaser = new ExpressionUnaliaser(alias.alias());
 
         final List<ValueExpression> unaliasedFilters = filters.stream().map(unaliaser).collect(toList());

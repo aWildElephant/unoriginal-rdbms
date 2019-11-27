@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.plan.alias;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Objects;
 
@@ -24,7 +25,11 @@ public final class TableAlias implements Alias {
 
     @Override
     public ColumnReference unalias(ColumnReference reference) {
-        throw new UnsupportedOperationException("Removing a table alias is not yet implemented");
+        if (!reference.table().isPresent()) {
+            return reference;
+        }
+
+        return new UnqualifiedColumnReference(reference.name());
     }
 
     @Override
