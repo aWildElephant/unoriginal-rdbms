@@ -229,6 +229,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final List<AST> maps = expressions.stream()
                                           .filter(expression -> !(expression instanceof ColumnName))
                                           .collect(toList());
+
+        if (maps.isEmpty()) {
+            return input;
+        }
+
         final List<ValueExpression> valueExpressions = createValueExpressions(input, maps);
 
         final List<String> outputNames = getOutputNames(maps);
