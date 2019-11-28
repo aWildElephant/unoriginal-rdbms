@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -25,12 +26,16 @@ import java.util.List;
 import java.util.UUID;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
+import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
+import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.value.And.and;
+import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.In.in;
+import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
 import static fr.awildelephant.rdbms.ast.value.Like.like;
@@ -68,6 +73,22 @@ public final class SubqueryExtractor extends DefaultASTVisitor<AST> {
     @Override
     public AST visit(Equal equal) {
         return equal(apply(equal.left()), apply(equal.right()));
+    }
+
+    @Override
+    public AST visit(Exists exists) {
+        final String id = UUID.randomUUID().toString();
+
+        final Select subquery = select(List.of(columnAlias(countStar(), id)),
+                                       exists.input(),
+                                       null,
+                                       null,
+                                       null,
+                                       null);
+
+        subqueries.add(subquery);
+
+        return greater(unqualifiedColumnName(id), integerLiteral(0));
     }
 
     @Override

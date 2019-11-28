@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
@@ -61,7 +62,7 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(CaseWhen caseWhen) {
         return "case when " + apply(caseWhen.condition()) + " then " + apply(caseWhen.thenExpression()) + " else "
-                + apply(caseWhen.elseExpression());
+                + apply(caseWhen.elseExpression()) + " end";
     }
 
     @Override
@@ -79,6 +80,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(CountStar countStar) {
         return "count(*)";
+    }
+
+    @Override
+    public String visit(Exists exists) {
+        return "exists(" + apply(exists.input()) + ')';
     }
 
     @Override

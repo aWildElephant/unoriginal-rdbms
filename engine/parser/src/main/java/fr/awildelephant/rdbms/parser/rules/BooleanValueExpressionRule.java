@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static fr.awildelephant.rdbms.ast.Exists.exists;
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Between.between;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
@@ -30,6 +31,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpression;
 
 final class BooleanValueExpressionRule {
@@ -165,6 +167,16 @@ final class BooleanValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return parenthesizedValueExpression;
+            case EXISTS:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final AST input = deriveQueryExpression(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return exists(input);
             case TRUE:
                 lexer.consumeNextToken();
 

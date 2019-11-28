@@ -6,6 +6,7 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
+import static fr.awildelephant.rdbms.ast.Exists.exists;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
@@ -120,5 +121,12 @@ class BooleanExpressionParserTest {
 
                       rows(row(not(in(unqualifiedColumnName("a"),
                                       List.of(integerLiteral(1), integerLiteral(2)))))));
+    }
+
+    @Test
+    void it_should_parse_an_exists_predicate() {
+        assertParsing("VALUES (EXISTS(VALUES ('coucou')))",
+
+                      rows(row(exists(rows(row(textLiteral("coucou")))))));
     }
 }

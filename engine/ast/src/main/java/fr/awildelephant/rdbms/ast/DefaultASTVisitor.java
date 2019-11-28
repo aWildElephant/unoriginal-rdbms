@@ -120,6 +120,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(Exists exists) {
+        return defaultVisit(exists);
+    }
+
+    @Override
     public T visit(ExtractYear extractYear) {
         return defaultVisit(extractYear);
     }

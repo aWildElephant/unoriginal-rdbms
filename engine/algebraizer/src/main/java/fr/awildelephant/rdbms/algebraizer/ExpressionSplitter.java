@@ -13,7 +13,6 @@ import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 
 import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
-import static fr.awildelephant.rdbms.algebraizer.FormulaOrNotFormulaDifferentiator.isFormula;
 import static fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate.countStarAggregate;
 
 final class ExpressionSplitter {
@@ -32,9 +31,7 @@ final class ExpressionSplitter {
         final AST aggregateFreeOutputColumn = aggregationsExtractor.apply(expression);
         final SubqueryExtractor subqueryExtractor = new SubqueryExtractor();
 
-        if (isFormula(aggregateFreeOutputColumn)) {
-            collector.addMapAboveAggregates(subqueryExtractor.apply(aggregateFreeOutputColumn));
-        }
+        collector.addMapAboveAggregates(subqueryExtractor.apply(aggregateFreeOutputColumn));
 
         for (AST aggregate : aggregationsExtractor.collectedAggregates()) {
             if (aggregate instanceof Count) {

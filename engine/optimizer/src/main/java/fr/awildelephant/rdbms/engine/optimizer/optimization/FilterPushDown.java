@@ -171,25 +171,18 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         for (ValueExpression filter : filters) {
             final List<ColumnReference> requiredVariables = filter.variables().collect(toList());
 
-            final boolean requiresInput = requiredVariables.stream().anyMatch(inputSchema::contains);
             final boolean requiresSubquery = requiredVariables.stream().anyMatch(subquerySchema::contains);
-
-            if (!requiresInput) {
-                filtersOnSubquery.add(filter);
-            }
 
             if (!requiresSubquery) {
                 filtersOnInput.add(filter);
-            }
-
-            if (requiresInput && requiresSubquery) {
+            } else {
                 filtersOnBoth.add(filter);
             }
         }
 
         return createFilterAbove(filtersOnBoth, new SubqueryExecutionLop(
                 new FilterPushDown(filtersOnInput).apply(subqueryExecutionLop.input()),
-                new FilterPushDown(filtersOnSubquery).apply(subqueryExecutionLop.subquery())
+                new FilterPushDown().apply(subqueryExecutionLop.subquery())
         ));
     }
 

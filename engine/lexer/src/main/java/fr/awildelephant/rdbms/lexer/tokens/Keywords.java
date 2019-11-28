@@ -20,6 +20,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ELSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXISTS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXTRACT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
@@ -278,6 +279,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return END;
+        }
+    },
+    EXISTS_TOKEN {
+        @Override
+        public String text() {
+            return "exists";
+        }
+
+        @Override
+        public TokenType type() {
+            return EXISTS;
         }
     },
     EXTRACT_TOKEN {

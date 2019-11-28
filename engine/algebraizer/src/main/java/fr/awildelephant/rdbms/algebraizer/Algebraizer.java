@@ -118,28 +118,29 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final Optional<AST> whereClause = select.whereClause();
         if (whereClause.isPresent()) {
-            // TODO: that is doo doo
-            if (whereClause.get() instanceof ColumnName) {
-                plan = createFilter(plan, whereClause.get());
-            } else {
-                final SplitExpressionCollector filter = new SplitExpressionCollector();
-                expressionSplitter.split(whereClause.get(), filter);
+            final SplitExpressionCollector filter = new SplitExpressionCollector();
+            expressionSplitter.split(whereClause.get(), filter);
 
-                if (!filter.aggregates().isEmpty()) {
-                    throw new IllegalArgumentException("Aggregate are not allowed in the where clause");
+            if (!filter.aggregates().isEmpty()) {
+                throw new IllegalArgumentException("Aggregate are not allowed in the where clause");
+            }
+
+            final List<AST> subqueries = filter.subqueries();
+
+            final Schema filterInputSchema = plan.schema();
+
+            if (!subqueries.isEmpty()) {
+                final Algebraizer outerQueryAwareAlgebraizer = withOuterQuerySchema(filterInputSchema);
+
+                for (AST subquery : subqueries) {
+                    plan = new SubqueryExecutionLop(plan, outerQueryAwareAlgebraizer.apply(subquery));
                 }
+            }
 
-                final List<AST> subqueries = filter.subqueries();
+            plan = createFilter(plan, filter.mapsAboveAggregates().get(0));
 
-                if (!subqueries.isEmpty()) {
-                    final Algebraizer outerQueryAwareAlgebraizer = withOuterQuerySchema(plan.schema());
-
-                    for (AST subquery : subqueries) {
-                        plan = new SubqueryExecutionLop(plan, outerQueryAwareAlgebraizer.apply(subquery));
-                    }
-                }
-
-                plan = createFilter(plan, filter.mapsAboveAggregates().get(0));
+            if (!subqueries.isEmpty()) {
+                plan = new ProjectionLop(plan, filterInputSchema.columnNames());
             }
         }
 
@@ -214,14 +215,6 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         return plan;
     }
 
-    private LogicalOperator joinSubquery(LogicalOperator plan, AST subquery) {
-        final Schema inputSchema = plan.schema();
-        final LogicalOperator otherInput = withOuterQuerySchema(inputSchema).apply(subquery);
-        final Schema outputSchema = joinOutputSchema(inputSchema, otherInput.schema());
-
-        return new CartesianProductLop(plan, otherInput, outputSchema);
-    }
-
     private LogicalOperator createProjection(LogicalOperator input, List<AST> columns) {
         final List<ColumnReference> columnReferences = new ArrayList<>(columns.size());
 
@@ -232,7 +225,10 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         return new ProjectionLop(input, columnReferences);
     }
 
-    private LogicalOperator createMap(LogicalOperator input, List<AST> maps) {
+    private LogicalOperator createMap(LogicalOperator input, List<AST> expressions) {
+        final List<AST> maps = expressions.stream()
+                                          .filter(expression -> !(expression instanceof ColumnName))
+                                          .collect(toList());
         final List<ValueExpression> valueExpressions = createValueExpressions(input, maps);
 
         final List<String> outputNames = getOutputNames(maps);

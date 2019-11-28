@@ -26,6 +26,7 @@ public enum TokenType {
     END,
     END_OF_FILE,
     EQUAL,
+    EXISTS,
     EXTRACT,
     FALSE,
     FOREIGN,

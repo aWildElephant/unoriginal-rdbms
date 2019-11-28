@@ -74,6 +74,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(Equal equal);
 
+    T visit(Exists exists);
+
     T visit(ExtractYear extractYear);
 
     T visit(Greater greater);
