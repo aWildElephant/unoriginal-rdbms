@@ -175,6 +175,6 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
 
     @Override
     public ValueExpression visit(Variable variable) {
-        return variable(alias.unalias(variable.name()), variable.domain());
+        return variable(alias.unalias(variable.reference()), variable.domain());
     }
 }

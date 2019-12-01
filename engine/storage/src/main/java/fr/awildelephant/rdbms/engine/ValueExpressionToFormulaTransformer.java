@@ -292,7 +292,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(Variable variable) {
-        final Column column = schema.column(variable.name());
+        final Column column = schema.column(variable.reference());
 
         return valuesHolder.createReference(column.index(), column.domain());
     }

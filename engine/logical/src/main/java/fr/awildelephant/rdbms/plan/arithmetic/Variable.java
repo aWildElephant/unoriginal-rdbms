@@ -21,8 +21,7 @@ public final class Variable implements ValueExpression {
         return new Variable(reference, domain);
     }
 
-    // TODO: rename
-    public ColumnReference name() {
+    public ColumnReference reference() {
         return reference;
     }
 
