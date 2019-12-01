@@ -7,9 +7,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public final class Schema {
+
+    public static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final List<ColumnReference> allColumns;
     private final Map<String, Map<String, Column>> columnIndex;

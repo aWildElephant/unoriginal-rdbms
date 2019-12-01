@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.engine.operators.values;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.evaluator.Values;
-import fr.awildelephant.rdbms.schema.ColumnReference;
 
 public final class NoValues implements Values {
 
@@ -17,7 +16,7 @@ public final class NoValues implements Values {
     }
 
     @Override
-    public DomainValue valueOf(ColumnReference column) {
-        return null;
+    public DomainValue valueOf(int index) {
+        throw new IllegalStateException();
     }
 }

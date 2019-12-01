@@ -29,6 +29,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,10 +66,19 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     private Map<ColumnReference, Reference> references = new HashMap<>();
 
-    static Formula createFormula(ValueExpression expression) {
+    static Formula createFormula(ValueExpression expression, Schema inputSchema) {
         final ValueExpressionToFormulaTransformer transformer = new ValueExpressionToFormulaTransformer();
+        final Operation operation = transformer.apply(expression);
+        final Map<ColumnReference, Reference> referenceMap = transformer.references;
+        final Reference[] references = new Reference[inputSchema.numberOfAttributes()];
 
-        return new Formula(transformer.apply(expression), transformer.references);
+        referenceMap.forEach((reference, placeholder) -> {
+            final int index = inputSchema.indexOf(reference);
+
+            references[index] = placeholder;
+        });
+
+        return new Formula(operation, references);
     }
 
     @Override

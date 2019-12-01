@@ -48,12 +48,10 @@ import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.plan.alias.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
-import static java.util.Collections.emptyList;
+import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
-
-    private static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final Storage storage;
     private final Schema outerQuerySchema;

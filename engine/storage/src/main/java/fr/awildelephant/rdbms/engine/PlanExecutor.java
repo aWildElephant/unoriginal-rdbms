@@ -53,6 +53,7 @@ import java.util.UUID;
 import static fr.awildelephant.rdbms.engine.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
 public final class PlanExecutor implements LopVisitor<List<Table>> {
@@ -222,7 +223,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - FilterOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
 
-        final FilterOperator operator = new FilterOperator(createFormula(filter.filter()));
+        final FilterOperator operator = new FilterOperator(createFormula(filter.filter(), filter.input().schema()));
 
         final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
 
@@ -272,7 +273,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         if (canUseHashJoin(expressions)) {
             return createHashJoinOperator(expressions, leftInputSchema, rightInputSchema, innerJoinLop.schema());
         } else {
-            return createNestedLoopJoinOperator(innerJoinLop, leftInputSchema, rightInputSchema);
+            return createNestedLoopJoinOperator(innerJoinLop);
         }
     }
 
@@ -327,10 +328,8 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         return new InnerHashJoinOperator(leftMapping, rightMapping, outputSchema);
     }
 
-    private InnerNestedLoopJoinOperator createNestedLoopJoinOperator(InnerJoinLop innerJoinLop, Schema leftInputSchema, Schema rightInputSchema) {
-        return new InnerNestedLoopJoinOperator(createFormula(innerJoinLop.joinSpecification()),
-                                               leftInputSchema,
-                                               rightInputSchema,
+    private InnerNestedLoopJoinOperator createNestedLoopJoinOperator(InnerJoinLop innerJoinLop) {
+        return new InnerNestedLoopJoinOperator(createFormula(innerJoinLop.joinSpecification(), innerJoinLop.schema()),
                                                innerJoinLop.schema());
     }
 
@@ -366,9 +365,11 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - MapOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
 
+        final Schema inputSchema = mapNode.input().schema();
+
         final List<Formula> formulas = mapNode.expressions()
                                               .stream()
-                                              .map(ValueExpressionToFormulaTransformer::createFormula)
+                                              .map(expression -> createFormula(expression, inputSchema))
                                               .collect(toList());
 
         final MapOperator operator = new MapOperator(formulas, mapNode.schema());
@@ -494,7 +495,8 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
 
         final List<List<Formula>> formulas = matrix.stream()
                                                    .map(row -> row.stream()
-                                                                  .map(ValueExpressionToFormulaTransformer::createFormula)
+                                                                  .map(expression -> createFormula(expression,
+                                                                                                   EMPTY_SCHEMA))
                                                                   .collect(toList()))
                                                    .collect(toList());
 

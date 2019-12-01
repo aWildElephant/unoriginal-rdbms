@@ -25,7 +25,7 @@ public class MapOperator implements Operator<Table, Table> {
     public Table compute(Table inputTable) {
         final Table outputTable = simpleTable(outputSchema);
         final Schema inputSchema = inputTable.schema();
-        final RecordValues values = new RecordValues(inputSchema);
+        final RecordValues values = new RecordValues();
 
         for (Record record : inputTable) {
             final Record extendedRecord = computeMaps(record, inputSchema, values);

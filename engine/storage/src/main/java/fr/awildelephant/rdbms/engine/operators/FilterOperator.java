@@ -22,7 +22,7 @@ public class FilterOperator implements Operator<Table, Table> {
         final Schema inputSchema = inputTable.schema();
         final Table outputTable = simpleTable(inputSchema);
 
-        final RecordValues values = new RecordValues(inputSchema);
+        final RecordValues values = new RecordValues();
 
         for (Record record : inputTable) {
             values.setRecord(record);
