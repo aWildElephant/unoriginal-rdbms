@@ -258,8 +258,9 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(OuterQueryVariable outerQueryVariable) {
-        return references.computeIfAbsent(outerQueryVariable.reference(),
-                                          unused -> reference(outerQueryVariable.domain()));
+        final String error = "Unresolved outer query reference to " + outerQueryVariable.reference().fullName();
+
+        throw new IllegalStateException(error);
     }
 
     @Override
