@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.engine;
 
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
-import fr.awildelephant.rdbms.evaluator.operation.Reference;
+import fr.awildelephant.rdbms.evaluator.operation.ValuesHolder;
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression;
@@ -27,12 +27,9 @@ import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
-import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static fr.awildelephant.rdbms.evaluator.operation.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
@@ -52,7 +49,6 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.inte
 import static fr.awildelephant.rdbms.evaluator.operation.LikePredicate.likePredicate;
 import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
-import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.equalComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessOrEqualComparison;
@@ -64,21 +60,22 @@ import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
 public final class ValueExpressionToFormulaTransformer extends DefaultValueExpressionVisitor<Operation> {
 
-    private Map<ColumnReference, Reference> references = new HashMap<>();
+    private final Schema schema;
+    private final ValuesHolder valuesHolder;
+
+    public ValueExpressionToFormulaTransformer(Schema schema) {
+        this.schema = schema;
+        this.valuesHolder = new ValuesHolder();
+    }
+
+    private ValuesHolder valuesHolder() {
+        return valuesHolder;
+    }
 
     static Formula createFormula(ValueExpression expression, Schema inputSchema) {
-        final ValueExpressionToFormulaTransformer transformer = new ValueExpressionToFormulaTransformer();
-        final Operation operation = transformer.apply(expression);
-        final Map<ColumnReference, Reference> referenceMap = transformer.references;
-        final Reference[] references = new Reference[inputSchema.numberOfAttributes()];
+        final ValueExpressionToFormulaTransformer transformer = new ValueExpressionToFormulaTransformer(inputSchema);
 
-        referenceMap.forEach((reference, placeholder) -> {
-            final int index = inputSchema.indexOf(reference);
-
-            references[index] = placeholder;
-        });
-
-        return new Formula(operation, references);
+        return new Formula(transformer.apply(expression), transformer.valuesHolder());
     }
 
     @Override
@@ -295,7 +292,9 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(Variable variable) {
-        return references.computeIfAbsent(variable.name(), unused -> reference(variable.domain()));
+        final Column column = schema.column(variable.name());
+
+        return valuesHolder.createReference(column.index(), column.domain());
     }
 
     @Override
