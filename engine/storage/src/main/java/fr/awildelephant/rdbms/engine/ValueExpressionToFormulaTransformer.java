@@ -24,6 +24,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
+import fr.awildelephant.rdbms.plan.arithmetic.SubstringExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
@@ -49,6 +50,7 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.inte
 import static fr.awildelephant.rdbms.evaluator.operation.LikePredicate.likePredicate;
 import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
+import static fr.awildelephant.rdbms.evaluator.operation.SubstringOperation.substringOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.equalComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.comparison.ComparisonFactory.lessOrEqualComparison;
@@ -268,6 +270,15 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final String error = "Unresolved outer query reference to " + outerQueryVariable.reference().fullName();
 
         throw new IllegalStateException(error);
+    }
+
+    @Override
+    public Operation visit(SubstringExpression substring) {
+        final Operation input = apply(substring.input());
+        final Operation start = apply(substring.start());
+        final Operation length = apply(substring.length());
+
+        return substringOperation(input, start, length);
     }
 
     @Override

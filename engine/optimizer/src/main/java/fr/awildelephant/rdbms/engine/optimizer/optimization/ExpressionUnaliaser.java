@@ -21,6 +21,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.NotExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
+import fr.awildelephant.rdbms.plan.arithmetic.SubstringExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpressionVisitor;
@@ -51,6 +52,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable.outerQue
 import static fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression.subtractExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
 
+// TODO: utiliser transformInputs pour réduire le nombre de lignes
 public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueExpression> {
 
     private final Alias alias;
@@ -166,6 +168,11 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
     @Override
     public ValueExpression visit(OuterQueryVariable outerQueryVariable) {
         return outerQueryVariable(alias.unalias(outerQueryVariable.reference()), outerQueryVariable.domain());
+    }
+
+    @Override
+    public ValueExpression visit(SubstringExpression substring) {
+        return substring.transformInputs(this);
     }
 
     @Override

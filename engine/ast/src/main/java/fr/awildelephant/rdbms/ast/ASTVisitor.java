@@ -134,6 +134,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(SortSpecificationList sortSpecificationList);
 
+    T visit(Substring substring);
+
     T visit(TableAlias tableAlias);
 
     T visit(TableElementList tableElementList);

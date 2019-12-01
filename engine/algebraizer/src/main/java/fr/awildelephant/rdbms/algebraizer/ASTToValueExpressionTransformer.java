@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.Substring;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Between;
@@ -71,6 +72,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression.notEqual
 import static fr.awildelephant.rdbms.plan.arithmetic.NotExpression.notExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable.outerQueryVariable;
+import static fr.awildelephant.rdbms.plan.arithmetic.SubstringExpression.substringExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression.subtractExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
@@ -379,6 +381,15 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
                                                                                 qualifiedColumnReference.name());
 
         return createVariable(reference);
+    }
+
+    @Override
+    public ValueExpression visit(Substring substring) {
+        final ValueExpression input = apply(substring.input());
+        final ValueExpression start = apply(substring.start());
+        final ValueExpression length = apply(substring.length());
+
+        return substringExpression(input, start, length);
     }
 
     @Override

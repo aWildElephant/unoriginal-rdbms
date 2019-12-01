@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.Substring;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -167,6 +168,11 @@ public final class FormulaOrNotFormulaDifferentiator extends DefaultASTVisitor<B
 
     @Override
     public Boolean visit(Minus minus) {
+        return TRUE;
+    }
+
+    @Override
+    public Boolean visit(Substring substring) {
         return TRUE;
     }
 

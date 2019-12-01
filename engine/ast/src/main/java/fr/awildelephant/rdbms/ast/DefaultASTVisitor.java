@@ -250,6 +250,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(Substring substring) {
+        return defaultVisit(substring);
+    }
+
+    @Override
     public T visit(Values values) {
         return defaultVisit(values);
     }

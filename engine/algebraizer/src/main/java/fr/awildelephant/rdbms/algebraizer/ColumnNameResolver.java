@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.Substring;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Avg;
@@ -223,6 +224,12 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(QualifiedColumnName qualifiedColumnReference) {
         return qualifiedColumnReference.qualifier() + '.' + qualifiedColumnReference.name();
+    }
+
+    @Override
+    public String visit(Substring substring) {
+        return "substring(" + apply(substring.input()) + " from " + apply(substring.start()) + " for " + apply(
+                substring.length()) + ")";
     }
 
     @Override

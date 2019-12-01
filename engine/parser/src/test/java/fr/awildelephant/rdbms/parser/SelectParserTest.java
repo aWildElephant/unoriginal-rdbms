@@ -12,15 +12,20 @@ import static fr.awildelephant.rdbms.ast.Limit.limit;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
 import static fr.awildelephant.rdbms.ast.OrderingSpecification.DESCENDING;
 import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
+import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.SortSpecification.sortSpecification;
 import static fr.awildelephant.rdbms.ast.SortSpecificationList.sortSpecificationList;
+import static fr.awildelephant.rdbms.ast.Substring.substring;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
+import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
+import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.columns;
 
@@ -136,5 +141,12 @@ class SelectParserTest {
         assertParsing("SELECT test.a FROM test",
 
                       select(List.of(qualifiedColumnName("test", "a")), tableName("test"), null, null, null, null));
+    }
+
+    @Test
+    void it_should_parse_the_substring_method() {
+        assertParsing("VALUES (SUBSTRING ('caca' FROM 0 FOR 2))",
+
+                      rows(row(substring(textLiteral("caca"), integerLiteral(0), integerLiteral(2)))));
     }
 }

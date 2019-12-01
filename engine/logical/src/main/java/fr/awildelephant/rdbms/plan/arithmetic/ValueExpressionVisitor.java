@@ -48,6 +48,8 @@ public interface ValueExpressionVisitor<T> extends Function<ValueExpression, T> 
 
     T visit(OuterQueryVariable outerQueryVariable);
 
+    T visit(SubstringExpression substring);
+
     T visit(SubtractExpression subtract);
 
     T visit(Variable variable);

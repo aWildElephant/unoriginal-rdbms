@@ -23,6 +23,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXISTS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXTRACT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
@@ -46,6 +47,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUBSTRING;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT;
@@ -314,6 +316,17 @@ public enum Keywords implements Token {
             return FALSE;
         }
     },
+    FOR_TOKEN {
+        @Override
+        public String text() {
+            return "for";
+        }
+
+        @Override
+        public TokenType type() {
+            return FOR;
+        }
+    },
     FOREIGN_TOKEN {
         @Override
         public String text() {
@@ -565,6 +578,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return SELECT;
+        }
+    },
+    SUBSTRING_TOKEN {
+        @Override
+        public String text() {
+            return "substring";
+        }
+
+        @Override
+        public TokenType type() {
+            return SUBSTRING;
         }
     },
     SUM_TOKEN {

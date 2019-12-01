@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
+import static fr.awildelephant.rdbms.ast.Substring.substring;
 import static fr.awildelephant.rdbms.ast.value.Avg.avg;
 import static fr.awildelephant.rdbms.ast.value.CaseWhen.caseWhen;
 import static fr.awildelephant.rdbms.ast.value.Count.count;
@@ -36,6 +37,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ELSE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
@@ -62,6 +64,24 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
+            case SUBSTRING:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final AST input = deriveValueExpression(lexer);
+
+                consumeAndExpect(FROM, lexer);
+
+                final AST start = deriveValueExpression(lexer);
+
+                consumeAndExpect(FOR, lexer);
+
+                final AST length = deriveValueExpression(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return substring(input, start, length);
             case TEXT_LITERAL:
                 return deriveTextLiteral(lexer);
             case MINUS:

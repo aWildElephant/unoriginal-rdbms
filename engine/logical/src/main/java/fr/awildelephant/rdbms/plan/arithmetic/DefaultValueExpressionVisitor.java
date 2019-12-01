@@ -103,6 +103,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(SubstringExpression substring) {
+        return defaultVisit(substring);
+    }
+
+    @Override
     public T visit(SubtractExpression subtract) {
         return defaultVisit(subtract);
     }
