@@ -20,7 +20,7 @@ final class AliasExtractor {
 
             final ColumnReference columnReference = columnReferenceTransformer.apply(unaliasedColumn);
 
-            collector.addAlias(columnReference.table().orElse(""), columnReference.name(), aliasedColumn.alias());
+            collector.addAlias(columnReference, aliasedColumn.alias());
 
             collector.addUnaliasedColumn(unaliasedColumn);
         } else {

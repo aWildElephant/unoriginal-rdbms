@@ -10,12 +10,8 @@ public final class ColumnAlias implements Alias {
 
     private final Map<String, Map<String, String>> aliases;
 
-    private ColumnAlias(Map<String, Map<String, String>> aliases) {
+    ColumnAlias(Map<String, Map<String, String>> aliases) {
         this.aliases = aliases;
-    }
-
-    public static ColumnAlias columnAlias(Map<String, Map<String, String>> aliases) {
-        return new ColumnAlias(aliases);
     }
 
     @Override

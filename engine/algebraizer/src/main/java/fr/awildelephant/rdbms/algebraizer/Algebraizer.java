@@ -35,18 +35,17 @@ import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
-import static fr.awildelephant.rdbms.plan.alias.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
@@ -196,9 +195,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         plan = createProjection(plan, outputColumns);
 
-        final Map<String, Map<String, String>> aliasing = aliasCollector.aliasing();
-        if (!aliasing.isEmpty()) {
-            plan = new AliasLop(plan, columnAlias(aliasing));
+        final Optional<ColumnAlias> aliasing = aliasCollector.aliasing();
+        if (aliasing.isPresent()) {
+            plan = new AliasLop(plan, aliasing.get());
         }
 
         if (groupByClause.isPresent()) {

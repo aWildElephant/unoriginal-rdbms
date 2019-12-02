@@ -1,16 +1,18 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
+import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 final class AliasCollector {
 
     private final List<AST> unaliasedColumns = new ArrayList<>();
-    private final Map<String, Map<String, String>> aliasing = new HashMap<>();
+    private final ColumnAliasBuilder columnAliasBuilder = new ColumnAliasBuilder();
 
     void addUnaliasedColumn(AST column) {
         unaliasedColumns.add(column);
@@ -20,19 +22,11 @@ final class AliasCollector {
         return unaliasedColumns;
     }
 
-    void addAlias(String table, String original, String alias) {
-        aliasing.compute(original, (unused, aliases) -> {
-            if (aliases == null) {
-                aliases = new HashMap<>();
-            }
-
-            aliases.put(table, alias);
-
-            return aliases;
-        });
+    void addAlias(ColumnReference original, String alias) {
+        columnAliasBuilder.add(original, alias);
     }
 
-    Map<String, Map<String, String>> aliasing() {
-        return aliasing;
+    Optional<ColumnAlias> aliasing() {
+        return columnAliasBuilder.build();
     }
 }
