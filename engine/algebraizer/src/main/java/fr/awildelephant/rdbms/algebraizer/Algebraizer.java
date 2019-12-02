@@ -16,10 +16,8 @@ import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.engine.Storage;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.BreakdownLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.CollectLop;
@@ -280,10 +278,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(TableName tableReference) {
-        final String name = tableReference.name();
-        final Table table = storage.get(name);
-
-        return new BaseTableLop(name, table.schema());
+        return storage.getOperator(tableReference.name());
     }
 
     @Override

@@ -64,6 +64,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(CreateTable createTable);
 
+    T visit(CreateView createView);
+
     T visit(DecimalLiteral decimalLiteral);
 
     T visit(Distinct distinct);

@@ -10,7 +10,7 @@ import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.DropTableStatementRule.deriveDropTableStatement;
 import static fr.awildelephant.rdbms.parser.rules.InsertStatementRule.deriveInsertStatementRule;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
-import static fr.awildelephant.rdbms.parser.rules.TableDefinitionRule.deriveTableDefinitionRule;
+import static fr.awildelephant.rdbms.parser.rules.TableDefinitionRule.deriveCreateStatement;
 
 public final class StatementRule {
 
@@ -34,7 +34,7 @@ public final class StatementRule {
 
         switch (token.type()) {
             case CREATE:
-                return deriveTableDefinitionRule(lexer);
+                return deriveCreateStatement(lexer);
             case DROP:
                 return deriveDropTableStatement(lexer);
             case INSERT:

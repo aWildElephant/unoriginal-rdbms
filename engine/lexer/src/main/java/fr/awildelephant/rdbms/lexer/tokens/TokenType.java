@@ -79,6 +79,7 @@ public enum TokenType {
     UNKNOWN,
     VALUES,
     VARCHAR,
+    VIEW,
     WHEN,
     WHERE,
     YEAR

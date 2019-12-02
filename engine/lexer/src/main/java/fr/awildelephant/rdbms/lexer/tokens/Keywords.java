@@ -57,6 +57,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNIQUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNKNOWN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VIEW;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
@@ -688,6 +689,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return VARCHAR;
+        }
+    },
+    VIEW_TOKEN {
+        @Override
+        public String text() {
+            return "view";
+        }
+
+        @Override
+        public TokenType type() {
+            return VIEW;
         }
     },
     WHEN_TOKEN {

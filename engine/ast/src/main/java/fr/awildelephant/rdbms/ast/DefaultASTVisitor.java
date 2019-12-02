@@ -95,6 +95,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(CreateView createView) {
+        return defaultVisit(createView);
+    }
+
+    @Override
     public T visit(DecimalLiteral decimalLiteral) {
         return defaultVisit(decimalLiteral);
     }
