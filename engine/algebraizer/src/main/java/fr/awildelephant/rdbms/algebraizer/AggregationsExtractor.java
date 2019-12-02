@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.value.Count;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.Divide;
 import fr.awildelephant.rdbms.ast.value.Greater;
+import fr.awildelephant.rdbms.ast.value.Max;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
@@ -70,6 +71,14 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
     @Override
     public AST visit(Greater greater) {
         return greater(apply(greater.left()), apply(greater.right()));
+    }
+
+    @Override
+    public AST visit(Max max) {
+        final String name = nameResolver.apply(max);
+        aggregates.put(name, max);
+
+        return unqualifiedColumnName(name);
     }
 
     @Override

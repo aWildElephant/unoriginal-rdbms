@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.Column;
@@ -55,6 +56,8 @@ public final class AggregationLop extends AbstractLop {
             return INTEGER;
         } else if (aggregate instanceof AvgAggregate) {
             return DECIMAL;
+        } else if (aggregate instanceof MaxAggregate) {
+            return inputSchema.column(((MaxAggregate) aggregate).input()).domain();
         } else if (aggregate instanceof MinAggregate) {
             return inputSchema.column(((MinAggregate) aggregate).input()).domain();
         } else if (aggregate instanceof SumAggregate) {

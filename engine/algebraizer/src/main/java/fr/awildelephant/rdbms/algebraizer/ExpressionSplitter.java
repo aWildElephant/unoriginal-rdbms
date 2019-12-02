@@ -5,10 +5,12 @@ import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Count;
 import fr.awildelephant.rdbms.ast.value.CountStar;
+import fr.awildelephant.rdbms.ast.value.Max;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 
@@ -54,6 +56,14 @@ final class ExpressionSplitter {
                 }
 
                 collector.addAggregate(new AvgAggregate(columnReferenceTransformer.apply(avgInput)));
+            } else if (aggregate instanceof Max) {
+                final AST maxInput = ((Max) aggregate).input();
+
+                if (!(maxInput instanceof ColumnName)) {
+                    collector.addMapBelowAggregates(subqueryExtractor.apply(maxInput));
+                }
+
+                collector.addAggregate(new MaxAggregate(columnReferenceTransformer.apply(maxInput)));
             } else if (aggregate instanceof Min) {
                 final AST minInput = ((Min) aggregate).input();
 

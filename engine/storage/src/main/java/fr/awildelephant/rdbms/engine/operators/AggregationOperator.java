@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.Column;
@@ -90,6 +91,8 @@ public class AggregationOperator implements Operator<Table, Table> {
             }
         } else if (aggregate instanceof CountStarAggregate) {
             return computeCountStarAggregation(inputTable);
+        } else if (aggregate instanceof MaxAggregate) {
+            return computeMaxAggregate(((MaxAggregate) aggregate).input(), inputTable);
         } else if (aggregate instanceof MinAggregate) {
             return computeMinAggregate(((MinAggregate) aggregate).input(), inputTable);
         } else if (aggregate instanceof SumAggregate) {
@@ -159,10 +162,49 @@ public class AggregationOperator implements Operator<Table, Table> {
         }
     }
 
+    private DomainValue computeMaxAggregate(ColumnReference inputName, Table inputTable) {
+        final Column column = inputTable.schema().column(inputName);
+        final int columnIndex = column.index();
+
+        final RecordComparator comparator = recordComparator(column, columnIndex);
+
+        Record maxRecord = null;
+
+        for (Record record : inputTable) {
+            if (maxRecord == null || comparator.compare(record, maxRecord) > 0) {
+                maxRecord = record;
+            }
+        }
+
+        if (maxRecord == null) {
+            return nullValue();
+        } else {
+            return maxRecord.get(columnIndex);
+        }
+    }
+
     private DomainValue computeMinAggregate(ColumnReference inputName, Table inputTable) {
         final Column column = inputTable.schema().column(inputName);
         final int columnIndex = column.index();
 
+        final RecordComparator comparator = recordComparator(column, columnIndex);
+
+        Record minRecord = null;
+
+        for (Record record : inputTable) {
+            if (minRecord == null || comparator.compare(record, minRecord) < 0) {
+                minRecord = record;
+            }
+        }
+
+        if (minRecord == null) {
+            return nullValue();
+        } else {
+            return minRecord.get(columnIndex);
+        }
+    }
+
+    private RecordComparator recordComparator(Column column, int columnIndex) {
         final RecordComparator comparator;
         // TODO: create a factory method for this
         switch (column.domain()) {
@@ -181,20 +223,7 @@ public class AggregationOperator implements Operator<Table, Table> {
             default:
                 throw new UnsupportedOperationException(); // TODO 8)
         }
-
-        Record minRecord = null;
-
-        for (Record record : inputTable) {
-            if (minRecord == null || comparator.compare(record, minRecord) < 0) {
-                minRecord = record;
-            }
-        }
-
-        if (minRecord == null) {
-            return nullValue();
-        } else {
-            return minRecord.get(columnIndex);
-        }
+        return comparator;
     }
 
     private DomainValue computeIntegerSumAggregate(ColumnReference inputName, Table inputTable) {

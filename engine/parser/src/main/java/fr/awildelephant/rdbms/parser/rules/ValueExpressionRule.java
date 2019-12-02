@@ -24,6 +24,7 @@ import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.DAY_GRANULARI
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.MONTH_GRANULARITY;
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.YEAR_GRANULARITY;
 import static fr.awildelephant.rdbms.ast.value.IntervalLiteral.intervalLiteral;
+import static fr.awildelephant.rdbms.ast.value.Max.max;
 import static fr.awildelephant.rdbms.ast.value.Min.min;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
 import static fr.awildelephant.rdbms.ast.value.Multiply.multiply;
@@ -251,6 +252,15 @@ final class ValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return count(distinct, input);
+            case MAX:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final AST maxInput = deriveValueExpression(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return max(maxInput);
             case MIN:
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);

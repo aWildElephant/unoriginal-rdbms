@@ -19,6 +19,7 @@ import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.Max;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
@@ -103,6 +104,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Like like);
 
     T visit(Limit limit);
+
+    T visit(Max max);
 
     T visit(Min min);
 

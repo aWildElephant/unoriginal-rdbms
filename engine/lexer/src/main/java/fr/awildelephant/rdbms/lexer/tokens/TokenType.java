@@ -51,6 +51,7 @@ public enum TokenType {
     LESS_OR_EQUAL,
     LIKE,
     LIMIT,
+    MAX,
     MIN,
     MINUS,
     MONTH,
