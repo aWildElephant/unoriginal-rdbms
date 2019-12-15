@@ -3,13 +3,13 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 
-final class JoinUtils {
+public final class JoinUtils {
 
     private JoinUtils() {
 
     }
 
-    static Record joinRecords(Record leftRecord, Record rightRecord) {
+    public static Record joinRecords(Record leftRecord, Record rightRecord) {
         final int numberOfColumnsFromLeftTable = leftRecord.size();
 
         final DomainValue[] values = new DomainValue[numberOfColumnsFromLeftTable + rightRecord.size()];

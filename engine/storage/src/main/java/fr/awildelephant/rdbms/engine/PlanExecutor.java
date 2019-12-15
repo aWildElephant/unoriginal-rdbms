@@ -9,8 +9,6 @@ import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
 import fr.awildelephant.rdbms.engine.operators.CartesianProductOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.FilterOperator;
-import fr.awildelephant.rdbms.engine.operators.InnerHashJoinOperator;
-import fr.awildelephant.rdbms.engine.operators.InnerNestedLoopJoinOperator;
 import fr.awildelephant.rdbms.engine.operators.JoinOperator;
 import fr.awildelephant.rdbms.engine.operators.LimitOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
@@ -18,6 +16,12 @@ import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.SortOperator;
 import fr.awildelephant.rdbms.engine.operators.SubqueryExecutionOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
+import fr.awildelephant.rdbms.engine.operators.join.HashJoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.join.InnerJoinOutputCreator;
+import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.join.JoinOutputCreator;
+import fr.awildelephant.rdbms.engine.operators.join.LeftJoinOutputCreator;
+import fr.awildelephant.rdbms.engine.operators.join.NestedLoopJoinMatcher;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
@@ -28,6 +32,7 @@ import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
@@ -250,15 +255,22 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
                     () -> computeSize(leftPartitions),
                     () -> computeSize(rightPartitions));
 
-        final JoinOperator operator = chooseJoinOperator(innerJoinLop, leftInput.schema(), rightInput.schema());
-
-        LOGGER.info("{} - Using {} algorithm", () -> operatorId, () -> operator.getClass().getSimpleName());
-
         final List<Table> outputPartitions = new ArrayList<>(leftPartitions.size() * rightPartitions.size());
+
+        final Schema leftInputSchema = leftInput.schema();
+        final Schema rightInputSchema = rightInput.schema();
+        final Schema outputSchema = innerJoinLop.schema();
+        final ValueExpression joinSpecification = innerJoinLop.joinSpecification();
+        final JoinOutputCreator outputCreator = new InnerJoinOutputCreator();
 
         for (Table leftPartition : leftPartitions) {
             for (Table rightPartition : rightPartitions) {
-                outputPartitions.add(operator.compute(leftPartition, rightPartition));
+                final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
+                                                              rightInputSchema,
+                                                              outputSchema,
+                                                              joinSpecification,
+                                                              rightPartition);
+                outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
             }
         }
 
@@ -267,13 +279,55 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         return outputPartitions;
     }
 
-    private JoinOperator chooseJoinOperator(InnerJoinLop innerJoinLop, Schema leftInputSchema, Schema rightInputSchema) {
-        final List<ValueExpression> expressions = expandFilters(innerJoinLop.joinSpecification());
+    @Override
+    public List<Table> visit(LeftJoinLop leftJoin) {
+        final LogicalOperator leftInput = leftJoin.left();
+        final List<Table> leftPartitions = apply(leftInput);
+
+        final LogicalOperator rightInput = leftJoin.right();
+        final List<Table> rightPartitions = apply(rightInput);
+
+        final UUID operatorId = UUID.randomUUID();
+
+        LOGGER.info("{} - LeftJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
+                    () -> computeSize(leftPartitions),
+                    () -> computeSize(rightPartitions));
+
+        final List<Table> outputPartitions = new ArrayList<>(leftPartitions.size() * rightPartitions.size());
+
+        final Schema leftInputSchema = leftInput.schema();
+        final Schema rightInputSchema = rightInput.schema();
+        final Schema outputSchema = leftJoin.schema();
+        final ValueExpression joinSpecification = leftJoin.joinSpecification();
+        final JoinOutputCreator outputCreator = new LeftJoinOutputCreator(leftInputSchema, rightInputSchema);
+
+        for (Table leftPartition : leftPartitions) {
+            for (Table rightPartition : rightPartitions) {
+                final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
+                                                              rightInputSchema,
+                                                              outputSchema,
+                                                              joinSpecification,
+                                                              rightPartition);
+                outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
+            }
+        }
+
+        LOGGER.info("{} - LeftJoinOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
+
+        return outputPartitions;
+    }
+
+    private JoinMatcher createJoinMatcher(Schema leftInputSchema,
+                                          Schema rightInputSchema,
+                                          Schema outputSchema,
+                                          ValueExpression joinSpecification,
+                                          Table rightTable) {
+        final List<ValueExpression> expressions = expandFilters(joinSpecification);
 
         if (canUseHashJoin(expressions)) {
-            return createHashJoinOperator(expressions, leftInputSchema, rightInputSchema, innerJoinLop.schema());
+            return createHashJoinMatcher(rightTable, leftInputSchema, rightInputSchema, expressions);
         } else {
-            return createNestedLoopJoinOperator(innerJoinLop);
+            return createNestedLoopJoinMatcher(rightTable, createFormula(joinSpecification, outputSchema));
         }
     }
 
@@ -293,10 +347,10 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         return true;
     }
 
-    private JoinOperator createHashJoinOperator(List<ValueExpression> joinSpecification,
-                                                Schema leftInputSchema,
-                                                Schema rightInputSchema,
-                                                Schema outputSchema) {
+    private JoinMatcher createHashJoinMatcher(Table rightTable,
+                                              Schema leftInputSchema,
+                                              Schema rightInputSchema,
+                                              List<ValueExpression> joinSpecification) {
         final int numberOfEqualFilters = joinSpecification.size();
 
         final List<ColumnReference> leftJoinColumns = new ArrayList<>(numberOfEqualFilters);
@@ -325,12 +379,11 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
             rightMapping[i] = rightInputSchema.indexOf(rightJoinColumns.get(i));
         }
 
-        return new InnerHashJoinOperator(leftMapping, rightMapping, outputSchema);
+        return new HashJoinMatcher(rightTable, leftMapping, rightMapping);
     }
 
-    private InnerNestedLoopJoinOperator createNestedLoopJoinOperator(InnerJoinLop innerJoinLop) {
-        return new InnerNestedLoopJoinOperator(createFormula(innerJoinLop.joinSpecification(), innerJoinLop.schema()),
-                                               innerJoinLop.schema());
+    private JoinMatcher createNestedLoopJoinMatcher(Table rightTable, Formula joinSpecification) {
+        return new NestedLoopJoinMatcher(rightTable, joinSpecification);
     }
 
     @Override

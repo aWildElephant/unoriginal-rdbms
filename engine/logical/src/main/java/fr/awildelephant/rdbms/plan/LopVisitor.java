@@ -26,6 +26,8 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
 
     T visit(InnerJoinLop innerJoinLop);
 
+    T visit(LeftJoinLop leftJoinLop);
+
     T visit(LimitLop limitLop);
 
     T visit(MapLop mapNode);

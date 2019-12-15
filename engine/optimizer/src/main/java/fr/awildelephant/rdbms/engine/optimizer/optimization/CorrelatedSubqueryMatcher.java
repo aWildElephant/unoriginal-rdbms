@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
@@ -80,6 +81,13 @@ public class CorrelatedSubqueryMatcher implements LopVisitor<Boolean> {
         return isCorrelated(innerJoinLop.joinSpecification())
                 || apply(innerJoinLop.left())
                 || apply(innerJoinLop.right());
+    }
+
+    @Override
+    public Boolean visit(LeftJoinLop leftJoinLop) {
+        return isCorrelated(leftJoinLop.joinSpecification())
+                || apply(leftJoinLop.left())
+                || apply(leftJoinLop.right());
     }
 
     @Override

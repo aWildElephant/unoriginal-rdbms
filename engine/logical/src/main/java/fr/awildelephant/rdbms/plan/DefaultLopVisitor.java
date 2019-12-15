@@ -48,6 +48,11 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
+    public T visit(LeftJoinLop leftJoinLop) {
+        return defaultVisit(leftJoinLop);
+    }
+
+    @Override
     public T visit(LimitLop limitLop) {
         return defaultVisit(limitLop);
     }

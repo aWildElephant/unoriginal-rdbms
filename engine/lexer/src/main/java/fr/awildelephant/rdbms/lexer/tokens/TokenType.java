@@ -46,6 +46,7 @@ public enum TokenType {
     INTO,
     JOIN,
     KEY,
+    LEFT,
     LEFT_PAREN,
     LESS,
     LESS_OR_EQUAL,

@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
 import fr.awildelephant.rdbms.ast.InnerJoin;
+import fr.awildelephant.rdbms.ast.LeftJoin;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
@@ -24,6 +25,7 @@ import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
@@ -92,9 +94,21 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         return new InnerJoinLop(leftInput,
                                 rightInput,
-                                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema
-                                ),
+                                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema),
                                 outputSchema);
+    }
+
+    @Override
+    public LogicalOperator visit(LeftJoin leftJoin) {
+        final LogicalOperator leftInput = apply(leftJoin.left());
+        final LogicalOperator rightInput = apply(leftJoin.right());
+
+        final Schema outputSchema = joinOutputSchema(leftInput.schema(), rightInput.schema());
+
+        return new LeftJoinLop(leftInput,
+                               rightInput,
+                               createValueExpression(leftJoin.joinSpecification(), outputSchema, outerQuerySchema),
+                               outputSchema);
     }
 
     @Override

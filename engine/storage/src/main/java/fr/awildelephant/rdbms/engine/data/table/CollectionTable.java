@@ -22,8 +22,13 @@ public class CollectionTable implements Table {
     }
 
     @Override
-    public void add(Record record) {
-        records.add(record);
+    public void add(Record newRecord) {
+        records.add(newRecord);
+    }
+
+    @Override
+    public void addAll(Collection<Record> newRecords) {
+        records.addAll(newRecords);
     }
 
     @Override

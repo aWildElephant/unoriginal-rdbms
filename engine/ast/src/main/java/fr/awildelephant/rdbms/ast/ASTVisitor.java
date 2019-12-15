@@ -97,6 +97,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(IntervalLiteral intervalLiteral);
 
+    T visit(LeftJoin leftJoin);
+
     T visit(Less less);
 
     T visit(LessOrEqual lessOrEqual);

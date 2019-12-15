@@ -31,12 +31,17 @@ public class TableWithChecker implements ManagedTable {
     }
 
     @Override
-    public void add(Record record) {
-        checkers.check(record);
+    public void add(Record newRecord) {
+        checkers.check(newRecord);
 
-        indexes.forEach(index -> index.register(record));
+        indexes.forEach(index -> index.register(newRecord));
 
-        protectedTable.add(record);
+        protectedTable.add(newRecord);
+    }
+
+    @Override
+    public void addAll(Collection<Record> newRecords) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

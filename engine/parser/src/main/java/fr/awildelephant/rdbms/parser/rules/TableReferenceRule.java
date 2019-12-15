@@ -2,12 +2,13 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.lexer.Lexer;
+import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
+import static fr.awildelephant.rdbms.ast.LeftJoin.leftJoin;
 import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IDENTIFIER;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INNER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
@@ -22,23 +23,38 @@ import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
 final class TableReferenceRule {
 
     static AST deriveTableReferenceRule(Lexer lexer) {
-        final AST leftTable = deriveTablePrimary(lexer);
+        final AST leftInput = deriveTablePrimary(lexer);
 
-        if (!nextTokenIs(INNER, lexer)) {
-            return leftTable;
+        final Token nextToken = lexer.lookupNextToken();
+
+        switch (nextToken.type()) {
+            case INNER:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(JOIN, lexer);
+
+                final AST innerJoinRightInput = deriveTableReferenceRule(lexer);
+
+                consumeAndExpect(ON, lexer);
+
+                final AST innerJoinSpecification = deriveBooleanValueExpressionRule(lexer);
+
+                return innerJoin(leftInput, innerJoinRightInput, innerJoinSpecification);
+            case LEFT:
+                lexer.consumeNextToken();
+
+                consumeAndExpect(JOIN, lexer);
+
+                final AST leftJoinRightInput = deriveTableReferenceRule(lexer);
+
+                consumeAndExpect(ON, lexer);
+
+                final AST leftJoinSpecification = deriveBooleanValueExpressionRule(lexer);
+
+                return leftJoin(leftInput, leftJoinRightInput, leftJoinSpecification);
+            default:
+                return leftInput;
         }
-
-        lexer.consumeNextToken();
-
-        consumeAndExpect(JOIN, lexer);
-
-        final AST rightTable = deriveTableReferenceRule(lexer);
-
-        consumeAndExpect(ON, lexer);
-
-        final AST joinSpecification = deriveBooleanValueExpressionRule(lexer);
-
-        return innerJoin(leftTable, rightTable, joinSpecification);
     }
 
     private static AST deriveTablePrimary(Lexer lexer) {

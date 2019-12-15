@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.plan.CollectLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
@@ -113,7 +114,12 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(InnerJoinLop innerJoinLop) {
-        return innerJoinLop; // TODO, not necessary for Q3
+        return innerJoinLop; // TODO
+    }
+
+    @Override
+    public LogicalOperator visit(LeftJoinLop leftJoinLop) {
+        return leftJoinLop; // TODO
     }
 
     @Override
