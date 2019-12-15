@@ -62,6 +62,7 @@ public enum TokenType {
     ON,
     OR,
     ORDER,
+    OUTER,
     PERIOD,
     PLUS,
     QUESTION_MARK,

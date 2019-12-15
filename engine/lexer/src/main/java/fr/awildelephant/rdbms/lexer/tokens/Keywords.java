@@ -47,6 +47,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OUTER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUBSTRING;
@@ -581,6 +582,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return ORDER;
+        }
+    },
+    OUTER_TOKEN {
+        @Override
+        public String text() {
+            return "outer";
+        }
+
+        @Override
+        public TokenType type() {
+            return OUTER;
         }
     },
     REFERENCES_TOKEN {

@@ -17,6 +17,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IDENTIFIER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OUTER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -48,6 +49,7 @@ final class TableReferenceRule {
             case LEFT:
                 lexer.consumeNextToken();
 
+                consumeAndExpect(OUTER, lexer);
                 consumeAndExpect(JOIN, lexer);
 
                 final AST leftJoinRightInput = deriveTableReferenceRule(lexer);

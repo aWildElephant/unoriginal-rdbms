@@ -20,6 +20,7 @@ import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
@@ -31,9 +32,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
+import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpressionFactorizer.factorizeOrExpression;
+import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -118,8 +122,46 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(LeftJoinLop leftJoinLop) {
-        return leftJoinLop; // TODO
+    public LogicalOperator visit(LeftJoinLop leftJoin) {
+        final List<ValueExpression> expandedJoinSpecification = expandFilters(leftJoin.joinSpecification());
+
+        final Schema leftInputSchema = leftJoin.left().schema();
+        final Schema rightInputSchema = leftJoin.right().schema();
+
+        final List<ValueExpression> filtersOnLeftInput = new ArrayList<>();
+        final List<ValueExpression> filtersOnRightInput = new ArrayList<>();
+        final List<ValueExpression> filtersOnBoth = new ArrayList<>();
+
+        for (ValueExpression expression : expandedJoinSpecification) {
+            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+
+            final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
+            final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
+
+            if (!requiresLeftInput) {
+                filtersOnRightInput.add(expression);
+            }
+
+            if (!requiresRightInput) {
+                filtersOnLeftInput.add(expression);
+            }
+
+            if (requiresLeftInput && requiresRightInput) {
+                filtersOnBoth.add(expression);
+            }
+        }
+
+        final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeftInput).apply(leftJoin.left());
+        final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRightInput).apply(leftJoin.right());
+
+        final ConstantExpression alwaysTrue = constantExpression(trueValue(), BOOLEAN);
+        final LeftJoinLop transformedJoin = new LeftJoinLop(transformedLeftInput,
+                                                            transformedRightInput,
+                                                            collapseFilters(filtersOnBoth).orElse(alwaysTrue),
+                                                            leftJoin.schema());
+
+        // TODO: push filters down the left join, transform it to an inner join if possible
+        return createFilterAbove(filters, transformedJoin);
     }
 
     @Override
@@ -167,10 +209,8 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(SubqueryExecutionLop subqueryExecutionLop) {
-        final Schema inputSchema = subqueryExecutionLop.input().schema();
         final Schema subquerySchema = subqueryExecutionLop.subquery().schema();
 
-        final Collection<ValueExpression> filtersOnSubquery = new ArrayList<>();
         final Collection<ValueExpression> filtersOnInput = new ArrayList<>();
         final Collection<ValueExpression> filtersOnBoth = new ArrayList<>();
 

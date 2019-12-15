@@ -19,7 +19,7 @@ Feature: Left join
 
     When I execute the query
       """
-      SELECT name, zip_code FROM person LEFT JOIN address ON address_id = id
+      SELECT name, zip_code FROM person LEFT OUTER JOIN address ON address_id = id
       """
 
     Then I expect the result set
