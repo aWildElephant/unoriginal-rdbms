@@ -145,6 +145,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(TableAlias tableAlias);
 
+    T visit(TableAliasWithColumns tableAliasWithColumns);
+
     T visit(TableElementList tableElementList);
 
     T visit(TableName tableName);

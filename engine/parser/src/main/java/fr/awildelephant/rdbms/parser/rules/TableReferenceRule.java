@@ -4,10 +4,15 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
 import static fr.awildelephant.rdbms.ast.LeftJoin.leftJoin;
 import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
+import static fr.awildelephant.rdbms.ast.TableAliasWithColumns.tableAliasWithColumns;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IDENTIFIER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
@@ -79,6 +84,24 @@ final class TableReferenceRule {
 
         final String alias = consumeIdentifier(lexer);
 
-        return tableAlias(tablePrimary, alias);
+        if (!nextTokenIs(LEFT_PAREN, lexer)) {
+            return tableAlias(tablePrimary, alias);
+        }
+
+        lexer.consumeNextToken();
+
+        final List<String> columnAliases = new ArrayList<>();
+
+        columnAliases.add(consumeIdentifier(lexer));
+
+        while (nextTokenIs(COMMA, lexer)) {
+            lexer.consumeNextToken();
+
+            columnAliases.add(consumeIdentifier(lexer));
+        }
+
+        consumeAndExpect(RIGHT_PAREN, lexer);
+
+        return tableAliasWithColumns(tablePrimary, alias, columnAliases);
     }
 }

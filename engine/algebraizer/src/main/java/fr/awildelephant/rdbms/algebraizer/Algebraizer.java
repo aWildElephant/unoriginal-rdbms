@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
 import fr.awildelephant.rdbms.ast.TableAlias;
+import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
@@ -36,6 +37,7 @@ import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
+import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -288,6 +290,21 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final LogicalOperator input = apply(tableAlias.input());
 
         return new AliasLop(input, tableAlias(tableAlias.alias()));
+    }
+
+    @Override
+    public LogicalOperator visit(TableAliasWithColumns tableAliasWithColumns) {
+        final LogicalOperator input = apply(tableAliasWithColumns.input());
+
+        final ColumnAliasBuilder columnAliasBuilder = new ColumnAliasBuilder();
+        final List<ColumnReference> columnReferences = input.schema().columnNames();
+        for (int i = 0; i < columnReferences.size(); i++) {
+            columnAliasBuilder.add(columnReferences.get(i), tableAliasWithColumns.columnAliases().get(i));
+        }
+
+        return new AliasLop(new AliasLop(input,
+                                         tableAlias(tableAliasWithColumns.tableAlias())),
+                            columnAliasBuilder.build().orElseThrow());
     }
 
     @Override
