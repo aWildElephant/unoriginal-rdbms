@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Substring;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Any;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -43,6 +44,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
     @Override
     public String visit(And and) {
         return apply(and.left()) + " and " + apply(and.right());
+    }
+
+    @Override
+    public String visit(Any any) {
+        return "any(" + apply(any.input()) + ')';
     }
 
     @Override

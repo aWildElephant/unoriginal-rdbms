@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
@@ -50,7 +52,9 @@ public final class AggregationLop extends AbstractLop {
     }
 
     private static Domain outputType(Schema inputSchema, Aggregate aggregate) {
-        if (aggregate instanceof CountAggregate) {
+        if (aggregate instanceof AnyAggregate) {
+            return BOOLEAN;
+        } else if (aggregate instanceof CountAggregate) {
             return INTEGER;
         } else if (aggregate instanceof CountStarAggregate) {
             return INTEGER;

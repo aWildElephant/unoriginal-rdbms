@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.Substring.substring;
+import static fr.awildelephant.rdbms.ast.value.Any.any;
 import static fr.awildelephant.rdbms.ast.value.Avg.avg;
 import static fr.awildelephant.rdbms.ast.value.CaseWhen.caseWhen;
 import static fr.awildelephant.rdbms.ast.value.Count.count;
@@ -279,6 +280,15 @@ final class ValueExpressionRule {
                 consumeAndExpect(RIGHT_PAREN, lexer);
 
                 return sum(sumInput);
+            case ANY:
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+
+                final AST anyInput = deriveValueExpression(lexer);
+
+                consumeAndExpect(RIGHT_PAREN, lexer);
+
+                return any(anyInput);
             case IDENTIFIER:
                 return deriveColumnReference(lexer);
             case QUESTION_MARK:

@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.engine.operators.sort.IntegerColumnComparator;
 import fr.awildelephant.rdbms.engine.operators.sort.RecordComparator;
 import fr.awildelephant.rdbms.engine.operators.sort.TextColumnComparator;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
@@ -26,8 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
+import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
+import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
@@ -79,7 +82,9 @@ public class AggregationOperator implements Operator<Table, Table> {
     }
 
     private DomainValue computeAggregation(Aggregate aggregate, Table inputTable) {
-        if (aggregate instanceof AvgAggregate) {
+        if (aggregate instanceof AnyAggregate) {
+            return computeAnyAggregate(((AnyAggregate) aggregate).input(), inputTable);
+        } else if (aggregate instanceof AvgAggregate) {
             return computeAvgAggregate(((AvgAggregate) aggregate).input(), inputTable);
         } else if (aggregate instanceof CountAggregate) {
             final CountAggregate countAggregate = (CountAggregate) aggregate;
@@ -104,6 +109,29 @@ public class AggregationOperator implements Operator<Table, Table> {
             }
         } else {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    private DomainValue computeAnyAggregate(ColumnReference inputName, Table inputTable) {
+        final int inputIndex = outputSchema.indexOf(inputName);
+        boolean foundNonNullValue = false;
+
+        for (Record record : inputTable) {
+            final DomainValue value = record.get(inputIndex);
+
+            if (!value.isNull()) {
+                if (value.getBool()) {
+                    return trueValue();
+                }
+
+                foundNonNullValue = true;
+            }
+        }
+
+        if (foundNonNullValue) {
+            return falseValue();
+        } else {
+            return nullValue();
         }
     }
 

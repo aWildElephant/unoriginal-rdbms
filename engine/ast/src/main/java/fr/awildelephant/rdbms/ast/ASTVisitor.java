@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Any;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -42,6 +43,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     }
 
     T visit(And and);
+
+    T visit(Any any);
 
     T visit(Asterisk asterisk);
 

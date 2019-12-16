@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Any;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
@@ -38,6 +39,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(And and) {
         return defaultVisit(and);
+    }
+
+    @Override
+    public T visit(Any any) {
+        return defaultVisit(any);
     }
 
     @Override

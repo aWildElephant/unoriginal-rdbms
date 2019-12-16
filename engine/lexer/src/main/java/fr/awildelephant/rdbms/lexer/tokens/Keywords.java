@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ANY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASC;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AVG;
@@ -66,7 +67,6 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 
 public enum Keywords implements Token {
-
     AND_TOKEN {
         @Override
         public String text() {
@@ -76,6 +76,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return AND;
+        }
+    },
+    ANY_TOKEN {
+        @Override
+        public String text() {
+            return "any";
+        }
+
+        @Override
+        public TokenType type() {
+            return ANY;
         }
     },
     AS_TOKEN {

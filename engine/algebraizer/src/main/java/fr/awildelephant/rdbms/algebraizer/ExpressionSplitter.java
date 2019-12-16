@@ -2,12 +2,14 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.value.Any;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Count;
 import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.Max;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Sum;
+import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
@@ -36,7 +38,16 @@ final class ExpressionSplitter {
         collector.addMapAboveAggregates(subqueryExtractor.apply(aggregateFreeOutputColumn));
 
         for (AST aggregate : aggregationsExtractor.collectedAggregates()) {
-            if (aggregate instanceof Count) {
+            if (aggregate instanceof Any) {
+                final Any anyAggregate = (Any) aggregate;
+                final AST anyInput = anyAggregate.input();
+
+                if (!(anyInput instanceof ColumnName)) {
+                    collector.addMapBelowAggregates(subqueryExtractor.apply(anyInput));
+                }
+
+                collector.addAggregate(new AnyAggregate(columnReferenceTransformer.apply(anyInput)));
+            } else if (aggregate instanceof Count) {
                 final Count countAggregate = (Count) aggregate;
                 final AST countInput = countAggregate.input();
 

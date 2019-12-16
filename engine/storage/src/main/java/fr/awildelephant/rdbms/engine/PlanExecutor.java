@@ -556,7 +556,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final TableConstructorOperator operator = new TableConstructorOperator(formulas, tableConstructor.schema());
         final Table output = operator.compute(null);
 
-        LOGGER.info("{} -> TableConstructor - outputSize: {}", operatorId, numberOfRows);
+        LOGGER.info("{} - TableConstructor - outputSize: {}", operatorId, numberOfRows);
 
         return List.of(output);
     }

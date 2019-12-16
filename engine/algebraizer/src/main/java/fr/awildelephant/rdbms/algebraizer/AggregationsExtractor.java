@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.value.Any;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Count;
 import fr.awildelephant.rdbms.ast.value.CountStar;
@@ -43,24 +44,23 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
     }
 
     @Override
+    public AST visit(Any any) {
+        return transform(any);
+    }
+
+    @Override
     public AST visit(Avg avg) {
-        final String name = nameResolver.apply(avg);
-        aggregates.put(name, avg);
-        return unqualifiedColumnName(name);
+        return transform(avg);
     }
 
     @Override
     public AST visit(Count count) {
-        final String name = nameResolver.apply(count);
-        aggregates.put(name, count);
-        return unqualifiedColumnName(name);
+        return transform(count);
     }
 
     @Override
     public AST visit(CountStar countStar) {
-        final String name = nameResolver.apply(countStar);
-        aggregates.put(name, countStar);
-        return unqualifiedColumnName(name);
+        return transform(countStar);
     }
 
     @Override
@@ -75,18 +75,12 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
 
     @Override
     public AST visit(Max max) {
-        final String name = nameResolver.apply(max);
-        aggregates.put(name, max);
-
-        return unqualifiedColumnName(name);
+        return transform(max);
     }
 
     @Override
     public AST visit(Min min) {
-        final String name = nameResolver.apply(min);
-        aggregates.put(name, min);
-
-        return unqualifiedColumnName(name);
+        return transform(min);
     }
 
     @Override
@@ -106,13 +100,17 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
 
     @Override
     public AST visit(Sum sum) {
-        final String name = nameResolver.apply(sum);
-        aggregates.put(name, sum);
-        return unqualifiedColumnName(name);
+        return transform(sum);
     }
 
     @Override
     public AST defaultVisit(AST node) {
         return node;
+    }
+
+    private AST transform(AST aggregation) {
+        final String name = nameResolver.apply(aggregation);
+        aggregates.put(name, aggregation);
+        return unqualifiedColumnName(name);
     }
 }

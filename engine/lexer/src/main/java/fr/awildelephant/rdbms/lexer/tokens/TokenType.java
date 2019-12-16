@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.lexer.tokens;
 
 public enum TokenType {
     AND,
+    ANY,
     AS,
     ASC,
     ASTERISK,
