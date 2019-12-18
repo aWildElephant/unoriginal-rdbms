@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 public class Optimizer {
 
     public LogicalOperator optimize(LogicalOperator plan) {
-        return new FilterPushDown().apply(new SubqueryUnnesting().apply(plan));
+        final LogicalOperator moncul = new SubqueryUnnesting().apply(plan);
+        return new FilterPushDown().apply(moncul);
     }
 }

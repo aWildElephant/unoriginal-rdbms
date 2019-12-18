@@ -118,7 +118,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(InnerJoinLop innerJoinLop) {
-        return innerJoinLop; // TODO
+        return createFilterAbove(filters, innerJoinLop); // TODO
     }
 
     @Override
