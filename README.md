@@ -14,7 +14,7 @@ You can then find:
 
 ## Run the TPC-H tests
 
-The database can run TPC-H Q1 and Q3 at the moment. You can run these queries on the scale factor 1 dataset with:
+The database can run some TPC-H queries. You can run them on the scale factor 1 dataset with:
 `mvn clean test -Ptpch`
 
 You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gzip compressed files in 
@@ -27,13 +27,13 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 - 2019-11-01: TPC-H Q5 support
 - 2019-11-02: TPC-H Q6, Q7 and Q8 support
 - 2019-11-03: TPC-H Q10 support
+- 2019-12-19: TPC-H Q4 (supported decorrelating its subquery so that it doesn't take hours)
 
 ## Next steps
 
 - Fix TODOs
-- Support concurrent queries, probably by having a global queue and executing them one at a time
 - Improve loading speed of the TPC-H scale factor 1 dataset (currently around 2 minute)
-- Support TPC-H Q2
+- Support the remaining TPC-H queries: optimize queries by reordering joins, support subquery in IN predicate (and more?)
 
 ## F.A.Q.
 
