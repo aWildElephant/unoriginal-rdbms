@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class CountAggregate implements Aggregate {
 
@@ -39,6 +40,11 @@ public final class CountAggregate implements Aggregate {
         }
 
         return new UnqualifiedColumnReference(outputName);
+    }
+
+    @Override
+    public Optional<ColumnReference> inputColumn() {
+        return Optional.of(input);
     }
 
     @Override

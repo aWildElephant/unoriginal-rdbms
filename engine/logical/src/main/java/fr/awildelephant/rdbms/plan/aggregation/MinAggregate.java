@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public final class MinAggregate implements Aggregate {
 
@@ -25,6 +26,11 @@ public final class MinAggregate implements Aggregate {
     @Override
     public ColumnReference outputName() {
         return new UnqualifiedColumnReference("min(" + input.fullName() + ")");
+    }
+
+    @Override
+    public Optional<ColumnReference> inputColumn() {
+        return Optional.of(input);
     }
 
     @Override

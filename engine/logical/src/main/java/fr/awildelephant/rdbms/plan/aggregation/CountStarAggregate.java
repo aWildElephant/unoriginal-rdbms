@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.plan.aggregation;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
+import java.util.Optional;
+
 public final class CountStarAggregate implements Aggregate {
 
     private static final CountStarAggregate INSTANCE = new CountStarAggregate();
@@ -25,4 +27,8 @@ public final class CountStarAggregate implements Aggregate {
         return new UnqualifiedColumnReference("count(*)");
     }
 
+    @Override
+    public Optional<ColumnReference> inputColumn() {
+        return Optional.empty();
+    }
 }
