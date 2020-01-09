@@ -31,7 +31,7 @@ Feature: Qualified column names
     Column not found: employer.name
     """
 
-  Scenario: I qualify a column in an average aggregate
+  Scenario: I qualify a column in a min aggregate
 
     When I execute the query
     """
