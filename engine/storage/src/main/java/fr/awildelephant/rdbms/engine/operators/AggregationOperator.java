@@ -3,11 +3,15 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.operators.sort.DateColumnComparator;
-import fr.awildelephant.rdbms.engine.operators.sort.DecimalColumnComparator;
-import fr.awildelephant.rdbms.engine.operators.sort.IntegerColumnComparator;
-import fr.awildelephant.rdbms.engine.operators.sort.RecordComparator;
-import fr.awildelephant.rdbms.engine.operators.sort.TextColumnComparator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.Aggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.AnyAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.AvgAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.CountAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.CountDistinctAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.DecimalSumAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.IntegerSumAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.MaxAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.MinAggregator;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
@@ -17,20 +21,13 @@ import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.Column;
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
-import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
-import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
-import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
@@ -82,227 +79,71 @@ public class AggregationOperator implements Operator<Table, Table> {
     }
 
     private DomainValue computeAggregation(Aggregate aggregate, Table inputTable) {
+        if (aggregate instanceof CountStarAggregate) {
+            return integerValue(inputTable.numberOfTuples());
+        }
+
+        final Schema inputSchema = inputTable.schema();
+
+        final Aggregator aggregator = aggregator(aggregate, inputSchema);
+
+        final int inputColumnIndex = inputSchema.column(aggregate.inputColumn().orElseThrow()).index();
+
+        for (Record record : inputTable) {
+            final boolean done = aggregator.accumulate(record.get(inputColumnIndex));
+
+            if (done) {
+                break;
+            }
+        }
+
+        return aggregator.aggregate();
+    }
+
+    private Aggregator aggregator(Aggregate aggregate, Schema schema) {
         if (aggregate instanceof AnyAggregate) {
-            return computeAnyAggregate(((AnyAggregate) aggregate).input(), inputTable);
+            return new AnyAggregator();
         } else if (aggregate instanceof AvgAggregate) {
-            return computeAvgAggregate(((AvgAggregate) aggregate).input(), inputTable);
+            return new AvgAggregator();
         } else if (aggregate instanceof CountAggregate) {
-            final CountAggregate countAggregate = (CountAggregate) aggregate;
-
-            if (countAggregate.distinct()) {
-                return computeCountDistinctAggregate(countAggregate.input(), inputTable);
+            if (((CountAggregate) aggregate).distinct()) {
+                return new CountDistinctAggregator();
             } else {
-                return computeCountAggregate(countAggregate.input(), inputTable);
+                return new CountAggregator();
             }
-        } else if (aggregate instanceof CountStarAggregate) {
-            return computeCountStarAggregation(inputTable);
         } else if (aggregate instanceof MaxAggregate) {
-            return computeMaxAggregate(((MaxAggregate) aggregate).input(), inputTable);
+            final Column inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+
+            return new MaxAggregator(comparator(inputColumn));
         } else if (aggregate instanceof MinAggregate) {
-            return computeMinAggregate(((MinAggregate) aggregate).input(), inputTable);
+            final Column inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+
+            return new MinAggregator(comparator(inputColumn));
         } else if (aggregate instanceof SumAggregate) {
-            final ColumnReference inputColumn = ((SumAggregate) aggregate).input();
-            if (inputTable.schema().column(inputColumn).domain() == INTEGER) {
-                return computeIntegerSumAggregate(inputColumn, inputTable);
+            final Column inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+
+            if (inputColumn.domain() == INTEGER) {
+                return new IntegerSumAggregator();
             } else {
-                return computeDecimalSumAggregate(inputColumn, inputTable);
+                return new DecimalSumAggregator();
             }
         } else {
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException();
         }
     }
 
-    private DomainValue computeAnyAggregate(ColumnReference inputName, Table inputTable) {
-        final int inputIndex = outputSchema.indexOf(inputName);
-        boolean foundNonNullValue = false;
-
-        for (Record record : inputTable) {
-            final DomainValue value = record.get(inputIndex);
-
-            if (!value.isNull()) {
-                if (value.getBool()) {
-                    return trueValue();
-                }
-
-                foundNonNullValue = true;
-            }
-        }
-
-        if (foundNonNullValue) {
-            return falseValue();
-        } else {
-            return nullValue();
-        }
-    }
-
-    private DomainValue computeCountDistinctAggregate(ColumnReference inputName, Table inputTable) {
-        final int inputIndex = outputSchema.indexOf(inputName);
-        final Set<DomainValue> accumulator = new HashSet<>();
-
-        for (Record record : inputTable) {
-            final DomainValue value = record.get(inputIndex);
-
-            if (!value.isNull()) {
-                accumulator.add(value);
-            }
-        }
-
-        return integerValue(accumulator.size());
-    }
-
-    private DomainValue computeCountAggregate(ColumnReference inputName, Table inputTable) {
-        final int inputIndex = outputSchema.indexOf(inputName);
-        int count = 0;
-
-        for (Record record : inputTable) {
-            if (!record.get(inputIndex).isNull()) {
-                count++;
-            }
-        }
-
-        return integerValue(count);
-    }
-
-    private DomainValue computeAvgAggregate(ColumnReference inputName, Table inputTable) {
-        final int inputIndex = outputSchema.indexOf(inputName);
-        BigDecimal accumulator = null;
-        int numberOfNotNullValues = 0;
-
-        for (Record record : inputTable) {
-            final DomainValue value = record.get(inputIndex);
-
-            if (!value.isNull()) {
-                numberOfNotNullValues++;
-
-                final BigDecimal newValue = value.getBigDecimal();
-                if (accumulator == null) {
-                    accumulator = newValue;
-                } else {
-                    accumulator = accumulator.add(newValue);
-                }
-            }
-        }
-
-        if (accumulator == null) {
-            return nullValue();
-        } else {
-            return decimalValue(accumulator.divide(BigDecimal.valueOf(numberOfNotNullValues), MathContext.DECIMAL64));
-        }
-    }
-
-    private DomainValue computeMaxAggregate(ColumnReference inputName, Table inputTable) {
-        final Column column = inputTable.schema().column(inputName);
-        final int columnIndex = column.index();
-
-        final RecordComparator comparator = recordComparator(column, columnIndex);
-
-        Record maxRecord = null;
-
-        for (Record record : inputTable) {
-            if (maxRecord == null || comparator.compare(record, maxRecord) > 0) {
-                maxRecord = record;
-            }
-        }
-
-        if (maxRecord == null) {
-            return nullValue();
-        } else {
-            return maxRecord.get(columnIndex);
-        }
-    }
-
-    private DomainValue computeMinAggregate(ColumnReference inputName, Table inputTable) {
-        final Column column = inputTable.schema().column(inputName);
-        final int columnIndex = column.index();
-
-        final RecordComparator comparator = recordComparator(column, columnIndex);
-
-        Record minRecord = null;
-
-        for (Record record : inputTable) {
-            if (minRecord == null || comparator.compare(record, minRecord) < 0) {
-                minRecord = record;
-            }
-        }
-
-        if (minRecord == null) {
-            return nullValue();
-        } else {
-            return minRecord.get(columnIndex);
-        }
-    }
-
-    private RecordComparator recordComparator(Column column, int columnIndex) {
-        final RecordComparator comparator;
-        // TODO: create a factory method for this
+    private Comparator<DomainValue> comparator(Column column) {
         switch (column.domain()) {
             case DATE:
-                comparator = new DateColumnComparator(columnIndex);
-                break;
+                return Comparator.comparing(DomainValue::getLocalDate);
             case DECIMAL:
-                comparator = new DecimalColumnComparator(columnIndex);
-                break;
+                return Comparator.comparing(DomainValue::getBigDecimal);
             case INTEGER:
-                comparator = new IntegerColumnComparator(columnIndex);
-                break;
+                return Comparator.comparingInt(DomainValue::getInt);
             case TEXT:
-                comparator = new TextColumnComparator(columnIndex);
-                break;
+                return Comparator.comparing(DomainValue::getString);
             default:
-                throw new UnsupportedOperationException(); // TODO 8)
+                throw new UnsupportedOperationException(); // TODO
         }
-        return comparator;
-    }
-
-    private DomainValue computeIntegerSumAggregate(ColumnReference inputName, Table inputTable) {
-        final int inputIndex = outputSchema.indexOf(inputName);
-        Integer accumulator = null;
-
-        for (Record record : inputTable) {
-            final DomainValue value = record.get(inputIndex);
-
-            if (!value.isNull()) {
-                final int newValue = value.getInt();
-                if (accumulator == null) {
-                    accumulator = newValue;
-                } else {
-                    accumulator = accumulator + newValue;
-                }
-            }
-        }
-
-        if (accumulator == null) {
-            return nullValue();
-        } else {
-            return integerValue(accumulator);
-        }
-    }
-
-    private DomainValue computeDecimalSumAggregate(ColumnReference inputName, Table inputTable) {
-        final int inputIndex = outputSchema.indexOf(inputName);
-        BigDecimal accumulator = null;
-
-        for (Record record : inputTable) {
-            final DomainValue value = record.get(inputIndex);
-
-            if (!value.isNull()) {
-                final BigDecimal newValue = value.getBigDecimal();
-                if (accumulator == null) {
-                    accumulator = newValue;
-                } else {
-                    accumulator = accumulator.add(newValue);
-                }
-            }
-        }
-
-        if (accumulator == null) {
-            return nullValue();
-        } else {
-            return decimalValue(accumulator);
-        }
-    }
-
-    private DomainValue computeCountStarAggregation(Table inputTable) {
-        return integerValue(inputTable.numberOfTuples());
     }
 }
