@@ -1,4 +1,3 @@
-@todo # We need to reorder the joins to be able to execute the query with 8G heap size in a timely fashion
 Feature: TPC-H Q9
 
   Background: TPC-H dataset
