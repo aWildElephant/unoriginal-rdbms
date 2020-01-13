@@ -1,6 +1,8 @@
 package fr.awildelephant.rdbms.plan.alias;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Map;
 import java.util.Objects;
@@ -40,12 +42,18 @@ public final class ColumnAlias implements Alias {
         for (Map.Entry<String, Map<String, String>> aliasesByOriginalColumnName : aliases.entrySet()) {
             for (Map.Entry<String, String> aliasByTable : aliasesByOriginalColumnName.getValue().entrySet()) {
                 if (aliasedColumnName.equals(aliasByTable.getValue())) {
-                    return aliased.renameColumn(aliasesByOriginalColumnName.getKey());
+                    final String optionalOriginalTableName = aliasByTable.getKey();
+                    final String originalColumnName = aliasesByOriginalColumnName.getKey();
+                    if (optionalOriginalTableName.isEmpty()) {
+                        return new UnqualifiedColumnReference(originalColumnName);
+                    } else {
+                        return new QualifiedColumnReference(optionalOriginalTableName, originalColumnName);
+                    }
                 }
             }
         }
 
-        throw new IllegalStateException();
+        return aliased;
     }
 
     @Override

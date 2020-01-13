@@ -101,6 +101,10 @@ public final class Schema {
         return column(columnReference).index();
     }
 
+    public ColumnReference normalize(ColumnReference reference) {
+        return column(reference).name();
+    }
+
     public int numberOfAttributes() {
         return allColumns.size();
     }

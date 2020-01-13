@@ -17,6 +17,7 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -115,7 +116,9 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     private Table executeReadQuery(AST ast) {
         final LogicalOperator rawPlan = algebraizer.apply(ast);
         final LogicalOperator optimizedPlan = optimizer.optimize(rawPlan);
-        return storage.execute(optimizedPlan);
+
+        final List<ColumnReference> queryOutputColumns = rawPlan.schema().columnNames();
+        return storage.execute(new ProjectionLop(optimizedPlan, queryOutputColumns));
     }
 
     @Override

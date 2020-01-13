@@ -9,6 +9,7 @@ import java.util.function.Function;
 public final class SortLop extends AbstractLop {
 
     private final LogicalOperator input;
+    // TODO: stop using AST SortSpecification here
     private final List<SortSpecification> columns;
 
     public SortLop(LogicalOperator input, List<SortSpecification> sortSpecificationList) {

@@ -29,6 +29,12 @@ public final class TableAlias implements Alias {
             return reference;
         }
 
+        final String tableName = reference.table().get();
+
+        if (!tableName.equals(alias)) {
+            return reference;
+        }
+
         return new UnqualifiedColumnReference(reference.name());
     }
 

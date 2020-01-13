@@ -76,6 +76,11 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
         remainingFilters.remove(filter);
 
         final List<LogicalOperator> inputsToJoin = inputsToHaveAllColumns(remainingInputs, filter);
+
+        if (inputsToJoin.isEmpty()) {
+            return continueReordering(new FilterLop(leftmostInput, filter), remainingInputs, remainingFilters);
+        }
+
         remainingInputs.removeAll(inputsToJoin);
 
         final LogicalOperator right = cartesianProducts(inputsToJoin);
