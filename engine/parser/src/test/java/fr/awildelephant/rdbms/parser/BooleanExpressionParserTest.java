@@ -4,11 +4,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.ast.Exists.exists;
 import static fr.awildelephant.rdbms.ast.InValueList.inValueList;
 import static fr.awildelephant.rdbms.ast.Row.row;
+import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.And.and;
@@ -129,5 +132,13 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (EXISTS(VALUES ('coucou')))",
 
                       rows(row(exists(rows(row(textLiteral("coucou")))))));
+    }
+
+    @Test
+    void it_should_parse_an_in_predicate_with_a_subquery() {
+        assertParsing("VALUES (a IN (SELECT b FROM test))",
+
+                      rows(row(in(unqualifiedColumnName("a"),
+                                  select(List.of(unqualifiedColumnName("b")), tableName("test"), null, null, null, null)))));
     }
 }

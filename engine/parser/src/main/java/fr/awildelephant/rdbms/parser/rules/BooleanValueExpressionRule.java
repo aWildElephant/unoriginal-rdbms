@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.parser.rules;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.lexer.Lexer;
+import fr.awildelephant.rdbms.lexer.LexerSnapshot;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
+import static fr.awildelephant.rdbms.parser.rules.QuerySpecificationRule.deriveQuerySpecificationRule;
 import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveValueExpression;
 
 final class BooleanValueExpressionRule {
@@ -139,6 +141,27 @@ final class BooleanValueExpressionRule {
     private static AST deriveInPredicate(AST left, Lexer lexer) {
         lexer.consumeNextToken();
 
+        final LexerSnapshot lexerSnapshot = lexer.save();
+        try {
+            return in(left, deriveInSubquery(lexer));
+        } catch (Exception e) { // TODO: create a custom exception e.g. ParseException
+            lexer.restore(lexerSnapshot);
+
+            return in(left, deriveInPredicateValueList(lexer));
+        }
+    }
+
+    private static AST deriveInSubquery(Lexer lexer) {
+        consumeAndExpect(LEFT_PAREN, lexer);
+
+        final AST subquery = deriveQuerySpecificationRule(lexer);
+
+        consumeAndExpect(RIGHT_PAREN, lexer);
+
+        return subquery;
+    }
+
+    private static AST deriveInPredicateValueList(Lexer lexer) {
         consumeAndExpect(LEFT_PAREN, lexer);
 
         final List<AST> values = new ArrayList<>();
@@ -153,7 +176,7 @@ final class BooleanValueExpressionRule {
 
         consumeAndExpect(RIGHT_PAREN, lexer);
 
-        return in(left, inValueList(values));
+        return inValueList(values);
     }
 
     private static AST deriveBooleanTestLeftInput(final Lexer lexer) {
