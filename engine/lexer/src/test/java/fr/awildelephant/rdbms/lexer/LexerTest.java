@@ -26,6 +26,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PERIOD_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LexerTest {
 
@@ -112,5 +113,21 @@ class LexerTest {
                      new IdentifierToken("two"),
                      PERIOD_TOKEN,
                      new IdentifierToken("three"));
+    }
+
+    @Test
+    void it_should_be_able_to_save_its_state_and_go_back_to_it_when_needed() {
+        final Lexer lexer = new Lexer(InputStreamWrapper.wrap("SELECT * FROM test"));
+
+        lexer.consumeNextToken();
+
+        final LexerSnapshot snapshot = lexer.save();
+
+        lexer.consumeNextToken();
+        lexer.consumeNextToken();
+
+        lexer.restore(snapshot);
+
+        assertThat(lexer.lookupNextToken()).isEqualTo(ASTERISK_TOKEN);
     }
 }

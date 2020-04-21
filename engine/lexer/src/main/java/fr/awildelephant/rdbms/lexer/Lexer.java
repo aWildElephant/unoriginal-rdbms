@@ -8,8 +8,10 @@ import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.List;
 
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
@@ -33,30 +35,31 @@ import static java.lang.Integer.parseInt;
 public final class Lexer {
 
     private final InputStreamWrapper input;
+    private final List<Token> readTokens;
 
-    private Token nextToken;
+    private int cursor;
 
     public Lexer(InputStreamWrapper input) {
         this.input = input;
+
+        this.readTokens = new ArrayList<>();
     }
 
     public Token lookupNextToken() {
-        if (nextToken == null) {
-            nextToken = matchNextToken();
+        // cursor is at most readTokens.size() + 1
+        if (cursor >= readTokens.size()) {
+            readTokens.add(matchNextToken());
         }
 
-        return nextToken;
+        return readTokens.get(cursor);
     }
 
     public Token consumeNextToken() {
-        if (nextToken != null) {
-            final Token token = nextToken;
-            nextToken = null;
+        final Token token = lookupNextToken();
 
-            return token;
-        }
+        cursor++;
 
-        return matchNextToken();
+        return token;
     }
 
     private Token matchNextToken() {
@@ -215,5 +218,13 @@ public final class Lexer {
                 || (codePoint >= 'A' && codePoint <= 'Z')
                 || (codePoint >= '0' && codePoint <= '9')
                 || codePoint == '_';
+    }
+
+    public LexerSnapshot save() {
+        return new LexerSnapshot(cursor);
+    }
+
+    public void restore(LexerSnapshot snapshot) {
+        cursor = snapshot.cursor();
     }
 }
