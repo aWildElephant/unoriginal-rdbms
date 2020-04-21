@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Exists;
+import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.value.And;
 import fr.awildelephant.rdbms.ast.value.Divide;
@@ -21,12 +22,12 @@ import fr.awildelephant.rdbms.ast.value.Or;
 import fr.awildelephant.rdbms.ast.value.Plus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
+import static fr.awildelephant.rdbms.ast.InValueList.inValueList;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.value.And.and;
@@ -98,13 +99,17 @@ public final class SubqueryExtractor extends DefaultASTVisitor<AST> {
 
     @Override
     public AST visit(In in) {
-        final AST input = apply(in.input());
-        final Collection<AST> values = new ArrayList<>(in.values().size());
-        for (AST value : in.values()) {
+        return in(apply(in.input()), apply(in.value()));
+    }
+
+    @Override
+    public AST visit(InValueList inValueList) {
+        final List<AST> values = new ArrayList<>();
+        for (AST value : inValueList.values()) {
             values.add(apply(value));
         }
 
-        return in(input, values);
+        return inValueList(values);
     }
 
     @Override

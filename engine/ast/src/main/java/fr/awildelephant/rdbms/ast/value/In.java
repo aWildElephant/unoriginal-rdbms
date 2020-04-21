@@ -3,29 +3,28 @@ package fr.awildelephant.rdbms.ast.value;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ASTVisitor;
 
-import java.util.Collection;
 import java.util.Objects;
 
 public final class In implements AST {
 
     private final AST input;
-    private final Collection<AST> values;
+    private final AST value;
 
-    private In(AST input, Collection<AST> values) {
+    private In(AST input, AST value) {
         this.input = input;
-        this.values = values;
+        this.value = value;
     }
 
-    public static In in(AST input, Collection<AST> values) {
-        return new In(input, values);
+    public static In in(AST input, AST value) {
+        return new In(input, value);
     }
 
     public AST input() {
         return input;
     }
 
-    public Collection<AST> values() {
-        return values;
+    public AST value() {
+        return value;
     }
 
     @Override
@@ -35,7 +34,7 @@ public final class In implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(input, values);
+        return Objects.hash(input, value);
     }
 
     @Override
@@ -47,6 +46,6 @@ public final class In implements AST {
         final In other = (In) obj;
 
         return Objects.equals(input, other.input)
-                && Objects.equals(values, other.values);
+                && Objects.equals(value, other.value);
     }
 }

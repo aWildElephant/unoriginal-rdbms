@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Substring;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
@@ -43,7 +44,7 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.time.Period;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
@@ -227,8 +228,9 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
     @Override
     public ValueExpression visit(In in) {
         final ValueExpression input = apply(in.input());
-        final Collection<ValueExpression> values = new ArrayList<>(in.values().size());
-        for (AST value : in.values()) {
+
+        final List<ValueExpression> values = new ArrayList<>();
+        for (AST value : ((InValueList) in.value()).values()) {
             values.add(apply(value));
         }
 

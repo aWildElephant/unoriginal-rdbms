@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Exists;
+import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Substring;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
@@ -144,8 +145,17 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
 
     @Override
     public String visit(In in) {
-        final StringJoiner joiner = new StringJoiner(",", apply(in.input()) + " in (", ")");
-        in.values().forEach(value -> joiner.add(apply(value)));
+        return apply(in.input()) + " in (" + apply(in.value()) + ')';
+    }
+
+    @Override
+    public String visit(InValueList inValueList) {
+        final StringJoiner joiner = new StringJoiner(",");
+
+        for (AST value : inValueList.values()) {
+            joiner.add(apply(value));
+        }
+
 
         return joiner.toString();
     }

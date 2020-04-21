@@ -7,6 +7,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
 import static fr.awildelephant.rdbms.ast.Exists.exists;
+import static fr.awildelephant.rdbms.ast.InValueList.inValueList;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
@@ -112,7 +113,7 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (a IN (1, 2, 3))",
 
                       rows(row(in(unqualifiedColumnName("a"),
-                                  List.of(integerLiteral(1), integerLiteral(2), integerLiteral(3))))));
+                                  inValueList(List.of(integerLiteral(1), integerLiteral(2), integerLiteral(3)))))));
     }
 
     @Test
@@ -120,7 +121,7 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (a NOT IN (1, 2))",
 
                       rows(row(not(in(unqualifiedColumnName("a"),
-                                      List.of(integerLiteral(1), integerLiteral(2)))))));
+                                      inValueList(List.of(integerLiteral(1), integerLiteral(2))))))));
     }
 
     @Test

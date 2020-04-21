@@ -6,9 +6,10 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Exists.exists;
+import static fr.awildelephant.rdbms.ast.InValueList.inValueList;
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Between.between;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
@@ -140,7 +141,7 @@ final class BooleanValueExpressionRule {
 
         consumeAndExpect(LEFT_PAREN, lexer);
 
-        final Collection<AST> values = new ArrayList<>();
+        final List<AST> values = new ArrayList<>();
 
         values.add(deriveBooleanValueExpressionRule(lexer));
 
@@ -152,7 +153,7 @@ final class BooleanValueExpressionRule {
 
         consumeAndExpect(RIGHT_PAREN, lexer);
 
-        return in(left, values);
+        return in(left, inValueList(values));
     }
 
     private static AST deriveBooleanTestLeftInput(final Lexer lexer) {
