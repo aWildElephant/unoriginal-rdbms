@@ -3,45 +3,10 @@ package fr.awildelephant.rdbms.engine;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
-import fr.awildelephant.rdbms.engine.operators.AliasOperator;
-import fr.awildelephant.rdbms.engine.operators.BreakdownOperator;
-import fr.awildelephant.rdbms.engine.operators.CartesianProductOperator;
-import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
-import fr.awildelephant.rdbms.engine.operators.FilterOperator;
-import fr.awildelephant.rdbms.engine.operators.JoinOperator;
-import fr.awildelephant.rdbms.engine.operators.LimitOperator;
-import fr.awildelephant.rdbms.engine.operators.MapOperator;
-import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
-import fr.awildelephant.rdbms.engine.operators.SortOperator;
-import fr.awildelephant.rdbms.engine.operators.SubqueryExecutionOperator;
-import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
-import fr.awildelephant.rdbms.engine.operators.join.HashJoinMatcher;
-import fr.awildelephant.rdbms.engine.operators.join.InnerJoinOutputCreator;
-import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
-import fr.awildelephant.rdbms.engine.operators.join.JoinOutputCreator;
-import fr.awildelephant.rdbms.engine.operators.join.LeftJoinOutputCreator;
-import fr.awildelephant.rdbms.engine.operators.join.NestedLoopJoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.*;
+import fr.awildelephant.rdbms.engine.operators.join.*;
 import fr.awildelephant.rdbms.evaluator.Formula;
-import fr.awildelephant.rdbms.plan.AggregationLop;
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.BaseTableLop;
-import fr.awildelephant.rdbms.plan.BreakdownLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.CollectLop;
-import fr.awildelephant.rdbms.plan.DistinctLop;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LeftJoinLop;
-import fr.awildelephant.rdbms.plan.LimitLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.LopVisitor;
-import fr.awildelephant.rdbms.plan.MapLop;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
-import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
@@ -255,7 +220,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
                     () -> computeSize(leftPartitions),
                     () -> computeSize(rightPartitions));
 
-        final List<Table> outputPartitions = new ArrayList<>(leftPartitions.size() * rightPartitions.size());
+        final List<Table> outputPartitions = new ArrayList<>();
 
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
@@ -293,7 +258,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
                     () -> computeSize(leftPartitions),
                     () -> computeSize(rightPartitions));
 
-        final List<Table> outputPartitions = new ArrayList<>(leftPartitions.size() * rightPartitions.size());
+        final List<Table> outputPartitions = new ArrayList<>();
 
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
