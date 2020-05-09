@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.tpch;
 
-import cucumber.api.java8.En;
+import io.cucumber.java8.En;
 import fr.awildelephant.csvloader.Loader;
 import fr.awildelephant.rdbms.test.commons.ExpectedResult;
 import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
