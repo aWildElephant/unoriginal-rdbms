@@ -4,18 +4,18 @@ Feature: In predicate
 
     When I execute the query
       """
-      SELECT column1 IN ('a', 'b') AS result FROM (VALUES
+      SELECT column1 AS result
+      FROM (VALUES
         ('a'),
         ('b'),
         ('c'),
         (null)
-      );
+      )
+      WHERE column1 IN ('a', 'b');
       """
 
     Then I expect the result set
-      | result  |
-      | BOOLEAN |
-      | true    |
-      | true    |
-      | false   |
-      | null    |
+      | result |
+      | TEXT   |
+      | a      |
+      | b      |

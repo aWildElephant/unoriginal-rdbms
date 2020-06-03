@@ -1,24 +1,6 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.AggregationLop;
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.BaseTableLop;
-import fr.awildelephant.rdbms.plan.BreakdownLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.CollectLop;
-import fr.awildelephant.rdbms.plan.DistinctLop;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LeftJoinLop;
-import fr.awildelephant.rdbms.plan.LimitLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.LopVisitor;
-import fr.awildelephant.rdbms.plan.MapLop;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
-import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
@@ -200,6 +182,11 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         final LogicalOperator transformedSubquery = new FilterPushDown().apply(scalarSubquery.input());
 
         return createFilterAbove(filters, new ScalarSubqueryLop(transformedSubquery, scalarSubquery.id()));
+    }
+
+    @Override
+    public LogicalOperator visit(SemiJoinLop semiJoin) {
+        return createFilterAbove(filters, semiJoin); // TODO
     }
 
     @Override

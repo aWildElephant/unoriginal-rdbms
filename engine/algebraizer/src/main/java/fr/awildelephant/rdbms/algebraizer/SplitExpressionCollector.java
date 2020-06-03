@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.algebraizer;
 
+import fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 
@@ -9,12 +10,12 @@ import java.util.List;
 
 final class SplitExpressionCollector {
 
-    private final List<AST> subqueries = new ArrayList<>();
+    private final List<SubqueryJoiner> subqueries = new ArrayList<>();
     private final List<AST> mapsBelowAggregates = new ArrayList<>();
     private final List<Aggregate> aggregates = new ArrayList<>();
     private final List<AST> mapsAboveAggregates = new ArrayList<>();
 
-    void addAllSubqueries(Collection<AST> subquery) {
+    void addAllSubqueries(Collection<SubqueryJoiner> subquery) {
         subqueries.addAll(subquery);
     }
 
@@ -30,7 +31,7 @@ final class SplitExpressionCollector {
         mapsAboveAggregates.add(map);
     }
 
-    List<AST> subqueries() {
+    List<SubqueryJoiner> subqueries() {
         return subqueries;
     }
 

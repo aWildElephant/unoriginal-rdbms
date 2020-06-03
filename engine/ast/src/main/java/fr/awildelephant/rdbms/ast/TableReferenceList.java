@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 import java.util.Objects;
 
+// TODO: create CartesianProduct AST node to replace this node
 public final class TableReferenceList implements AST {
 
     private final AST first;

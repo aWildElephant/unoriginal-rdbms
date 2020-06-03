@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.algebraizer;
 
+import fr.awildelephant.rdbms.algebraizer.formula.SubqueryExtractor;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.value.Any;
