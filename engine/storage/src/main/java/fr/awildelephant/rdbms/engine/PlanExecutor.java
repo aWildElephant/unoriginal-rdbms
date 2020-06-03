@@ -451,6 +451,43 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
     }
 
     @Override
+    public List<Table> visit(SemiJoinLop semiJoin) {
+        final LogicalOperator leftInput = semiJoin.left();
+        final List<Table> leftPartitions = apply(leftInput);
+
+        final LogicalOperator rightInput = semiJoin.right();
+        final List<Table> rightPartitions = apply(rightInput);
+
+        final UUID operatorId = UUID.randomUUID();
+
+        LOGGER.info("{} - SemiJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
+                () -> computeSize(leftPartitions),
+                () -> computeSize(rightPartitions));
+
+        final List<Table> outputPartitions = new ArrayList<>();
+
+        final Schema leftInputSchema = leftInput.schema();
+        final Schema rightInputSchema = rightInput.schema();
+        final Schema outputSchema = semiJoin.schema();
+        final JoinOutputCreator outputCreator = SemiJoinOutputCreator.INSTANCE;
+
+        for (Table leftPartition : leftPartitions) {
+            for (Table rightPartition : rightPartitions) {
+                final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
+                        rightInputSchema,
+                        outputSchema,
+                        semiJoin.predicate(),
+                        rightPartition);
+                outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
+            }
+        }
+
+        LOGGER.info("{} - SemiJoinOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
+
+        return outputPartitions;
+    }
+
+    @Override
     public List<Table> visit(SubqueryExecutionLop subqueryExecutionLop) {
         final List<Table> inputPartitions = apply(subqueryExecutionLop.input());
 

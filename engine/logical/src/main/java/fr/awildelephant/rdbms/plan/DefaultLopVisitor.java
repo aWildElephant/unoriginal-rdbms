@@ -73,6 +73,11 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
+    public T visit(SemiJoinLop semiJoin) {
+        return defaultVisit(semiJoin);
+    }
+
+    @Override
     public T visit(SortLop sortLop) {
         return defaultVisit(sortLop);
     }

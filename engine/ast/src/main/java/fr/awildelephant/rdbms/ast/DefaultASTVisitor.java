@@ -42,6 +42,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
+    public T visit(AntiJoin antiJoin) {
+        return defaultVisit(antiJoin);
+    }
+
+    @Override
     public T visit(Any any) {
         return defaultVisit(any);
     }
@@ -289,6 +294,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(Select select) {
         return defaultVisit(select);
+    }
+
+    @Override
+    public T visit(SemiJoin semiJoin) {
+        return defaultVisit(semiJoin);
     }
 
     @Override

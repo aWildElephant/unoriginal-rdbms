@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.algebraizer;
 
+import fr.awildelephant.rdbms.algebraizer.formula.SubqueryExtractor;
+import fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
@@ -18,23 +20,7 @@ import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.engine.Storage;
-import fr.awildelephant.rdbms.plan.AggregationLop;
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.BreakdownLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.CollectLop;
-import fr.awildelephant.rdbms.plan.DistinctLop;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LeftJoinLop;
-import fr.awildelephant.rdbms.plan.LimitLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.MapLop;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
-import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
@@ -47,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
+import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.JoinType.SEMI_JOIN;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
@@ -136,21 +123,25 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                 throw new IllegalArgumentException("Aggregate are not allowed in the where clause");
             }
 
-            final List<AST> subqueries = filter.subqueries();
+            final List<SubqueryJoiner> joiners = filter.subqueries();
 
             final Schema filterInputSchema = plan.schema();
 
-            if (!subqueries.isEmpty()) {
+            if (!joiners.isEmpty()) {
                 final Algebraizer outerQueryAwareAlgebraizer = withOuterQuerySchema(filterInputSchema);
 
-                for (AST subquery : subqueries) {
-                    plan = new SubqueryExecutionLop(plan, outerQueryAwareAlgebraizer.apply(subquery));
+                for (SubqueryJoiner joiner : joiners) {
+                    if (joiner.joinType() == SEMI_JOIN) {
+                        plan = new SemiJoinLop(plan, outerQueryAwareAlgebraizer.apply(joiner.subquery()), createValueExpression(joiner.predicate(), plan.schema(), outerQuerySchema));
+                    } else {
+                        plan = new SubqueryExecutionLop(plan, outerQueryAwareAlgebraizer.apply(joiner.subquery()));
+                    }
                 }
             }
 
             plan = createFilter(plan, filter.mapsAboveAggregates().get(0));
 
-            if (!subqueries.isEmpty()) {
+            if (!joiners.isEmpty()) {
                 plan = new ProjectionLop(plan, filterInputSchema.columnNames());
             }
         }
@@ -183,7 +174,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
             expressionSplitter.split(havingFilter, havingAndOutputColumns);
 
-            plan = mergeInputWithSubqueries(plan, havingSubqueryExtractor.subqueries());
+            plan = mergeInputWithHavingClauseSubqueries(plan, havingSubqueryExtractor.subqueries());
         } else {
             havingFilter = null;
         }
@@ -353,14 +344,18 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         return new TableConstructorLop(matrix);
     }
 
-    private LogicalOperator mergeInputWithSubqueries(LogicalOperator input, List<AST> subqueries) {
-        if (subqueries.isEmpty()) {
+    private LogicalOperator mergeInputWithHavingClauseSubqueries(LogicalOperator input, List<SubqueryJoiner> joiners) {
+        if (joiners.isEmpty()) {
             return input;
         } else {
             LogicalOperator mergedInput = input;
 
-            for (AST subquery : subqueries) {
-                mergedInput = cartesianProduct(mergedInput, subquery);
+            for (SubqueryJoiner joiner : joiners) {
+                if (joiner.joinType() == SEMI_JOIN) {
+                    throw new UnsupportedOperationException();
+                }
+
+                mergedInput = cartesianProduct(mergedInput, joiner.subquery());
             }
 
             return mergedInput;

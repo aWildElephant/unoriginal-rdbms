@@ -1,38 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
-import fr.awildelephant.rdbms.ast.value.And;
-import fr.awildelephant.rdbms.ast.value.Any;
-import fr.awildelephant.rdbms.ast.value.Avg;
-import fr.awildelephant.rdbms.ast.value.Between;
-import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
-import fr.awildelephant.rdbms.ast.value.CaseWhen;
-import fr.awildelephant.rdbms.ast.value.Count;
-import fr.awildelephant.rdbms.ast.value.CountStar;
-import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
-import fr.awildelephant.rdbms.ast.value.Divide;
-import fr.awildelephant.rdbms.ast.value.Equal;
-import fr.awildelephant.rdbms.ast.value.ExtractYear;
-import fr.awildelephant.rdbms.ast.value.Greater;
-import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
-import fr.awildelephant.rdbms.ast.value.In;
-import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
-import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
-import fr.awildelephant.rdbms.ast.value.Less;
-import fr.awildelephant.rdbms.ast.value.LessOrEqual;
-import fr.awildelephant.rdbms.ast.value.Like;
-import fr.awildelephant.rdbms.ast.value.Max;
-import fr.awildelephant.rdbms.ast.value.Min;
-import fr.awildelephant.rdbms.ast.value.Minus;
-import fr.awildelephant.rdbms.ast.value.Multiply;
-import fr.awildelephant.rdbms.ast.value.Not;
-import fr.awildelephant.rdbms.ast.value.NotEqual;
-import fr.awildelephant.rdbms.ast.value.NullLiteral;
-import fr.awildelephant.rdbms.ast.value.Or;
-import fr.awildelephant.rdbms.ast.value.Placeholder;
-import fr.awildelephant.rdbms.ast.value.Plus;
-import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
-import fr.awildelephant.rdbms.ast.value.Sum;
-import fr.awildelephant.rdbms.ast.value.TextLiteral;
+import fr.awildelephant.rdbms.ast.value.*;
 
 import java.util.function.Function;
 
@@ -43,6 +11,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     }
 
     T visit(And and);
+
+    T visit(AntiJoin antiJoin);
 
     T visit(Any any);
 
@@ -141,6 +111,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Sum sum);
 
     T visit(Select select);
+
+    T visit(SemiJoin semiJoin);
 
     T visit(SortSpecification sortSpecification);
 
