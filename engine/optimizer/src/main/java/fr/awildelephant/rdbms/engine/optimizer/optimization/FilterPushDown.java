@@ -186,7 +186,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(SemiJoinLop semiJoin) {
-        return createFilterAbove(filters, semiJoin); // TODO
+        return new SemiJoinLop(apply(semiJoin.left()), semiJoin.right(), semiJoin.predicate()); // FIXME: yolo
     }
 
     @Override
