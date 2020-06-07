@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
@@ -114,6 +116,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         final List<ValueExpression> filtersOnRightInput = new ArrayList<>();
         final List<ValueExpression> filtersOnBoth = new ArrayList<>();
 
+        // FIXME: why are we looping on left join specifications and not filters ?
         for (ValueExpression expression : expandedJoinSpecification) {
             final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
 
@@ -186,7 +189,42 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(SemiJoinLop semiJoin) {
-        return new SemiJoinLop(apply(semiJoin.left()), semiJoin.right(), semiJoin.predicate()); // FIXME: yolo
+        final String outputColumnName = semiJoin.ouputColumnName();
+
+        final List<ValueExpression> regularFilters = new ArrayList<>();
+        final List<ValueExpression> filtersReferencingSemiJoin = new ArrayList<>();
+
+        for (ValueExpression expression : filters) {
+            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+
+            final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(semiJoinReference(outputColumnName));
+
+            if (referencesSemiJoin) {
+                filtersReferencingSemiJoin.add(expression);
+            } else {
+                regularFilters.add(expression);
+            }
+        }
+
+        final LogicalOperator transformedLeftInput = new FilterPushDown(regularFilters).apply(semiJoin.left());
+
+        final SemiJoinLop transformedJoin = new SemiJoinLop(
+                transformedLeftInput,
+                semiJoin.right(),
+                semiJoin.predicate(),
+                semiJoin.ouputColumnName());
+
+        return createFilterAbove(filtersReferencingSemiJoin, transformedJoin);
+    }
+
+    private Predicate<ColumnReference> semiJoinReference(String semiJoinOutputColumnName) {
+        return columnReference -> {
+            if (columnReference instanceof QualifiedColumnReference) {
+                return false;
+            }
+
+            return semiJoinOutputColumnName.equals(columnReference.name());
+        };
     }
 
     @Override

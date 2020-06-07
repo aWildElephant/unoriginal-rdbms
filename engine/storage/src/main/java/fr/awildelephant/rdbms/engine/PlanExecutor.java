@@ -475,7 +475,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
             for (Table rightPartition : rightPartitions) {
                 final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
                         rightInputSchema,
-                        outputSchema,
+                        semiJoin.schema(),
                         semiJoin.predicate(),
                         rightPartition);
                 outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));

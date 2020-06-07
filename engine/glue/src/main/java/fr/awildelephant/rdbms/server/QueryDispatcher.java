@@ -21,6 +21,8 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -28,6 +30,8 @@ import static fr.awildelephant.rdbms.server.Inserter.insertRows;
 import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final Storage storage;
     private final Algebraizer algebraizer;
@@ -114,6 +118,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     }
 
     private Table executeReadQuery(AST ast) {
+        LOGGER.debug("Executing {}", ast);
         final LogicalOperator rawPlan = algebraizer.apply(ast);
         final LogicalOperator optimizedPlan = optimizer.optimize(rawPlan);
 
