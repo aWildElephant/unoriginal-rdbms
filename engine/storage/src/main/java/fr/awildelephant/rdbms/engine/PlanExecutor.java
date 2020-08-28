@@ -5,6 +5,9 @@ import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.*;
 import fr.awildelephant.rdbms.engine.operators.join.*;
+import fr.awildelephant.rdbms.engine.operators.semijoin.HashSemiJoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.semijoin.SemiJoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.semijoin.SemiJoinOperator;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
@@ -47,7 +50,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         LOGGER.info("{} - AggregateOperator - inputSize: {}", operatorId, inputSize);
 
         final AggregationOperator operator = new AggregationOperator(aggregationNode.aggregates(),
-                                                                     aggregationNode.schema());
+                aggregationNode.schema());
 
         final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
 
@@ -109,7 +112,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         }
 
         LOGGER.info("{} - BreakdownOperator - outputSize {}, numberOfBuckets: {}", () -> operatorId,
-                    () -> computeSize(outputPartitions), outputPartitions::size);
+                () -> computeSize(outputPartitions), outputPartitions::size);
 
         return outputPartitions;
     }
@@ -122,7 +125,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - CartesianProductOperator - leftInputSize: {}, rightInputSize: {}", () -> operatorId,
-                    () -> computeSize(leftPartitions), () -> computeSize(rightPartitions));
+                () -> computeSize(leftPartitions), () -> computeSize(rightPartitions));
 
         final CartesianProductOperator operator = new CartesianProductOperator(cartesianProductNode.schema());
 
@@ -135,7 +138,7 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         }
 
         LOGGER.info("{} - CartesianProductOperator - outputSize {}", () -> operatorId,
-                    () -> computeSize(outputPartitions));
+                () -> computeSize(outputPartitions));
 
         return outputPartitions;
     }
@@ -149,17 +152,27 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
 
         LOGGER.info("{} - MergeOperator - inputSize: {}", operatorId, numberOfRows);
 
-        final Table output = simpleTable(collectNode.schema(), numberOfRows);
+        final Table output = collect(collectNode.schema(), inputPartitions);
+
+        LOGGER.info("{} - MergeOperator - outputSize: {}", operatorId, numberOfRows);
+
+        return List.of(output);
+    }
+
+    private Table collect(Schema schema, List<Table> inputPartitions) {
+        if (inputPartitions.size() == 1) {
+            return inputPartitions.get(0);
+        }
+
+        final int numberOfRows = computeSize(inputPartitions);
+        final Table output = simpleTable(schema, numberOfRows);
 
         for (Table partition : inputPartitions) {
             for (Record record : partition) {
                 output.add(record);
             }
         }
-
-        LOGGER.info("{} - MergeOperator - outputSize: {}", operatorId, numberOfRows);
-
-        return List.of(output);
+        return output;
     }
 
     @Override
@@ -217,8 +230,8 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - InnerJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
-                    () -> computeSize(leftPartitions),
-                    () -> computeSize(rightPartitions));
+                () -> computeSize(leftPartitions),
+                () -> computeSize(rightPartitions));
 
         final List<Table> outputPartitions = new ArrayList<>();
 
@@ -231,10 +244,10 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         for (Table leftPartition : leftPartitions) {
             for (Table rightPartition : rightPartitions) {
                 final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
-                                                              rightInputSchema,
-                                                              outputSchema,
-                                                              joinSpecification,
-                                                              rightPartition);
+                        rightInputSchema,
+                        outputSchema,
+                        joinSpecification,
+                        rightPartition);
                 outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
             }
         }
@@ -255,8 +268,8 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - LeftJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
-                    () -> computeSize(leftPartitions),
-                    () -> computeSize(rightPartitions));
+                () -> computeSize(leftPartitions),
+                () -> computeSize(rightPartitions));
 
         final List<Table> outputPartitions = new ArrayList<>();
 
@@ -269,10 +282,10 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         for (Table leftPartition : leftPartitions) {
             for (Table rightPartition : rightPartitions) {
                 final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
-                                                              rightInputSchema,
-                                                              outputSchema,
-                                                              joinSpecification,
-                                                              rightPartition);
+                        rightInputSchema,
+                        outputSchema,
+                        joinSpecification,
+                        rightPartition);
                 outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
             }
         }
@@ -386,9 +399,9 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final Schema inputSchema = mapNode.input().schema();
 
         final List<Formula> formulas = mapNode.expressions()
-                                              .stream()
-                                              .map(expression -> createFormula(expression, inputSchema))
-                                              .collect(toList());
+                .stream()
+                .map(expression -> createFormula(expression, inputSchema))
+                .collect(toList());
 
         final MapOperator operator = new MapOperator(formulas, mapNode.schema());
 
@@ -469,22 +482,66 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
         final Schema outputSchema = semiJoin.schema();
-        final JoinOutputCreator outputCreator = SemiJoinOutputCreator.INSTANCE;
+
+        final Table rightTable = collect(rightInput.schema(), rightPartitions);
+
+        final SemiJoinMatcher matcher = createSemiJoinMatcher(leftInputSchema, rightInputSchema, outputSchema, semiJoin.predicate(), rightTable);
+        final SemiJoinOperator operator = new SemiJoinOperator(semiJoin.schema(), matcher);
 
         for (Table leftPartition : leftPartitions) {
-            for (Table rightPartition : rightPartitions) {
-                final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
-                        rightInputSchema,
-                        semiJoin.schema(),
-                        semiJoin.predicate(),
-                        rightPartition);
-                outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
-            }
+            outputPartitions.add(operator.compute(leftPartition));
         }
 
         LOGGER.info("{} - SemiJoinOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
 
         return outputPartitions;
+    }
+
+    private SemiJoinMatcher createSemiJoinMatcher(Schema leftInputSchema,
+                                                  Schema rightInputSchema,
+                                                  Schema outputSchema,
+                                                  ValueExpression joinPredicate,
+                                                  Table rightTable) {
+        final List<ValueExpression> expressions = expandFilters(joinPredicate);
+
+        if (canUseHashJoin(expressions)) {
+            return createHashSemiJoinMatcher(leftInputSchema, rightInputSchema, rightTable, expressions);
+        } else {
+            createFormula(joinPredicate, outputSchema);
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private SemiJoinMatcher createHashSemiJoinMatcher(Schema leftInputSchema, Schema rightInputSchema, Table rightTable, List<ValueExpression> expressions) {
+        final int numberOfEqualFilters = expressions.size();
+
+        final List<ColumnReference> leftJoinColumns = new ArrayList<>(numberOfEqualFilters);
+        final List<ColumnReference> rightJoinColumns = new ArrayList<>(numberOfEqualFilters);
+
+        for (ValueExpression expression : expressions) {
+            final EqualExpression equalExpression = (EqualExpression) expression;
+
+            final ColumnReference equalLeftMember = equalExpression.left().variables().findAny().orElseThrow();
+            final ColumnReference equalRightMember = equalExpression.right().variables().findAny().orElseThrow();
+
+            if (leftInputSchema.contains(equalLeftMember)) {
+                leftJoinColumns.add(equalLeftMember);
+                rightJoinColumns.add(equalRightMember);
+            } else {
+                leftJoinColumns.add(equalRightMember);
+                rightJoinColumns.add(equalLeftMember);
+            }
+        }
+
+        final int[] leftMapping = new int[numberOfEqualFilters];
+        final int[] rightMapping = new int[numberOfEqualFilters];
+
+        for (int i = 0; i < numberOfEqualFilters; i++) {
+            leftMapping[i] = leftInputSchema.indexOf(leftJoinColumns.get(i));
+            rightMapping[i] = rightInputSchema.indexOf(rightJoinColumns.get(i));
+        }
+
+        return new HashSemiJoinMatcher(rightTable, leftMapping, rightMapping);
     }
 
     @Override
@@ -496,8 +553,8 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         LOGGER.info("{} - SubqueryOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
 
         final SubqueryExecutionOperator operator = new SubqueryExecutionOperator(subqueryExecutionLop.subquery(),
-                                                                                 this,
-                                                                                 subqueryExecutionLop.schema());
+                this,
+                subqueryExecutionLop.schema());
 
         final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
 
@@ -549,11 +606,11 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         LOGGER.info("{} - TableConstructor - rows: {}, columns: {}", operatorId, numberOfRows, numberOfColumns);
 
         final List<List<Formula>> formulas = matrix.stream()
-                                                   .map(row -> row.stream()
-                                                                  .map(expression -> createFormula(expression,
-                                                                                                   EMPTY_SCHEMA))
-                                                                  .collect(toList()))
-                                                   .collect(toList());
+                .map(row -> row.stream()
+                        .map(expression -> createFormula(expression,
+                                EMPTY_SCHEMA))
+                        .collect(toList()))
+                .collect(toList());
 
         final TableConstructorOperator operator = new TableConstructorOperator(formulas, tableConstructor.schema());
         final Table output = operator.compute(null);

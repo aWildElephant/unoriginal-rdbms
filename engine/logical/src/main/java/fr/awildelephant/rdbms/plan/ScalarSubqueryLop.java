@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
@@ -28,9 +28,9 @@ public final class ScalarSubqueryLop extends AbstractLop {
             throw new IllegalArgumentException("Scalar subquery cannot have more than one column");
         }
 
-        final Column column = input.schema().column(columns.get(0));
+        final ColumnMetadata column = input.schema().column(columns.get(0));
 
-        return new Schema(List.of(new Column(0, new UnqualifiedColumnReference(id), column.domain(),
+        return new Schema(List.of(new ColumnMetadata(0, new UnqualifiedColumnReference(id), column.domain(),
                                              column.notNull(), true)));
     }
 

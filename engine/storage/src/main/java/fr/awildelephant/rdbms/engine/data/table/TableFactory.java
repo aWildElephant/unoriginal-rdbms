@@ -1,9 +1,13 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
+import fr.awildelephant.rdbms.engine.data.column.*;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 
 public final class TableFactory {
 
@@ -18,7 +22,7 @@ public final class TableFactory {
      * </p>
      */
     public static Table distinctTable(Schema schema) {
-        return new CollectionTable(schema, new HashSet<>());
+        throw new UnsupportedOperationException("Must be reimplemented");
     }
 
     public static Table simpleTable(Schema schema) {
@@ -26,7 +30,39 @@ public final class TableFactory {
     }
 
     public static Table simpleTable(Schema schema, int initialCapacity) {
-        return new CollectionTable(schema, new ArrayList<>(initialCapacity));
+        final List<Column> columns = createColumns(schema, initialCapacity);
+
+        return new ColumnBasedTable(schema, columns);
+    }
+
+    public static List<Column> createColumns(Schema schema, int initialCapacity) {
+        final List<Column> columns = new ArrayList<>(schema.numberOfAttributes());
+
+        for (ColumnReference columnName : schema.columnNames()) {
+            final ColumnMetadata columnMetadata = schema.column(columnName);
+
+            final Column column = createColumn(columnMetadata.domain(), initialCapacity);
+
+            columns.add(column);
+        }
+        return columns;
+    }
+
+    public static Column createColumn(Domain columnType, int initialCapacity) {
+        switch (columnType) {
+            case BOOLEAN:
+                return new BooleanColumn(initialCapacity);
+            case DATE:
+                return new DateColumn(initialCapacity);
+            case DECIMAL:
+                return new DecimalColumn(initialCapacity);
+            case INTEGER:
+                return new IntegerColumn(initialCapacity);
+            case TEXT:
+                return new TextColumn(initialCapacity);
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 
     public static TableWithChecker tableWithChecker(Schema schema) {

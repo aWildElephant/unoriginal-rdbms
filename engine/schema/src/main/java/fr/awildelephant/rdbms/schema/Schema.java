@@ -15,21 +15,21 @@ public final class Schema {
     public static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final List<ColumnReference> allColumns;
-    private final Map<String, Map<String, Column>> columnIndex;
+    private final Map<String, Map<String, ColumnMetadata>> columnIndex;
 
-    public Schema(List<Column> columns) {
+    public Schema(List<ColumnMetadata> columns) {
         final int numberOfColumns = columns.size();
-        final List<Column> reindexedColumns = new ArrayList<>(numberOfColumns);
+        final List<ColumnMetadata> reindexedColumns = new ArrayList<>(numberOfColumns);
 
         for (int i = 0; i < numberOfColumns; i++) {
-            final Column column = columns.get(i);
-            reindexedColumns.add(new Column(i, column.name(), column.domain(), column.notNull(), column.system()));
+            final ColumnMetadata column = columns.get(i);
+            reindexedColumns.add(new ColumnMetadata(i, column.name(), column.domain(), column.notNull(), column.system()));
         }
 
         columnIndex = new HashMap<>();
         allColumns = new ArrayList<>();
 
-        for (Column column : reindexedColumns) {
+        for (ColumnMetadata column : reindexedColumns) {
             final ColumnReference columnReference = column.name();
             allColumns.add(columnReference);
             columnIndex.compute(columnReference.name(), (unused, tables) -> {
@@ -48,8 +48,8 @@ public final class Schema {
         return allColumns;
     }
 
-    public Column column(String name) {
-        final Map<String, Column> tables = columnIndex.get(name);
+    public ColumnMetadata column(String name) {
+        final Map<String, ColumnMetadata> tables = columnIndex.get(name);
 
         if (tables == null || tables.isEmpty()) {
             throw new ColumnNotFoundException(name);
@@ -62,14 +62,14 @@ public final class Schema {
         return tables.values().iterator().next();
     }
 
-    public Column column(String tableName, String columnName) {
-        final Map<String, Column> tables = columnIndex.get(columnName);
+    public ColumnMetadata column(String tableName, String columnName) {
+        final Map<String, ColumnMetadata> tables = columnIndex.get(columnName);
 
         if (tables == null || tables.isEmpty()) {
             throw new ColumnNotFoundException(tableName, columnName);
         }
 
-        final Column column = tables.get(tableName);
+        final ColumnMetadata column = tables.get(tableName);
 
         if (column == null) {
             throw new ColumnNotFoundException(tableName, columnName);
@@ -78,7 +78,7 @@ public final class Schema {
         return column;
     }
 
-    public Column column(ColumnReference reference) {
+    public ColumnMetadata column(ColumnReference reference) {
         return reference.table()
                         .map(qualifier -> column(qualifier, reference.name()))
                         .orElseGet(() -> column(reference.name()));
@@ -110,11 +110,11 @@ public final class Schema {
     }
 
     public Schema project(List<ColumnReference> references) {
-        final List<Column> projection = new ArrayList<>();
+        final List<ColumnMetadata> projection = new ArrayList<>();
 
         int i = 0;
         for (ColumnReference reference : references) {
-            final Column column = reference.table()
+            final ColumnMetadata column = reference.table()
                                            .map(qualifier -> column(qualifier, reference.name()))
                                            .orElseGet(() -> column(reference.name()));
 
@@ -123,7 +123,7 @@ public final class Schema {
                         "Column `" + reference + "` not found. Available columns " + this.allColumns);
             }
 
-            projection.add(new Column(i, column.name(), column.domain(), column.notNull(), column.system()));
+            projection.add(new ColumnMetadata(i, column.name(), column.domain(), column.notNull(), column.system()));
             i = i + 1;
         }
 
@@ -131,9 +131,9 @@ public final class Schema {
     }
 
     public Schema alias(Function<ColumnReference, ColumnReference> alias) {
-        final List<Column> columns = allColumns.stream()
+        final List<ColumnMetadata> columns = allColumns.stream()
                                                .map(this::column)
-                                               .map(column -> new Column(column.index(),
+                                               .map(column -> new ColumnMetadata(column.index(),
                                                                          alias.apply(column.name()),
                                                                          column.domain(),
                                                                          column.notNull(),
@@ -143,8 +143,8 @@ public final class Schema {
         return new Schema(columns);
     }
 
-    public Schema extend(List<Column> newColumns) {
-        final ArrayList<Column> allColumns = new ArrayList<>(this.allColumns.size() + newColumns.size());
+    public Schema extend(List<ColumnMetadata> newColumns) {
+        final ArrayList<ColumnMetadata> allColumns = new ArrayList<>(this.allColumns.size() + newColumns.size());
 
         for (ColumnReference columnReference : this.allColumns) {
             allColumns.add(column(columnReference));

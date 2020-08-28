@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
@@ -27,7 +27,7 @@ public final class SemiJoinLop extends AbstractLop {
     }
 
     private static Schema outputSchema(LogicalOperator left, String outputColumnName) {
-        return left.schema().extend(List.of(new Column(0, new UnqualifiedColumnReference(outputColumnName), Domain.BOOLEAN, true, false)));
+        return left.schema().extend(List.of(new ColumnMetadata(0, new UnqualifiedColumnReference(outputColumnName), Domain.BOOLEAN, true, false)));
     }
 
     public LogicalOperator left() {

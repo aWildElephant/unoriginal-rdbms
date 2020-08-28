@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.aggregation.Aggregator;
@@ -20,7 +21,7 @@ import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Comparator;
@@ -31,7 +32,7 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public class AggregationOperator implements Operator<Table, Table> {
+public final class AggregationOperator implements Operator<Table, Table> {
 
     private final List<Aggregate> aggregates;
     private final Schema outputSchema;
@@ -89,8 +90,10 @@ public class AggregationOperator implements Operator<Table, Table> {
 
         final int inputColumnIndex = inputSchema.column(aggregate.inputColumn().orElseThrow()).index();
 
-        for (Record record : inputTable) {
-            final boolean done = aggregator.accumulate(record.get(inputColumnIndex));
+        final Column column = inputTable.columns().get(inputColumnIndex);
+
+        for (int i = 0; i < column.size(); i++) {
+            final boolean done = aggregator.accumulate(column.get(i));
 
             if (done) {
                 break;
@@ -112,15 +115,15 @@ public class AggregationOperator implements Operator<Table, Table> {
                 return new CountAggregator();
             }
         } else if (aggregate instanceof MaxAggregate) {
-            final Column inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
 
             return new MaxAggregator(comparator(inputColumn));
         } else if (aggregate instanceof MinAggregate) {
-            final Column inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
 
             return new MinAggregator(comparator(inputColumn));
         } else if (aggregate instanceof SumAggregate) {
-            final Column inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
 
             if (inputColumn.domain() == INTEGER) {
                 return new IntegerSumAggregator();
@@ -132,7 +135,7 @@ public class AggregationOperator implements Operator<Table, Table> {
         }
     }
 
-    private Comparator<DomainValue> comparator(Column column) {
+    private Comparator<DomainValue> comparator(ColumnMetadata column) {
         switch (column.domain()) {
             case DATE:
                 return Comparator.comparing(DomainValue::getLocalDate);

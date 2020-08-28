@@ -8,7 +8,7 @@ import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -38,13 +38,13 @@ public final class AggregationLop extends AbstractLop {
 
         final int firstIndex = inputSchema.numberOfAttributes();
 
-        final List<Column> aggregateColumns = new ArrayList<>(aggregates.size());
+        final List<ColumnMetadata> aggregateColumns = new ArrayList<>(aggregates.size());
         for (int i = 0; i < aggregates.size(); i++) {
             final Aggregate aggregate = aggregates.get(i);
 
             final Domain outputType = outputType(inputSchema, aggregate);
 
-            aggregateColumns.add(new Column(firstIndex + i, aggregate.outputName(), outputType,
+            aggregateColumns.add(new ColumnMetadata(firstIndex + i, aggregate.outputName(), outputType,
                                             !aggregate.outputIsNullable(), false));
         }
 

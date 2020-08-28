@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.schema;
 import java.util.Objects;
 
 // TODO: split the index and the rest of the fields
-public final class Column {
+public final class ColumnMetadata {
 
     private final int index;
     private final ColumnReference name;
@@ -11,7 +11,7 @@ public final class Column {
     private final boolean notNull;
     private final boolean system;
 
-    public Column(int index, ColumnReference name, Domain domain, boolean notNull, boolean system) {
+    public ColumnMetadata(int index, ColumnReference name, Domain domain, boolean notNull, boolean system) {
         this.name = name;
         this.domain = domain;
         this.index = index;
@@ -49,11 +49,11 @@ public final class Column {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Column)) {
+        if (!(obj instanceof ColumnMetadata)) {
             return false;
         }
 
-        final Column other = (Column) obj;
+        final ColumnMetadata other = (ColumnMetadata) obj;
 
         return index == other.index
                 && notNull == other.notNull

@@ -28,7 +28,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.SubstringExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -303,7 +303,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(Variable variable) {
-        final Column column = schema.column(variable.reference());
+        final ColumnMetadata column = schema.column(variable.reference());
 
         return valuesHolder.createReference(column.index(), column.domain());
     }

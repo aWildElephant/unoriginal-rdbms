@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.data.table;
 
 import fr.awildelephant.rdbms.engine.constraint.CompositeChecker;
 import fr.awildelephant.rdbms.engine.constraint.ConstraintChecker;
+import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -52,6 +53,11 @@ public class TableWithChecker implements ManagedTable {
     @Override
     public Iterator<Record> iterator() {
         return protectedTable.iterator();
+    }
+
+    @Override
+    public List<Column> columns() {
+        return protectedTable.columns();
     }
 
     @Override

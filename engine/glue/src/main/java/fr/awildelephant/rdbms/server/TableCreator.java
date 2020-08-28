@@ -9,7 +9,7 @@ import fr.awildelephant.rdbms.engine.constraint.NotNullChecker;
 import fr.awildelephant.rdbms.engine.constraint.UniqueChecker;
 import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -32,7 +32,7 @@ final class TableCreator {
     }
 
     static TableWithChecker tableFrom(CreateTable createTable) {
-        final List<Column> columns = attributesOf(createTable);
+        final List<ColumnMetadata> columns = attributesOf(createTable);
         final Schema schema = new Schema(columns);
         final TableWithChecker table = tableWithChecker(schema);
 
@@ -69,15 +69,15 @@ final class TableCreator {
         schema.column(columnName);
     }
 
-    private static List<Column> attributesOf(CreateTable createTable) {
+    private static List<ColumnMetadata> attributesOf(CreateTable createTable) {
         final String tableName = createTable.tableName().name();
         final TableElementList elements = createTable.tableElementList();
         final List<ColumnDefinition> columnDefinitions = elements.columns();
-        final ArrayList<Column> columns = new ArrayList<>(columnDefinitions.size());
+        final ArrayList<ColumnMetadata> columns = new ArrayList<>(columnDefinitions.size());
 
         int i = 0;
         for (ColumnDefinition element : columnDefinitions) {
-            columns.add(new Column(i, new QualifiedColumnReference(tableName, element.columnName()),
+            columns.add(new ColumnMetadata(i, new QualifiedColumnReference(tableName, element.columnName()),
                                    domainOf(element.columnType()), false, false));
             i = i + 1;
         }

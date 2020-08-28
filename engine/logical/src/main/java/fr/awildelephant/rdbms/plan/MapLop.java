@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
@@ -29,7 +29,7 @@ public final class MapLop extends AbstractLop {
         // TODO: can we use Schema#extend
         final List<ColumnReference> inputColumns = schema.columnNames();
 
-        final List<Column> outputColumns = new ArrayList<>(inputColumns.size() + valueExpressions.size());
+        final List<ColumnMetadata> outputColumns = new ArrayList<>(inputColumns.size() + valueExpressions.size());
 
         for (ColumnReference columnReference : inputColumns) {
             outputColumns.add(schema.column(columnReference));
@@ -38,7 +38,7 @@ public final class MapLop extends AbstractLop {
         int index = inputColumns.size();
 
         for (int i = 0; i < valueExpressions.size(); i++) {
-            outputColumns.add(new Column(index++, new UnqualifiedColumnReference(outputNames.get(i)),
+            outputColumns.add(new ColumnMetadata(index++, new UnqualifiedColumnReference(outputNames.get(i)),
                                          valueExpressions.get(i).domain(), false, false));
         }
 

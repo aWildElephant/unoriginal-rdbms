@@ -8,43 +8,43 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class CollectionTable implements Table {
+import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 
-    private final Schema schema;
-    private final Collection<Record> records;
+public final class NoColumnTable implements Table {
 
-    public CollectionTable(Schema schema, Collection<Record> records) {
-        this.schema = schema;
-        this.records = records;
+    private int size;
+
+    public NoColumnTable(int size) {
+        this.size = size;
     }
 
     @Override
     public Schema schema() {
-        return schema;
+        return EMPTY_SCHEMA;
     }
 
     @Override
     public void add(Record newRecord) {
-        records.add(newRecord);
+        size++;
     }
 
     @Override
     public void addAll(Collection<Record> newRecords) {
-        records.addAll(newRecords);
+        size += newRecords.size();
     }
 
     @Override
     public int numberOfTuples() {
-        return records.size();
-    }
-
-    @Override
-    public Iterator<Record> iterator() {
-        return records.iterator();
+        return size;
     }
 
     @Override
     public List<Column> columns() {
-        throw new UnsupportedOperationException();
+        return List.of();
+    }
+
+    @Override
+    public Iterator<Record> iterator() {
+        return new NoColumnIterator(size);
     }
 }

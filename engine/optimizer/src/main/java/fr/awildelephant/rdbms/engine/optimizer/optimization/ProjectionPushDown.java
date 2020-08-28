@@ -4,15 +4,11 @@ import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.schema.Column;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

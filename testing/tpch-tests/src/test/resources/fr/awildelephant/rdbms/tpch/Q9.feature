@@ -1,3 +1,4 @@
+@todo # Regression : java heap space since column-based refactoring
 Feature: TPC-H Q9
 
   Background: TPC-H dataset

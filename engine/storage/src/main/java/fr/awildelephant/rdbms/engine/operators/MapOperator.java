@@ -1,17 +1,22 @@
 package fr.awildelephant.rdbms.engine.operators;
 
-import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.values.RecordValues;
 import fr.awildelephant.rdbms.evaluator.Formula;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import static fr.awildelephant.rdbms.engine.data.table.TableFactory.createColumn;
 
-public class MapOperator implements Operator<Table, Table> {
+public final class MapOperator implements Operator<Table, Table> {
 
     private final List<Formula> operations;
     private final Schema outputSchema;
@@ -23,34 +28,34 @@ public class MapOperator implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {
-        final Table outputTable = simpleTable(outputSchema);
-        final Schema inputSchema = inputTable.schema();
+        final List<Column> outputColumns = new ArrayList<>(outputSchema.numberOfAttributes());
+        outputColumns.addAll(inputTable.columns());
+
+        final List<ColumnReference> outputColumnReferences = outputSchema.columnNames();
+        final List<ColumnReference> mapColumnReferences = outputColumnReferences.subList(inputTable.schema().numberOfAttributes(), outputColumnReferences.size());
+
+        for (int i = 0; i < operations.size(); i++) {
+            final Formula operation = operations.get(i);
+            final ColumnReference columnReference = mapColumnReferences.get(i);
+            final ColumnMetadata columnMetadata = outputSchema.column(columnReference);
+
+            outputColumns.add(createColumnForOperation(operation, columnMetadata.domain(), inputTable));
+        }
+
+        return new ColumnBasedTable(outputSchema, outputColumns);
+    }
+
+    private Column createColumnForOperation(Formula operation, Domain outputType, Table inputTable) {
+        final Column column = createColumn(outputType, inputTable.numberOfTuples());
+
         final RecordValues values = new RecordValues();
 
         for (Record record : inputTable) {
-            final Record extendedRecord = computeMaps(record, inputSchema, values);
-            outputTable.add(extendedRecord);
+            values.setRecord(record);
+
+            column.add(operation.evaluate(values));
         }
 
-        return outputTable;
-    }
-
-    private Record computeMaps(Record record, Schema inputSchema, RecordValues values) {
-        final int numberOfInputAttributes = inputSchema.numberOfAttributes();
-        final int numberOfOutputAttributes = outputSchema.numberOfAttributes();
-
-        final DomainValue[] outputValues = new DomainValue[numberOfOutputAttributes];
-
-        for (int i = 0; i < numberOfInputAttributes; i++) {
-            outputValues[i] = record.get(i);
-        }
-
-        values.setRecord(record);
-
-        for (int i = 0; i < operations.size(); i++) {
-            outputValues[numberOfInputAttributes + i] = operations.get(i).evaluate(values);
-        }
-
-        return new Record(outputValues);
+        return column;
     }
 }

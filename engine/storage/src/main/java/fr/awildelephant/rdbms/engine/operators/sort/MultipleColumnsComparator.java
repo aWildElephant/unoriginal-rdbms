@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.engine.operators.sort;
 
 import fr.awildelephant.rdbms.ast.SortSpecification;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.schema.Column;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Comparator;
@@ -17,7 +17,7 @@ public class MultipleColumnsComparator implements RecordComparator {
 
     public MultipleColumnsComparator(Schema schema, List<SortSpecification> sortSpecificationList) {
         comparators = sortSpecificationList.stream().map(sortSpecification -> {
-            final Column column = schema.column(sortSpecification.sortKey().name());
+            final ColumnMetadata column = schema.column(sortSpecification.sortKey().name());
 
             final RecordComparator comparator = comparatorForDomain(column);
 
@@ -25,7 +25,7 @@ public class MultipleColumnsComparator implements RecordComparator {
         }).collect(toList());
     }
 
-    private RecordComparator comparatorForDomain(Column column) {
+    private RecordComparator comparatorForDomain(ColumnMetadata column) {
         switch (column.domain()) {
             case DATE:
                 return new DateColumnComparator(column.index());

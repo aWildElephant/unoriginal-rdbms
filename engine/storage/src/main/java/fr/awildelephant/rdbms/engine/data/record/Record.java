@@ -6,6 +6,8 @@ import java.util.Arrays;
 
 public final class Record {
 
+    public static final Record EMPTY_RECORD = new Record(new DomainValue[0]);
+
     private final DomainValue[] values;
 
     public Record(final DomainValue[] values) {

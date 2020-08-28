@@ -20,7 +20,7 @@ Feature: Simple division
 
     Then I expect the result set
       | i / 2   |
-      | INTEGER |
+      | DECIMAL |
       | null    |
       | 0       |
       | 1       |
