@@ -13,7 +13,9 @@ import java.util.UUID;
 import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.cartesianProductJoiner;
 import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.semiJoinJoiner;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
+import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
@@ -50,13 +52,17 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
 
     @Override
     public AST visit(In in) {
+        final String inValuesColumnAlias = UUID.randomUUID().toString();
+
         final AST rewrittenInValue = inValuesRewriter.apply(in.value());
 
         final String columnName = firstColumnNameResolver.apply(rewrittenInValue);
 
+        final Select aliasedRewrittenInValue = select(List.of(columnAlias(unqualifiedColumnName(columnName), inValuesColumnAlias)), rewrittenInValue, null, null, null, null);
+
         final String semiJoinIdentifier = UUID.randomUUID().toString();
 
-        subqueries.add(semiJoinJoiner(rewrittenInValue, equal(in.input(), unqualifiedColumnName(columnName)), semiJoinIdentifier));
+        subqueries.add(semiJoinJoiner(aliasedRewrittenInValue, equal(in.input(), unqualifiedColumnName(inValuesColumnAlias)), semiJoinIdentifier));
 
         return unqualifiedColumnName(semiJoinIdentifier);
     }
