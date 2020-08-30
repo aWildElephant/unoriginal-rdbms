@@ -51,13 +51,18 @@ public class TableWithChecker implements ManagedTable {
     }
 
     @Override
-    public Iterator<Record> iterator() {
-        return protectedTable.iterator();
+    public Record get(int rowIndex) {
+        return null;
     }
 
     @Override
     public List<Column> columns() {
         return protectedTable.columns();
+    }
+
+    @Override
+    public Iterator<Record> iterator() {
+        return protectedTable.iterator();
     }
 
     @Override

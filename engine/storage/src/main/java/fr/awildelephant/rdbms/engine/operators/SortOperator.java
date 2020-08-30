@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.ast.SortSpecification;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.CollectionTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.engine.operators.sort.MultipleColumnsComparator;

@@ -17,5 +17,7 @@ public interface Table extends Iterable<Record> {
 
     int numberOfTuples();
 
+    Record get(int rowIndex);
+
     List<Column> columns();
 }

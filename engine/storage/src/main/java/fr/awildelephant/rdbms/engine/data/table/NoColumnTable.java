@@ -39,6 +39,11 @@ public final class NoColumnTable implements Table {
     }
 
     @Override
+    public Record get(int rowIndex) {
+        return Record.EMPTY_RECORD;
+    }
+
+    @Override
     public List<Column> columns() {
         return List.of();
     }

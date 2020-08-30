@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
+import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.MultipleColumnsIterator;
 import fr.awildelephant.rdbms.engine.data.record.Record;
@@ -50,6 +51,17 @@ public final class ColumnBasedTable implements Table {
     @Override
     public int numberOfTuples() {
         return columns.get(0).size();
+    }
+
+    @Override
+    public Record get(int rowIndex) {
+        final DomainValue[] values = new DomainValue[columns.size()];
+
+        for (int i = 0; i < columns.size(); i++) {
+            values[i] = columns.get(i).get(rowIndex);
+        }
+
+        return new Record(values);
     }
 
     @Override
