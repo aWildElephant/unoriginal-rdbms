@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.engine.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
@@ -233,22 +234,19 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
                 () -> computeSize(leftPartitions),
                 () -> computeSize(rightPartitions));
 
-        final List<Table> outputPartitions = new ArrayList<>();
-
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
         final Schema outputSchema = innerJoinLop.schema();
         final ValueExpression joinSpecification = innerJoinLop.joinSpecification();
-        final JoinOutputCreator outputCreator = new InnerJoinOutputCreator();
 
+        final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema, outputSchema, joinSpecification);
+
+        final InnerJoinOperator operator = new InnerJoinOperator(matcherCreator, outputSchema);
+
+        final List<Table> outputPartitions = new ArrayList<>();
         for (Table leftPartition : leftPartitions) {
             for (Table rightPartition : rightPartitions) {
-                final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
-                        rightInputSchema,
-                        outputSchema,
-                        joinSpecification,
-                        rightPartition);
-                outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
+                outputPartitions.add(operator.compute(leftPartition, rightPartition));
             }
         }
 
@@ -276,16 +274,15 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
         final Schema outputSchema = leftJoin.schema();
-        final ValueExpression joinSpecification = leftJoin.joinSpecification();
+        final ValueExpression joinPredicate = leftJoin.joinSpecification();
         final JoinOutputCreator outputCreator = new LeftJoinOutputCreator(leftInputSchema, rightInputSchema);
+
+        final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema, outputSchema, joinPredicate);
 
         for (Table leftPartition : leftPartitions) {
             for (Table rightPartition : rightPartitions) {
-                final JoinMatcher matcher = createJoinMatcher(leftInputSchema,
-                        rightInputSchema,
-                        outputSchema,
-                        joinSpecification,
-                        rightPartition);
+                final JoinMatcher matcher = matcherCreator.apply(rightPartition);
+
                 outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
             }
         }
@@ -295,17 +292,16 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         return outputPartitions;
     }
 
-    private JoinMatcher createJoinMatcher(Schema leftInputSchema,
-                                          Schema rightInputSchema,
-                                          Schema outputSchema,
-                                          ValueExpression joinSpecification,
-                                          Table rightTable) {
-        final List<ValueExpression> expressions = expandFilters(joinSpecification);
+    private Function<Table, JoinMatcher> buildJoinMatcherCreator(Schema leftInputSchema,
+                                                                 Schema rightInputSchema,
+                                                                 Schema outputSchema,
+                                                                 ValueExpression joinPredicate) {
+        final List<ValueExpression> expressions = expandFilters(joinPredicate);
 
         if (canUseHashJoin(expressions)) {
-            return createHashJoinMatcher(rightTable, leftInputSchema, rightInputSchema, expressions);
+            return table -> createHashJoinMatcher(table, leftInputSchema, rightInputSchema, expressions);
         } else {
-            return createNestedLoopJoinMatcher(rightTable, createFormula(joinSpecification, outputSchema));
+            return table -> createNestedLoopJoinMatcher(table, createFormula(joinPredicate, outputSchema));
         }
     }
 
