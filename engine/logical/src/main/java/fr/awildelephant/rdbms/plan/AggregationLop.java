@@ -1,14 +1,8 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
-import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.*;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -17,38 +11,53 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
-import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
-import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
+import static fr.awildelephant.rdbms.schema.Domain.*;
 
 public final class AggregationLop extends AbstractLop {
 
     private final LogicalOperator input;
+    private final List<ColumnReference> breakdowns;
     private final List<Aggregate> aggregates;
 
-    public AggregationLop(LogicalOperator input, List<Aggregate> aggregates) {
-        super(buildOutputSchema(input, aggregates));
+    public AggregationLop(LogicalOperator input, List<ColumnReference> breakdowns, List<Aggregate> aggregates) {
+        super(buildOutputSchema(input, breakdowns, aggregates));
 
         this.input = input;
+        this.breakdowns = breakdowns;
         this.aggregates = aggregates;
     }
 
-    private static Schema buildOutputSchema(LogicalOperator input, List<Aggregate> aggregates) {
+    private static Schema buildOutputSchema(LogicalOperator input,
+                                            List<ColumnReference> breakdowns,
+                                            List<Aggregate> aggregates) {
         final Schema inputSchema = input.schema();
 
-        final int firstIndex = inputSchema.numberOfAttributes();
+        final List<ColumnMetadata> outputColumns = new ArrayList<>(breakdowns.size() + aggregates.size());
 
-        final List<ColumnMetadata> aggregateColumns = new ArrayList<>(aggregates.size());
-        for (int i = 0; i < aggregates.size(); i++) {
-            final Aggregate aggregate = aggregates.get(i);
-
-            final Domain outputType = outputType(inputSchema, aggregate);
-
-            aggregateColumns.add(new ColumnMetadata(firstIndex + i, aggregate.outputName(), outputType,
-                                            !aggregate.outputIsNullable(), false));
+        for (int i = 0; i < breakdowns.size(); i++) {
+            final ColumnReference breakdown = breakdowns.get(i);
+            final ColumnMetadata columnInInputTable = inputSchema.column(breakdown);
+            outputColumns.add(new ColumnMetadata(i,
+                                                 breakdown,
+                                                 columnInInputTable.domain(),
+                                                 false,
+                                                 false));
         }
 
-        return inputSchema.extend(aggregateColumns);
+        final int numberOfBreakdowns = breakdowns.size();
+
+        for (int i = 0; i < aggregates.size(); i++) {
+            final Aggregate aggregate = aggregates.get(i);
+            final Domain outputType = outputType(inputSchema, aggregate);
+
+            outputColumns.add(new ColumnMetadata(numberOfBreakdowns + i,
+                                                 aggregate.outputName(),
+                                                 outputType,
+                                                 !aggregate.outputIsNullable(),
+                                                 false));
+        }
+
+        return new Schema(outputColumns);
     }
 
     private static Domain outputType(Schema inputSchema, Aggregate aggregate) {
@@ -75,13 +84,17 @@ public final class AggregationLop extends AbstractLop {
         return input;
     }
 
+    public List<ColumnReference> breakdowns() {
+        return breakdowns;
+    }
+
     public List<Aggregate> aggregates() {
         return aggregates;
     }
 
     @Override
     public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
-        return new AggregationLop(transformer.apply(input), aggregates);
+        return new AggregationLop(transformer.apply(input), breakdowns, aggregates);
     }
 
     @Override
@@ -91,7 +104,7 @@ public final class AggregationLop extends AbstractLop {
 
     @Override
     public int hashCode() {
-        return Objects.hash(input, aggregates);
+        return Objects.hash(input, breakdowns, aggregates);
     }
 
     @Override
@@ -103,6 +116,7 @@ public final class AggregationLop extends AbstractLop {
         final AggregationLop other = (AggregationLop) obj;
 
         return Objects.equals(input, other.input)
+                && Objects.equals(breakdowns, other.breakdowns)
                 && Objects.equals(aggregates, other.aggregates);
     }
 }

@@ -51,6 +51,11 @@ public class TableWithChecker implements ManagedTable {
     }
 
     @Override
+    public boolean isEmpty() {
+        return protectedTable.isEmpty();
+    }
+
+    @Override
     public Record get(int rowIndex) {
         return null;
     }

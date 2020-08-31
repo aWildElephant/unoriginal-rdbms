@@ -30,7 +30,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilter
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
-public final class PlanExecutor implements LopVisitor<List<Table>> {
+public final class PlanExecutor implements LopVisitor<Table> {
 
     private static final Logger LOGGER = LogManager.getLogger("Executor");
 
@@ -41,235 +41,149 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
     }
 
     @Override
-    public List<Table> visit(AggregationLop aggregationNode) {
-        final List<Table> inputPartitions = apply(aggregationNode.input());
+    public Table visit(AggregationLop aggregationNode) {
+        final Table inputTable = apply(aggregationNode.input());
 
         final UUID operatorId = UUID.randomUUID();
 
-        final long inputSize = computeSize(inputPartitions);
+        final long inputSize = inputTable.numberOfTuples();
 
         LOGGER.info("{} - AggregateOperator - inputSize: {}", operatorId, inputSize);
 
         final AggregationOperator operator = new AggregationOperator(aggregationNode.aggregates(),
-                aggregationNode.schema());
+                                                                     aggregationNode.breakdowns(),
+                                                                     aggregationNode.schema());
 
-        final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
+        final Table outputTable = operator.compute(inputTable);
 
-        for (Table partition : inputPartitions) {
-            outputPartitions.add(operator.compute(partition));
-        }
-
-        final long outputSize = computeSize(outputPartitions);
+        final long outputSize = outputTable.numberOfTuples();
 
         LOGGER.info("{} - AggregateOperator - outputSize: {}", operatorId, outputSize);
 
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(AliasLop aliasNode) {
-        final List<Table> inputPartitions = apply(aliasNode.input());
+    public Table visit(AliasLop aliasNode) {
+        final Table inputTable = apply(aliasNode.input());
 
         final UUID operatorId = UUID.randomUUID();
 
-        LOGGER.info("{} - RenameOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
+        LOGGER.info("{} - RenameOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final AliasOperator operator = new AliasOperator(aliasNode.schema());
 
-        final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
+        final Table outputTable = operator.compute(inputTable);
 
-        for (Table partition : inputPartitions) {
-            outputPartitions.add(operator.compute(partition));
-        }
+        LOGGER.info("{} - RenameOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        LOGGER.info("{} - RenameOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
-
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(BaseTableLop baseTable) {
+    public Table visit(BaseTableLop baseTable) {
         final Table table = tables.get(baseTable.name());
 
-        LOGGER.info("BaseTable - {} - outputSize: {}", baseTable.name(), table.numberOfTuples());
+        LOGGER.info("BaseTable - {} - outputSize: {}", baseTable::name, table::numberOfTuples);
 
-        return List.of(table);
+        return table;
     }
 
     @Override
-    public List<Table> visit(BreakdownLop breakdownNode) {
-        final List<Table> inputPartitions = apply(breakdownNode.input());
-
-        final UUID operatorId = UUID.randomUUID();
-
-        LOGGER.info("{} - BreakdownOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
-
-        final BreakdownOperator operator = new BreakdownOperator(breakdownNode.breakdowns());
-
-        final List<Table> outputPartitions = new ArrayList<>();
-
-        for (Table partition : inputPartitions) {
-            outputPartitions.addAll(operator.compute(partition));
-        }
-
-        LOGGER.info("{} - BreakdownOperator - outputSize {}, numberOfBuckets: {}", () -> operatorId,
-                () -> computeSize(outputPartitions), outputPartitions::size);
-
-        return outputPartitions;
-    }
-
-    @Override
-    public List<Table> visit(CartesianProductLop cartesianProductNode) {
-        final List<Table> leftPartitions = apply(cartesianProductNode.leftInput());
-        final List<Table> rightPartitions = apply(cartesianProductNode.rightInput());
+    public Table visit(CartesianProductLop cartesianProductNode) {
+        final Table leftInput = apply(cartesianProductNode.leftInput());
+        final Table rightInput = apply(cartesianProductNode.rightInput());
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - CartesianProductOperator - leftInputSize: {}, rightInputSize: {}", () -> operatorId,
-                () -> computeSize(leftPartitions), () -> computeSize(rightPartitions));
+                    leftInput::numberOfTuples, rightInput::numberOfTuples);
 
         final CartesianProductOperator operator = new CartesianProductOperator(cartesianProductNode.schema());
 
-        final List<Table> outputPartitions = new ArrayList<>(leftPartitions.size() * rightPartitions.size());
-
-        for (Table leftPartition : leftPartitions) {
-            for (Table rightPartition : rightPartitions) {
-                outputPartitions.add(operator.compute(leftPartition, rightPartition));
-            }
-        }
+        final Table outputTable = operator.compute(leftInput, rightInput);
 
         LOGGER.info("{} - CartesianProductOperator - outputSize {}", () -> operatorId,
-                () -> computeSize(outputPartitions));
+                    outputTable::numberOfTuples);
 
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(CollectLop collectNode) {
-        final List<Table> inputPartitions = apply(collectNode.input());
+    public Table visit(DistinctLop distinctNode) {
+        final Table inputTable = apply(distinctNode.input());
 
         final UUID operatorId = UUID.randomUUID();
-        final int numberOfRows = computeSize(inputPartitions);
-
-        LOGGER.info("{} - MergeOperator - inputSize: {}", operatorId, numberOfRows);
-
-        final Table output = collect(collectNode.schema(), inputPartitions);
-
-        LOGGER.info("{} - MergeOperator - outputSize: {}", operatorId, numberOfRows);
-
-        return List.of(output);
-    }
-
-    private Table collect(Schema schema, List<Table> inputPartitions) {
-        if (inputPartitions.size() == 1) {
-            return inputPartitions.get(0);
-        }
-
-        final int numberOfRows = computeSize(inputPartitions);
-        final Table output = simpleTable(schema, numberOfRows);
-
-        for (Table partition : inputPartitions) {
-            for (Record record : partition) {
-                output.add(record);
-            }
-        }
-        return output;
-    }
-
-    @Override
-    public List<Table> visit(DistinctLop distinctNode) {
-        final List<Table> inputPartitions = apply(distinctNode.input());
-
-        final int numberOfInputPartitions = inputPartitions.size();
-
-        if (numberOfInputPartitions != 1) {
-            throw new IllegalStateException(
-                    "DistinctOperator must have exactly one input partition, got " + numberOfInputPartitions);
-        }
-
-        final Table input = inputPartitions.get(0);
-
-        final UUID operatorId = UUID.randomUUID();
-        LOGGER.info("{} - DistinctOperator - inputSize: {}", () -> operatorId, input::numberOfTuples);
+        LOGGER.info("{} - DistinctOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final DistinctOperator operator = new DistinctOperator();
-        final Table output = operator.compute(input);
+        final Table outputTable = operator.compute(inputTable);
 
-        LOGGER.info("{} - DistinctOperator - outputSize: {}", () -> operatorId, output::numberOfTuples);
+        LOGGER.info("{} - DistinctOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        return List.of(output);
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(FilterLop filter) {
-        final List<Table> inputPartitions = apply(filter.input());
+    public Table visit(FilterLop filter) {
+        final Table inputTable = apply(filter.input());
 
         final UUID operatorId = UUID.randomUUID();
-        LOGGER.info("{} - FilterOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
+        LOGGER.info("{} - FilterOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final FilterOperator operator = new FilterOperator(createFormula(filter.filter(), filter.input().schema()));
 
-        final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
 
-        for (Table partition : inputPartitions) {
-            outputPartitions.add(operator.compute(partition));
-        }
+        final Table outputTable = operator.compute(inputTable);
 
-        LOGGER.info("{} - FilterOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
+        LOGGER.info("{} - FilterOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(InnerJoinLop innerJoinLop) {
+    public Table visit(InnerJoinLop innerJoinLop) {
         final LogicalOperator leftInput = innerJoinLop.left();
-        final List<Table> leftPartitions = apply(leftInput);
+        final Table leftInputTable = apply(leftInput);
 
         final LogicalOperator rightInput = innerJoinLop.right();
-        final List<Table> rightPartitions = apply(rightInput);
+        final Table rightInputTable = apply(rightInput);
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - InnerJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
-                () -> computeSize(leftPartitions),
-                () -> computeSize(rightPartitions));
+                    leftInputTable::numberOfTuples, rightInputTable::numberOfTuples);
 
-        final Schema leftInputSchema = leftInput.schema();
+        final Schema leftInputSchema = leftInputTable.schema();
         final Schema rightInputSchema = rightInput.schema();
         final Schema outputSchema = innerJoinLop.schema();
         final ValueExpression joinSpecification = innerJoinLop.joinSpecification();
 
-        final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema, outputSchema, joinSpecification);
+        final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema,
+                                                                                    outputSchema, joinSpecification);
 
         final InnerJoinOperator operator = new InnerJoinOperator(matcherCreator, outputSchema);
 
-        final List<Table> outputPartitions = new ArrayList<>();
-        for (Table leftPartition : leftPartitions) {
-            for (Table rightPartition : rightPartitions) {
-                outputPartitions.add(operator.compute(leftPartition, rightPartition));
-            }
-        }
+        final Table outputTable = operator.compute(leftInputTable, rightInputTable);
 
-        LOGGER.info("{} - InnerJoinOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
+        LOGGER.info("{} - InnerJoinOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(LeftJoinLop leftJoin) {
+    public Table visit(LeftJoinLop leftJoin) {
         final LogicalOperator leftInput = leftJoin.left();
-        final List<Table> leftPartitions = apply(leftInput);
+        final Table leftInputTable = apply(leftInput);
 
         final LogicalOperator rightInput = leftJoin.right();
-        final List<Table> rightPartitions = apply(rightInput);
+        final Table rightInputTable = apply(rightInput);
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - LeftJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
-                () -> computeSize(leftPartitions),
-                () -> computeSize(rightPartitions));
-
-        final List<Table> outputPartitions = new ArrayList<>();
+                    leftInputTable::numberOfTuples,
+                    rightInputTable::numberOfTuples);
 
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
@@ -277,19 +191,17 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final ValueExpression joinPredicate = leftJoin.joinSpecification();
         final JoinOutputCreator outputCreator = new LeftJoinOutputCreator(leftInputSchema, rightInputSchema);
 
-        final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema, outputSchema, joinPredicate);
+        final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema,
+                                                                                    outputSchema, joinPredicate);
 
-        for (Table leftPartition : leftPartitions) {
-            for (Table rightPartition : rightPartitions) {
-                final JoinMatcher matcher = matcherCreator.apply(rightPartition);
+        final JoinMatcher matcher = matcherCreator.apply(rightInputTable);
+        final JoinOperator operator = new JoinOperator(matcher, outputCreator, outputSchema);
 
-                outputPartitions.add(new JoinOperator(matcher, outputCreator, outputSchema).compute(leftPartition));
-            }
-        }
+        final Table outputTable = operator.compute(leftInputTable);
 
-        LOGGER.info("{} - LeftJoinOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
+        LOGGER.info("{} - LeftJoinOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        return outputPartitions;
+        return outputTable;
     }
 
     private Function<Table, JoinMatcher> buildJoinMatcherCreator(Schema leftInputSchema,
@@ -361,36 +273,27 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
     }
 
     @Override
-    public List<Table> visit(LimitLop limitLop) {
-        final List<Table> inputPartitions = apply(limitLop.input());
-
-        final int numberOfInputPartitions = inputPartitions.size();
-
-        if (numberOfInputPartitions != 1) {
-            throw new IllegalStateException(
-                    "LimitOperator must have exactly one input partition, got " + numberOfInputPartitions);
-        }
-
-        final Table input = inputPartitions.get(0);
+    public Table visit(LimitLop limitLop) {
+        final Table inputTable = apply(limitLop.input());
 
         final UUID operatorId = UUID.randomUUID();
 
-        LOGGER.info("{} - LimitOperator - inputSize: {}", () -> operatorId, input::numberOfTuples);
+        LOGGER.info("{} - LimitOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final LimitOperator operator = new LimitOperator(limitLop.limit());
-        final Table output = operator.compute(input);
+        final Table outputTable = operator.compute(inputTable);
 
-        LOGGER.info("{} - LimitOperator - outputSize: {}", () -> operatorId, output::numberOfTuples);
+        LOGGER.info("{} - LimitOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        return List.of(output);
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(MapLop mapNode) {
-        final List<Table> inputPartitions = apply(mapNode.input());
+    public Table visit(MapLop mapNode) {
+        final Table inputTable = apply(mapNode.input());
 
         final UUID operatorId = UUID.randomUUID();
-        LOGGER.info("{} - MapOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
+        LOGGER.info("{} - MapOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final Schema inputSchema = mapNode.input().schema();
 
@@ -401,96 +304,80 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
 
         final MapOperator operator = new MapOperator(formulas, mapNode.schema());
 
-        final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
+        final Table outputTable = operator.compute(inputTable);
 
-        for (Table partition : inputPartitions) {
-            outputPartitions.add(operator.compute(partition));
-        }
+        LOGGER.info("{} - MapOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        LOGGER.info("{} - MapOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
-
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(ProjectionLop projectionNode) {
-        final List<Table> inputPartitions = apply(projectionNode.input());
+    public Table visit(ProjectionLop projectionNode) {
+        final Table inputTable = apply(projectionNode.input());
 
         final UUID operatorId = UUID.randomUUID();
-        LOGGER.info("{} - ProjectOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
+        LOGGER.info("{} - ProjectOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final ProjectionOperator operator = new ProjectionOperator(projectionNode.schema());
 
-        final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
+        final Table outputTable = operator.compute(inputTable);
 
-        for (Table partition : inputPartitions) {
-            outputPartitions.add(operator.compute(partition));
-        }
+        LOGGER.info("{} - ProjectOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        LOGGER.info("{} - ProjectOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
-
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(ScalarSubqueryLop scalarSubquery) {
-        final List<Table> inputPartitions = apply(scalarSubquery.input());
+    public Table visit(ScalarSubqueryLop scalarSubquery) {
+        final Table inputTable = apply(scalarSubquery.input());
 
         final UUID operatorId = UUID.randomUUID();
 
-        LOGGER.info("{} - ScalarOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
+        LOGGER.info("{} - ScalarOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
-        final Table output = simpleTable(scalarSubquery.schema(), 1);
+        final Table outputTable = simpleTable(scalarSubquery.schema(), 1);
 
         boolean foundOneRow = false;
-        for (Table table : inputPartitions) {
-            for (Record record : table) {
-                if (foundOneRow) {
-                    throw new IllegalArgumentException("Scalar subquery cannot have more than one row");
-                }
-
-                foundOneRow = true;
-                output.add(record);
+        for (Record record : inputTable) {
+            if (foundOneRow) {
+                throw new IllegalArgumentException("Scalar subquery cannot have more than one row");
             }
+
+            foundOneRow = true;
+            outputTable.add(record);
         }
 
         LOGGER.info("{} - ScalarOperator - outputSize: 1", operatorId);
 
-        return List.of(output);
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(SemiJoinLop semiJoin) {
+    public Table visit(SemiJoinLop semiJoin) {
         final LogicalOperator leftInput = semiJoin.left();
-        final List<Table> leftPartitions = apply(leftInput);
+        final Table leftInputTable = apply(leftInput);
 
         final LogicalOperator rightInput = semiJoin.right();
-        final List<Table> rightPartitions = apply(rightInput);
+        final Table rightInputTable = apply(rightInput);
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - SemiJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
-                () -> computeSize(leftPartitions),
-                () -> computeSize(rightPartitions));
-
-        final List<Table> outputPartitions = new ArrayList<>();
+                    leftInputTable::numberOfTuples, rightInputTable::numberOfTuples);
 
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
         final Schema outputSchema = semiJoin.schema();
 
-        final Table rightTable = collect(rightInput.schema(), rightPartitions);
-
-        final SemiJoinMatcher matcher = createSemiJoinMatcher(leftInputSchema, rightInputSchema, outputSchema, semiJoin.predicate(), rightTable);
+        final SemiJoinMatcher matcher = createSemiJoinMatcher(leftInputSchema, rightInputSchema, outputSchema,
+                                                              semiJoin.predicate(), rightInputTable);
         final SemiJoinOperator operator = new SemiJoinOperator(semiJoin.schema(), matcher);
 
-        for (Table leftPartition : leftPartitions) {
-            outputPartitions.add(operator.compute(leftPartition));
-        }
+        final Table outputTable = operator.compute(leftInputTable);
 
-        LOGGER.info("{} - SemiJoinOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
+        LOGGER.info("{} - SemiJoinOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        return outputPartitions;
+        return outputTable;
     }
 
     private SemiJoinMatcher createSemiJoinMatcher(Schema leftInputSchema,
@@ -508,7 +395,8 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         }
     }
 
-    private SemiJoinMatcher createHashSemiJoinMatcher(Schema leftInputSchema, Schema rightInputSchema, Table rightTable, List<ValueExpression> expressions) {
+    private SemiJoinMatcher createHashSemiJoinMatcher(Schema leftInputSchema, Schema rightInputSchema, Table rightTable,
+                                                      List<ValueExpression> expressions) {
         final int numberOfEqualFilters = expressions.size();
 
         final List<ColumnReference> leftJoinColumns = new ArrayList<>(numberOfEqualFilters);
@@ -541,53 +429,41 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
     }
 
     @Override
-    public List<Table> visit(SubqueryExecutionLop subqueryExecutionLop) {
-        final List<Table> inputPartitions = apply(subqueryExecutionLop.input());
+    public Table visit(SubqueryExecutionLop subqueryExecutionLop) {
+        final Table inputTable = apply(subqueryExecutionLop.input());
 
         final UUID operatorId = UUID.randomUUID();
 
-        LOGGER.info("{} - SubqueryOperator - inputSize: {}", () -> operatorId, () -> computeSize(inputPartitions));
+        LOGGER.info("{} - SubqueryOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final SubqueryExecutionOperator operator = new SubqueryExecutionOperator(subqueryExecutionLop.subquery(),
-                this,
-                subqueryExecutionLop.schema());
+                                                                                 this,
+                                                                                 subqueryExecutionLop.schema());
 
-        final List<Table> outputPartitions = new ArrayList<>(inputPartitions.size());
+        final Table outputTable = operator.compute(inputTable);
 
-        for (Table partition : inputPartitions) {
-            outputPartitions.add(operator.compute(partition));
-        }
+        LOGGER.info("{} - ScalarOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
-        LOGGER.info("{} - ScalarOperator - outputSize: {}", () -> operatorId, () -> computeSize(outputPartitions));
-
-        return outputPartitions;
+        return outputTable;
     }
 
     @Override
-    public List<Table> visit(SortLop sortNode) {
-        final List<Table> inputPartitions = apply(sortNode.input());
-
-        final int numberOfInputPartitions = inputPartitions.size();
-
-        if (numberOfInputPartitions != 1) {
-            throw new IllegalStateException(
-                    "SortOperator must have exactly one input partition, got " + numberOfInputPartitions);
-        }
-        final Table input = inputPartitions.get(0);
+    public Table visit(SortLop sortNode) {
+        final Table inputTable = apply(sortNode.input());
 
         final UUID operatorId = UUID.randomUUID();
-        LOGGER.info("{} - SortOperator - inputSize: {}", () -> operatorId, input::numberOfTuples);
+        LOGGER.info("{} - SortOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final SortOperator operator = new SortOperator(sortNode.schema(), sortNode.sortSpecificationList());
-        final Table output = operator.compute(input);
+        final Table output = operator.compute(inputTable);
 
         LOGGER.info("{} - SortOperator - outputSize: {}", () -> operatorId, output::numberOfTuples);
 
-        return List.of(output);
+        return output;
     }
 
     @Override
-    public List<Table> visit(TableConstructorLop tableConstructor) {
+    public Table visit(TableConstructorLop tableConstructor) {
         final List<List<ValueExpression>> matrix = tableConstructor.matrix();
 
         final int numberOfRows = matrix.size();
@@ -604,19 +480,15 @@ public final class PlanExecutor implements LopVisitor<List<Table>> {
         final List<List<Formula>> formulas = matrix.stream()
                 .map(row -> row.stream()
                         .map(expression -> createFormula(expression,
-                                EMPTY_SCHEMA))
+                                                         EMPTY_SCHEMA))
                         .collect(toList()))
                 .collect(toList());
 
         final TableConstructorOperator operator = new TableConstructorOperator(formulas, tableConstructor.schema());
-        final Table output = operator.compute(null);
+        final Table outputTable = operator.compute(null);
 
         LOGGER.info("{} - TableConstructor - outputSize: {}", operatorId, numberOfRows);
 
-        return List.of(output);
-    }
-
-    private int computeSize(List<Table> inputPartitions) {
-        return inputPartitions.stream().mapToInt(Table::numberOfTuples).sum();
+        return outputTable;
     }
 }

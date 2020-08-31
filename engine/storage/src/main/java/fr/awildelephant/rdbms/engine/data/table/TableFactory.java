@@ -41,14 +41,16 @@ public final class TableFactory {
         for (ColumnReference columnName : schema.columnNames()) {
             final ColumnMetadata columnMetadata = schema.column(columnName);
 
-            final Column column = createColumn(columnMetadata.domain(), initialCapacity);
+            final Column column = createColumn(columnMetadata, initialCapacity);
 
             columns.add(column);
         }
         return columns;
     }
 
-    public static Column createColumn(Domain columnType, int initialCapacity) {
+    public static Column createColumn(ColumnMetadata columnMetadata, int initialCapacity) {
+        final Domain columnType = columnMetadata.domain();
+        final boolean nullable = !columnMetadata.notNull();
         switch (columnType) {
             case BOOLEAN:
                 return new BooleanColumn(initialCapacity);
@@ -57,7 +59,11 @@ public final class TableFactory {
             case DECIMAL:
                 return new DecimalColumn(initialCapacity);
             case INTEGER:
-                return new IntegerColumn(initialCapacity);
+                if (nullable) {
+                    return new IntegerColumn(initialCapacity);
+                } else {
+                    return new NonNullableIntegerColumn(initialCapacity);
+                }
             case TEXT:
                 return new TextColumn(initialCapacity);
             default:

@@ -8,7 +8,6 @@ import fr.awildelephant.rdbms.engine.operators.values.RecordValues;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -39,14 +38,14 @@ public final class MapOperator implements Operator<Table, Table> {
             final ColumnReference columnReference = mapColumnReferences.get(i);
             final ColumnMetadata columnMetadata = outputSchema.column(columnReference);
 
-            outputColumns.add(createColumnForOperation(operation, columnMetadata.domain(), inputTable));
+            outputColumns.add(createColumnForOperation(operation, columnMetadata, inputTable));
         }
 
         return new ColumnBasedTable(outputSchema, outputColumns);
     }
 
-    private Column createColumnForOperation(Formula operation, Domain outputType, Table inputTable) {
-        final Column column = createColumn(outputType, inputTable.numberOfTuples());
+    private Column createColumnForOperation(Formula operation, ColumnMetadata outputColumn, Table inputTable) {
+        final Column column = createColumn(outputColumn, inputTable.numberOfTuples());
 
         final RecordValues values = new RecordValues();
 

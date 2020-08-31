@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.data.value;
 
 public final class NullValue extends AbstractValue {
 
-    private static NullValue NULL_VALUE = new NullValue();
+    private static final NullValue NULL_VALUE = new NullValue();
 
     private NullValue() {
 

@@ -20,6 +20,8 @@ import java.util.Optional;
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.JoinType.SEMI_JOIN;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
+import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
+import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.leftJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
@@ -64,7 +66,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final LogicalOperator leftInput = apply(innerJoin.left());
         final LogicalOperator rightInput = apply(innerJoin.right());
 
-        final Schema outputSchema = joinOutputSchema(leftInput.schema(), rightInput.schema());
+        final Schema outputSchema = innerJoinOutputSchema(leftInput.schema(), rightInput.schema());
 
         return new InnerJoinLop(leftInput,
                 rightInput,
@@ -77,7 +79,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final LogicalOperator leftInput = apply(leftJoin.left());
         final LogicalOperator rightInput = apply(leftJoin.right());
 
-        final Schema outputSchema = joinOutputSchema(leftInput.schema(), rightInput.schema());
+        final Schema outputSchema = leftJoinOutputSchema(leftInput.schema(), rightInput.schema());
 
         return new LeftJoinLop(leftInput,
                 rightInput,
@@ -119,7 +121,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                     final LogicalOperator leftInput = outerQueryAwareAlgebraizer.apply(joiner.subquery());
 
                     if (joiner.joinType() == SEMI_JOIN) {
-                        plan = new SemiJoinLop(plan, leftInput, createValueExpression(joiner.predicate(), joinOutputSchema(plan.schema(), leftInput.schema()), outerQuerySchema), joiner.identifier());
+                        plan = new SemiJoinLop(plan, leftInput, createValueExpression(joiner.predicate(), innerJoinOutputSchema(plan.schema(), leftInput.schema()), outerQuerySchema), joiner.identifier());
                     } else {
                         plan = new SubqueryExecutionLop(plan, leftInput);
                     }
@@ -131,13 +133,6 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             if (!joiners.isEmpty()) {
                 plan = new ProjectionLop(plan, filterInputSchema.columnNames());
             }
-        }
-
-        final Optional<GroupingSetsList> groupByClause = select.groupByClause();
-        if (groupByClause.isPresent()) {
-            plan = new BreakdownLop(plan, groupByClause.get().breakdowns().stream()
-                    .map(columnReferenceTransformer)
-                    .collect(toList()));
         }
 
         final SplitExpressionCollector havingAndOutputColumns = new SplitExpressionCollector();
@@ -155,13 +150,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final Optional<AST> havingClause = select.havingClause();
         final AST havingFilter;
+        final SubqueryExtractor havingSubqueryExtractor = new SubqueryExtractor();
         if (havingClause.isPresent()) {
-            final SubqueryExtractor havingSubqueryExtractor = new SubqueryExtractor();
             havingFilter = havingSubqueryExtractor.apply(havingClause.get());
 
             expressionSplitter.split(havingFilter, havingAndOutputColumns);
-
-            plan = mergeInputWithHavingClauseSubqueries(plan, havingSubqueryExtractor.subqueries());
         } else {
             havingFilter = null;
         }
@@ -173,8 +166,16 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final List<Aggregate> aggregates = havingAndOutputColumns.aggregates();
         if (!aggregates.isEmpty()) {
-            plan = new AggregationLop(plan, aggregates);
+            final List<ColumnReference> breakdowns = select.groupByClause()
+                    .map(groupingSetsList -> groupingSetsList.breakdowns().stream()
+                            .map(columnReferenceTransformer)
+                            .collect(toList()))
+                    .orElseGet(List::of);
+
+            plan = new AggregationLop(plan, breakdowns, aggregates);
         }
+
+        plan = mergeInputWithHavingClauseSubqueries(plan, havingSubqueryExtractor.subqueries());
 
         final List<AST> mapsAboveAggregates = havingAndOutputColumns.mapsAboveAggregates();
         if (!mapsAboveAggregates.isEmpty()) {
@@ -190,10 +191,6 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Optional<ColumnAlias> aliasing = aliasCollector.aliasing();
         if (aliasing.isPresent()) {
             plan = new AliasLop(plan, aliasing.get());
-        }
-
-        if (groupByClause.isPresent()) {
-            plan = new CollectLop(plan);
         }
 
         final Optional<SortSpecificationList> orderByClause = select.orderByClause();
@@ -295,7 +292,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final LogicalOperator firstInput = apply(tableReferenceList.first());
         final LogicalOperator secondInput = apply(tableReferenceList.second());
 
-        Schema outputSchema = joinOutputSchema(firstInput.schema(), secondInput.schema());
+        Schema outputSchema = innerJoinOutputSchema(firstInput.schema(), secondInput.schema());
 
         CartesianProductLop cartesianProduct = new CartesianProductLop(firstInput, secondInput, outputSchema);
 
@@ -308,7 +305,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     private CartesianProductLop cartesianProduct(LogicalOperator left, AST right) {
         final LogicalOperator otherInput = apply(right);
-        final Schema outputSchema = joinOutputSchema(left.schema(), otherInput.schema());
+        final Schema outputSchema = innerJoinOutputSchema(left.schema(), otherInput.schema());
 
         return new CartesianProductLop(left, otherInput, outputSchema);
     }
@@ -352,10 +349,5 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     @Override
     public LogicalOperator defaultVisit(AST node) {
         throw new IllegalStateException();
-    }
-
-    private static Schema joinOutputSchema(Schema leftSchema, Schema rightSchema) {
-        return leftSchema
-                .extend(rightSchema.columnNames().stream().map(rightSchema::column).collect(toList()));
     }
 }

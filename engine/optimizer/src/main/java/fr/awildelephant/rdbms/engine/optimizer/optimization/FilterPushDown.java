@@ -9,11 +9,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
@@ -42,9 +38,9 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     @Override
     public LogicalOperator visit(AggregationLop aggregationNode) {
         final List<ColumnReference> aggregatesColumns = aggregationNode.aggregates()
-                                                                       .stream()
-                                                                       .map(Aggregate::outputName)
-                                                                       .collect(toList());
+                .stream()
+                .map(Aggregate::outputName)
+                .collect(toList());
 
         final List<ValueExpression> filtersOnAggregates = new ArrayList<>();
         final List<ValueExpression> filtersOnInput = new ArrayList<>();
@@ -57,10 +53,10 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
             }
         }
 
-        return createFilterAbove(filtersOnAggregates, new AggregationLop(new FilterPushDown(filtersOnInput)
-                                                                                 .apply(aggregationNode.input()),
-                                                                         aggregationNode.aggregates()
-        ));
+        final LogicalOperator transformedInput = new FilterPushDown(filtersOnInput).apply(aggregationNode.input());
+
+        return createFilterAbove(filtersOnAggregates,
+                new AggregationLop(transformedInput, aggregationNode.breakdowns(), aggregationNode.aggregates()));
     }
 
     @Override
@@ -75,16 +71,6 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     @Override
     public LogicalOperator visit(BaseTableLop baseTable) {
         return createFilterAbove(filters, baseTable);
-    }
-
-    @Override
-    public LogicalOperator visit(BreakdownLop breakdownNode) {
-        return new BreakdownLop(apply(breakdownNode.input()), breakdownNode.breakdowns());
-    }
-
-    @Override
-    public LogicalOperator visit(CollectLop collectNode) {
-        return new CollectLop(apply(collectNode.input()));
     }
 
     @Override
@@ -141,9 +127,9 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
         final ConstantExpression alwaysTrue = constantExpression(trueValue(), BOOLEAN);
         final LeftJoinLop transformedJoin = new LeftJoinLop(transformedLeftInput,
-                                                            transformedRightInput,
-                                                            collapseFilters(filtersOnBoth).orElse(alwaysTrue),
-                                                            leftJoin.schema());
+                transformedRightInput,
+                collapseFilters(filtersOnBoth).orElse(alwaysTrue),
+                leftJoin.schema());
 
         // TODO: push filters down the left join, transform it to an inner join if possible
         return createFilterAbove(filters, transformedJoin);
@@ -170,9 +156,9 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         }
 
         return createFilterAbove(filtersOnMapColumns,
-                                 new MapLop(new FilterPushDown(filtersOnInput).apply(mapNode.input()),
-                                            mapNode.expressions(),
-                                            mapNode.expressionsOutputNames()));
+                new MapLop(new FilterPushDown(filtersOnInput).apply(mapNode.input()),
+                        mapNode.expressions(),
+                        mapNode.expressionsOutputNames()));
     }
 
     @Override

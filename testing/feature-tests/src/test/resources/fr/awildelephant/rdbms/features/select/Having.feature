@@ -19,13 +19,13 @@ Feature: I filter using the having clause
 
     When I execute the query
       """
-      SELECT client.client_name
+      SELECT client.client_id
       FROM client INNER JOIN orders ON client.client_id = orders.client_id
       GROUP BY client.client_id
       HAVING SUM(amount) > 20
       """
 
     Then I expect the result set
-      | client_name |
-      | TEXT        |
-      | Michel      |
+      | client_id |
+      | INTEGER   |
+      | 0         |

@@ -1,15 +1,6 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.BreakdownLop;
-import fr.awildelephant.rdbms.plan.CollectLop;
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
@@ -47,18 +38,19 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
         }
     }
 
-    private static InnerJoinLop transformToInnerJoin(LogicalOperator input, LogicalOperator transformedSubquery, Correlation correlation) {
+    private static InnerJoinLop transformToInnerJoin(LogicalOperator input, LogicalOperator transformedSubquery,
+                                                     Correlation correlation) {
         final Schema inputSchema = input.schema();
         final Schema transformedSubquerySchema = transformedSubquery.schema();
         final Variable innerVariable = variable(correlation.getInnerColumn(),
                                                 transformedSubquerySchema.column(correlation.getInnerColumn())
-                                                                         .domain());
+                                                        .domain());
         final Variable outerVariable = variable(correlation.getOuterColumn(),
                                                 inputSchema.column(correlation.getOuterColumn()).domain());
         final EqualExpression joinSpecification = equalExpression(innerVariable, outerVariable);
 
         return new InnerJoinLop(input,
-                                new CollectLop(transformedSubquery),
+                                transformedSubquery,
                                 joinSpecification,
                                 joinOutputSchema(inputSchema, transformedSubquerySchema));
     }
@@ -69,8 +61,19 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
     }
 
     @Override
-    public LogicalOperator visit(BreakdownLop breakdownNode) {
-        return breakdownNode;
+    public LogicalOperator visit(AggregationLop aggregationNode) {
+        final LogicalOperator transformedInput = apply(aggregationNode.input());
+
+        final List<ColumnReference> breakdowns = aggregationNode.breakdowns();
+        if (correlation != null && !breakdowns.contains(correlation.getInnerColumn())) {
+            final List<ColumnReference> breakdownsWithCorrelatedColumn = new ArrayList<>(breakdowns.size() + 1);
+            breakdownsWithCorrelatedColumn.addAll(breakdowns);
+            breakdownsWithCorrelatedColumn.add(correlation.getInnerColumn());
+
+            return new AggregationLop(transformedInput, breakdownsWithCorrelatedColumn, aggregationNode.aggregates());
+        }
+
+        return new AggregationLop(transformedInput, breakdowns, aggregationNode.aggregates());
     }
 
     @Override
@@ -132,11 +135,11 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
 
         correlation = getCorrelation(correlatedFilters.get(0), filter.input().schema());
 
-        return new BreakdownLop(createFilterAbove(filter.input(), uncorrelatedFilters),
-                                List.of(correlation.getInnerColumn()));
+        return createFilterAbove(filter.input(), uncorrelatedFilters);
     }
 
-    private LogicalOperator createFilterAbove(LogicalOperator transformedInput, List<ValueExpression> uncorrelatedFilters) {
+    private LogicalOperator createFilterAbove(LogicalOperator transformedInput,
+                                              List<ValueExpression> uncorrelatedFilters) {
         final Optional<ValueExpression> uncorrelatedFilter = collapseFilters(uncorrelatedFilters);
         if (uncorrelatedFilter.isPresent()) {
             return new FilterLop(transformedInput, uncorrelatedFilter.get());

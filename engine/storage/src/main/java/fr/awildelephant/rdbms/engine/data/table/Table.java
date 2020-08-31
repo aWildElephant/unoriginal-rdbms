@@ -17,6 +17,8 @@ public interface Table extends Iterable<Record> {
 
     int numberOfTuples();
 
+    boolean isEmpty();
+
     Record get(int rowIndex);
 
     List<Column> columns();

@@ -18,18 +18,8 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
-    public T visit(BreakdownLop breakdownNode) {
-        return defaultVisit(breakdownNode);
-    }
-
-    @Override
     public T visit(CartesianProductLop cartesianProductNode) {
         return defaultVisit(cartesianProductNode);
-    }
-
-    @Override
-    public T visit(CollectLop collectNode) {
-        return defaultVisit(collectNode);
     }
 
     @Override

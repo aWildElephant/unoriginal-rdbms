@@ -57,7 +57,7 @@ public final class Storage {
     }
 
     public Table execute(final LogicalOperator logicalPlan) {
-        return new PlanExecutor(tables).apply(logicalPlan).get(0);
+        return new PlanExecutor(tables).apply(logicalPlan);
     }
 
     private void checkTableFound(Table table, String tableName) {

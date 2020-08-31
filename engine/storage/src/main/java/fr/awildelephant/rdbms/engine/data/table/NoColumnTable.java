@@ -39,6 +39,11 @@ public final class NoColumnTable implements Table {
     }
 
     @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
     public Record get(int rowIndex) {
         return Record.EMPTY_RECORD;
     }

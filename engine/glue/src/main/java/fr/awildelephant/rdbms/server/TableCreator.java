@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -75,14 +76,29 @@ final class TableCreator {
         final List<ColumnDefinition> columnDefinitions = elements.columns();
         final ArrayList<ColumnMetadata> columns = new ArrayList<>(columnDefinitions.size());
 
+        final Set<String> notNullColumns = notNullColumns(createTable.tableElementList().notNullConstraints());
+
         int i = 0;
         for (ColumnDefinition element : columnDefinitions) {
-            columns.add(new ColumnMetadata(i, new QualifiedColumnReference(tableName, element.columnName()),
-                                   domainOf(element.columnType()), false, false));
+            final String columnName = element.columnName();
+            final QualifiedColumnReference columnReference = new QualifiedColumnReference(tableName, columnName);
+            final Domain columnType = domainOf(element.columnType());
+            final boolean notNull = notNullColumns.contains(columnName);
+
+            columns.add(new ColumnMetadata(i, columnReference, columnType, notNull, false));
+
             i = i + 1;
         }
 
         return columns;
+    }
+
+    private static Set<String> notNullColumns(Iterable<NotNullConstraint> notNullConstraints) {
+        final Set<String> notNullColumns = new HashSet<>();
+        for (NotNullConstraint notNullConstraint : notNullConstraints) {
+            notNullColumns.add(notNullConstraint.columnName());
+        }
+        return notNullColumns;
     }
 
     private static Domain domainOf(int columnType) {

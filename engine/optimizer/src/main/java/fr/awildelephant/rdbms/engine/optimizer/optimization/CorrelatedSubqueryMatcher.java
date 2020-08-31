@@ -34,18 +34,8 @@ public class CorrelatedSubqueryMatcher implements LopVisitor<Boolean> {
     }
 
     @Override
-    public Boolean visit(BreakdownLop breakdownNode) {
-        return apply(breakdownNode.input());
-    }
-
-    @Override
     public Boolean visit(CartesianProductLop cartesianProductNode) {
         return apply(cartesianProductNode.leftInput()) || apply(cartesianProductNode.rightInput());
-    }
-
-    @Override
-    public Boolean visit(CollectLop collectNode) {
-        return apply(collectNode.input());
     }
 
     @Override

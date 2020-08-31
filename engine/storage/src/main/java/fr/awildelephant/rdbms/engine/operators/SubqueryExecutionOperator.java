@@ -39,7 +39,7 @@ public class SubqueryExecutionOperator implements Operator<Table, Table> {
 
             final LogicalOperator transformedSubquery = replaceOuterQueryReferences(inputSchema, record);
 
-            final Table subqueryResult = executor.apply(transformedSubquery).get(0);
+            final Table subqueryResult = executor.apply(transformedSubquery);
 
             if (subqueryResult.numberOfTuples() > 0) {
                 values[numberOfOutputColumns - 1] = subqueryResult.iterator().next().get(0);

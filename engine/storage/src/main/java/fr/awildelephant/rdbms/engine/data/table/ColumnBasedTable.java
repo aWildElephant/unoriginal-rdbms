@@ -54,6 +54,11 @@ public final class ColumnBasedTable implements Table {
     }
 
     @Override
+    public boolean isEmpty() {
+        return numberOfTuples() == 0;
+    }
+
+    @Override
     public Record get(int rowIndex) {
         final DomainValue[] values = new DomainValue[columns.size()];
 
