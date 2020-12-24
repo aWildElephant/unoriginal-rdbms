@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class SubqueryExecutionLop extends AbstractLop {
 
     private final LogicalOperator input;
@@ -55,5 +57,13 @@ public final class SubqueryExecutionLop extends AbstractLop {
 
         return Objects.equals(input, other.input)
                 && Objects.equals(subquery, other.subquery);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("subquery", subquery)
+                .toString();
     }
 }

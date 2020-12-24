@@ -6,6 +6,8 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 import java.util.Objects;
 import java.util.Optional;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class MinAggregate implements Aggregate {
 
     private final ColumnReference input;
@@ -47,5 +49,12 @@ public final class MinAggregate implements Aggregate {
         final MinAggregate other = (MinAggregate) obj;
 
         return Objects.equals(input, other.input);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append(input)
+                .toString();
     }
 }

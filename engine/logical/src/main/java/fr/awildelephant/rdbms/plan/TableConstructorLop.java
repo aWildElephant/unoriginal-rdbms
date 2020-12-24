@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class TableConstructorLop extends AbstractLop {
 
     private final List<List<ValueExpression>> matrix;
@@ -94,5 +96,12 @@ public final class TableConstructorLop extends AbstractLop {
         final TableConstructorLop other = (TableConstructorLop) obj;
 
         return Objects.equals(matrix, other.matrix);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("matrix", matrix)
+                .toString();
     }
 }

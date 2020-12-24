@@ -6,6 +6,8 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class LeftJoinLop extends AbstractLop {
 
     private final LogicalOperator left;
@@ -58,5 +60,14 @@ public final class LeftJoinLop extends AbstractLop {
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)
                 && Objects.equals(joinSpecification, other.joinSpecification);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("left", left)
+                .append("right", right)
+                .append("predicate", joinSpecification)
+                .toString();
     }
 }

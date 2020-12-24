@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class CaseWhenExpression implements ValueExpression {
 
     private final ValueExpression condition;
@@ -78,5 +80,15 @@ public final class CaseWhenExpression implements ValueExpression {
                 && Objects.equals(condition, other.condition)
                 && Objects.equals(thenExpression, other.thenExpression)
                 && Objects.equals(elseExpression, other.elseExpression);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("if", condition)
+                .append("then", thenExpression)
+                .append("else", elseExpression)
+                .append("domain", outputDomain)
+                .toString();
     }
 }

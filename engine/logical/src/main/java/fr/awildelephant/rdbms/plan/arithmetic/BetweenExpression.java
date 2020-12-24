@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
 public final class BetweenExpression implements ValueExpression {
@@ -75,5 +76,14 @@ public final class BetweenExpression implements ValueExpression {
         return Objects.equals(value, other.value)
                 && Objects.equals(lowerBound, other.lowerBound)
                 && Objects.equals(upperBound, other.upperBound);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("value", value)
+                .append("lowerBound", lowerBound)
+                .append("upperBound", upperBound)
+                .toString();
     }
 }

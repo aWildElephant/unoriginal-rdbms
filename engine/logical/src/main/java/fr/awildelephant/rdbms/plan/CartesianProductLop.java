@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class CartesianProductLop extends AbstractLop {
 
     private final LogicalOperator leftInput;
@@ -50,5 +52,13 @@ public final class CartesianProductLop extends AbstractLop {
 
         return Objects.equals(leftInput, other.leftInput)
                 && Objects.equals(rightInput, other.rightInput);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("left", leftInput)
+                .append("right", rightInput)
+                .toString();
     }
 }

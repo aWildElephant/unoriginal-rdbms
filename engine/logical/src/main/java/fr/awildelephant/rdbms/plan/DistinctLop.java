@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.plan;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class DistinctLop extends AbstractLop {
 
     private final LogicalOperator input;
@@ -40,5 +42,12 @@ public final class DistinctLop extends AbstractLop {
         final DistinctLop other = (DistinctLop) obj;
 
         return Objects.equals(input, other.input);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append(input)
+                .toString();
     }
 }

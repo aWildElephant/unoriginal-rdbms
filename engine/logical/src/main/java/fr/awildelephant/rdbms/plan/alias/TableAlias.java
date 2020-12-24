@@ -6,6 +6,8 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class TableAlias implements Alias {
 
     private final String alias;
@@ -52,5 +54,12 @@ public final class TableAlias implements Alias {
         final TableAlias other = (TableAlias) obj;
 
         return Objects.equals(alias, other.alias);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("alias", alias)
+                .toString();
     }
 }

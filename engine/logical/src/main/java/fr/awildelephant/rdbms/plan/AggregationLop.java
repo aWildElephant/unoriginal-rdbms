@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.*;
 
 public final class AggregationLop extends AbstractLop {
@@ -118,5 +119,14 @@ public final class AggregationLop extends AbstractLop {
         return Objects.equals(input, other.input)
                 && Objects.equals(breakdowns, other.breakdowns)
                 && Objects.equals(aggregates, other.aggregates);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("breakdowns", breakdowns)
+                .append("aggregates", aggregates)
+                .toString();
     }
 }

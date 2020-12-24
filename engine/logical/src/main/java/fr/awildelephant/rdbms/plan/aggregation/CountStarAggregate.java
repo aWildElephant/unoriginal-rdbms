@@ -31,4 +31,9 @@ public final class CountStarAggregate implements Aggregate {
     public Optional<ColumnReference> inputColumn() {
         return Optional.empty();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

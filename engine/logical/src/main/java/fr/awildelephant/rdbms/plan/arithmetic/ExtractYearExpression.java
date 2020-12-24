@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
 public final class ExtractYearExpression implements ValueExpression {
@@ -59,5 +60,12 @@ public final class ExtractYearExpression implements ValueExpression {
         final ExtractYearExpression other = (ExtractYearExpression) obj;
 
         return Objects.equals(input, other.input);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append(input)
+                .toString();
     }
 }

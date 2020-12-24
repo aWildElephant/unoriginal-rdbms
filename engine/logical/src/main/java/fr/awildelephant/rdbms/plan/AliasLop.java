@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.plan.alias.Alias;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class AliasLop extends AbstractLop {
 
     private final LogicalOperator input;
@@ -50,5 +52,13 @@ public final class AliasLop extends AbstractLop {
 
         return Objects.equals(input, other.input)
                 && Objects.equals(alias, other.alias);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("alias", alias)
+                .toString();
     }
 }

@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class ConstantExpression implements ValueExpression {
 
     private final DomainValue value;
@@ -61,5 +63,13 @@ public final class ConstantExpression implements ValueExpression {
 
         return domain == other.domain
                 && Objects.equals(value, other.value);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("value", value)
+                .append("domain", domain)
+                .toString();
     }
 }

@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.plan;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class LimitLop extends AbstractLop {
 
     private final LogicalOperator input;
@@ -48,5 +50,13 @@ public final class LimitLop extends AbstractLop {
 
         return limit == other.limit
                 && Objects.equals(input, other.input);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("limit", limit)
+                .append("input", input)
+                .toString();
     }
 }

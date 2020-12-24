@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class CastExpression implements ValueExpression {
 
     private final ValueExpression input;
@@ -60,5 +62,13 @@ public final class CastExpression implements ValueExpression {
 
         return domain == other.domain
                 && Objects.equals(input, other.input);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("castTo", domain)
+                .toString();
     }
 }

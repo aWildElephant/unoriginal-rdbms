@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class SemiJoinLop extends AbstractLop {
 
     private final LogicalOperator left;
@@ -73,5 +75,15 @@ public final class SemiJoinLop extends AbstractLop {
                 && Objects.equals(right, other.right)
                 && Objects.equals(predicate, other.predicate)
                 && Objects.equals(outputColumnName, other.outputColumnName);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("left", left)
+                .append("right", right)
+                .append("predicate", predicate)
+                .append("resultColumn", outputColumnName)
+                .toString();
     }
 }

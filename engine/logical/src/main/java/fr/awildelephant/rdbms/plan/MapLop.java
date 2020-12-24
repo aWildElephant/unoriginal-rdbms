@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class MapLop extends AbstractLop {
 
     private final LogicalOperator input;
@@ -83,5 +85,14 @@ public final class MapLop extends AbstractLop {
         return Objects.equals(input, other.input)
                 && Objects.equals(expressions, other.expressions)
                 && Objects.equals(expressionsOutputNames, other.expressionsOutputNames);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("expressions", expressions)
+                .append("aliases", expressionsOutputNames)
+                .toString();
     }
 }

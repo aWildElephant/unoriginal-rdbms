@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
 public final class InExpression implements ValueExpression {
@@ -73,5 +74,13 @@ public final class InExpression implements ValueExpression {
 
         return Objects.equals(input, other.input)
                 && Objects.equals(values, other.values);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("values", values)
+                .toString();
     }
 }

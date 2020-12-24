@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class ProjectionLop extends AbstractLop {
 
     private final LogicalOperator input;
@@ -51,5 +53,13 @@ public final class ProjectionLop extends AbstractLop {
 
         return Objects.equals(input, other.input)
                 && Objects.equals(outputColumns, other.outputColumns);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("projection", outputColumns)
+                .append("input", input)
+                .toString();
     }
 }

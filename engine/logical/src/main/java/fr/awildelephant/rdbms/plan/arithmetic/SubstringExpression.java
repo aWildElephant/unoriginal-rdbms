@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
 public final class SubstringExpression implements ValueExpression {
@@ -76,5 +77,14 @@ public final class SubstringExpression implements ValueExpression {
         return Objects.equals(input, other.input)
                 && Objects.equals(start, other.start)
                 && Objects.equals(length, other.length);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("start", start)
+                .append("length", length)
+                .toString();
     }
 }

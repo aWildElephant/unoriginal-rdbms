@@ -9,36 +9,19 @@ import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
-public final class NotEqualExpression implements ValueExpression {
-
-    private final ValueExpression left;
-    private final ValueExpression right;
+public final class NotEqualExpression extends BinaryExpression {
 
     private NotEqualExpression(ValueExpression left, ValueExpression right) {
-        this.left = left;
-        this.right = right;
+        super(left, right);
     }
 
     public static NotEqualExpression notEqualExpression(ValueExpression left, ValueExpression right) {
         return new NotEqualExpression(left, right);
     }
 
-    public ValueExpression left() {
-        return left;
-    }
-
-    public ValueExpression right() {
-        return right;
-    }
-
     @Override
     public Domain domain() {
         return BOOLEAN;
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.concat(left.variables(), right.variables());
     }
 
     @Override

@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class BaseTableLop extends AbstractLop {
 
     private final String name;
@@ -43,5 +45,12 @@ public final class BaseTableLop extends AbstractLop {
         final BaseTableLop other = (BaseTableLop) obj;
 
         return Objects.equals(name, other.name);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append(name)
+                .toString();
     }
 }

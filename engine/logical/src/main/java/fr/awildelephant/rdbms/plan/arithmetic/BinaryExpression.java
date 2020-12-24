@@ -4,6 +4,8 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public abstract class BinaryExpression implements ValueExpression {
 
     final ValueExpression left;
@@ -25,5 +27,13 @@ public abstract class BinaryExpression implements ValueExpression {
 
     public ValueExpression right() {
         return right;
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("left", left)
+                .append("right", right)
+                .toString();
     }
 }
