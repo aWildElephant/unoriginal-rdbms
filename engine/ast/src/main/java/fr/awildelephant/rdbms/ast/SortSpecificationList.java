@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class SortSpecificationList implements AST {
 
     private final List<SortSpecification> sortSpecificationList;
@@ -28,7 +30,7 @@ public final class SortSpecificationList implements AST {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return toStringBuilder(this)
                 .append(sortSpecificationList)
                 .toString();
     }

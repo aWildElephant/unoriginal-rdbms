@@ -7,6 +7,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class DecimalLiteral implements AST {
 
     private final BigDecimal value;
@@ -30,7 +32,7 @@ public final class DecimalLiteral implements AST {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return toStringBuilder(this)
                 .append(value)
                 .toString();
     }

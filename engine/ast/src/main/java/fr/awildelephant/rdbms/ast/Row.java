@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class Row implements AST {
 
     private final List<AST> values;
@@ -48,7 +50,7 @@ public final class Row implements AST {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return toStringBuilder(this)
                 .append(values)
                 .toString();
     }

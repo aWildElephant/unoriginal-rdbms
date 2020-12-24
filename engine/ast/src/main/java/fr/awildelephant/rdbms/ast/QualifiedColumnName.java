@@ -2,6 +2,8 @@ package fr.awildelephant.rdbms.ast;
 
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class QualifiedColumnName implements ColumnName {
 
     private final String qualifier;
@@ -45,5 +47,13 @@ public final class QualifiedColumnName implements ColumnName {
 
         return Objects.equals(qualifier, other.qualifier)
                 && Objects.equals(name, other.name);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("qualifier", qualifier)
+                .append("name", name)
+                .toString();
     }
 }

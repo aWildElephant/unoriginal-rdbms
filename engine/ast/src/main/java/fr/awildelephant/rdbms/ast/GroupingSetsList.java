@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.ast;
 import java.util.List;
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class GroupingSetsList implements AST {
 
     private final List<ColumnName> columns;
@@ -38,5 +40,12 @@ public final class GroupingSetsList implements AST {
         final GroupingSetsList other = (GroupingSetsList) obj;
 
         return Objects.equals(columns, other.columns);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append(columns)
+                .toString();
     }
 }

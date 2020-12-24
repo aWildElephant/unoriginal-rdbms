@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 import java.util.Objects;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 // TODO: create CartesianProduct AST node to replace this node
 public final class TableReferenceList implements AST {
 
@@ -41,7 +43,7 @@ public final class TableReferenceList implements AST {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return toStringBuilder(this)
                 .append("first", first)
                 .append("second", second)
                 .append("others", others)

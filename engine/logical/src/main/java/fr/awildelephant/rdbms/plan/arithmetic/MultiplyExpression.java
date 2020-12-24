@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.schema.Domain;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class MultiplyExpression extends BinaryExpression {
 
     private final Domain domain;
@@ -49,5 +51,15 @@ public final class MultiplyExpression extends BinaryExpression {
         return domain == other.domain
                 && Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("left", left)
+                .append("right", right)
+                .append("domain", domain)
+                .toString();
+
     }
 }

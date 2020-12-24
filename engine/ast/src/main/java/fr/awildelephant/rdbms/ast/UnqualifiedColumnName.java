@@ -1,8 +1,11 @@
 package fr.awildelephant.rdbms.ast;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
+
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
 public final class UnqualifiedColumnName implements ColumnName {
 
@@ -44,7 +47,7 @@ public final class UnqualifiedColumnName implements ColumnName {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return toStringBuilder(this)
                 .append("name", name)
                 .toString();
     }
