@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class OuterQueryVariable implements ValueExpression {
 
     private final ColumnReference reference;
@@ -60,5 +62,13 @@ public final class OuterQueryVariable implements ValueExpression {
 
         return domain == other.domain
                 && Objects.equals(reference, other.reference);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("name", reference)
+                .append("domain", domain)
+                .toString();
     }
 }

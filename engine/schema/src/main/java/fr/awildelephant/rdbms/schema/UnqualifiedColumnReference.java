@@ -46,4 +46,9 @@ public final class UnqualifiedColumnReference implements ColumnReference {
 
         return Objects.equals(name, other.name);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

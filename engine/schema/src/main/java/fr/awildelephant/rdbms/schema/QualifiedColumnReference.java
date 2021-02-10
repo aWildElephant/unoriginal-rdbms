@@ -49,4 +49,9 @@ public final class QualifiedColumnReference implements ColumnReference {
         return Objects.equals(table, other.table)
                 && Objects.equals(name, other.name);
     }
+
+    @Override
+    public String toString() {
+        return table + '.' + name;
+    }
 }
