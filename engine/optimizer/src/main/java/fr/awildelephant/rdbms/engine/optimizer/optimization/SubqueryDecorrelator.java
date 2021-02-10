@@ -2,10 +2,12 @@ package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
 import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
+import fr.awildelephant.rdbms.plan.alias.TableAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.BreakdownFinder.canAddBreakdownOver;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.CorrelatedFilterMatcher.isCorrelated;
+import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
@@ -42,17 +45,17 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
                                                      Correlation correlation) {
         final Schema inputSchema = input.schema();
         final Schema transformedSubquerySchema = transformedSubquery.schema();
-        final Variable innerVariable = variable(correlation.getInnerColumn(),
-                                                transformedSubquerySchema.column(correlation.getInnerColumn())
-                                                        .domain());
-        final Variable outerVariable = variable(correlation.getOuterColumn(),
-                                                inputSchema.column(correlation.getOuterColumn()).domain());
-        final EqualExpression joinSpecification = equalExpression(innerVariable, outerVariable);
 
-        return new InnerJoinLop(input,
-                                transformedSubquery,
-                                joinSpecification,
-                                joinOutputSchema(inputSchema, transformedSubquerySchema));
+        final ColumnMetadata innerColumn = transformedSubquerySchema.column(correlation.getInnerColumn());
+        final Variable innerVariable = variable(innerColumn.name(), innerColumn.domain());
+
+        final ColumnMetadata outerColumn = inputSchema.column(correlation.getOuterColumn());
+        final Variable outerVariable = variable(outerColumn.name(), outerColumn.domain());
+
+        final EqualExpression joinSpecification = equalExpression(innerVariable, outerVariable);
+        final Schema joinOutputSchema = joinOutputSchema(inputSchema, transformedSubquerySchema);
+
+        return new InnerJoinLop(input, transformedSubquery, joinSpecification, joinOutputSchema);
     }
 
     private static Schema joinOutputSchema(Schema leftSchema, Schema rightSchema) {
@@ -102,9 +105,15 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
         }
 
         final ColumnAliasBuilder columnAliasBuilder = new ColumnAliasBuilder();
-        columnAliasBuilder.add(scalarSubquery.input().schema().columnNames().get(0), scalarSubquery.id());
+        columnAliasBuilder.add(scalarSubquery.input().schema().columnNames().get(0), "0");
 
-        return new AliasLop(transformedInput, columnAliasBuilder.build().orElseThrow());
+        final AliasLop aliasSubqueryOutputColumn = new AliasLop(transformedInput, columnAliasBuilder.build().orElseThrow());
+
+        final TableAlias tableAlias = tableAlias(scalarSubquery.id());
+
+        correlation = new Correlation(tableAlias.alias(correlation.getInnerColumn()), correlation.getOuterColumn());
+
+        return new AliasLop(aliasSubqueryOutputColumn, tableAlias);
     }
 
     @Override

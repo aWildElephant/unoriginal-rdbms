@@ -6,16 +6,14 @@ import fr.awildelephant.rdbms.engine.optimizer.optimization.ProjectionPushDown;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.SubqueryUnnesting;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
-import java.util.function.Function;
-
 public class Optimizer {
 
     public LogicalOperator optimize(LogicalOperator plan) {
-        final Function<LogicalOperator, LogicalOperator> optimizationChain = new SubqueryUnnesting()
-                .andThen(new FilterPushDown())
-                .andThen(new JoinReordering())
-                .andThen(ProjectionPushDown::pushDownProjections);
-
-        return optimizationChain.apply(plan);
+        LogicalOperator optimizedPlan = plan;
+        optimizedPlan = new SubqueryUnnesting().apply(optimizedPlan);
+        optimizedPlan = new FilterPushDown().apply(optimizedPlan);
+        optimizedPlan = new JoinReordering().apply(optimizedPlan);
+        optimizedPlan = ProjectionPushDown.pushDownProjections(optimizedPlan);
+        return optimizedPlan;
     }
 }

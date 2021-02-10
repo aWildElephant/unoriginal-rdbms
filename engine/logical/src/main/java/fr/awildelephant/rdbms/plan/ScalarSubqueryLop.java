@@ -2,8 +2,8 @@ package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,8 +32,8 @@ public final class ScalarSubqueryLop extends AbstractLop {
 
         final ColumnMetadata column = input.schema().column(columns.get(0));
 
-        return new Schema(List.of(new ColumnMetadata(0, new UnqualifiedColumnReference(id), column.domain(),
-                                             column.notNull(), true)));
+        return new Schema(List.of(new ColumnMetadata(0, new QualifiedColumnReference(id, "0"), column.domain(),
+                                                     column.notNull(), true)));
     }
 
     public LogicalOperator input() {

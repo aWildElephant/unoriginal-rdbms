@@ -35,6 +35,7 @@ import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnNotFoundException;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
@@ -408,9 +409,11 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     private ValueExpression createVariable(ColumnReference reference) {
         try {
-            return variable(reference, inputSchema.column(reference).domain());
+            final ColumnMetadata column = inputSchema.column(reference);
+            return variable(column.name(), column.domain());
         } catch (ColumnNotFoundException unused) {
-            return outerQueryVariable(reference, outerQuerySchema.column(reference).domain());
+            final ColumnMetadata outerColumn = outerQuerySchema.column(reference);
+            return outerQueryVariable(outerColumn.name(), outerColumn.domain());
         }
     }
 

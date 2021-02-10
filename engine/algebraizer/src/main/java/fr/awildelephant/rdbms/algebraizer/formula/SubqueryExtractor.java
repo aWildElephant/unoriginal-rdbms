@@ -73,7 +73,7 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
 
         subqueries.add(cartesianProductJoiner(scalarSubquery(select, id)));
 
-        return unqualifiedColumnName(id);
+        return qualifiedColumnName(id, "0");
     }
 
     @Override

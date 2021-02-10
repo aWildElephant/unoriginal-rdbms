@@ -201,11 +201,13 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         return plan;
     }
 
-    private LogicalOperator createProjection(LogicalOperator input, List<AST> columns) {
-        final List<ColumnReference> columnReferences = new ArrayList<>(columns.size());
+    private LogicalOperator createProjection(LogicalOperator input, List<AST> columnExpressions) {
+        final List<ColumnReference> columnReferences = new ArrayList<>(columnExpressions.size());
+        final Schema inputSchema = input.schema();
 
-        for (AST column : columns) {
-            columnReferences.add(columnReferenceTransformer.apply(column));
+        for (AST columnExpression : columnExpressions) {
+            final ColumnReference columnReference = columnReferenceTransformer.apply(columnExpression);
+            columnReferences.add(inputSchema.column(columnReference).name());
         }
 
         return new ProjectionLop(input, columnReferences);
@@ -254,10 +256,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     }
 
     private LogicalOperator createFilter(LogicalOperator input, AST filter) {
-        return new FilterLop(input, createValueExpression(filter,
-                input.schema(),
-                outerQuerySchema
-        ));
+        return new FilterLop(input, createValueExpression(filter, input.schema(), outerQuerySchema));
     }
 
     @Override

@@ -87,8 +87,54 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(InnerJoinLop innerJoinLop) {
-        return createFilterAbove(filters, innerJoinLop); // TODO
+    public LogicalOperator visit(InnerJoinLop innerJoin) {
+        final Schema leftInputSchema = innerJoin.left().schema();
+        final Schema rightInputSchema = innerJoin.right().schema();
+
+        final List<ValueExpression> filtersOnLeftInput = new ArrayList<>();
+        final List<ValueExpression> filtersOnRightInput = new ArrayList<>();
+        final List<ValueExpression> filtersOnBoth = new ArrayList<>();
+
+        final List<ValueExpression> allFilters = new ArrayList<>(filters);
+        allFilters.addAll(expandFilters(innerJoin.joinSpecification()));
+
+        for (ValueExpression expression : allFilters) {
+            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+
+            final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
+            final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
+
+            if (!requiresLeftInput) {
+                filtersOnRightInput.add(expression);
+            }
+
+            if (!requiresRightInput) {
+                filtersOnLeftInput.add(expression);
+            }
+
+            if (requiresLeftInput && requiresRightInput) {
+                filtersOnBoth.add(expression);
+            }
+        }
+
+        final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeftInput).apply(innerJoin.left());
+        final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRightInput).apply(innerJoin.right());
+
+        final Optional<ValueExpression> joinCondition = collapseFilters(filtersOnBoth);
+        final LogicalOperator transformedJoin;
+        if (joinCondition.isPresent()) {
+            transformedJoin = new InnerJoinLop(transformedLeftInput,
+                                               transformedRightInput,
+                                               joinCondition.get(),
+                                               innerJoin.schema());
+
+        } else {
+            transformedJoin = new CartesianProductLop(transformedLeftInput,
+                                                      transformedRightInput,
+                                                      innerJoin.schema());
+        }
+
+        return createFilterAbove(filters, transformedJoin);
     }
 
     @Override
