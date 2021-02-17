@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.value.IntervalGranularity;
 import fr.awildelephant.rdbms.lexer.Lexer;
@@ -303,7 +304,21 @@ final class ValueExpressionRule {
     private static AST deriveDateValueExpression(Lexer lexer) {
         consumeAndExpect(DATE, lexer);
 
-        return cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
+        final boolean parenthesis;
+        if (nextTokenIs(LEFT_PAREN, lexer)) {
+            lexer.consumeNextToken();
+            parenthesis = true;
+        } else {
+            parenthesis = false;
+        }
+
+        final Cast node = cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
+
+        if (parenthesis) {
+            consumeAndExpect(RIGHT_PAREN, lexer);
+        }
+
+        return node;
     }
 
     private static AST deriveParenthesizedValueExpression(Lexer lexer) {
