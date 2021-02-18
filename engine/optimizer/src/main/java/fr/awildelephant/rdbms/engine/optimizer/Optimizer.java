@@ -14,6 +14,8 @@ public class Optimizer {
         optimizedPlan = new FilterPushDown().apply(optimizedPlan);
         optimizedPlan = new JoinReordering().apply(optimizedPlan);
         optimizedPlan = ProjectionPushDown.pushDownProjections(optimizedPlan);
+        optimizedPlan = new FilterPushDown().apply(optimizedPlan);
+        optimizedPlan = ProjectionPushDown.pushDownProjections(optimizedPlan);
         return optimizedPlan;
     }
 }

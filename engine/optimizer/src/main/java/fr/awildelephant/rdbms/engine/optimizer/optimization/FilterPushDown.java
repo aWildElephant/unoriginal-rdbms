@@ -93,7 +93,8 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
         final List<ValueExpression> filtersOnLeftInput = new ArrayList<>();
         final List<ValueExpression> filtersOnRightInput = new ArrayList<>();
-        final List<ValueExpression> filtersOnBoth = new ArrayList<>();
+        final List<ValueExpression> joinConditionFilters = new ArrayList<>();
+        final List<ValueExpression> filtersAbove = new ArrayList<>();
 
         final List<ValueExpression> allFilters = new ArrayList<>(filters);
         allFilters.addAll(expandFilters(innerJoin.joinSpecification()));
@@ -113,28 +114,37 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
             }
 
             if (requiresLeftInput && requiresRightInput) {
-                filtersOnBoth.add(expression);
+                if (expression instanceof EqualExpression) {
+                    joinConditionFilters.add(expression);
+                } else {
+                    filtersAbove.add(expression);
+                }
             }
         }
 
         final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeftInput).apply(innerJoin.left());
         final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRightInput).apply(innerJoin.right());
 
-        final Optional<ValueExpression> joinCondition = collapseFilters(filtersOnBoth);
+        // Out of desperation, we pick non-equal predicates to use in the join condition
+        if (joinConditionFilters.isEmpty() && !filtersAbove.isEmpty()) {
+            joinConditionFilters.addAll(filtersAbove);
+            filtersAbove.clear();
+        }
+
+        final Optional<ValueExpression> joinCondition = collapseFilters(joinConditionFilters);
         final LogicalOperator transformedJoin;
         if (joinCondition.isPresent()) {
             transformedJoin = new InnerJoinLop(transformedLeftInput,
                                                transformedRightInput,
                                                joinCondition.get(),
                                                innerJoin.schema());
-
         } else {
             transformedJoin = new CartesianProductLop(transformedLeftInput,
                                                       transformedRightInput,
                                                       innerJoin.schema());
         }
 
-        return createFilterAbove(filters, transformedJoin);
+        return createFilterAbove(filtersAbove, transformedJoin);
     }
 
     @Override
@@ -242,7 +252,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
         final SemiJoinLop transformedJoin = new SemiJoinLop(
                 transformedLeftInput,
-                semiJoin.right(),
+                new FilterPushDown().apply(semiJoin.right()),
                 semiJoin.predicate(),
                 semiJoin.ouputColumnName());
 

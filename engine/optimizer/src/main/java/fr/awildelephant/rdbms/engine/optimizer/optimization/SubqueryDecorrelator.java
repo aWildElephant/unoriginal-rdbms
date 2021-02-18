@@ -1,8 +1,17 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.*;
+import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.plan.alias.TableAlias;
+import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -12,8 +21,11 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.BreakdownFinder.canAddBreakdownOver;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.CorrelatedFilterMatcher.isCorrelated;
@@ -26,15 +38,15 @@ import static java.util.stream.Collectors.toList;
 
 public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperator> {
 
-    private Correlation correlation;
+    private Set<Correlation> correlations = new HashSet<>();
 
     public static LogicalOperator decorrelateSubquery(LogicalOperator input, LogicalOperator subquery) {
         final SubqueryDecorrelator decorrelator = new SubqueryDecorrelator();
 
         final LogicalOperator transformedSubquery = decorrelator.apply(subquery);
 
-        final Correlation correlation = decorrelator.correlation;
-        if (correlation != null) {
+        final Set<Correlation> correlation = decorrelator.correlations;
+        if (!correlation.isEmpty()) {
             return transformToInnerJoin(input, transformedSubquery, correlation);
         } else {
             return new SubqueryExecutionLop(input, transformedSubquery);
@@ -42,20 +54,32 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
     }
 
     private static InnerJoinLop transformToInnerJoin(LogicalOperator input, LogicalOperator transformedSubquery,
-                                                     Correlation correlation) {
+                                                     Set<Correlation> correlations) {
         final Schema inputSchema = input.schema();
         final Schema transformedSubquerySchema = transformedSubquery.schema();
 
-        final ColumnMetadata innerColumn = transformedSubquerySchema.column(correlation.getInnerColumn());
-        final Variable innerVariable = variable(innerColumn.name(), innerColumn.domain());
+        final ValueExpression joinSpecification = buildJoinSpecifications(transformedSubquerySchema, inputSchema, correlations);
 
-        final ColumnMetadata outerColumn = inputSchema.column(correlation.getOuterColumn());
-        final Variable outerVariable = variable(outerColumn.name(), outerColumn.domain());
-
-        final EqualExpression joinSpecification = equalExpression(innerVariable, outerVariable);
         final Schema joinOutputSchema = joinOutputSchema(inputSchema, transformedSubquerySchema);
 
         return new InnerJoinLop(input, transformedSubquery, joinSpecification, joinOutputSchema);
+    }
+
+    private static ValueExpression buildJoinSpecifications(Schema transformedSubquerySchema,
+                                                           Schema inputSchema,
+                                                           Set<Correlation> correlations) {
+        return correlations.stream()
+                .<ValueExpression>map(correlation -> {
+                    final ColumnMetadata innerColumn = transformedSubquerySchema.column(correlation.getInnerColumn());
+                    final Variable innerVariable = variable(innerColumn.name(), innerColumn.domain());
+
+                    final ColumnMetadata outerColumn = inputSchema.column(correlation.getOuterColumn());
+                    final Variable outerVariable = variable(outerColumn.name(), outerColumn.domain());
+
+                    return equalExpression(innerVariable, outerVariable);
+                })
+                .reduce(AndExpression::andExpression)
+                .orElseThrow();
     }
 
     private static Schema joinOutputSchema(Schema leftSchema, Schema rightSchema) {
@@ -68,12 +92,15 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
         final LogicalOperator transformedInput = apply(aggregationNode.input());
 
         final List<ColumnReference> breakdowns = aggregationNode.breakdowns();
-        if (correlation != null && !breakdowns.contains(correlation.getInnerColumn())) {
-            final List<ColumnReference> breakdownsWithCorrelatedColumn = new ArrayList<>(breakdowns.size() + 1);
-            breakdownsWithCorrelatedColumn.addAll(breakdowns);
-            breakdownsWithCorrelatedColumn.add(correlation.getInnerColumn());
+        if (!correlations.isEmpty()) {
+            final List<ColumnReference> breakdownsWithCorrelatedColumns = new ArrayList<>(breakdowns);
+            for (Correlation correlation : correlations) {
+                if (!breakdownsWithCorrelatedColumns.contains(correlation.getInnerColumn())) {
+                    breakdownsWithCorrelatedColumns.add(correlation.getInnerColumn());
+                }
+            }
 
-            return new AggregationLop(transformedInput, breakdownsWithCorrelatedColumn, aggregationNode.aggregates());
+            return new AggregationLop(transformedInput, breakdownsWithCorrelatedColumns, aggregationNode.aggregates());
         }
 
         return new AggregationLop(transformedInput, breakdowns, aggregationNode.aggregates());
@@ -83,15 +110,17 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
     public LogicalOperator visit(ProjectionLop projectionNode) {
         final LogicalOperator transformedInput = apply(projectionNode.input());
 
-        if (correlation == null) {
+        if (correlations.isEmpty()) {
             return new ProjectionLop(transformedInput, projectionNode.outputColumns());
         }
 
         final List<ColumnReference> outputColumns = new ArrayList<>(projectionNode.outputColumns());
 
-        if (!outputColumns.contains(correlation.getInnerColumn())) {
-            outputColumns.add(correlation.getInnerColumn());
-        }
+        correlations.forEach(correlation -> {
+            if (!outputColumns.contains(correlation.getInnerColumn())) {
+                outputColumns.add(correlation.getInnerColumn());
+            }
+        });
 
         return new ProjectionLop(transformedInput, outputColumns);
     }
@@ -100,7 +129,7 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
     public LogicalOperator visit(ScalarSubqueryLop scalarSubquery) {
         final LogicalOperator transformedInput = apply(scalarSubquery.input());
 
-        if (correlation == null) {
+        if (correlations.isEmpty()) {
             return scalarSubquery;
         }
 
@@ -111,7 +140,10 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
 
         final TableAlias tableAlias = tableAlias(scalarSubquery.id());
 
-        correlation = new Correlation(tableAlias.alias(correlation.getInnerColumn()), correlation.getOuterColumn());
+        correlations = correlations.stream()
+                .map(correlation -> new Correlation(tableAlias.alias(correlation.getInnerColumn()),
+                                                    correlation.getOuterColumn()))
+                .collect(Collectors.toSet());
 
         return new AliasLop(aliasSubqueryOutputColumn, tableAlias);
     }
@@ -134,15 +166,15 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
             return filter.transformInputs(this);
         }
 
-        // TODO: we don't need to support several correlated filters so we don't
-        final int numberOfCorrelatedFilters = correlatedFilters.size();
-        if (numberOfCorrelatedFilters != 1
-                || !isEqualFilterBetweenTwoColumns(correlatedFilters.get(0))
+        // TODO: I don't remember what "canAddBreakdownOver" is for
+        if (!correlatedFilters.stream().allMatch(this::isEqualFilterBetweenTwoColumns)
                 || !canAddBreakdownOver(filter.input())) {
             return filter.transformInputs(this);
         }
 
-        correlation = getCorrelation(correlatedFilters.get(0), filter.input().schema());
+        for (ValueExpression correlatedFilter : correlatedFilters) {
+            correlations.add(getCorrelation(correlatedFilter));
+        }
 
         return createFilterAbove(filter.input(), uncorrelatedFilters);
     }
@@ -157,7 +189,7 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
         }
     }
 
-    private Correlation getCorrelation(ValueExpression expression, Schema inputSchema) {
+    private Correlation getCorrelation(ValueExpression expression) {
         final EqualExpression equalExpression = (EqualExpression) expression;
         if (equalExpression.left() instanceof OuterQueryVariable) {
             final ColumnReference outerColumn = ((OuterQueryVariable) equalExpression.left()).reference();

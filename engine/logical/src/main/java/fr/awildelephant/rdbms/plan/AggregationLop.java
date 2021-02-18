@@ -85,6 +85,7 @@ public final class AggregationLop extends AbstractLop {
         return input;
     }
 
+    // TODO: this should be a set
     public List<ColumnReference> breakdowns() {
         return breakdowns;
     }
