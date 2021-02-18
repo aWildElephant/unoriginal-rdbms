@@ -15,6 +15,7 @@ public class Optimizer {
         optimizedPlan = new JoinReordering().apply(optimizedPlan);
         optimizedPlan = ProjectionPushDown.pushDownProjections(optimizedPlan);
         optimizedPlan = new FilterPushDown().apply(optimizedPlan);
+        // At the time of writing filters materialize their output but projections do not, so executing projections first is a no-brainer
         optimizedPlan = ProjectionPushDown.pushDownProjections(optimizedPlan);
         return optimizedPlan;
     }
