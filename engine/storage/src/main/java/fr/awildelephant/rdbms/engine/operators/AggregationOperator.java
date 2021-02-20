@@ -33,7 +33,7 @@ public final class AggregationOperator implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {
-        if (inputTable.isEmpty()) {
+        if (breakdowns.isEmpty() && inputTable.isEmpty()) {
             return computeAggregationOnEmptyTable();
         }
 
