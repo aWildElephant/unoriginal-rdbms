@@ -32,6 +32,8 @@ import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import java.util.List;
+
 import static fr.awildelephant.rdbms.evaluator.operation.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
@@ -59,6 +61,7 @@ import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 import static fr.awildelephant.rdbms.schema.Domain.INTERVAL;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
+import static java.util.stream.Collectors.toList;
 
 public final class ValueExpressionToFormulaTransformer extends DefaultValueExpressionVisitor<Operation> {
 
@@ -78,6 +81,16 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final ValueExpressionToFormulaTransformer transformer = new ValueExpressionToFormulaTransformer(inputSchema);
 
         return new Formula(transformer.apply(expression), transformer.valuesHolder());
+    }
+
+    static Formula createFormula(ValueExpression expression, Schema firstInputSchema, Schema secondInputSchema) {
+        final List<ColumnMetadata> secondInputColumns = secondInputSchema.columnNames().stream()
+                .map(secondInputSchema::column)
+                .collect(toList());
+
+        final Schema joinedSchema = firstInputSchema.extend(secondInputColumns);
+
+        return createFormula(expression, joinedSchema);
     }
 
     @Override

@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.*;
 import fr.awildelephant.rdbms.engine.operators.join.*;
 import fr.awildelephant.rdbms.engine.operators.semijoin.HashSemiJoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.semijoin.NestedLoopSemiJoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.semijoin.SemiJoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.semijoin.SemiJoinOperator;
 import fr.awildelephant.rdbms.evaluator.Formula;
@@ -367,9 +368,8 @@ public final class PlanExecutor implements LopVisitor<Table> {
 
         final Schema leftInputSchema = leftInput.schema();
         final Schema rightInputSchema = rightInput.schema();
-        final Schema outputSchema = semiJoin.schema();
 
-        final SemiJoinMatcher matcher = createSemiJoinMatcher(leftInputSchema, rightInputSchema, outputSchema,
+        final SemiJoinMatcher matcher = createSemiJoinMatcher(leftInputSchema, rightInputSchema,
                                                               semiJoin.predicate(), rightInputTable);
         final SemiJoinOperator operator = new SemiJoinOperator(semiJoin.schema(), matcher);
 
@@ -382,7 +382,6 @@ public final class PlanExecutor implements LopVisitor<Table> {
 
     private SemiJoinMatcher createSemiJoinMatcher(Schema leftInputSchema,
                                                   Schema rightInputSchema,
-                                                  Schema outputSchema,
                                                   ValueExpression joinPredicate,
                                                   Table rightTable) {
         final List<ValueExpression> expressions = expandFilters(joinPredicate);
@@ -390,8 +389,8 @@ public final class PlanExecutor implements LopVisitor<Table> {
         if (canUseHashJoin(expressions)) {
             return createHashSemiJoinMatcher(leftInputSchema, rightInputSchema, rightTable, expressions);
         } else {
-            createFormula(joinPredicate, outputSchema);
-            throw new UnsupportedOperationException();
+            final Formula predicateFormula = createFormula(joinPredicate, leftInputSchema, rightInputSchema);
+            return new NestedLoopSemiJoinMatcher(rightTable, predicateFormula);
         }
     }
 
