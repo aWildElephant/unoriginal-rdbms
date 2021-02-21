@@ -158,7 +158,7 @@ public final class ExpressionUnaliaser implements ValueExpressionVisitor<ValueEx
 
     @Override
     public ValueExpression visit(NotExpression not) {
-        return notExpression(apply(not.input()));
+        return not.transformInputs(this);
     }
 
     @Override

@@ -1,7 +1,6 @@
-package fr.awildelephant.rdbms.engine.operators.values;
+package fr.awildelephant.rdbms.evaluator.input;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.evaluator.Values;
 
 public final class NoValues implements Values {
 

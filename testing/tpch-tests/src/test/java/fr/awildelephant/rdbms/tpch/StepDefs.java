@@ -18,7 +18,12 @@ import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;

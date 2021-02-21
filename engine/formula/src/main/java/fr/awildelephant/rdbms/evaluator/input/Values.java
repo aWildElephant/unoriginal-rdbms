@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.evaluator;
+package fr.awildelephant.rdbms.evaluator.input;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 

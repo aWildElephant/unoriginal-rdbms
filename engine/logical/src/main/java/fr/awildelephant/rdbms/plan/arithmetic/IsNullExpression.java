@@ -37,7 +37,7 @@ public final class IsNullExpression implements ValueExpression {
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return isNullExpression(input.transformInputs(transformer));
+        return isNullExpression(transformer.apply(input));
     }
 
     @Override

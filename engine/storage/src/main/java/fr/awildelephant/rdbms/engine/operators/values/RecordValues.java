@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.engine.operators.values;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.evaluator.Values;
+import fr.awildelephant.rdbms.evaluator.input.Values;
 
 public class RecordValues implements Values {
 

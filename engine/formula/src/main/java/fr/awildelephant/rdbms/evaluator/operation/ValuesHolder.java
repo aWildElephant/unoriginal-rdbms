@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.evaluator.operation;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.evaluator.Values;
+import fr.awildelephant.rdbms.evaluator.input.Values;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;

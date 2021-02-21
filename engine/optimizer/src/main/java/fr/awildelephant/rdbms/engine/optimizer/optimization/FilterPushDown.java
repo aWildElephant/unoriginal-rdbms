@@ -1,23 +1,51 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.*;
+import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.data.value.NullValue;
+import fr.awildelephant.rdbms.evaluator.Formula;
+import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.BaseTableLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.LopVisitor;
+import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
+import fr.awildelephant.rdbms.plan.SemiJoinLop;
+import fr.awildelephant.rdbms.plan.SortLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
-import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
-import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
+import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
+import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
+import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
+import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpressionFactorizer.factorizeOrExpression;
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -147,19 +175,45 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         return createFilterAbove(filtersAbove, transformedJoin);
     }
 
+    // TODO: reminder to go back and improve this code
     @Override
     public LogicalOperator visit(LeftJoinLop leftJoin) {
-        final List<ValueExpression> expandedJoinSpecification = expandFilters(leftJoin.joinSpecification());
-
         final Schema leftInputSchema = leftJoin.left().schema();
         final Schema rightInputSchema = leftJoin.right().schema();
 
         final List<ValueExpression> filtersOnLeftInput = new ArrayList<>();
         final List<ValueExpression> filtersOnRightInput = new ArrayList<>();
-        final List<ValueExpression> filtersOnBoth = new ArrayList<>();
+        final List<ValueExpression> filtersAbove = new ArrayList<>();
 
-        // FIXME: why are we looping on left join specifications and not filters ?
-        for (ValueExpression expression : expandedJoinSpecification) {
+        boolean transformToInnerJoin = false;
+
+        for (ValueExpression expression : filters) {
+            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+
+            final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
+            final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
+
+            if (!requiresLeftInput) {
+                if (shouldTransformLeftJoinToInnerJoin(expression, rightInputSchema)) {
+                    filtersOnRightInput.add(expression);
+                    transformToInnerJoin = true;
+                } else {
+                    filtersAbove.add(expression);
+                }
+            }
+
+            if (!requiresRightInput) {
+                filtersOnLeftInput.add(expression);
+            }
+
+            if (requiresLeftInput && requiresRightInput) {
+                filtersAbove.add(expression);
+            }
+        }
+
+        final List<ValueExpression> joinFilters = new ArrayList<>();
+
+        for (ValueExpression expression : expandFilters(leftJoin.joinSpecification())) {
             final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
@@ -174,21 +228,59 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
             }
 
             if (requiresLeftInput && requiresRightInput) {
-                filtersOnBoth.add(expression);
+                joinFilters.add(expression);
             }
         }
 
         final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeftInput).apply(leftJoin.left());
         final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRightInput).apply(leftJoin.right());
 
-        final ConstantExpression alwaysTrue = constantExpression(trueValue(), BOOLEAN);
-        final LeftJoinLop transformedJoin = new LeftJoinLop(transformedLeftInput,
-                transformedRightInput,
-                collapseFilters(filtersOnBoth).orElse(alwaysTrue),
-                leftJoin.schema());
+        final Optional<ValueExpression> joinCondition = collapseFilters(joinFilters);
 
-        // TODO: push filters down the left join, transform it to an inner join if possible
-        return createFilterAbove(filters, transformedJoin);
+        if (joinCondition.isPresent()) {
+            final LogicalOperator transformedJoin;
+            if (transformToInnerJoin) {
+                transformedJoin = new InnerJoinLop(transformedLeftInput,
+                                                   transformedRightInput,
+                                                   joinCondition.get(),
+                                                   innerJoinOutputSchema(leftInputSchema, rightInputSchema));
+            } else {
+                transformedJoin = new LeftJoinLop(transformedLeftInput,
+                                                  transformedRightInput,
+                                                  joinCondition.get(),
+                                                  leftJoin.schema());
+            }
+
+            return createFilterAbove(filtersAbove, transformedJoin);
+        } else {
+            final Schema outputSchema = innerJoinOutputSchema(leftInputSchema, rightInputSchema);
+
+            return collapseFilters(filtersAbove)
+                    .<LogicalOperator>map(filter -> new InnerJoinLop(transformedLeftInput,
+                                                                     transformedRightInput,
+                                                                     filter,
+                                                                     outputSchema))
+                    .orElseGet(() -> new CartesianProductLop(transformedLeftInput,
+                                                             transformedRightInput,
+                                                             outputSchema));
+        }
+    }
+
+    private boolean shouldTransformLeftJoinToInnerJoin(ValueExpression expression, Schema rightInputSchema) {
+        final Map<ColumnReference, NullValue> nullValues = rightInputSchema.columnNames().stream()
+                .collect(Collectors.toMap(Function.identity(), unused -> nullValue()));
+
+        final ValueExpression transformedExpression = new VariableTransformer(nullValues).apply(expression);
+        final ValueExpression simplifiedExpression = new ExpressionSimplifier().apply(transformedExpression);
+
+        if (isConstant(simplifiedExpression)) {
+            final Formula formula = createFormula(simplifiedExpression, Schema.emptySchema());
+            final DomainValue constantValue = formula.evaluate(noValues());
+
+            return constantValue.isNull() || !constantValue.getBool();
+        }
+
+        return false;
     }
 
     @Override

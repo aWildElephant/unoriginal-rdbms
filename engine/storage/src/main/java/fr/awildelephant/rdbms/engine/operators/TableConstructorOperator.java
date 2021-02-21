@@ -9,7 +9,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.List;
 
-import static fr.awildelephant.rdbms.engine.operators.values.NoValues.noValues;
+import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 
 public class TableConstructorOperator implements Operator<Void, Table> {
 

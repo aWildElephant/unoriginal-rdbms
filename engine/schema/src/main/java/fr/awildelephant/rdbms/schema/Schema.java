@@ -15,8 +15,8 @@ public final class Schema {
     public static final Schema EMPTY_SCHEMA = new Schema(emptyList());
 
     private final List<ColumnReference> allColumns;
-    private final Map<String, Map<String, ColumnMetadata>> columnIndex;
 
+    private final Map<String, Map<String, ColumnMetadata>> columnIndex;
     public Schema(List<ColumnMetadata> columns) {
         final int numberOfColumns = columns.size();
         final List<ColumnMetadata> reindexedColumns = new ArrayList<>(numberOfColumns);
@@ -42,6 +42,10 @@ public final class Schema {
                 return tables;
             });
         }
+    }
+
+    public static Schema emptySchema() {
+        return EMPTY_SCHEMA;
     }
 
     public List<ColumnReference> columnNames() {

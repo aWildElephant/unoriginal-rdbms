@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine;
+package fr.awildelephant.rdbms.formula.creation;
 
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
@@ -79,13 +79,13 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         return valuesHolder;
     }
 
-    static Formula createFormula(ValueExpression expression, Schema inputSchema) {
+    public static Formula createFormula(ValueExpression expression, Schema inputSchema) {
         final ValueExpressionToFormulaTransformer transformer = new ValueExpressionToFormulaTransformer(inputSchema);
 
         return new Formula(transformer.apply(expression), transformer.valuesHolder());
     }
 
-    static Formula createFormula(ValueExpression expression, Schema firstInputSchema, Schema secondInputSchema) {
+    public static Formula createFormula(ValueExpression expression, Schema firstInputSchema, Schema secondInputSchema) {
         final List<ColumnMetadata> secondInputColumns = secondInputSchema.columnNames().stream()
                 .map(secondInputSchema::column)
                 .collect(toList());
@@ -314,7 +314,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
             return decimalSubtraction(left, right);
         }
 
-        if (left.domain().canBeUsedAs(Domain.DATE) && right.domain().canBeUsedAs(INTERVAL)) {
+        if (left.domain().canBeUsedAs(DATE) && right.domain().canBeUsedAs(INTERVAL)) {
             return dateIntervalSubstraction(left, right);
         }
 
