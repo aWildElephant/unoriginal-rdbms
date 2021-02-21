@@ -135,4 +135,6 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(UnqualifiedColumnName unqualifiedColumnReference);
 
     T visit(Values values);
+
+    T visit(IsNull isNull);
 }

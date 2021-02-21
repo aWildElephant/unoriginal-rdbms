@@ -23,6 +23,7 @@ import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
 import static fr.awildelephant.rdbms.ast.value.In.in;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.IsNull.isNull;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
 import static fr.awildelephant.rdbms.ast.value.Like.like;
@@ -140,5 +141,15 @@ class BooleanExpressionParserTest {
 
                       rows(row(in(unqualifiedColumnName("a"),
                                   select(List.of(unqualifiedColumnName("b")), tableName("test"), null, null, null, null)))));
+    }
+
+    @Test
+    void it_should_parse_an_is_null_predicate() {
+        assertParsing("VALUES (1 IS NULL)", rows(row(isNull(integerLiteral(1)))));
+    }
+
+    @Test
+    void it_should_parse_an_is_not_null_predicate() {
+        assertParsing("VALUES (1 IS NOT NULL)", rows(row(not(isNull(integerLiteral(1))))));
     }
 }

@@ -17,6 +17,7 @@ import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
 import static fr.awildelephant.rdbms.ast.value.In.in;
+import static fr.awildelephant.rdbms.ast.value.IsNull.isNull;
 import static fr.awildelephant.rdbms.ast.value.Less.less;
 import static fr.awildelephant.rdbms.ast.value.LessOrEqual.lessOrEqual;
 import static fr.awildelephant.rdbms.ast.value.Like.like;
@@ -26,9 +27,11 @@ import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -107,6 +110,8 @@ final class BooleanValueExpressionRule {
                 return greaterOrEqual(left, deriveValueExpression(lexer));
             case IN:
                 return deriveInPredicate(left, lexer);
+            case IS:
+                return deriveIsPredicate(left, lexer);
             case LESS:
                 lexer.consumeNextToken();
 
@@ -177,6 +182,22 @@ final class BooleanValueExpressionRule {
         consumeAndExpect(RIGHT_PAREN, lexer);
 
         return inValueList(values);
+    }
+
+    private static AST deriveIsPredicate(AST left, Lexer lexer) {
+        consumeAndExpect(IS, lexer);
+
+        final boolean negate;
+        if (nextTokenIs(NOT, lexer)) {
+            negate = true;
+            lexer.consumeNextToken();
+        } else {
+            negate = false;
+        }
+
+        consumeAndExpect(NULL, lexer);
+
+        return negate ? not(isNull(left)) : isNull(left);
     }
 
     private static AST deriveBooleanTestLeftInput(final Lexer lexer) {

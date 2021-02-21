@@ -134,7 +134,6 @@ public final class PlanExecutor implements LopVisitor<Table> {
 
         final FilterOperator operator = new FilterOperator(createFormula(filter.filter(), filter.input().schema()));
 
-
         final Table outputTable = operator.compute(inputTable);
 
         LOGGER.info("{} - FilterOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);

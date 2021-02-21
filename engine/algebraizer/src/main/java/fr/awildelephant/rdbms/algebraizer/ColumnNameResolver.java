@@ -23,6 +23,7 @@ import fr.awildelephant.rdbms.ast.value.Greater;
 import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.IsNull;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
@@ -158,6 +159,11 @@ public final class ColumnNameResolver extends DefaultASTVisitor<String> {
 
 
         return joiner.toString();
+    }
+
+    @Override
+    public String visit(IsNull isNull) {
+        return apply(isNull.input()) + " is null";
     }
 
     @Override

@@ -21,6 +21,7 @@ import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
+import fr.awildelephant.rdbms.ast.value.IsNull;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
@@ -66,6 +67,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression.extra
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression.greaterExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression.greaterOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.InExpression.inExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.IsNullExpression.isNullExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessExpression.lessExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression.lessOrEqualExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.LikeExpression.likeExpression;
@@ -258,6 +260,11 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         }
 
         return constantExpression(intervalValue(period), INTERVAL);
+    }
+
+    @Override
+    public ValueExpression visit(IsNull isNull) {
+        return isNullExpression(apply(isNull.input()));
     }
 
     @Override

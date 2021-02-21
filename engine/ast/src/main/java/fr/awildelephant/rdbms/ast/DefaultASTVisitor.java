@@ -17,6 +17,7 @@ import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
 import fr.awildelephant.rdbms.ast.value.In;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
+import fr.awildelephant.rdbms.ast.value.IsNull;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
@@ -189,6 +190,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(IntervalLiteral intervalLiteral) {
         return defaultVisit(intervalLiteral);
+    }
+
+    @Override
+    public T visit(IsNull isNull) {
+        return defaultVisit(isNull);
     }
 
     @Override

@@ -16,6 +16,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.InExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.IsNullExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
@@ -49,6 +50,7 @@ import static fr.awildelephant.rdbms.evaluator.operation.IntegerAddition.integer
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerDivision.integerDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.integerSubtraction;
+import static fr.awildelephant.rdbms.evaluator.operation.IsNullPredicate.isNullPredicate;
 import static fr.awildelephant.rdbms.evaluator.operation.LikePredicate.likePredicate;
 import static fr.awildelephant.rdbms.evaluator.operation.NotOperation.notOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.OrOperation.orOperation;
@@ -218,6 +220,11 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         }
 
         return inOperation;
+    }
+
+    @Override
+    public Operation visit(IsNullExpression isNull) {
+        return isNullPredicate(apply(isNull.input()));
     }
 
     @Override

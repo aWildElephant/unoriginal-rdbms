@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.ExtractYearExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.InExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.IsNullExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.LikeExpression;
@@ -71,6 +72,11 @@ public final class OuterQueryVariableExtractor implements ValueExpressionVisitor
     @Override
     public Stream<ColumnReference> visit(LikeExpression like) {
         return Stream.concat(apply(like.input()), apply(like.pattern()));
+    }
+
+    @Override
+    public Stream<ColumnReference> visit(IsNullExpression isNull) {
+        return apply(isNull.input());
     }
 
     @Override

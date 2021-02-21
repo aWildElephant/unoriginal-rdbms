@@ -45,6 +45,7 @@ public enum TokenType {
     INTEGER_LITERAL,
     INTERVAL,
     INTO,
+    IS,
     JOIN,
     KEY,
     LEFT,

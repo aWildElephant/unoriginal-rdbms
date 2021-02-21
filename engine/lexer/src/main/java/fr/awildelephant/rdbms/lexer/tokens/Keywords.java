@@ -35,6 +35,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INSERT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTERVAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT;
@@ -450,6 +451,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return INTO;
+        }
+    },
+    IS_TOKEN {
+        @Override
+        public String text() {
+            return "is";
+        }
+
+        @Override
+        public TokenType type() {
+            return IS;
         }
     },
     JOIN_TOKEN {
