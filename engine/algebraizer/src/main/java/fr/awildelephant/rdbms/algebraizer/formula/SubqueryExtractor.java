@@ -15,12 +15,14 @@ import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.semiJoin
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Select.select;
-import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
+import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
+import static fr.awildelephant.rdbms.ast.value.IsNull.isNull;
+import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.ScalarSubquery.scalarSubquery;
 
 public final class SubqueryExtractor extends DefaultFormulaRewriter {
@@ -47,7 +49,7 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
 
         subqueries.add(cartesianProductJoiner(subquery));
 
-        return greater(unqualifiedColumnName(id), integerLiteral(0));
+        return and(not(isNull(unqualifiedColumnName(id))), greater(unqualifiedColumnName(id), integerLiteral(0)));
     }
 
     @Override

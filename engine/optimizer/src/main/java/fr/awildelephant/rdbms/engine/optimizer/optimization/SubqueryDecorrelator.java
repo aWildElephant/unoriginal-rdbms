@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
@@ -47,14 +47,14 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
 
         final Set<Correlation> correlation = decorrelator.correlations;
         if (!correlation.isEmpty()) {
-            return transformToInnerJoin(input, transformedSubquery, correlation);
+            return transformToLeftJoin(input, transformedSubquery, correlation);
         } else {
             return new SubqueryExecutionLop(input, transformedSubquery);
         }
     }
 
-    private static InnerJoinLop transformToInnerJoin(LogicalOperator input, LogicalOperator transformedSubquery,
-                                                     Set<Correlation> correlations) {
+    private static LeftJoinLop transformToLeftJoin(LogicalOperator input, LogicalOperator transformedSubquery,
+                                                    Set<Correlation> correlations) {
         final Schema inputSchema = input.schema();
         final Schema transformedSubquerySchema = transformedSubquery.schema();
 
@@ -62,7 +62,7 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
 
         final Schema joinOutputSchema = joinOutputSchema(inputSchema, transformedSubquerySchema);
 
-        return new InnerJoinLop(input, transformedSubquery, joinSpecification, joinOutputSchema);
+        return new LeftJoinLop(input, transformedSubquery, joinSpecification, joinOutputSchema);
     }
 
     private static ValueExpression buildJoinSpecifications(Schema transformedSubquerySchema,
@@ -76,7 +76,7 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
                     final ColumnMetadata outerColumn = inputSchema.column(correlation.getOuterColumn());
                     final Variable outerVariable = variable(outerColumn.name(), outerColumn.domain());
 
-                    return equalExpression(innerVariable, outerVariable);
+                    return equalExpression(outerVariable, innerVariable);
                 })
                 .reduce(AndExpression::andExpression)
                 .orElseThrow();
