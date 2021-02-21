@@ -1,4 +1,4 @@
-@todo # Internal error "column not found"
+@todo # Returns 0 row (mauvaise réécriture de NOT EXISTS)
 Feature: TPC-H Q22
 
   Background: TPC-H dataset
