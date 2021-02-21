@@ -35,4 +35,24 @@ public final class IntervalValue extends AbstractValue {
 
         return Objects.equals(period, other.period);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder stringBuilder = new StringBuilder("IntervalValue[");
+
+        final int years = period.getYears();
+        if (years > 0) {
+            stringBuilder.append(years).append('Y');
+        }
+        final int months = period.getMonths();
+        if (months > 0) {
+            stringBuilder.append(months).append('M');
+        }
+        final int days = period.getDays();
+        if (days > 0){
+            stringBuilder.append(days).append('D');
+        }
+
+        return stringBuilder.append(']').toString();
+    }
 }

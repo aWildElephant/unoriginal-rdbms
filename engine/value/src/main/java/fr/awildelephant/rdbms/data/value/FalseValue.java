@@ -12,4 +12,9 @@ public class FalseValue extends AbstractValue {
     public boolean getBool() {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "FalseValue";
+    }
 }

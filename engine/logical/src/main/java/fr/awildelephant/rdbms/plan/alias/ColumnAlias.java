@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+
 public final class ColumnAlias implements Alias {
 
     private final Map<String, Map<String, String>> aliases;
@@ -70,5 +72,12 @@ public final class ColumnAlias implements Alias {
         final ColumnAlias other = (ColumnAlias) obj;
 
         return Objects.equals(aliases, other.aliases);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("aliases", aliases)
+                .build();
     }
 }

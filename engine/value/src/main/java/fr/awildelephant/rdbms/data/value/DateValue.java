@@ -35,4 +35,9 @@ public final class DateValue extends AbstractValue {
 
         return Objects.equals(value, other.value);
     }
+
+    @Override
+    public String toString() {
+        return "DateValue[" + value + ']';
+    }
 }

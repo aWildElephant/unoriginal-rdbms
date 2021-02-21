@@ -12,4 +12,9 @@ public class TrueValue extends AbstractValue {
     public boolean getBool() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "TrueValue";
+    }
 }

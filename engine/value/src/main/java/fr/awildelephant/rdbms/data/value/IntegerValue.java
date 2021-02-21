@@ -39,4 +39,9 @@ public final class IntegerValue extends AbstractValue {
 
         return value == other.value;
     }
+
+    @Override
+    public String toString() {
+        return "IntegerValue[" + value + ']';
+    }
 }

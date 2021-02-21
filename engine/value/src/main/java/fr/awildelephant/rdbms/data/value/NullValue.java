@@ -16,4 +16,9 @@ public final class NullValue extends AbstractValue {
     public boolean isNull() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "NullValue";
+    }
 }
