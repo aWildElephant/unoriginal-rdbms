@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TableAliasTest {
 
-    private static final TableAlias ALIAS = tableAlias("alias");
+    private static final TableAlias ALIAS = tableAlias("source", "alias");
 
     @Test
     void it_should_modify_an_unqualified_column_reference() {

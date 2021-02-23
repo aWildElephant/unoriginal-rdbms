@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -45,6 +46,11 @@ public final class LikeExpression implements ValueExpression {
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
         return new LikeExpression(transformer.apply(input), transformer.apply(pattern));
+    }
+
+    @Override
+    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
+        return accumulator.apply(function.apply(input), function.apply(pattern));
     }
 
     @Override

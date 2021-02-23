@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -41,6 +42,11 @@ public final class ConstantExpression implements ValueExpression {
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
         return this;
+    }
+
+    @Override
+    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
+        return null;
     }
 
     @Override

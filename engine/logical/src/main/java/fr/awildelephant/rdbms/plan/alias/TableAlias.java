@@ -10,14 +10,16 @@ import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuil
 
 public final class TableAlias implements Alias {
 
+    private final String source;
     private final String alias;
 
-    private TableAlias(String alias) {
+    private TableAlias(String source, String alias) {
+        this.source = source;
         this.alias = alias;
     }
 
-    public static TableAlias tableAlias(String alias) {
-        return new TableAlias(alias);
+    public static TableAlias tableAlias(String source, String alias) {
+        return new TableAlias(source, alias);
     }
 
     @Override
@@ -37,7 +39,9 @@ public final class TableAlias implements Alias {
             return reference;
         }
 
-        return new UnqualifiedColumnReference(reference.name());
+        return source != null
+                ? new QualifiedColumnReference(source, reference.name())
+                : new UnqualifiedColumnReference(reference.name());
     }
 
     @Override
@@ -59,6 +63,7 @@ public final class TableAlias implements Alias {
     @Override
     public String toString() {
         return toStringBuilder(this)
+                .append("source", source)
                 .append("alias", alias)
                 .toString();
     }

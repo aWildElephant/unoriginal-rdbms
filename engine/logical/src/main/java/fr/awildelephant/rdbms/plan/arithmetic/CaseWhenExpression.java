@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -56,6 +57,12 @@ public final class CaseWhenExpression implements ValueExpression {
                                       transformer.apply(thenExpression),
                                       transformer.apply(elseExpression),
                                       outputDomain);
+    }
+
+    @Override
+    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
+        return accumulator.apply(function.apply(condition),
+                                 accumulator.apply(function.apply(thenExpression), function.apply(elseExpression)));
     }
 
     @Override

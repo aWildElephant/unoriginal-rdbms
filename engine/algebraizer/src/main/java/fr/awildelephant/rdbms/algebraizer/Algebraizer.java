@@ -2,10 +2,39 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.algebraizer.formula.SubqueryExtractor;
 import fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner;
-import fr.awildelephant.rdbms.ast.*;
+import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.ColumnName;
+import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.Distinct;
+import fr.awildelephant.rdbms.ast.InnerJoin;
+import fr.awildelephant.rdbms.ast.LeftJoin;
+import fr.awildelephant.rdbms.ast.Limit;
+import fr.awildelephant.rdbms.ast.Row;
+import fr.awildelephant.rdbms.ast.Select;
+import fr.awildelephant.rdbms.ast.SortSpecificationList;
+import fr.awildelephant.rdbms.ast.TableAlias;
+import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
+import fr.awildelephant.rdbms.ast.TableName;
+import fr.awildelephant.rdbms.ast.TableReferenceList;
+import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.engine.Storage;
-import fr.awildelephant.rdbms.plan.*;
+import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
+import fr.awildelephant.rdbms.plan.SemiJoinLop;
+import fr.awildelephant.rdbms.plan.SortLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
@@ -263,7 +292,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     public LogicalOperator visit(TableAlias tableAlias) {
         final LogicalOperator input = apply(tableAlias.input());
 
-        return new AliasLop(input, tableAlias(tableAlias.alias()));
+        final Optional<String> source = input.schema().columnNames().stream().map(ColumnReference::table).filter(
+                Optional::isPresent)
+                .map(Optional::get).findAny();
+
+        return new AliasLop(input, tableAlias(source.orElse(null), tableAlias.alias()));
     }
 
     @Override
@@ -276,8 +309,12 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             columnAliasBuilder.add(columnReferences.get(i), tableAliasWithColumns.columnAliases().get(i));
         }
 
+        final Optional<String> sourceTable = input.schema().columnNames().stream().map(ColumnReference::table).filter(
+                Optional::isPresent)
+                .map(Optional::get).findAny();
+
         return new AliasLop(new AliasLop(input,
-                tableAlias(tableAliasWithColumns.tableAlias())),
+                tableAlias(sourceTable.orElse(null), tableAliasWithColumns.tableAlias())),
                 columnAliasBuilder.build().orElseThrow());
     }
 

@@ -49,7 +49,7 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
         if (!correlation.isEmpty()) {
             return transformToLeftJoin(input, transformedSubquery, correlation);
         } else {
-            return new SubqueryExecutionLop(input, transformedSubquery);
+            return new SubqueryExecutionLop(input, subquery);
         }
     }
 
@@ -134,11 +134,12 @@ public final class SubqueryDecorrelator extends DefaultLopVisitor<LogicalOperato
         }
 
         final ColumnAliasBuilder columnAliasBuilder = new ColumnAliasBuilder();
-        columnAliasBuilder.add(scalarSubquery.input().schema().columnNames().get(0), "0");
+        final ColumnReference scalarSubqueryColumn = scalarSubquery.input().schema().columnNames().get(0);
+        columnAliasBuilder.add(scalarSubqueryColumn, "0");
 
         final AliasLop aliasSubqueryOutputColumn = new AliasLop(transformedInput, columnAliasBuilder.build().orElseThrow());
 
-        final TableAlias tableAlias = tableAlias(scalarSubquery.id());
+        final TableAlias tableAlias = tableAlias(scalarSubqueryColumn.table().orElse(null), scalarSubquery.id());
 
         correlations = correlations.stream()
                 .map(correlation -> new Correlation(tableAlias.alias(correlation.getInnerColumn()),

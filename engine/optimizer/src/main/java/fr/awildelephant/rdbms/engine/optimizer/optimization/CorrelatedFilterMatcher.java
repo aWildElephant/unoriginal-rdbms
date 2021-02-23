@@ -1,14 +1,10 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.BetweenExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.CaseWhenExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.CastExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
-import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -22,33 +18,13 @@ public final class CorrelatedFilterMatcher extends DefaultValueExpressionVisitor
     }
 
     @Override
-    public Boolean visit(AddExpression add) {
-        return apply(add.left()) || apply(add.right());
+    public Boolean visit(ConstantExpression constant) {
+        return FALSE;
     }
 
     @Override
-    public Boolean visit(AndExpression and) {
-        return apply(and.left()) || apply(and.right());
-    }
-
-    @Override
-    public Boolean visit(BetweenExpression between) {
-        return apply(between.value()) || apply(between.lowerBound()) || apply(between.upperBound());
-    }
-
-    @Override
-    public Boolean visit(CaseWhenExpression caseWhen) {
-        return apply(caseWhen.condition()) || apply(caseWhen.thenExpression()) || apply(caseWhen.elseExpression());
-    }
-
-    @Override
-    public Boolean visit(CastExpression cast) {
-        return apply(cast.input());
-    }
-
-    @Override
-    public Boolean visit(EqualExpression equal) {
-        return apply(equal.left()) || apply(equal.right());
+    public Boolean visit(Variable variable) {
+        return FALSE;
     }
 
     @Override
@@ -56,9 +32,8 @@ public final class CorrelatedFilterMatcher extends DefaultValueExpressionVisitor
         return TRUE;
     }
 
-
     @Override
     protected Boolean defaultVisit(ValueExpression expression) {
-        return FALSE;
+        return expression.reduce(this, (a, b) -> TRUE.equals(a) || TRUE.equals(b));
     }
 }

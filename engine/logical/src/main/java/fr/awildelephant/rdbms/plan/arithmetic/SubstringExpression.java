@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -54,6 +55,12 @@ public final class SubstringExpression implements ValueExpression {
         return new SubstringExpression(transformer.apply(input),
                                        transformer.apply(start),
                                        transformer.apply(length));
+    }
+
+    @Override
+    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
+        return accumulator.apply(function.apply(input),
+                                 accumulator.apply(function.apply(start), function.apply(length)));
     }
 
     @Override

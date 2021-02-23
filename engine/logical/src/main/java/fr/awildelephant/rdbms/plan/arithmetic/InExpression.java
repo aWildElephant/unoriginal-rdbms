@@ -6,6 +6,8 @@ import fr.awildelephant.rdbms.schema.Domain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -52,6 +54,19 @@ public final class InExpression implements ValueExpression {
         }
 
         return new InExpression(transformer.apply(input), transformedValues);
+    }
+
+    @Override
+    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
+        final T inputResult = function.apply(input);
+
+        final Optional<T> valuesResult = values.stream().map(function).reduce(accumulator);
+
+        if (valuesResult.isPresent()) {
+            return accumulator.apply(inputResult, valuesResult.get());
+        }
+
+        return inputResult;
     }
 
     @Override

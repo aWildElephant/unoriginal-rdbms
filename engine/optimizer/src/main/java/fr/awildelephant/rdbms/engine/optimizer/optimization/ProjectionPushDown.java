@@ -1,25 +1,45 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.*;
+import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.SemiJoinLop;
+import fr.awildelephant.rdbms.plan.SortLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.leftJoinOutputSchema;
 import static java.util.stream.Collectors.toList;
 
+// TODO:
+// 1) Vérifier qu'on ne fait pas passer sous un noeud une colonne qui n'existe pas dans la branche (s_name)
+// 2) Supprimer outerQuerySchema, il faut juste ignorer les colonnes qu'on ne connait pas dans le noeud, c'est probablement des colonnes de l'outer schema
+// 3) Re-test
 public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator> {
 
     private final List<ColumnReference> projection;
 
-    public ProjectionPushDown(List<ColumnReference> projection) {
+    private ProjectionPushDown(List<ColumnReference> projection) {
         this.projection = projection;
     }
 
@@ -67,9 +87,11 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
                                         Collection<ColumnReference> columnsRequiredByNode) {
         final List<ColumnReference> mergeResult = new ArrayList<>(projectionOverNode);
         for (ColumnReference column : columnsRequiredByNode) {
-            final ColumnReference normalizedColumn = inputSchema.normalize(column);
-            if (!mergeResult.contains(normalizedColumn)) {
-                mergeResult.add(normalizedColumn);
+            if (inputSchema.contains(column)) {
+                final ColumnReference normalizedColumn = inputSchema.normalize(column);
+                if (!mergeResult.contains(normalizedColumn)) {
+                    mergeResult.add(normalizedColumn);
+                }
             }
         }
         return mergeResult;
@@ -116,7 +138,7 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
 
         final LogicalOperator transformedFilter = filterNode.transformInputs(new ProjectionPushDown(newProjection));
 
-        if (projection.size() != newProjection.size()) {
+        if (projection.size() > newProjection.size()) {
             return new ProjectionLop(transformedFilter, projection);
         } else {
             return transformedFilter;
@@ -295,7 +317,12 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
 
         final LogicalOperator transformedInput
                 = new ProjectionPushDown(inputProjection).apply(subqueryExecution.input());
-        final SubqueryExecutionLop transformedNode = new SubqueryExecutionLop(transformedInput, subquery);
+
+        final List<ColumnReference> subqueryProjection = restrictProjectionToAvailableColumns(subquery, projection);
+
+        final LogicalOperator transformedSubquery = new ProjectionPushDown(subqueryProjection).apply(subquery);
+
+        final SubqueryExecutionLop transformedNode = new SubqueryExecutionLop(transformedInput, transformedSubquery);
 
         return createProjectionIfNecessary(transformedNode);
     }

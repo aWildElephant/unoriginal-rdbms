@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.Objects;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -53,6 +54,12 @@ public final class BetweenExpression implements ValueExpression {
         return new BetweenExpression(transformer.apply(value),
                                      transformer.apply(lowerBound),
                                      transformer.apply(upperBound));
+    }
+
+    @Override
+    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
+        return accumulator.apply(function.apply(value),
+                                 accumulator.apply(function.apply(lowerBound), function.apply(upperBound)));
     }
 
     @Override
