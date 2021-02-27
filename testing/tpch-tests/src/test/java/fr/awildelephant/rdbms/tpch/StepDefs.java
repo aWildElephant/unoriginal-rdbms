@@ -63,7 +63,7 @@ public class StepDefs implements En {
                 final File compressedCsvDataFile = Paths
                         .get(tpchDataDirectory, String.valueOf(scaleFactor), tableName + ".tbl.gz").toFile();
 
-                new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
+                //new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
             } else {
                 LOGGER.info("Table {} is already loaded", tableName);
             }

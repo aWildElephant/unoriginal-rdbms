@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
+import fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
@@ -36,6 +37,8 @@ import static java.util.stream.Collectors.toList;
 // 2) Supprimer outerQuerySchema, il faut juste ignorer les colonnes qu'on ne connait pas dans le noeud, c'est probablement des colonnes de l'outer schema
 // 3) Re-test
 public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator> {
+
+    private final FreeVariablesFunction freeVariablesFunction = new FreeVariablesFunction();
 
     private final List<ColumnReference> projection;
 
@@ -313,7 +316,7 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
 
         final List<ColumnReference> inputProjection
                 = restrictProjectionToAvailableColumns(subqueryExecution.input(), projection);
-        inputProjection.addAll(new RequiredOuterColumnsCollector().apply(subquery).collect(toList()));
+        inputProjection.addAll(freeVariablesFunction.apply(subquery));
 
         final LogicalOperator transformedInput
                 = new ProjectionPushDown(inputProjection).apply(subqueryExecution.input());

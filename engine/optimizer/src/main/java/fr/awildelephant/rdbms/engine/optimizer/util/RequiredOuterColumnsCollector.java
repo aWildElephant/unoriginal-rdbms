@@ -1,16 +1,14 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
+package fr.awildelephant.rdbms.engine.optimizer.util;
 
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
@@ -24,7 +22,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-public class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnReference>> {
+final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnReference>> {
 
     private final OuterQueryVariableExtractor outerQueryVariableExtractor = new OuterQueryVariableExtractor();
 

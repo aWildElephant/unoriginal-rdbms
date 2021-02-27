@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
+package fr.awildelephant.rdbms.engine.optimizer.util;
 
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
@@ -30,7 +30,7 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.stream.Stream;
 
-public final class OuterQueryVariableExtractor implements ValueExpressionVisitor<Stream<ColumnReference>> {
+final class OuterQueryVariableExtractor implements ValueExpressionVisitor<Stream<ColumnReference>> {
 
     @Override
     public Stream<ColumnReference> visit(OuterQueryVariable outerQueryVariable) {
@@ -39,14 +39,14 @@ public final class OuterQueryVariableExtractor implements ValueExpressionVisitor
 
     @Override
     public Stream<ColumnReference> visit(BetweenExpression between) {
-        return Stream.concat(apply(between.value()),
-                             Stream.concat(apply(between.lowerBound()), apply(between.upperBound())));
+        return StreamHelper.concat(apply(between.value()), apply(between.lowerBound()), apply(between.upperBound()));
     }
 
     @Override
     public Stream<ColumnReference> visit(CaseWhenExpression caseWhen) {
-        return Stream.concat(apply(caseWhen.condition()),
-                             Stream.concat(apply(caseWhen.thenExpression()), apply(caseWhen.elseExpression())));
+        return StreamHelper.concat(apply(caseWhen.condition()),
+                                   apply(caseWhen.thenExpression()),
+                                   apply(caseWhen.elseExpression()));
     }
 
     @Override
@@ -86,8 +86,7 @@ public final class OuterQueryVariableExtractor implements ValueExpressionVisitor
 
     @Override
     public Stream<ColumnReference> visit(SubstringExpression substring) {
-        return Stream.concat(apply(substring.input()),
-                             Stream.concat(apply(substring.start()), apply(substring.length())));
+        return StreamHelper.concat(apply(substring.input()), apply(substring.start()), apply(substring.length()));
     }
 
     @Override
