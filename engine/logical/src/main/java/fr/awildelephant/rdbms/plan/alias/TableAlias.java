@@ -46,7 +46,7 @@ public final class TableAlias implements Alias {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(alias);
+        return Objects.hash(source, alias);
     }
 
     @Override
@@ -57,7 +57,8 @@ public final class TableAlias implements Alias {
 
         final TableAlias other = (TableAlias) obj;
 
-        return Objects.equals(alias, other.alias);
+        return Objects.equals(source, other.source)
+                && Objects.equals(alias, other.alias);
     }
 
     @Override
