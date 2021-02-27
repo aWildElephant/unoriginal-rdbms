@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.engine.optimizer;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.FilterPushDown;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.JoinReordering;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.ProjectionPushDown;
-import fr.awildelephant.rdbms.engine.optimizer.optimization.SubqueryUnnesting;
+import fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.SubqueryUnnesting;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
 public class Optimizer {

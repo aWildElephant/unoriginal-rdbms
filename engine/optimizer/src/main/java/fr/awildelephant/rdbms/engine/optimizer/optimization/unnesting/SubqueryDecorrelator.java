@@ -1,5 +1,6 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
+package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
+import fr.awildelephant.rdbms.engine.optimizer.optimization.Correlation;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;

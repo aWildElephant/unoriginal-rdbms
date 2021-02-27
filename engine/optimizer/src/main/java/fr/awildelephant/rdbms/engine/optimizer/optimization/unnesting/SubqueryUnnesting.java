@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
+package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
@@ -7,7 +7,7 @@ import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.CorrelatedSubqueryMatcher.isSubqueryCorrelated;
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.SubqueryDecorrelator.decorrelateSubquery;
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.SubqueryDecorrelator.decorrelateSubquery;
 import static java.util.stream.Collectors.toList;
 
 public class SubqueryUnnesting extends DefaultLopVisitor<LogicalOperator> {
