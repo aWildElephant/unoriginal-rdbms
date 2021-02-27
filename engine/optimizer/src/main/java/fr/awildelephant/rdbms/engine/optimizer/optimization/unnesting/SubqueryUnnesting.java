@@ -6,7 +6,7 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.CorrelatedSubqueryMatcher.isSubqueryCorrelated;
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.CorrelatedSubqueryMatcher.isSubqueryCorrelated;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.SubqueryDecorrelator.decorrelateSubquery;
 import static java.util.stream.Collectors.toList;
 
@@ -18,8 +18,12 @@ public class SubqueryUnnesting extends DefaultLopVisitor<LogicalOperator> {
 
         if (isSubqueryCorrelated(subquery)) {
             return decorrelateSubquery(apply(subqueryExecutionLop.input()), subqueryExecutionLop.subquery());
+        } else {
+            return transformToCartesianProduct(subqueryExecutionLop);
         }
+    }
 
+    private CartesianProductLop transformToCartesianProduct(SubqueryExecutionLop subqueryExecutionLop) {
         final LogicalOperator transformedInput = apply(subqueryExecutionLop.input());
         final LogicalOperator transformedSubquery = apply(subqueryExecutionLop.subquery());
 

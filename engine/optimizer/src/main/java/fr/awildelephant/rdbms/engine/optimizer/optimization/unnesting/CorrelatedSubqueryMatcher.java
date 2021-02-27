@@ -1,22 +1,38 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
+package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
-import fr.awildelephant.rdbms.plan.*;
+import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.BaseTableLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.LopVisitor;
+import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
+import fr.awildelephant.rdbms.plan.SemiJoinLop;
+import fr.awildelephant.rdbms.plan.SortLop;
+import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
 import java.util.List;
 
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.CorrelatedFilterMatcher.isCorrelated;
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.CorrelatedFilterMatcher.isCorrelated;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
-public class CorrelatedSubqueryMatcher implements LopVisitor<Boolean> {
+final class CorrelatedSubqueryMatcher implements LopVisitor<Boolean> {
 
     private static final CorrelatedSubqueryMatcher INSTANCE = new CorrelatedSubqueryMatcher();
 
-    public static boolean isSubqueryCorrelated(LogicalOperator subquery) {
+    static boolean isSubqueryCorrelated(LogicalOperator subquery) {
         return TRUE.equals(INSTANCE.apply(subquery));
     }
-
 
     @Override
     public Boolean visit(AggregationLop aggregationNode) {

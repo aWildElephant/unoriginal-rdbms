@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.BreakdownFinder.canAddBreakdownOver;
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.CorrelatedFilterMatcher.isCorrelated;
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.CorrelatedFilterMatcher.isCorrelated;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;

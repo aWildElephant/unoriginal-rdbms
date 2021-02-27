@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization;
+package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
@@ -9,11 +9,11 @@ import fr.awildelephant.rdbms.plan.arithmetic.Variable;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
-public final class CorrelatedFilterMatcher extends DefaultValueExpressionVisitor<Boolean> {
+final class CorrelatedFilterMatcher extends DefaultValueExpressionVisitor<Boolean> {
 
     private static final CorrelatedFilterMatcher INSTANCE = new CorrelatedFilterMatcher();
 
-    public static boolean isCorrelated(ValueExpression expression) {
+    static boolean isCorrelated(ValueExpression expression) {
         return TRUE.equals(INSTANCE.apply(expression));
     }
 
