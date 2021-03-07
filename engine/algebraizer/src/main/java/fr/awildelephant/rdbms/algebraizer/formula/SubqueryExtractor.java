@@ -15,6 +15,7 @@ import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.semiJoin
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Select.select;
+import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
@@ -71,11 +72,12 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
 
     @Override
     public AST visit(Select select) {
-        final String id = UUID.randomUUID().toString();
+        final String alias = UUID.randomUUID().toString();
 
-        subqueries.add(cartesianProductJoiner(scalarSubquery(select, id)));
+        subqueries.add(cartesianProductJoiner(scalarSubquery(tableAlias(select, alias))));
+        final String subqueryOutputColumnName = firstColumnNameResolver.apply(select);
 
-        return qualifiedColumnName(id, "0");
+        return qualifiedColumnName(alias, subqueryOutputColumnName);
     }
 
     @Override

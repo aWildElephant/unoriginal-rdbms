@@ -6,11 +6,16 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 
 public final class CartesianProductLop extends AbstractLop {
 
     private final LogicalOperator leftInput;
     private final LogicalOperator rightInput;
+
+    public CartesianProductLop(LogicalOperator leftInput, LogicalOperator rightInput) {
+        this(leftInput, rightInput, innerJoinOutputSchema(leftInput.schema(), rightInput.schema()));
+    }
 
     public CartesianProductLop(LogicalOperator leftInput, LogicalOperator rightInput, Schema outputSchema) {
         super(outputSchema);

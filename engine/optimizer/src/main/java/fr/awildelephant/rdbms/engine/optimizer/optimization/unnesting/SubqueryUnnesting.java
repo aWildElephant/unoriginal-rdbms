@@ -1,40 +1,18 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
-import fr.awildelephant.rdbms.schema.Schema;
-
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.CorrelatedSubqueryMatcher.isSubqueryCorrelated;
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.SubqueryDecorrelator.decorrelateSubquery;
-import static java.util.stream.Collectors.toList;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 
 public class SubqueryUnnesting extends DefaultLopVisitor<LogicalOperator> {
 
     @Override
-    public LogicalOperator visit(SubqueryExecutionLop subqueryExecutionLop) {
-        final LogicalOperator subquery = subqueryExecutionLop.subquery();
+    public LogicalOperator visit(DependentJoinLop dependentJoin) {
+        final DependentJoinLop transformedDependentJoin = new DependentJoinLop(apply(dependentJoin.left()),
+                                                                               apply(dependentJoin.right()),
+                                                                               dependentJoin.predicate());
 
-        if (isSubqueryCorrelated(subquery)) {
-            return decorrelateSubquery(apply(subqueryExecutionLop.input()), subqueryExecutionLop.subquery());
-        } else {
-            return transformToCartesianProduct(subqueryExecutionLop);
-        }
-    }
-
-    private CartesianProductLop transformToCartesianProduct(SubqueryExecutionLop subqueryExecutionLop) {
-        final LogicalOperator transformedInput = apply(subqueryExecutionLop.input());
-        final LogicalOperator transformedSubquery = apply(subqueryExecutionLop.subquery());
-
-        final Schema leftSchema = transformedInput.schema();
-        final Schema rightSchema = transformedSubquery.schema();
-
-        return new CartesianProductLop(transformedInput,
-                                       transformedSubquery,
-                                       leftSchema.extend(rightSchema.columnNames().stream()
-                                                                    .map(rightSchema::column)
-                                                                    .collect(toList())));
+        return new NeumannKemperSubqueryDecorrelator().decorrelate(transformedDependentJoin);
     }
 
     @Override

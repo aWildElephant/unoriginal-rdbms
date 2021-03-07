@@ -13,12 +13,13 @@ import fr.awildelephant.rdbms.ast.value.Sum;
 import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
 import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
-import static fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate.countStarAggregate;
 
 final class ExpressionSplitter {
 
@@ -39,6 +40,8 @@ final class ExpressionSplitter {
         collector.addMapAboveAggregates(subqueryExtractor.apply(aggregateFreeOutputColumn));
 
         for (AST aggregate : aggregationsExtractor.collectedAggregates()) {
+            final ColumnReference outputName = columnReferenceTransformer.apply(aggregate);
+
             if (aggregate instanceof Any) {
                 final Any anyAggregate = (Any) aggregate;
                 final AST anyInput = anyAggregate.input();
@@ -47,7 +50,7 @@ final class ExpressionSplitter {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(anyInput));
                 }
 
-                collector.addAggregate(new AnyAggregate(columnReferenceTransformer.apply(anyInput)));
+                collector.addAggregate(new AnyAggregate(columnReferenceTransformer.apply(anyInput), outputName));
             } else if (aggregate instanceof Count) {
                 final Count countAggregate = (Count) aggregate;
                 final AST countInput = countAggregate.input();
@@ -57,9 +60,10 @@ final class ExpressionSplitter {
                 }
 
                 collector.addAggregate(new CountAggregate(columnReferenceTransformer.apply(countInput),
+                                                          outputName,
                                                           countAggregate.distinct()));
             } else if (aggregate instanceof CountStar) {
-                collector.addAggregate(countStarAggregate());
+                collector.addAggregate(new CountStarAggregate(outputName));
             } else if (aggregate instanceof Avg) {
                 final AST avgInput = ((Avg) aggregate).input();
 
@@ -67,7 +71,7 @@ final class ExpressionSplitter {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(avgInput));
                 }
 
-                collector.addAggregate(new AvgAggregate(columnReferenceTransformer.apply(avgInput)));
+                collector.addAggregate(new AvgAggregate(columnReferenceTransformer.apply(avgInput), outputName));
             } else if (aggregate instanceof Max) {
                 final AST maxInput = ((Max) aggregate).input();
 
@@ -75,7 +79,7 @@ final class ExpressionSplitter {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(maxInput));
                 }
 
-                collector.addAggregate(new MaxAggregate(columnReferenceTransformer.apply(maxInput)));
+                collector.addAggregate(new MaxAggregate(columnReferenceTransformer.apply(maxInput), outputName));
             } else if (aggregate instanceof Min) {
                 final AST minInput = ((Min) aggregate).input();
 
@@ -83,7 +87,7 @@ final class ExpressionSplitter {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(minInput));
                 }
 
-                collector.addAggregate(new MinAggregate(columnReferenceTransformer.apply(minInput)));
+                collector.addAggregate(new MinAggregate(columnReferenceTransformer.apply(minInput), outputName));
             } else if (aggregate instanceof Sum) {
                 final AST sumInput = ((Sum) aggregate).input();
 
@@ -91,7 +95,7 @@ final class ExpressionSplitter {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(sumInput));
                 }
 
-                collector.addAggregate(new SumAggregate(columnReferenceTransformer.apply(sumInput)));
+                collector.addAggregate(new SumAggregate(columnReferenceTransformer.apply(sumInput), outputName));
             } else {
                 throw new UnsupportedOperationException();
             }

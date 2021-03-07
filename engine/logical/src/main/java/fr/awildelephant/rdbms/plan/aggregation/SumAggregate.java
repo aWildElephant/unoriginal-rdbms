@@ -8,11 +8,12 @@ import java.util.Optional;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class SumAggregate implements Aggregate {
+public final class SumAggregate extends AbstractAggregate {
 
     private final ColumnReference input;
 
-    public SumAggregate(ColumnReference input) {
+    public SumAggregate(ColumnReference input, ColumnReference output) {
+        super(output);
         this.input = input;
     }
 
@@ -26,18 +27,13 @@ public final class SumAggregate implements Aggregate {
     }
 
     @Override
-    public ColumnReference outputName() {
-        return new UnqualifiedColumnReference("sum(" + input.fullName() + ")");
-    }
-
-    @Override
     public Optional<ColumnReference> inputColumn() {
         return Optional.of(input);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(input);
+        return Objects.hash(input, outputColumn);
     }
 
     @Override
@@ -48,13 +44,15 @@ public final class SumAggregate implements Aggregate {
 
         final SumAggregate other = (SumAggregate) obj;
 
-        return Objects.equals(input, other.input);
+        return Objects.equals(input, other.input)
+                && Objects.equals(outputColumn, other.outputColumn);
     }
 
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append(input)
+                .append("inputColumn", input)
+                .append("outputColumn", outputColumn)
                 .toString();
     }
 }

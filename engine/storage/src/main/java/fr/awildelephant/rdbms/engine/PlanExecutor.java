@@ -1,6 +1,5 @@
 package fr.awildelephant.rdbms.engine;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.AggregationOperator;
@@ -42,7 +41,7 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -58,7 +57,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
@@ -362,27 +360,28 @@ public final class PlanExecutor implements LopVisitor<Table> {
 
     @Override
     public Table visit(ScalarSubqueryLop scalarSubquery) {
-        final Table inputTable = apply(scalarSubquery.input());
-
-        final UUID operatorId = UUID.randomUUID();
-
-        LOGGER.info("{} - ScalarOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
-
-        final Table outputTable = simpleTable(scalarSubquery.schema(), 1);
-
-        boolean foundOneRow = false;
-        for (Record record : inputTable) {
-            if (foundOneRow) {
-                throw new IllegalArgumentException("Scalar subquery cannot have more than one row");
-            }
-
-            foundOneRow = true;
-            outputTable.add(record);
-        }
-
-        LOGGER.info("{} - ScalarOperator - outputSize: 1", operatorId);
-
-        return outputTable;
+        return apply(scalarSubquery.input());
+//        final Table inputTable = apply(scalarSubquery.input());
+//
+//        final UUID operatorId = UUID.randomUUID();
+//
+//        LOGGER.info("{} - ScalarOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
+//
+//        final Table outputTable = simpleTable(scalarSubquery.schema(), 1);
+//
+//        boolean foundOneRow = false;
+//        for (Record record : inputTable) {
+//            if (foundOneRow) {
+//                throw new IllegalArgumentException("Scalar subquery cannot have more than one row");
+//            }
+//
+//            foundOneRow = true;
+//            outputTable.add(record);
+//        }
+//
+//        LOGGER.info("{} - ScalarOperator - outputSize: 1", operatorId);
+//
+//        return outputTable;
     }
 
     @Override
@@ -460,22 +459,31 @@ public final class PlanExecutor implements LopVisitor<Table> {
     }
 
     @Override
-    public Table visit(SubqueryExecutionLop subqueryExecutionLop) {
-        final Table inputTable = apply(subqueryExecutionLop.input());
-
-        final UUID operatorId = UUID.randomUUID();
-
-        LOGGER.info("{} - SubqueryOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
-
-        final SubqueryExecutionOperator operator = new SubqueryExecutionOperator(subqueryExecutionLop.subquery(),
-                                                                                 this,
-                                                                                 subqueryExecutionLop.schema());
-
-        final Table outputTable = operator.compute(inputTable);
-
-        LOGGER.info("{} - ScalarOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
-
-        return outputTable;
+    public Table visit(DependentJoinLop dependentJoinLop) {
+        throw new UnsupportedOperationException("We're not able to execute a dependent join anymore");
+//        final LogicalOperator leftInput = dependentJoinLop.left();
+//        final LogicalOperator rightInput = dependentJoinLop.right();
+//
+//        final Table inputTable = apply(leftInput);
+//
+//        final UUID operatorId = UUID.randomUUID();
+//
+//        LOGGER.info("{} - SubqueryOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
+//
+//        final Formula predicateFormula = createFormula(dependentJoinLop.predicate(),
+//                                                       leftInput.schema(),
+//                                                       rightInput.schema());
+//
+//        final SubqueryExecutionOperator operator = new SubqueryExecutionOperator(rightInput,
+//                                                                                 predicateFormula,
+//                                                                                 this,
+//                                                                                 dependentJoinLop.schema());
+//
+//        final Table outputTable = operator.compute(inputTable);
+//
+//        LOGGER.info("{} - ScalarOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
+//
+//        return outputTable;
     }
 
     @Override

@@ -4,7 +4,6 @@ import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +16,11 @@ public final class MapLop extends AbstractLop {
 
     private final LogicalOperator input;
     private final List<ValueExpression> expressions;
-    private final List<String> expressionsOutputNames;
+    private final List<ColumnReference> expressionsOutputNames;
 
-    public MapLop(LogicalOperator input, List<ValueExpression> expressions, List<String> expressionsOutputNames) {
+    public MapLop(LogicalOperator input,
+                  List<ValueExpression> expressions,
+                  List<ColumnReference> expressionsOutputNames) {
         super(buildOutputSchema(expressions, expressionsOutputNames, input.schema()));
 
         this.expressions = expressions;
@@ -27,7 +28,9 @@ public final class MapLop extends AbstractLop {
         this.input = input;
     }
 
-    private static Schema buildOutputSchema(List<ValueExpression> valueExpressions, List<String> outputNames, Schema schema) {
+    private static Schema buildOutputSchema(List<ValueExpression> valueExpressions,
+                                            List<ColumnReference> expressionOutputNames,
+                                            Schema schema) {
         // TODO: can we use Schema#extend
         final List<ColumnReference> inputColumns = schema.columnNames();
 
@@ -40,8 +43,9 @@ public final class MapLop extends AbstractLop {
         int index = inputColumns.size();
 
         for (int i = 0; i < valueExpressions.size(); i++) {
-            outputColumns.add(new ColumnMetadata(index++, new UnqualifiedColumnReference(outputNames.get(i)),
-                                         valueExpressions.get(i).domain(), false, false));
+            outputColumns.add(
+                    new ColumnMetadata(index++, expressionOutputNames.get(i), valueExpressions.get(i).domain(), false,
+                                       false));
         }
 
         return new Schema(outputColumns);
@@ -55,7 +59,7 @@ public final class MapLop extends AbstractLop {
         return expressions;
     }
 
-    public List<String> expressionsOutputNames() {
+    public List<ColumnReference> expressionsOutputNames() {
         return expressionsOutputNames;
     }
 

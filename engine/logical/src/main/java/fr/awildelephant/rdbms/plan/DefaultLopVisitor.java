@@ -73,8 +73,8 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
-    public T visit(SubqueryExecutionLop subqueryExecutionLop) {
-        return defaultVisit(subqueryExecutionLop);
+    public T visit(DependentJoinLop dependentJoinLop) {
+        return defaultVisit(dependentJoinLop);
     }
 
     @Override

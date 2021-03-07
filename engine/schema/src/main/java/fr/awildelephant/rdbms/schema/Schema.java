@@ -17,6 +17,7 @@ public final class Schema {
     private final List<ColumnReference> allColumns;
 
     private final Map<String, Map<String, ColumnMetadata>> columnIndex;
+
     public Schema(List<ColumnMetadata> columns) {
         final int numberOfColumns = columns.size();
         final List<ColumnMetadata> reindexedColumns = new ArrayList<>(numberOfColumns);
@@ -113,7 +114,7 @@ public final class Schema {
         return allColumns.size();
     }
 
-    public Schema project(List<ColumnReference> references) {
+    public Schema project(Iterable<ColumnReference> references) {
         final List<ColumnMetadata> projection = new ArrayList<>();
 
         int i = 0;

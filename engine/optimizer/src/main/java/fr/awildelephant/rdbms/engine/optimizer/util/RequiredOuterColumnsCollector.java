@@ -15,7 +15,7 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
@@ -97,8 +97,8 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
     }
 
     @Override
-    public Stream<ColumnReference> visit(SubqueryExecutionLop subqueryExecutionLop) {
-        return apply(subqueryExecutionLop.input());
+    public Stream<ColumnReference> visit(DependentJoinLop dependentJoinLop) {
+        return apply(dependentJoinLop.left());
     }
 
     @Override

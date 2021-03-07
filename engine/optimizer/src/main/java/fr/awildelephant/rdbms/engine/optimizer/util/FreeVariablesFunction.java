@@ -9,7 +9,13 @@ import java.util.stream.Collectors;
 
 public final class FreeVariablesFunction implements Function<LogicalOperator, Set<ColumnReference>> {
 
+    private static FreeVariablesFunction INSTANCE = new FreeVariablesFunction();
+
     private final RequiredOuterColumnsCollector requiredOuterColumnsCollector = new RequiredOuterColumnsCollector();
+
+    public static Set<ColumnReference> freeVariables(LogicalOperator operator) {
+        return INSTANCE.apply(operator);
+    }
 
     @Override
     public Set<ColumnReference> apply(LogicalOperator logicalOperator) {

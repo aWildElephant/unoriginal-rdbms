@@ -8,12 +8,13 @@ import java.util.Optional;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class CountAggregate implements Aggregate {
+public final class CountAggregate extends AbstractAggregate {
 
     private final ColumnReference input;
     private final boolean distinct;
 
-    public CountAggregate(ColumnReference input, boolean distinct) {
+    public CountAggregate(ColumnReference input, ColumnReference output, boolean distinct) {
+        super(output);
         this.input = input;
         this.distinct = distinct;
     }
@@ -32,26 +33,13 @@ public final class CountAggregate implements Aggregate {
     }
 
     @Override
-    public ColumnReference outputName() {
-        final String outputName;
-
-        if (distinct) {
-            outputName = "count(distinct " + input.fullName() + ")";
-        } else {
-            outputName = "count(" + input.fullName() + ")";
-        }
-
-        return new UnqualifiedColumnReference(outputName);
-    }
-
-    @Override
     public Optional<ColumnReference> inputColumn() {
         return Optional.of(input);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(distinct, input);
+        return Objects.hash(distinct, input, outputColumn);
     }
 
     @Override
@@ -63,13 +51,15 @@ public final class CountAggregate implements Aggregate {
         final CountAggregate other = (CountAggregate) obj;
 
         return distinct == other.distinct
-                && Objects.equals(input, other.input);
+                && Objects.equals(input, other.input)
+                && Objects.equals(outputColumn, other.outputColumn);
     }
 
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("input", input)
+                .append("inputColumn", input)
+                .append("outputColumn", outputColumn)
                 .append("distinct", true)
                 .toString();
     }

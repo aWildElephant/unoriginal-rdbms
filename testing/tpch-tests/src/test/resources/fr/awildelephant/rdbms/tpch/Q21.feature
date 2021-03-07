@@ -1,4 +1,4 @@
-@todo # Internal error "column not found"
+@todo # Broken by subquery unnesting refactoring
 Feature: TPC-H Q21
 
   Background: TPC-H dataset

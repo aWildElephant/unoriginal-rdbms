@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.InnerJoin;
 import fr.awildelephant.rdbms.ast.LeftJoin;
 import fr.awildelephant.rdbms.ast.Limit;
+import fr.awildelephant.rdbms.ast.OrderingSpecification;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
@@ -33,14 +34,17 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.sort.SortSpecification;
 import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +53,13 @@ import java.util.Optional;
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.JoinType.SEMI_JOIN;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
+import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.leftJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
+import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
+import static fr.awildelephant.rdbms.plan.sort.SortSpecification.ascending;
+import static fr.awildelephant.rdbms.plan.sort.SortSpecification.descending;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
@@ -98,9 +106,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Schema outputSchema = innerJoinOutputSchema(leftInput.schema(), rightInput.schema());
 
         return new InnerJoinLop(leftInput,
-                rightInput,
-                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema),
-                outputSchema);
+                                rightInput,
+                                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema),
+                                outputSchema);
     }
 
     @Override
@@ -111,9 +119,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Schema outputSchema = leftJoinOutputSchema(leftInput.schema(), rightInput.schema());
 
         return new LeftJoinLop(leftInput,
-                rightInput,
-                createValueExpression(leftJoin.joinSpecification(), outputSchema, outerQuerySchema),
-                outputSchema);
+                               rightInput,
+                               createValueExpression(leftJoin.joinSpecification(), outputSchema, outerQuerySchema),
+                               outputSchema);
     }
 
     @Override
@@ -123,7 +131,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(ScalarSubquery scalarSubquery) {
-        return new ScalarSubqueryLop(apply(scalarSubquery.input()), scalarSubquery.id());
+        return new ScalarSubqueryLop(apply(scalarSubquery.input()));
     }
 
     @Override
@@ -150,9 +158,15 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                     final LogicalOperator leftInput = outerQueryAwareAlgebraizer.apply(joiner.subquery());
 
                     if (joiner.joinType() == SEMI_JOIN) {
-                        plan = new SemiJoinLop(plan, leftInput, createValueExpression(joiner.predicate(), innerJoinOutputSchema(plan.schema(), leftInput.schema()), outerQuerySchema), joiner.identifier());
+                        plan = new SemiJoinLop(plan,
+                                               leftInput,
+                                               createValueExpression(joiner.predicate(),
+                                                                     innerJoinOutputSchema(plan.schema(),
+                                                                                           leftInput.schema()),
+                                                                     outerQuerySchema),
+                                               new UnqualifiedColumnReference(joiner.identifier()));
                     } else {
-                        plan = new SubqueryExecutionLop(plan, leftInput);
+                        plan = new DependentJoinLop(plan, leftInput, constantExpression(trueValue(), Domain.BOOLEAN));
                     }
                 }
             }
@@ -224,7 +238,18 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final Optional<SortSpecificationList> orderByClause = select.orderByClause();
         if (orderByClause.isPresent()) {
-            plan = new SortLop(plan, orderByClause.get().columns());
+            final List<SortSpecification> specifications = orderByClause.get().columns()
+                    .stream()
+                    .map(element -> {
+                        final ColumnReference reference = columnReferenceTransformer.apply(element.sortKey());
+                        if (element.orderingSpecification() == OrderingSpecification.DESCENDING) {
+                            return descending(reference);
+                        } else {
+                            return ascending(reference);
+                        }
+                    })
+                    .collect(toList());
+            plan = new SortLop(plan, specifications);
         }
 
         return plan;
@@ -253,16 +278,16 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final List<ValueExpression> valueExpressions = createValueExpressions(input, maps);
 
-        final List<String> outputNames = getOutputNames(maps);
+        final List<ColumnReference> outputNames = mapOutputNames(maps);
 
         return new MapLop(input, valueExpressions, outputNames);
     }
 
-    private List<String> getOutputNames(List<AST> expressions) {
-        final List<String> outputNames = new ArrayList<>(expressions.size());
+    private List<ColumnReference> mapOutputNames(List<AST> expressions) {
+        final List<ColumnReference> outputNames = new ArrayList<>(expressions.size());
 
         for (AST expression : expressions) {
-            outputNames.add(columnNameResolver.apply(expression));
+            outputNames.add(new UnqualifiedColumnReference(columnNameResolver.apply(expression)));
         }
 
         return outputNames;
@@ -314,8 +339,8 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                 .map(Optional::get).findAny();
 
         return new AliasLop(new AliasLop(input,
-                tableAlias(sourceTable.orElse(null), tableAliasWithColumns.tableAlias())),
-                columnAliasBuilder.build().orElseThrow());
+                                         tableAlias(sourceTable.orElse(null), tableAliasWithColumns.tableAlias())),
+                            columnAliasBuilder.build().orElseThrow());
     }
 
     @Override

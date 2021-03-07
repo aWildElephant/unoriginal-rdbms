@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.ast.SortSpecification;
+import fr.awildelephant.rdbms.plan.sort.SortSpecification;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +11,6 @@ import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuil
 public final class SortLop extends AbstractLop {
 
     private final LogicalOperator input;
-    // TODO: stop using AST SortSpecification here
     private final List<SortSpecification> columns;
 
     public SortLop(LogicalOperator input, List<SortSpecification> sortSpecificationList) {

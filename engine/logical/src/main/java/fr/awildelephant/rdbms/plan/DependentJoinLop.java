@@ -5,26 +5,27 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
-import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.leftJoinOutputSchema;
 
-public final class LeftJoinLop extends AbstractLop {
+// TODO: est-ce que ça ne devrait pas être un left join quand on enlève la correlation ?
+public final class DependentJoinLop extends AbstractLop {
 
     private final LogicalOperator left;
     private final LogicalOperator right;
-    private final ValueExpression joinSpecification;
+    private final ValueExpression predicate;
 
-    public LeftJoinLop(LogicalOperator left, LogicalOperator right, ValueExpression joinSpecification) {
-        this(left, right, joinSpecification, leftJoinOutputSchema(left.schema(), right.schema()));
-    }
-
-    public LeftJoinLop(LogicalOperator left, LogicalOperator right, ValueExpression joinSpecification, Schema outputSchema) {
-        super(outputSchema);
+    public DependentJoinLop(LogicalOperator left, LogicalOperator right, ValueExpression predicate) {
+        super(createOutputSchema(left.schema(), right.schema()));
 
         this.left = left;
         this.right = right;
-        this.joinSpecification = joinSpecification;
+        this.predicate = predicate;
+    }
+
+    private static Schema createOutputSchema(Schema input, Schema subquery) {
+        return input.extend(subquery.columnNames().stream().map(subquery::column).collect(Collectors.toList()));
     }
 
     public LogicalOperator left() {
@@ -35,13 +36,13 @@ public final class LeftJoinLop extends AbstractLop {
         return right;
     }
 
-    public ValueExpression joinSpecification() {
-        return joinSpecification;
+    public ValueExpression predicate() {
+        return predicate;
     }
 
     @Override
     public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
-        return new LeftJoinLop(transformer.apply(left), transformer.apply(right), joinSpecification, schema());
+        return new DependentJoinLop(transformer.apply(left), transformer.apply(right), predicate);
     }
 
     @Override
@@ -51,20 +52,20 @@ public final class LeftJoinLop extends AbstractLop {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left, right, joinSpecification);
+        return Objects.hash(left, right, predicate);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LeftJoinLop)) {
+        if (!(obj instanceof DependentJoinLop)) {
             return false;
         }
 
-        final LeftJoinLop other = (LeftJoinLop) obj;
+        final DependentJoinLop other = (DependentJoinLop) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)
-                && Objects.equals(joinSpecification, other.joinSpecification);
+                && Objects.equals(predicate, other.predicate);
     }
 
     @Override
@@ -72,7 +73,7 @@ public final class LeftJoinLop extends AbstractLop {
         return toStringBuilder(this)
                 .append("left", left)
                 .append("right", right)
-                .append("predicate", joinSpecification)
+                .append("predicate", predicate)
                 .toString();
     }
 }

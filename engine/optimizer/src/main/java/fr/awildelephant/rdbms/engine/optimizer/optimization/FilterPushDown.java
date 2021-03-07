@@ -7,24 +7,22 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
-import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -39,10 +37,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
+import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
 import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
+import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpressionFactorizer.factorizeOrExpression;
@@ -51,7 +51,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Moves a filter node down its input node if possible.
  */
-public class FilterPushDown implements LopVisitor<LogicalOperator> {
+public class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
 
     private final Collection<ValueExpression> filters;
 
@@ -67,7 +67,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     public LogicalOperator visit(AggregationLop aggregationNode) {
         final List<ColumnReference> aggregatesColumns = aggregationNode.aggregates()
                 .stream()
-                .map(Aggregate::outputName)
+                .map(Aggregate::outputColumn)
                 .collect(toList());
 
         final List<ValueExpression> filtersOnAggregates = new ArrayList<>();
@@ -102,8 +102,43 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(DistinctLop distinctNode) {
-        return new DistinctLop(apply(distinctNode.input()));
+    public LogicalOperator visit(DependentJoinLop dependentJoinLop) {
+        final LogicalOperator leftInput = dependentJoinLop.left();
+        final Schema leftInputSchema = leftInput.schema();
+        final LogicalOperator rightInput = dependentJoinLop.right();
+        final Schema rightInputSchema = rightInput.schema();
+
+        final Collection<ValueExpression> filtersOnLeft = new ArrayList<>();
+        final Collection<ValueExpression> filtersOnRight = new ArrayList<>();
+        final Collection<ValueExpression> filtersOnBoth = new ArrayList<>();
+
+        for (ValueExpression filter : filters) {
+            final List<ColumnReference> requiredVariables = filter.variables().collect(toList());
+
+            final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
+            final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
+
+            if (!requiresRightInput) {
+                filtersOnLeft.add(filter);
+            }
+
+            if (!requiresLeftInput) {
+                filtersOnRight.add(filter);
+            }
+
+            if (requiresLeftInput && requiresRightInput) {
+                filtersOnBoth.add(filter);
+            }
+        }
+
+        final ValueExpression predicate = collapseFilters(filtersOnBoth)
+                .orElse(constantExpression(trueValue(), Domain.BOOLEAN)); // TODO: we should probably avoid representing a dependent cartesuan product by an always true predicate
+
+        return new DependentJoinLop(
+                new FilterPushDown(filtersOnLeft).apply(leftInput),
+                new FilterPushDown(filtersOnRight).apply(rightInput),
+                predicate
+        );
     }
 
     @Override
@@ -315,15 +350,8 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(ScalarSubqueryLop scalarSubquery) {
-        final LogicalOperator transformedSubquery = new FilterPushDown().apply(scalarSubquery.input());
-
-        return createFilterAbove(filters, new ScalarSubqueryLop(transformedSubquery, scalarSubquery.id()));
-    }
-
-    @Override
     public LogicalOperator visit(SemiJoinLop semiJoin) {
-        final String outputColumnName = semiJoin.ouputColumnName();
+        final ColumnReference outputColumnName = semiJoin.outputColumnName();
 
         final List<ValueExpression> regularFilters = new ArrayList<>();
         final List<ValueExpression> filtersReferencingSemiJoin = new ArrayList<>();
@@ -331,7 +359,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         for (ValueExpression expression : filters) {
             final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
 
-            final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(semiJoinReference(outputColumnName));
+            final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(outputColumnName::equals);
 
             if (referencesSemiJoin) {
                 filtersReferencingSemiJoin.add(expression);
@@ -346,7 +374,7 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
                 transformedLeftInput,
                 new FilterPushDown().apply(semiJoin.right()),
                 semiJoin.predicate(),
-                semiJoin.ouputColumnName());
+                semiJoin.outputColumnName());
 
         return createFilterAbove(filtersReferencingSemiJoin, transformedJoin);
     }
@@ -359,36 +387,6 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
 
             return semiJoinOutputColumnName.equals(columnReference.name());
         };
-    }
-
-    @Override
-    public LogicalOperator visit(SortLop sortLop) {
-        return new SortLop(apply(sortLop.input()), sortLop.sortSpecificationList());
-    }
-
-    @Override
-    public LogicalOperator visit(SubqueryExecutionLop subqueryExecutionLop) {
-        final Schema subquerySchema = subqueryExecutionLop.subquery().schema();
-
-        final Collection<ValueExpression> filtersOnInput = new ArrayList<>();
-        final Collection<ValueExpression> filtersOnBoth = new ArrayList<>();
-
-        for (ValueExpression filter : filters) {
-            final List<ColumnReference> requiredVariables = filter.variables().collect(toList());
-
-            final boolean requiresSubquery = requiredVariables.stream().anyMatch(subquerySchema::contains);
-
-            if (!requiresSubquery) {
-                filtersOnInput.add(filter);
-            } else {
-                filtersOnBoth.add(filter);
-            }
-        }
-
-        return createFilterAbove(filtersOnBoth, new SubqueryExecutionLop(
-                new FilterPushDown(filtersOnInput).apply(subqueryExecutionLop.input()),
-                new FilterPushDown().apply(subqueryExecutionLop.subquery())
-        ));
     }
 
     @Override
@@ -456,5 +454,10 @@ public class FilterPushDown implements LopVisitor<LogicalOperator> {
         }
 
         return createFilterAbove(aboveFilters, joinNode);
+    }
+
+    @Override
+    public LogicalOperator defaultVisit(LogicalOperator operator) {
+        return operator.transformInputs(this);
     }
 }

@@ -1,20 +1,16 @@
 package fr.awildelephant.rdbms.plan.aggregation;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
+import java.util.Objects;
 import java.util.Optional;
 
-public final class CountStarAggregate implements Aggregate {
+import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-    private static final CountStarAggregate INSTANCE = new CountStarAggregate();
+public final class CountStarAggregate extends AbstractAggregate {
 
-    private CountStarAggregate() {
-
-    }
-
-    public static CountStarAggregate countStarAggregate() {
-        return INSTANCE;
+    public CountStarAggregate(ColumnReference output) {
+        super(output);
     }
 
     @Override
@@ -23,17 +19,30 @@ public final class CountStarAggregate implements Aggregate {
     }
 
     @Override
-    public ColumnReference outputName() {
-        return new UnqualifiedColumnReference("count(*)");
-    }
-
-    @Override
     public Optional<ColumnReference> inputColumn() {
         return Optional.empty();
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(outputColumn);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof CountStarAggregate)) {
+            return false;
+        }
+
+        final CountStarAggregate other = (CountStarAggregate) obj;
+
+        return Objects.equals(outputColumn, other.outputColumn);
+    }
+
+    @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return toStringBuilder(this)
+                .append("outputColumn", outputColumn())
+                .toString();
     }
 }

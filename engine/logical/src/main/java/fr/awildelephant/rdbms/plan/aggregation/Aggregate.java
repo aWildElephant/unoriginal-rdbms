@@ -8,7 +8,7 @@ public interface Aggregate {
 
     boolean outputIsNullable();
 
-    ColumnReference outputName();
-
     Optional<ColumnReference> inputColumn();
+
+    ColumnReference outputColumn();
 }

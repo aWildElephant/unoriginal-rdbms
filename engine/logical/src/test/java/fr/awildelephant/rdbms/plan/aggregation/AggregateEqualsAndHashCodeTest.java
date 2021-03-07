@@ -25,7 +25,7 @@ class AggregateEqualsAndHashCodeTest {
                 .getSubTypesOf(Aggregate.class)
                 .stream()
                 .sorted(comparing(Class::getSimpleName))
-                .filter(type -> !CountStarAggregate.class.equals(type));
+                .filter(type -> !AbstractAggregate.class.equals(type));
     }
 
     @DisplayName("All implementations of Aggregate should implement equals and hashCode")

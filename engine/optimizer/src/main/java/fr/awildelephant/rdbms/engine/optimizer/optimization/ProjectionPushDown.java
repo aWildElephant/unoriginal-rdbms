@@ -15,7 +15,7 @@ import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -285,7 +285,7 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
                 transformedLeftInput,
                 transformedRightInput,
                 semiJoin.predicate(),
-                semiJoin.ouputColumnName());
+                semiJoin.outputColumnName());
 
         if (transformedJoin.schema().numberOfAttributes() != projection.size()) {
             return new ProjectionLop(transformedJoin, projection);
@@ -311,23 +311,47 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(SubqueryExecutionLop subqueryExecution) {
-        final LogicalOperator subquery = subqueryExecution.subquery();
+    public LogicalOperator visit(DependentJoinLop dependentJoin) {
+        final List<ColumnReference> newProjection = merge(projection,
+                                                          dependentJoin.schema(),
+                                                          dependentJoin.predicate().variables().collect(toList()));
 
-        final List<ColumnReference> inputProjection
-                = restrictProjectionToAvailableColumns(subqueryExecution.input(), projection);
-        inputProjection.addAll(freeVariablesFunction.apply(subquery));
+        final LogicalOperator leftInput = dependentJoin.left();
+        final Schema leftInputSchema = leftInput.schema();
+        final LogicalOperator rightInput = dependentJoin.right();
+        final Schema rightInputSchema = rightInput.schema();
 
-        final LogicalOperator transformedInput
-                = new ProjectionPushDown(inputProjection).apply(subqueryExecution.input());
+        final List<ColumnReference> leftInputProjection = new ArrayList<>();
+        final List<ColumnReference> rightInputProjection = new ArrayList<>();
+        for (ColumnReference column : newProjection) {
+            if (leftInputSchema.contains(column)) {
+                leftInputProjection.add(column);
+            } else if (rightInputSchema.contains(column)) {
+                rightInputProjection.add(column);
+            }
+        }
 
-        final List<ColumnReference> subqueryProjection = restrictProjectionToAvailableColumns(subquery, projection);
-
-        final LogicalOperator transformedSubquery = new ProjectionPushDown(subqueryProjection).apply(subquery);
-
-        final SubqueryExecutionLop transformedNode = new SubqueryExecutionLop(transformedInput, transformedSubquery);
-
-        return createProjectionIfNecessary(transformedNode);
+        final LogicalOperator transformedLeftInput = new ProjectionPushDown(leftInputProjection).apply(leftInput);
+        final LogicalOperator transformedRightInput = new ProjectionPushDown(rightInputProjection).apply(rightInput);
+        return new DependentJoinLop(transformedLeftInput,
+                                    transformedRightInput,
+                                    dependentJoin.predicate());
+//        final LogicalOperator subquery = subqueryExecution.right();
+//
+//        final List<ColumnReference> inputProjection
+//                = restrictProjectionToAvailableColumns(subqueryExecution.left(), projection);
+//        inputProjection.addAll(freeVariablesFunction.apply(subquery));
+//
+//        final LogicalOperator transformedInput
+//                = new ProjectionPushDown(inputProjection).apply(subqueryExecution.left());
+//
+//        final List<ColumnReference> subqueryProjection = restrictProjectionToAvailableColumns(subquery, projection);
+//
+//        final LogicalOperator transformedSubquery = new ProjectionPushDown(subqueryProjection).apply(subquery);
+//
+//        final DependentJoinLop transformedNode = new DependentJoinLop(transformedInput, transformedSubquery);
+//
+//        return createProjectionIfNecessary(transformedNode);
     }
 
     private List<ColumnReference> restrictProjectionToAvailableColumns(LogicalOperator node,

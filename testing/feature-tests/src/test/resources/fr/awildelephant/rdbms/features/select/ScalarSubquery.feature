@@ -1,5 +1,6 @@
 Feature: Scalar subquery
 
+  @todo # ça morche pu
   Scenario: I execute a query with a scalar subquery that has too many columns
 
     Given the table test

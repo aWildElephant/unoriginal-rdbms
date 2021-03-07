@@ -16,7 +16,7 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.SubqueryExecutionLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
@@ -111,8 +111,8 @@ final class CorrelatedSubqueryMatcher implements LopVisitor<Boolean> {
     }
 
     @Override
-    public Boolean visit(SubqueryExecutionLop subqueryExecutionLop) {
-        return apply(subqueryExecutionLop.input());
+    public Boolean visit(DependentJoinLop dependentJoinLop) {
+        return apply(dependentJoinLop.left());
     }
 
     @Override

@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.engine.PlanExecutor;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.subquery.LogicalOperatorOuterQueryReferenceReplacer;
+import fr.awildelephant.rdbms.engine.operators.values.JoinValues;
+import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -14,21 +16,26 @@ import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 public class SubqueryExecutionOperator implements Operator<Table, Table> {
 
     private final LogicalOperator subquery;
+    private final Formula predicate;
     private final PlanExecutor executor;
     private final Schema outputSchema;
 
-    public SubqueryExecutionOperator(LogicalOperator subquery, PlanExecutor executor, Schema outputSchema) {
+    public SubqueryExecutionOperator(LogicalOperator subquery, Formula predicate, PlanExecutor executor, Schema outputSchema) {
         this.subquery = subquery;
+        this.predicate = predicate;
         this.executor = executor;
         this.outputSchema = outputSchema;
     }
 
+    // TODO: apply the predicate
     @Override
     public Table compute(Table input) {
         final Table output = simpleTable(outputSchema, input.numberOfTuples());
         final Schema inputSchema = input.schema();
         final int numberOfInputColumns = inputSchema.numberOfAttributes();
         final int numberOfOutputColumns = outputSchema.numberOfAttributes();
+
+        final JoinValues joinValues = new JoinValues(numberOfInputColumns);
 
         for (Record record : input) {
             final DomainValue[] values = new DomainValue[numberOfOutputColumns];

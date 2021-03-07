@@ -8,23 +8,17 @@ import java.util.Objects;
 public final class ScalarSubquery implements AST {
 
     private final AST input;
-    private final String id;
 
-    private ScalarSubquery(AST input, String id) {
+    private ScalarSubquery(AST input) {
         this.input = input;
-        this.id = id;
     }
 
-    public static ScalarSubquery scalarSubquery(AST input, String id) {
-        return new ScalarSubquery(input, id);
+    public static ScalarSubquery scalarSubquery(AST input) {
+        return new ScalarSubquery(input);
     }
 
     public AST input() {
         return input;
-    }
-
-    public String id() {
-        return id;
     }
 
     @Override
@@ -34,7 +28,7 @@ public final class ScalarSubquery implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(input, id);
+        return Objects.hashCode(input);
     }
 
     @Override
@@ -45,7 +39,6 @@ public final class ScalarSubquery implements AST {
 
         final ScalarSubquery other = (ScalarSubquery) obj;
 
-        return Objects.equals(input, other.input)
-                && Objects.equals(id, other.id);
+        return Objects.equals(input, other.input);
     }
 }

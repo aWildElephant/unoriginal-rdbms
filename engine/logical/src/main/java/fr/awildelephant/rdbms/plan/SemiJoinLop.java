@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
@@ -17,9 +18,9 @@ public final class SemiJoinLop extends AbstractLop {
     private final LogicalOperator left;
     private final LogicalOperator right;
     private final ValueExpression predicate;
-    private final String outputColumnName;
+    private final ColumnReference outputColumnName;
 
-    public SemiJoinLop(LogicalOperator left, LogicalOperator right, ValueExpression predicate, String outputColumnName) {
+    public SemiJoinLop(LogicalOperator left, LogicalOperator right, ValueExpression predicate, ColumnReference outputColumnName) {
         super(outputSchema(left, outputColumnName));
 
         this.left = left;
@@ -28,8 +29,8 @@ public final class SemiJoinLop extends AbstractLop {
         this.outputColumnName = outputColumnName;
     }
 
-    private static Schema outputSchema(LogicalOperator left, String outputColumnName) {
-        return left.schema().extend(List.of(new ColumnMetadata(0, new UnqualifiedColumnReference(outputColumnName), Domain.BOOLEAN, true, false)));
+    private static Schema outputSchema(LogicalOperator left, ColumnReference outputColumnName) {
+        return left.schema().extend(List.of(new ColumnMetadata(0, outputColumnName, Domain.BOOLEAN, true, false)));
     }
 
     public LogicalOperator left() {
@@ -44,7 +45,7 @@ public final class SemiJoinLop extends AbstractLop {
         return predicate;
     }
 
-    public String ouputColumnName() {
+    public ColumnReference outputColumnName() {
         return outputColumnName;
     }
 

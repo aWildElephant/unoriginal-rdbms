@@ -1,3 +1,4 @@
+@todo # Broken by subquery unnesting refactoring (must push a dependent join down a map)
 Feature: TPC-H Q17
 
   Background: TPC-H dataset

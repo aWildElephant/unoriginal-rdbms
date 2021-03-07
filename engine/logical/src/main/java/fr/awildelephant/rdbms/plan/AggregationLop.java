@@ -52,7 +52,7 @@ public final class AggregationLop extends AbstractLop {
             final Domain outputType = outputType(inputSchema, aggregate);
 
             outputColumns.add(new ColumnMetadata(numberOfBreakdowns + i,
-                                                 aggregate.outputName(),
+                                                 aggregate.outputColumn(),
                                                  outputType,
                                                  !aggregate.outputIsNullable(),
                                                  false));
