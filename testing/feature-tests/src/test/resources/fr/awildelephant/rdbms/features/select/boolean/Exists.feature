@@ -1,6 +1,5 @@
 Feature: Exists predicate
 
-  @todo # Broken by subquery unnesting refactoring
   Scenario: I execute a query with an exists predicate with a correlated subquery
 
     Given the table t1

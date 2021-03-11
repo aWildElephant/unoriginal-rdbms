@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.util.OptimizationHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static java.util.stream.Collectors.toList;
 
@@ -30,7 +31,12 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
 
     private LogicalOperator reorderMultiJoin(MultiJoin multiJoin) {
         final List<LogicalOperator> inputs = new ArrayList<>(multiJoin.operators());
-        final List<ValueExpression> filters = new ArrayList<>(multiJoin.expressions());
+
+        final ValueExpression alwaysTrue = alwaysTrue();
+
+        final List<ValueExpression> filters = multiJoin.expressions().stream()
+                .filter(f -> !alwaysTrue.equals(f))
+                .collect(toList());
 
         if (filters.isEmpty()) {
             return cartesianProducts(inputs);
