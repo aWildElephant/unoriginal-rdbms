@@ -27,6 +27,7 @@ import fr.awildelephant.rdbms.plan.sort.SortSpecification;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
+import javax.management.ValueExp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -232,15 +233,21 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
             }
         });
 
-        final ExactMatchAlias expressionAliaser = new ExactMatchAlias(expressionsAliasing);
-
-        final List<ColumnReference> aliasedExpressionOutputNames = node.expressionsOutputNames().stream()
-                .map(expressionAliaser::alias)
-                .collect(toList());
-
         final LogicalOperator transformedInput = new AliasSimplification(inputAliasing).apply(node.input());
 
-        return new MapLop(transformedInput, node.expressions(), aliasedExpressionOutputNames);
+        final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(inputAliasing));
+
+        final List<ValueExpression> aliasedExpressions = node.expressions().stream()
+                .map(expressionAliaser)
+                .collect(toList());
+
+        final ExactMatchAlias alias = new ExactMatchAlias(expressionsAliasing);
+
+        final List<ColumnReference> aliasedExpressionOutputNames = node.expressionsOutputNames().stream()
+                .map(alias::alias)
+                .collect(toList());
+
+        return new MapLop(transformedInput, aliasedExpressions, aliasedExpressionOutputNames);
     }
 
     @Override
