@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.util.OptimizationHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
@@ -131,8 +132,8 @@ public class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final ValueExpression predicate = collapseFilters(filtersOnBoth)
-                .orElse(constantExpression(trueValue(), Domain.BOOLEAN)); // TODO: we should probably avoid representing a dependent cartesuan product by an always true predicate
+        // TODO: we should probably avoid representing a dependent cartesuan product by an always true predicate
+        final ValueExpression predicate = collapseFilters(filtersOnBoth).orElse(alwaysTrue());
 
         return new DependentJoinLop(
                 new FilterPushDown(filtersOnLeft).apply(leftInput),

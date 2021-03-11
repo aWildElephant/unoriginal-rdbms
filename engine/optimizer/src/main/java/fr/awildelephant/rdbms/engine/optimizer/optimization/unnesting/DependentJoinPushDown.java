@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LeftJoinLop;
@@ -10,19 +11,22 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
+import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.util.OptimizationHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
-import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
+import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
+import static java.util.stream.Collectors.toSet;
 
 public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperator> {
 
@@ -65,7 +69,36 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
                 }
             }
 
-            return new AggregationLop(apply(aggregation.input()), newBreakdowns, aggregation.aggregates());
+            final Set<ColumnReference> aggregateOutputs = aggregation.aggregates().stream()
+                    .map(Aggregate::outputColumn)
+                    .collect(toSet());
+
+            final List<ValueExpression> expandedFilters = expandFilters(predicate);
+            final List<ValueExpression> filtersAbove = new ArrayList<>();
+            final List<ValueExpression> filtersBelow = new ArrayList<>();
+            for (ValueExpression filter : expandedFilters) {
+                if (filter.variables().anyMatch(aggregateOutputs::contains)) {
+                    filtersAbove.add(filter);
+                } else {
+                    filtersBelow.add(filter);
+                }
+            }
+
+            final ValueExpression collapsedFilterBelow = collapseFilters(filtersBelow).orElse(alwaysTrue());
+            final LogicalOperator transformedInput = new DependentJoinPushDownRules(d, collapsedFilterBelow)
+                    .apply(aggregation.input());
+
+            final AggregationLop transformedNode = new AggregationLop(transformedInput,
+                                                                      newBreakdowns,
+                                                                     aggregation.aggregates());
+
+            return createFilterAbove(transformedNode, filtersAbove);
+        }
+
+        private LogicalOperator createFilterAbove(LogicalOperator node, List<ValueExpression> filters) {
+            final Optional<ValueExpression> filter = collapseFilters(filters);
+
+            return filter.<LogicalOperator>map(f -> new FilterLop(node, f)).orElse(node);
         }
 
         @Override

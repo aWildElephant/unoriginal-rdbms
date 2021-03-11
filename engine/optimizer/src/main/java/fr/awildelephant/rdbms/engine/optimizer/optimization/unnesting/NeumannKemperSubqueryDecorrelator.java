@@ -1,12 +1,11 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
 import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
@@ -20,10 +19,10 @@ import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.util.OptimizationHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
@@ -63,7 +62,7 @@ public final class NeumannKemperSubqueryDecorrelator {
                                                  Collection<ColumnReference> correlatedColumns) {
         final DistinctLop magicSet = magicSet(t1, new ArrayList<>(correlatedColumns));
 
-        final DependentJoinLop pushedDownDependentJoin = new DependentJoinLop(magicSet, t2, predicate);
+        final DependentJoinLop pushedDownDependentJoin = new DependentJoinLop(magicSet, t2, alwaysTrue());
 
         final ColumnAliasBuilder columnAliasBuilder = new ColumnAliasBuilder();
         for (ColumnReference correlatedColumn : correlatedColumns) {
