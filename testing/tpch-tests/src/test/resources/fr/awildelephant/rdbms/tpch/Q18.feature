@@ -1,4 +1,3 @@
-@todo # Broken by subquery unnesting refactoring
 Feature: TPC-H Q18
 
   Background: TPC-H dataset

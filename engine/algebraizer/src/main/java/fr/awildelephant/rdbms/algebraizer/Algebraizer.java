@@ -209,9 +209,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         final List<Aggregate> aggregates = havingAndOutputColumns.aggregates();
         if (!aggregates.isEmpty()) {
+            final Schema aggregationInputSchema = plan.schema();
             final List<ColumnReference> breakdowns = select.groupByClause()
                     .map(groupingSetsList -> groupingSetsList.breakdowns().stream()
                             .map(columnReferenceTransformer)
+                            .map(aggregationInputSchema::normalize)
                             .collect(toList()))
                     .orElseGet(List::of);
 
