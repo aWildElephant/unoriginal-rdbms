@@ -1,4 +1,3 @@
-@todo # Broken when changing storage from row-based to column-based, must be reimplemented
 Feature: Distinct
 
   Background: a table with some data
