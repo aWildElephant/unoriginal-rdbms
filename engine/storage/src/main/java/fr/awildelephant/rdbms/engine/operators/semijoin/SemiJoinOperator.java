@@ -15,7 +15,7 @@ import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 
 public final class SemiJoinOperator {
 
-    private Schema outputSchema;
+    private final Schema outputSchema;
     private final SemiJoinMatcher matcher;
 
     public SemiJoinOperator(Schema outputSchema, SemiJoinMatcher matcher) {

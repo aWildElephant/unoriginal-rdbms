@@ -25,13 +25,15 @@ class LogicalOperatorEqualsAndHashCodeTest {
                 .getSubTypesOf(LogicalOperator.class)
                 .stream()
                 .sorted(comparing(Class::getSimpleName))
-                .filter(type -> !AbstractLop.class.equals(type));
+                .filter(type -> !AbstractLop.class.equals(type)
+                        && !AbstractBinaryLop.class.equals(type));
     }
 
     @DisplayName("All implementations of LogicalOperator should implement equals and hashCode")
     @ParameterizedTest(name = "{index} - {0}")
     @MethodSource("parameters")
-    void all_implementations_of_LogicalOperator_should_implement_equals_and_hashCode(String className, Class<? extends LogicalOperator> implementationOfLogicalOperator) {
+    void all_implementations_of_LogicalOperator_should_implement_equals_and_hashCode(String className,
+                                                                                     Class<? extends LogicalOperator> implementationOfLogicalOperator) {
         EqualsVerifier.forClass(implementationOfLogicalOperator).withIgnoredFields("schema").verify();
     }
 }

@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.join.JoinType;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Objects;
@@ -9,7 +10,6 @@ import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-// TODO: est-ce que ça ne devrait pas être un left join quand on enlève la correlation ?
 public final class DependentJoinLop extends AbstractLop {
 
     private final LogicalOperator left;

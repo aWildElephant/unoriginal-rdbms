@@ -29,6 +29,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
@@ -62,7 +63,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilter
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
-public final class PlanExecutor implements LopVisitor<Table> {
+public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
     private static final Logger LOGGER = LogManager.getLogger("Executor");
 
@@ -459,34 +460,6 @@ public final class PlanExecutor implements LopVisitor<Table> {
     }
 
     @Override
-    public Table visit(DependentJoinLop dependentJoinLop) {
-        throw new UnsupportedOperationException("We're not able to execute a dependent join anymore");
-//        final LogicalOperator leftInput = dependentJoinLop.left();
-//        final LogicalOperator rightInput = dependentJoinLop.right();
-//
-//        final Table inputTable = apply(leftInput);
-//
-//        final UUID operatorId = UUID.randomUUID();
-//
-//        LOGGER.info("{} - SubqueryOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
-//
-//        final Formula predicateFormula = createFormula(dependentJoinLop.predicate(),
-//                                                       leftInput.schema(),
-//                                                       rightInput.schema());
-//
-//        final SubqueryExecutionOperator operator = new SubqueryExecutionOperator(rightInput,
-//                                                                                 predicateFormula,
-//                                                                                 this,
-//                                                                                 dependentJoinLop.schema());
-//
-//        final Table outputTable = operator.compute(inputTable);
-//
-//        LOGGER.info("{} - ScalarOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
-//
-//        return outputTable;
-    }
-
-    @Override
     public Table visit(SortLop sortNode) {
         final Table inputTable = apply(sortNode.input());
 
@@ -529,5 +502,10 @@ public final class PlanExecutor implements LopVisitor<Table> {
         LOGGER.info("{} - TableConstructor - outputSize: {}", operatorId, numberOfRows);
 
         return outputTable;
+    }
+
+    @Override
+    public Table defaultVisit(LogicalOperator operator) {
+        throw new IllegalStateException("Unable to execute node " + operator);
     }
 }

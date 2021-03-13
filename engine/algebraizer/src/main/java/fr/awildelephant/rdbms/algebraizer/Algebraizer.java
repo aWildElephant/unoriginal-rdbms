@@ -23,6 +23,8 @@ import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
+import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
@@ -34,7 +36,6 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
@@ -42,7 +43,6 @@ import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.sort.SortSpecification;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
@@ -51,13 +51,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
-import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.JoinType.SEMI_JOIN;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
-import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.leftJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
-import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
+import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
+import static fr.awildelephant.rdbms.plan.join.JoinType.SEMI;
 import static fr.awildelephant.rdbms.plan.sort.SortSpecification.ascending;
 import static fr.awildelephant.rdbms.plan.sort.SortSpecification.descending;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
@@ -157,16 +156,16 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                 for (SubqueryJoiner joiner : joiners) {
                     final LogicalOperator leftInput = outerQueryAwareAlgebraizer.apply(joiner.subquery());
 
-                    if (joiner.joinType() == SEMI_JOIN) {
-                        plan = new SemiJoinLop(plan,
-                                               leftInput,
-                                               createValueExpression(joiner.predicate(),
+                    if (joiner.type() == SEMI) {
+                        plan = new DependentSemiJoinLop(plan,
+                                                        leftInput,
+                                                        createValueExpression(joiner.predicate(),
                                                                      innerJoinOutputSchema(plan.schema(),
                                                                                            leftInput.schema()),
                                                                      outerQuerySchema),
-                                               new UnqualifiedColumnReference(joiner.identifier()));
+                                                        new UnqualifiedColumnReference(joiner.identifier()));
                     } else {
-                        plan = new DependentJoinLop(plan, leftInput, constantExpression(trueValue(), Domain.BOOLEAN));
+                        plan = new DependentJoinLop(plan, leftInput, alwaysTrue());
                     }
                 }
             }
@@ -398,7 +397,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             LogicalOperator mergedInput = input;
 
             for (SubqueryJoiner joiner : joiners) {
-                if (joiner.joinType() == SEMI_JOIN) {
+                if (joiner.type() == SEMI) {
                     throw new UnsupportedOperationException();
                 }
 

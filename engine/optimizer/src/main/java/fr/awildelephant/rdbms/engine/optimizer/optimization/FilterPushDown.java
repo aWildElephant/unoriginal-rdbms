@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LeftJoinLop;
@@ -22,7 +23,6 @@ import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -37,13 +37,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
-import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.util.OptimizationHelper.alwaysTrue;
+import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
-import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpressionFactorizer.factorizeOrExpression;
@@ -85,7 +83,8 @@ public class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final LogicalOperator transformedInput = new FilterPushDown(filtersOnInput).apply(aggregationNode.input());
 
         return createFilterAbove(filtersOnAggregates,
-                new AggregationLop(transformedInput, aggregationNode.breakdowns(), aggregationNode.aggregates()));
+                                 new AggregationLop(transformedInput, aggregationNode.breakdowns(),
+                                                    aggregationNode.aggregates()));
     }
 
     @Override
@@ -135,11 +134,9 @@ public class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         // TODO: we should probably avoid representing a dependent cartesuan product by an always true predicate
         final ValueExpression predicate = collapseFilters(filtersOnBoth).orElse(alwaysTrue());
 
-        return new DependentJoinLop(
-                new FilterPushDown(filtersOnLeft).apply(leftInput),
-                new FilterPushDown(filtersOnRight).apply(rightInput),
-                predicate
-        );
+        return new DependentJoinLop(new FilterPushDown(filtersOnLeft).apply(leftInput),
+                                    new FilterPushDown(filtersOnRight).apply(rightInput),
+                                    predicate);
     }
 
     @Override
@@ -340,14 +337,44 @@ public class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         }
 
         return createFilterAbove(filtersOnMapColumns,
-                new MapLop(new FilterPushDown(filtersOnInput).apply(mapNode.input()),
-                        mapNode.expressions(),
-                        mapNode.expressionsOutputNames()));
+                                 new MapLop(new FilterPushDown(filtersOnInput).apply(mapNode.input()),
+                                            mapNode.expressions(),
+                                            mapNode.expressionsOutputNames()));
     }
 
     @Override
     public LogicalOperator visit(ProjectionLop projectionNode) {
         return new ProjectionLop(apply(projectionNode.input()), projectionNode.outputColumns());
+    }
+
+    @Override
+    public LogicalOperator visit(DependentSemiJoinLop semiJoin) {
+        final ColumnReference outputColumnName = semiJoin.outputColumnName();
+
+        final List<ValueExpression> regularFilters = new ArrayList<>();
+        final List<ValueExpression> filtersReferencingSemiJoin = new ArrayList<>();
+
+        for (ValueExpression expression : filters) {
+            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+
+            final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(outputColumnName::equals);
+
+            if (referencesSemiJoin) {
+                filtersReferencingSemiJoin.add(expression);
+            } else {
+                regularFilters.add(expression);
+            }
+        }
+
+        final LogicalOperator transformedLeftInput = new FilterPushDown(regularFilters).apply(semiJoin.left());
+
+        final DependentSemiJoinLop transformedJoin = new DependentSemiJoinLop(
+                transformedLeftInput,
+                new FilterPushDown().apply(semiJoin.right()),
+                semiJoin.predicate(),
+                semiJoin.outputColumnName());
+
+        return createFilterAbove(filtersReferencingSemiJoin, transformedJoin);
     }
 
     @Override

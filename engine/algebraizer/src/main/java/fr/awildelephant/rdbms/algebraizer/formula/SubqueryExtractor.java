@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.algebraizer.FirstColumnNameResolver;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.Select;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.In;
 
 import java.util.ArrayList;
@@ -17,13 +18,7 @@ import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
-import static fr.awildelephant.rdbms.ast.value.And.and;
-import static fr.awildelephant.rdbms.ast.value.CountStar.countStar;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
-import static fr.awildelephant.rdbms.ast.value.Greater.greater;
-import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
-import static fr.awildelephant.rdbms.ast.value.IsNull.isNull;
-import static fr.awildelephant.rdbms.ast.value.Not.not;
 import static fr.awildelephant.rdbms.ast.value.ScalarSubquery.scalarSubquery;
 
 public final class SubqueryExtractor extends DefaultFormulaRewriter {
@@ -41,16 +36,9 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
     public AST visit(Exists exists) {
         final String id = UUID.randomUUID().toString();
 
-        final Select subquery = select(List.of(columnAlias(countStar(), id)),
-                exists.input(),
-                null,
-                null,
-                null,
-                null);
+        subqueries.add(semiJoinJoiner(exists.input(), id));
 
-        subqueries.add(cartesianProductJoiner(subquery));
-
-        return and(not(isNull(unqualifiedColumnName(id))), greater(unqualifiedColumnName(id), integerLiteral(0)));
+        return unqualifiedColumnName(id);
     }
 
     @Override

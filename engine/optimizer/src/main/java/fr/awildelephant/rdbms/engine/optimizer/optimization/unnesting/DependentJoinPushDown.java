@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.DependentJoinLop;
+import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LeftJoinLop;
@@ -13,6 +14,7 @@ import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.join.JoinType;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
@@ -20,25 +22,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.util.OptimizationHelper.alwaysTrue;
+import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.plan.join.JoinType.SEMI;
 import static java.util.stream.Collectors.toSet;
 
 public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperator> {
 
     @Override
-    public LogicalOperator visit(DependentJoinLop dependentJoinLop) {
-        final LogicalOperator leftInput = dependentJoinLop.left();
-        final LogicalOperator rightInput = dependentJoinLop.right();
+    public LogicalOperator visit(DependentJoinLop dependentJoin) {
+        final LogicalOperator leftInput = dependentJoin.left();
+        final LogicalOperator rightInput = dependentJoin.right();
 
         if (intersection(freeVariables(rightInput), attributes(leftInput)).isEmpty()) {
-            return new CartesianProductLop(leftInput, rightInput, dependentJoinLop.schema()); // TODO: is a cartesian product ok here ?
+            // TODO: is a cartesian product ok here ? (what about the dependent join predicate)
+            return new CartesianProductLop(leftInput, rightInput, dependentJoin.schema());
         } else {
-            return new DependentJoinPushDownRules(leftInput, dependentJoinLop.predicate()).apply(rightInput);
+            return new DependentJoinPushDownRules(leftInput, dependentJoin.predicate()).apply(rightInput);
         }
     }
 
@@ -54,7 +58,8 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
         private final Set<ColumnReference> attributesD;
         private final ValueExpression predicate;
 
-        public DependentJoinPushDownRules(LogicalOperator d, ValueExpression predicate) {
+        public DependentJoinPushDownRules(LogicalOperator d,
+                                          ValueExpression predicate) {
             this.d = d;
             this.attributesD = attributes(d);
             this.predicate = predicate;
@@ -90,7 +95,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
 
             final AggregationLop transformedNode = new AggregationLop(transformedInput,
                                                                       newBreakdowns,
-                                                                     aggregation.aggregates());
+                                                                      aggregation.aggregates());
 
             return createFilterAbove(transformedNode, filtersAbove);
         }
@@ -134,18 +139,6 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
             }
         }
 
-        @Override
-        public LogicalOperator visit(LeftJoinLop leftJoin) {
-            final LogicalOperator left = leftJoin.left();
-            final LogicalOperator right = leftJoin.right();
-
-            if (intersection(freeVariables(right), attributesD).isEmpty()) {
-                return new LeftJoinLop(apply(left), right, leftJoin.joinSpecification());
-            } else {
-                throw new UnsupportedOperationException(); // TODO: would need to add aliases, PITA
-            }
-        }
-
         // TODO, if necessary
 //        @Override
 //        public LogicalOperator visit(MapLop mapNode) {
@@ -170,21 +163,9 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
         }
 
         @Override
-        public LogicalOperator visit(SemiJoinLop semiJoin) {
-            final LogicalOperator left = semiJoin.left();
-            final LogicalOperator right = semiJoin.right();
-
-            if (intersection(freeVariables(right), attributesD).isEmpty()) {
-                return new SemiJoinLop(apply(left), right, semiJoin.predicate(), semiJoin.outputColumnName());
-            } else {
-                throw new UnsupportedOperationException(); // TODO: would need to add aliases, PITA
-            }
-        }
-
-        @Override
         public LogicalOperator apply(LogicalOperator right) {
             if (notDependent(right)) {
-                return createLeftJoinAndStopVisit(right);
+                return createJoinAndStopVisit(right);
             }
 
             return super.apply(right);
@@ -192,15 +173,16 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
 
         @Override
         public LogicalOperator defaultVisit(LogicalOperator node) {
-            throw new UnsupportedOperationException("Unable to push a dependent join down a " + node.getClass().getSimpleName() + " node");
+            throw new UnsupportedOperationException(
+                    "Unable to push a dependent join down a " + node.getClass().getSimpleName() + " node");
         }
 
         private boolean notDependent(LogicalOperator right) {
             return intersection(freeVariables(right), attributesD).isEmpty();
         }
 
-        private LeftJoinLop createLeftJoinAndStopVisit(LogicalOperator right) {
-            return new LeftJoinLop(d, right, predicate);
+        private InnerJoinLop createJoinAndStopVisit(LogicalOperator right) {
+            return new InnerJoinLop(d, right, predicate);
         }
     }
 }

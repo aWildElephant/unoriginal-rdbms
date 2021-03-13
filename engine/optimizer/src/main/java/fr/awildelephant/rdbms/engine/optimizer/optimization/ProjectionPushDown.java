@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
@@ -15,7 +16,6 @@ import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -336,22 +336,6 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
         return new DependentJoinLop(transformedLeftInput,
                                     transformedRightInput,
                                     dependentJoin.predicate());
-//        final LogicalOperator subquery = subqueryExecution.right();
-//
-//        final List<ColumnReference> inputProjection
-//                = restrictProjectionToAvailableColumns(subqueryExecution.left(), projection);
-//        inputProjection.addAll(freeVariablesFunction.apply(subquery));
-//
-//        final LogicalOperator transformedInput
-//                = new ProjectionPushDown(inputProjection).apply(subqueryExecution.left());
-//
-//        final List<ColumnReference> subqueryProjection = restrictProjectionToAvailableColumns(subquery, projection);
-//
-//        final LogicalOperator transformedSubquery = new ProjectionPushDown(subqueryProjection).apply(subquery);
-//
-//        final DependentJoinLop transformedNode = new DependentJoinLop(transformedInput, transformedSubquery);
-//
-//        return createProjectionIfNecessary(transformedNode);
     }
 
     private List<ColumnReference> restrictProjectionToAvailableColumns(LogicalOperator node,

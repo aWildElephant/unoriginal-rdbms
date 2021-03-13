@@ -22,7 +22,6 @@ public class NestedLoopSemiJoinMatcher implements SemiJoinMatcher {
     public boolean match(Record leftRecord) {
         final JoinValues values = new JoinValues(leftRecord.size());
 
-        final List<Record> matchingRightRecords = new ArrayList<>();
         for (Record rightRecord : rightTable) {
             values.setRecords(leftRecord, rightRecord);
             if (joinSpecification.evaluate(values).getBool()) {

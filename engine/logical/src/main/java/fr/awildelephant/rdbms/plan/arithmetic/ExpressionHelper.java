@@ -1,14 +1,13 @@
-package fr.awildelephant.rdbms.engine.optimizer.optimization.util;
+package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 
-public final class OptimizationHelper {
+public final class ExpressionHelper {
 
-    private OptimizationHelper() {
+    private ExpressionHelper() {
 
     }
 

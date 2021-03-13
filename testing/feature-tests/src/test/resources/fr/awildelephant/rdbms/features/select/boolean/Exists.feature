@@ -25,7 +25,32 @@ Feature: Exists predicate
       | INTEGER |
       | 2       |
 
-  @todo
+  Scenario: I execute a query with not exists predicate OR another predicate
+
+    Given the table t1
+      | a       |
+      | INTEGER |
+      | 1       |
+      | 2       |
+      | 3       |
+
+    And the table t2
+      | b       |
+      | INTEGER |
+      | 1       |
+      | 3       |
+
+    When I execute the query
+    """
+    SELECT a FROM t1 WHERE a = 1 OR NOT EXISTS (SELECT * FROM t2 WHERE a = b)
+    """
+
+    Then I expect the result set
+      | a       |
+      | INTEGER |
+      | 1       |
+      | 2       |
+
   Scenario: I execute a query with a not exists predicate with a correlated subquery
 
     Given the table t1

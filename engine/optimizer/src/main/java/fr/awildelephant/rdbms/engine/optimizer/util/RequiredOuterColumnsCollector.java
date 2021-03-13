@@ -4,6 +4,8 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
+import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
@@ -15,7 +17,6 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
@@ -58,12 +59,16 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
 
     @Override
     public Stream<ColumnReference> visit(InnerJoinLop innerJoinLop) {
-        return Stream.concat(apply(innerJoinLop.left()), apply(innerJoinLop.right()));
+        return StreamHelper.concat(apply(innerJoinLop.left()),
+                                   apply(innerJoinLop.right()),
+                                   outerQueryVariableExtractor.apply(innerJoinLop.joinSpecification()));
     }
 
     @Override
     public Stream<ColumnReference> visit(LeftJoinLop leftJoinLop) {
-        return Stream.concat(apply(leftJoinLop.left()), apply(leftJoinLop.right()));
+        return StreamHelper.concat(apply(leftJoinLop.left()),
+                                   apply(leftJoinLop.right()),
+                                   outerQueryVariableExtractor.apply(leftJoinLop.joinSpecification()));
     }
 
     @Override
@@ -88,7 +93,9 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
 
     @Override
     public Stream<ColumnReference> visit(SemiJoinLop semiJoin) {
-        return Stream.concat(apply(semiJoin.left()), apply(semiJoin.right()));
+        return StreamHelper.concat(apply(semiJoin.left()),
+                                   apply(semiJoin.right()),
+                                   outerQueryVariableExtractor.apply(semiJoin.predicate()));
     }
 
     @Override
@@ -97,8 +104,17 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
     }
 
     @Override
-    public Stream<ColumnReference> visit(DependentJoinLop dependentJoinLop) {
-        return apply(dependentJoinLop.left());
+    public Stream<ColumnReference> visit(DependentJoinLop dependentJoin) {
+        return StreamHelper.concat(apply(dependentJoin.left()),
+                                   apply(dependentJoin.right()),
+                                   outerQueryVariableExtractor.apply(dependentJoin.predicate()));
+    }
+
+    @Override
+    public Stream<ColumnReference> visit(DependentSemiJoinLop dependentSemiJoin) {
+        return StreamHelper.concat(apply(dependentSemiJoin.left()),
+                                   apply(dependentSemiJoin.right()),
+                                   outerQueryVariableExtractor.apply(dependentSemiJoin.predicate()));
     }
 
     @Override

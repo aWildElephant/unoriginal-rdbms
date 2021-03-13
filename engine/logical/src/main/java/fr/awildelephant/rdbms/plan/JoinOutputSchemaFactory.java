@@ -1,6 +1,8 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.List;
@@ -28,6 +30,16 @@ public final class JoinOutputSchemaFactory {
                 .collect(toList());
 
         return leftInputSchema.extend(nullableRightInputColumns);
+    }
+
+    public static Schema semiJoinOutputSchema(Schema leftInputSchema, ColumnReference outputColumnName) {
+        final ColumnMetadata outputColumn = new ColumnMetadata(leftInputSchema.numberOfAttributes(),
+                                                               outputColumnName,
+                                                               Domain.BOOLEAN,
+                                                               true,
+                                                               true);
+
+        return leftInputSchema.extend(List.of(outputColumn));
     }
 
     private static ColumnMetadata nullable(ColumnMetadata column) {

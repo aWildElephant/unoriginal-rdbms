@@ -39,4 +39,6 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
     T visit(DependentJoinLop subqueryExecutionLop);
 
     T visit(TableConstructorLop tableConstructor);
+
+    T visit(DependentSemiJoinLop dependentSemiJoinLop);
 }

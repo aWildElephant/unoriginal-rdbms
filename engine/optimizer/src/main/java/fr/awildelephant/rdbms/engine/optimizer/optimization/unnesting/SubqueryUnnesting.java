@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.DependentJoinLop;
 
@@ -13,6 +14,18 @@ public class SubqueryUnnesting extends DefaultLopVisitor<LogicalOperator> {
                                                                                dependentJoin.predicate());
 
         return new NeumannKemperSubqueryDecorrelator().decorrelate(transformedDependentJoin);
+    }
+
+    @Override
+    public LogicalOperator visit(DependentSemiJoinLop dependentSemiJoin) {
+        final DependentSemiJoinLop transformedDependentSemiJoin = new DependentSemiJoinLop(
+                apply(dependentSemiJoin.left()),
+                apply(dependentSemiJoin.right()),
+                dependentSemiJoin.predicate(),
+                dependentSemiJoin.outputColumnName()
+        );
+
+        return new NeumannKemperSubqueryDecorrelator().decorrelate(transformedDependentSemiJoin);
     }
 
     @Override

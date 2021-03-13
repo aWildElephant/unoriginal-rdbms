@@ -1,9 +1,11 @@
 package fr.awildelephant.rdbms.algebraizer.formula;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
+import fr.awildelephant.rdbms.plan.join.JoinType;
 
-import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.JoinType.CARTESIAN;
-import static fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner.JoinType.SEMI_JOIN;
+import static fr.awildelephant.rdbms.plan.join.JoinType.INNER;
+import static fr.awildelephant.rdbms.plan.join.JoinType.SEMI;
 
 public final class SubqueryJoiner {
 
@@ -20,11 +22,15 @@ public final class SubqueryJoiner {
     }
 
     public static SubqueryJoiner cartesianProductJoiner(AST subquery) {
-        return new SubqueryJoiner(subquery, null, CARTESIAN, null);
+        return new SubqueryJoiner(subquery, null, INNER, null);
+    }
+
+    public static SubqueryJoiner semiJoinJoiner(AST subquery, String identifier) {
+        return new SubqueryJoiner(subquery, BooleanLiteral.TRUE, SEMI, identifier);
     }
 
     public static SubqueryJoiner semiJoinJoiner(AST subquery, AST predicate, String identifier) {
-        return new SubqueryJoiner(subquery, predicate, SEMI_JOIN, identifier);
+        return new SubqueryJoiner(subquery, predicate, SEMI, identifier);
     }
 
     public AST subquery() {
@@ -35,15 +41,11 @@ public final class SubqueryJoiner {
         return predicate;
     }
 
-    public JoinType joinType() {
+    public JoinType type() {
         return joinType;
     }
 
     public String identifier() {
         return identifier;
-    }
-
-    public enum JoinType {
-        CARTESIAN, SEMI_JOIN
     }
 }

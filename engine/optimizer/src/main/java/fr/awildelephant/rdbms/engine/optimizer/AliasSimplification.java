@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
@@ -27,14 +28,11 @@ import fr.awildelephant.rdbms.plan.sort.SortSpecification;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import javax.management.ValueExp;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.plan.sort.SortSpecification.ascending;
 import static fr.awildelephant.rdbms.plan.sort.SortSpecification.descending;
@@ -267,10 +265,10 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(SemiJoinLop node) {
-        final LogicalOperator leftInput = node.left();
+    public LogicalOperator visit(DependentSemiJoinLop semiJoin) {
+        final LogicalOperator leftInput = semiJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = node.right();
+        final LogicalOperator rightInput = semiJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final Map<ColumnReference, ColumnReference> leftAliasing = new HashMap<>();
@@ -286,11 +284,44 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
 
         final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
 
-        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(node.predicate());
+        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(semiJoin.predicate());
 
-        ColumnReference aliasedSemiJoinOutputColumn = aliasing.get(node.outputColumnName());
+        ColumnReference aliasedSemiJoinOutputColumn = aliasing.get(semiJoin.outputColumnName());
         if (aliasedSemiJoinOutputColumn == null) {
-            aliasedSemiJoinOutputColumn = node.outputColumnName();
+            aliasedSemiJoinOutputColumn = semiJoin.outputColumnName();
+        }
+
+        return new DependentSemiJoinLop(new AliasSimplification(leftAliasing).apply(leftInput),
+                               new AliasSimplification(rightAliasing).apply(rightInput),
+                               aliasedJoinSpecification,
+                               aliasedSemiJoinOutputColumn);
+    }
+
+    @Override
+    public LogicalOperator visit(SemiJoinLop semiJoin) {
+        final LogicalOperator leftInput = semiJoin.left();
+        final Schema leftInputSchema = leftInput.schema();
+        final LogicalOperator rightInput = semiJoin.right();
+        final Schema rightInputSchema = rightInput.schema();
+
+        final Map<ColumnReference, ColumnReference> leftAliasing = new HashMap<>();
+        final Map<ColumnReference, ColumnReference> rightAliasing = new HashMap<>();
+        aliasing.forEach((original, alias) -> {
+            if (leftInputSchema.contains(original)) {
+                leftAliasing.put(original, alias);
+            }
+            if (rightInputSchema.contains(original)) {
+                rightAliasing.put(original, alias);
+            }
+        });
+
+        final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
+
+        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(semiJoin.predicate());
+
+        ColumnReference aliasedSemiJoinOutputColumn = aliasing.get(semiJoin.outputColumnName());
+        if (aliasedSemiJoinOutputColumn == null) {
+            aliasedSemiJoinOutputColumn = semiJoin.outputColumnName();
         }
 
         return new SemiJoinLop(new AliasSimplification(leftAliasing).apply(leftInput),
