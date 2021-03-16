@@ -209,8 +209,8 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
         final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(node.joinSpecification());
 
         return new LeftJoinLop(new AliasSimplification(leftAliasing).apply(leftInput),
-                                new AliasSimplification(rightAliasing).apply(rightInput),
-                                aliasedJoinSpecification);
+                               new AliasSimplification(rightAliasing).apply(rightInput),
+                               aliasedJoinSpecification);
     }
 
     @Override
@@ -291,10 +291,14 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
             aliasedSemiJoinOutputColumn = semiJoin.outputColumnName();
         }
 
-        return new DependentSemiJoinLop(new AliasSimplification(leftAliasing).apply(leftInput),
-                               new AliasSimplification(rightAliasing).apply(rightInput),
-                               aliasedJoinSpecification,
-                               aliasedSemiJoinOutputColumn);
+        final LogicalOperator transformedLeftInput = new AliasSimplification(leftAliasing).apply(leftInput);
+        final LogicalOperator transformedRightInput = new AliasSimplification(rightAliasing).apply(
+                new FreeVariableAliasing(new ExactMatchAlias(leftAliasing)).apply(rightInput));
+
+        return new DependentSemiJoinLop(transformedLeftInput,
+                                        transformedRightInput,
+                                        aliasedJoinSpecification,
+                                        aliasedSemiJoinOutputColumn);
     }
 
     @Override
@@ -368,9 +372,11 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
         final ExpressionAliaser aliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
         final ValueExpression aliasedPredicate = aliaser.apply(node.predicate());
 
-        return new DependentJoinLop(new AliasSimplification(leftAliasing).apply(leftInput),
-                                    new AliasSimplification(rightAliasing).apply(rightInput),
-                                    aliasedPredicate);
+        final LogicalOperator transformedLeftInput = new AliasSimplification(leftAliasing).apply(leftInput);
+        final LogicalOperator transformedRightInput = new AliasSimplification(rightAliasing).apply(
+                new FreeVariableAliasing(new ExactMatchAlias(leftAliasing)).apply(rightInput));
+
+        return new DependentJoinLop(transformedLeftInput, transformedRightInput, aliasedPredicate);
     }
 
     /**
