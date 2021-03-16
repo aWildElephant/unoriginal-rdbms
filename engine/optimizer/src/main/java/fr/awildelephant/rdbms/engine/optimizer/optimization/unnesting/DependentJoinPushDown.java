@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
@@ -18,6 +19,7 @@ import fr.awildelephant.rdbms.plan.join.JoinType;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -139,11 +141,31 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
             }
         }
 
-        // TODO, if necessary
-//        @Override
-//        public LogicalOperator visit(MapLop mapNode) {
-//            throw new UnsupportedOperationException();
-//        }
+        @Override
+        public LogicalOperator visit(MapLop map) {
+            final Set<ColumnReference> expressionOutputs = new HashSet<>(map.expressionsOutputNames());
+
+            final List<ValueExpression> expandedFilters = expandFilters(predicate);
+            final List<ValueExpression> filtersAbove = new ArrayList<>();
+            final List<ValueExpression> filtersBelow = new ArrayList<>();
+            for (ValueExpression filter : expandedFilters) {
+                if (filter.variables().anyMatch(expressionOutputs::contains)) {
+                    filtersAbove.add(filter);
+                } else {
+                    filtersBelow.add(filter);
+                }
+            }
+
+            final ValueExpression collapsedFilterBelow = collapseFilters(filtersBelow).orElse(alwaysTrue());
+            final LogicalOperator transformedInput = new DependentJoinPushDownRules(d, collapsedFilterBelow)
+                    .apply(map.input());
+
+            final MapLop transformedNode = new MapLop(transformedInput,
+                                                      map.expressions(),
+                                                      map.expressionsOutputNames());
+
+            return createFilterAbove(transformedNode, filtersAbove);
+        }
 
         @Override
         public LogicalOperator visit(ProjectionLop projection) {
