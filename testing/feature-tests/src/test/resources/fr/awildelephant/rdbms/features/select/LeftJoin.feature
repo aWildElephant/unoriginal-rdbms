@@ -1,4 +1,3 @@
-@todo
 Feature: Left join
 
   Scenario: Left join between two tables

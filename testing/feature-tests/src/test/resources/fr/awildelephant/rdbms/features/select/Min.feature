@@ -13,7 +13,6 @@ Feature: Min aggregate
       | INTEGER   |
       | -3        |
 
-  @todo
   Scenario: I get the min value in an integer column with a null value
 
     When I execute the query
