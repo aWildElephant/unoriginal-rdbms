@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
-import fr.awildelephant.rdbms.plan.alias.ExactMatchAlias;
+import fr.awildelephant.rdbms.plan.alias.Alias;
 
 import java.util.stream.Collectors;
 
@@ -12,7 +12,7 @@ public final class FreeVariableAliasing extends DefaultLopVisitor<LogicalOperato
 
     private final OuterQueryVariableAliaser outerQueryVariableAliaser;
 
-    public FreeVariableAliasing(ExactMatchAlias alias) {
+    public FreeVariableAliasing(Alias alias) {
         outerQueryVariableAliaser = new OuterQueryVariableAliaser(alias);
     }
 

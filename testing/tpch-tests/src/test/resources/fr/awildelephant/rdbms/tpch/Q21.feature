@@ -1,4 +1,3 @@
-@todo # Broken by subquery unnesting refactoring (0 row returned)
 Feature: TPC-H Q21
 
   Background: TPC-H dataset
@@ -50,7 +49,8 @@ Feature: TPC-H Q21
         s_name
       ORDER BY
         numwait DESC,
-        s_name;
+        s_name
+      LIMIT 100;
     """
 
     # Retrieved from https://github.com/apache/impala/blob/master/testdata/workloads/tpch/queries/tpch-q21.test
