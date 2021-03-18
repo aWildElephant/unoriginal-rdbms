@@ -1,4 +1,4 @@
-# Row-based in-memory java relational database management system
+# Column-based in-memory java relational database management system
 
 This project will not have any distinguishing feature. Its sole purpose is to allow me to implement or try to implement 
 every part of an RDBMS.
@@ -28,12 +28,15 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 - 2019-11-02: TPC-H Q6, Q7 and Q8 support
 - 2019-11-03: TPC-H Q10 support
 - 2019-12-19: TPC-H Q4 (supported decorrelating its subquery so that it doesn't take hours)
+- 2021-03-17: Support all TPC-H queries (implemented what was needed for unnesting using <u>Unnesting Arbitrary Queries</u> by Thomas Neumann and Alfons Kemper)
 
 ## Next steps
 
 - Fix TODOs
+- Implement a tool to display the plan of a query, implement the explain statement to retrieve the plan without debugging
+- Remove filters with always true predicate from the "optimized" plan
+- Improve evaluation of formulas: filter nodes are a lot slower than they should be
 - Improve loading speed of the TPC-H scale factor 1 dataset (currently around 2 minute)
-- Support the remaining TPC-H queries: optimize queries by reordering joins, support subquery in IN predicate (and more?)
 
 ## F.A.Q.
 
