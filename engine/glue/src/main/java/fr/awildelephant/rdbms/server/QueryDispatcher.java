@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.CreateView;
 import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
+import fr.awildelephant.rdbms.ast.Explain;
 import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.Select;
@@ -81,6 +82,11 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         storage.drop(dropTable.tableName().name());
 
         return null;
+    }
+
+    @Override
+    public Table visit(Explain explain) {
+        throw new UnsupportedOperationException("EXPLAIN is not yet implemented");
     }
 
     @Override
