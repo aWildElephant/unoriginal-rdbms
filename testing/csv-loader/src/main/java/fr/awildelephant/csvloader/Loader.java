@@ -25,7 +25,7 @@ import java.util.zip.GZIPInputStream;
 
 public class Loader {
 
-    private static final int NUMBER_OF_ROWS_PER_INSERT = 10_000;
+    private static final int NUMBER_OF_ROWS_PER_INSERT = 5_000;
 
     private final Connection connection;
 
