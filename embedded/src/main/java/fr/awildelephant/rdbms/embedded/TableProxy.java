@@ -21,7 +21,7 @@ public class TableProxy implements ResultProxy {
         final List<Record> rows = new ArrayList<>(table.numberOfTuples());
 
         for (Record record : table) {
-            rows.add(record);
+            rows.add(record.materialize());
         }
 
         this.rows = rows;

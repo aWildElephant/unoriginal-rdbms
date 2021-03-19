@@ -3,14 +3,37 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.operators.aggregation.*;
-import fr.awildelephant.rdbms.plan.aggregation.*;
+import fr.awildelephant.rdbms.engine.operators.aggregation.Aggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.AnyAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.AvgAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.CountAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.CountDistinctAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.CountStarAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.DecimalSumAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.IntegerSumAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.MaxAggregator;
+import fr.awildelephant.rdbms.engine.operators.aggregation.MinAggregator;
+import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
@@ -37,7 +60,7 @@ public final class AggregationOperator implements Operator<Table, Table> {
             return computeAggregationOnEmptyTable();
         }
 
-        final Map<Record, List<Aggregator>> accumulators = new HashMap<>();
+        final Map<Tuple, List<Aggregator>> accumulators = new HashMap<>();
 
         // TODO: have an operator/branch for an aggregation without breakdowns?
         final Schema inputSchema = inputTable.schema();
@@ -50,7 +73,7 @@ public final class AggregationOperator implements Operator<Table, Table> {
         final OptionalInt[] inputColumnIndexByAggregate = inputColumnIndexByAggregate(aggregates, inputSchema);
 
         for (Record record : inputTable) {
-            final Record group = project(record, columnIndexes);
+            final Tuple group = project(record, columnIndexes);
             final List<Aggregator> aggregators = accumulators
                     .computeIfAbsent(group, unused -> buildAccumulatorList(inputSchema));
 
@@ -94,7 +117,7 @@ public final class AggregationOperator implements Operator<Table, Table> {
         return accumulatorList;
     }
 
-    private Record project(Record record, int[] columnIndexes) {
+    private Tuple project(Record record, int[] columnIndexes) {
         final DomainValue[] values = new DomainValue[columnIndexes.length];
 
         int i = 0;
@@ -104,10 +127,10 @@ public final class AggregationOperator implements Operator<Table, Table> {
             i++;
         }
 
-        return new Record(values);
+        return new Tuple(values);
     }
 
-    private Table buildOutputTable(Map<Record, List<Aggregator>> accumulators) {
+    private Table buildOutputTable(Map<Tuple, List<Aggregator>> accumulators) {
         final Table outputTable = simpleTable(outputSchema, accumulators.size());
         final List<Column> outputColumns = outputTable.columns();
 
@@ -162,7 +185,7 @@ public final class AggregationOperator implements Operator<Table, Table> {
                 return new CountAggregator();
             }
         } else if (aggregate instanceof CountStarAggregate) {
-          return new CountStarAggregator();
+            return new CountStarAggregator();
         } else if (aggregate instanceof MaxAggregate) {
             final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
 

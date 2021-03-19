@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.engine.constraint.ConstraintChecker;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Collection;
@@ -56,7 +57,7 @@ public class TableWithChecker implements ManagedTable {
     }
 
     @Override
-    public Record get(int rowIndex) {
+    public Tuple get(int rowIndex) {
         return null;
     }
 

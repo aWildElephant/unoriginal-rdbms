@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.operators.subquery;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
@@ -17,7 +17,7 @@ public final class LogicalOperatorOuterQueryReferenceReplacer extends DefaultLop
 
     private final ValueExpressionOuterQueryReferenceReplacer valueExpressionReplacer;
 
-    public LogicalOperatorOuterQueryReferenceReplacer(Schema schema, Record record) {
+    public LogicalOperatorOuterQueryReferenceReplacer(Schema schema, Tuple record) {
         valueExpressionReplacer = new ValueExpressionOuterQueryReferenceReplacer(schema, record);
     }
 

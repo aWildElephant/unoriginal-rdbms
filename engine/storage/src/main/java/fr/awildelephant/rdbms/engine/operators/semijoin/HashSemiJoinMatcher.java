@@ -2,12 +2,13 @@ package fr.awildelephant.rdbms.engine.operators.semijoin;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class HashSemiJoinMatcher implements SemiJoinMatcher {
+public final class HashSemiJoinMatcher implements SemiJoinMatcher {
 
     private final int[] leftMapping;
     private final Set<Record> hash;
@@ -28,13 +29,13 @@ public class HashSemiJoinMatcher implements SemiJoinMatcher {
     }
 
     private static Record key(Record record, int[] mapping) {
-        final DomainValue[] values = new DomainValue[mapping.length];
+        final DomainValue[] values = new DomainValue[mapping.length]; // TODO: avoid building a new tuple?
 
         for (int i = 0; i < mapping.length; i++) {
             values[i] = record.get(mapping[i]);
         }
 
-        return new Record(values);
+        return new Tuple(values);
     }
 
     @Override

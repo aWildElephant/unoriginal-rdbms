@@ -6,7 +6,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
-public class AliasOperator implements Operator<Table, Table> {
+public final class AliasOperator implements Operator<Table, Table> {
 
     private final Schema schema;
 
@@ -20,7 +20,7 @@ public class AliasOperator implements Operator<Table, Table> {
 
         // TODO: see how we could avoid to copy the table
         for (Record record : inputTable) {
-            outputTable.add(record);
+            outputTable.add(record.materialize());
         }
 
         return outputTable;

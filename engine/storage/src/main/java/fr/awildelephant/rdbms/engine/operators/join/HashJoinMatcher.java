@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.operators.join;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ public final class HashJoinMatcher implements JoinMatcher {
         final Map<Record, List<Record>> hash = new HashMap<>();
 
         for (Record record : table) {
-            final Record key = key(record, mapping);
-            hash.computeIfAbsent(key, ignored -> new ArrayList<>())
-                .add(record);
+            final Record tuple = record.materialize();
+            final Record key = key(tuple, mapping);
+            hash.computeIfAbsent(key, ignored -> new ArrayList<>()).add(tuple);
         }
 
         return hash;
@@ -38,7 +39,7 @@ public final class HashJoinMatcher implements JoinMatcher {
             values[i] = record.get(mapping[i]);
         }
 
-        return new Record(values);
+        return new Tuple(values);
     }
 
     @Override

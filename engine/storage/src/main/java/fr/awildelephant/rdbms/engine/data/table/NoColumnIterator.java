@@ -1,11 +1,12 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static fr.awildelephant.rdbms.engine.data.record.Record.EMPTY_RECORD;
+import static fr.awildelephant.rdbms.engine.data.record.Tuple.EMPTY_TUPLE;
 
 public final class NoColumnIterator implements Iterator<Record> {
 
@@ -23,13 +24,13 @@ public final class NoColumnIterator implements Iterator<Record> {
     }
 
     @Override
-    public Record next() {
+    public Tuple next() {
         if (cursor >= size) {
             throw new NoSuchElementException();
         }
 
         cursor++;
 
-        return EMPTY_RECORD;
+        return EMPTY_TUPLE;
     }
 }

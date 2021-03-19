@@ -13,7 +13,6 @@ import fr.awildelephant.rdbms.engine.operators.LimitOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.SortOperator;
-import fr.awildelephant.rdbms.engine.operators.SubqueryExecutionOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
 import fr.awildelephant.rdbms.engine.operators.join.HashJoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
@@ -36,13 +35,11 @@ import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LimitLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.LopVisitor;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -102,13 +99,13 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
         final UUID operatorId = UUID.randomUUID();
 
-        LOGGER.info("{} - RenameOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
+        LOGGER.info("{} - AliasOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final AliasOperator operator = new AliasOperator(aliasNode.schema());
 
         final Table outputTable = operator.compute(inputTable);
 
-        LOGGER.info("{} - RenameOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
+        LOGGER.info("{} - AliasOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
         return outputTable;
     }

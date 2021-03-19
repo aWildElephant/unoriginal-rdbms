@@ -32,7 +32,7 @@ public final class InnerJoinOperator {
             final List<Record> rightRows = matcher.match(leftRow);
 
             for (Record rightRow : rightRows) {
-                joinedRows.add(new JoinRow(leftRow, rightRow));
+                joinedRows.add(new JoinRow(leftRow.materialize(), rightRow));
             }
         }
 

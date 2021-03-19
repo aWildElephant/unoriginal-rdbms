@@ -9,7 +9,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
-public class FilterOperator implements Operator<Table, Table> {
+public final class FilterOperator implements Operator<Table, Table> {
 
     private final Formula filter;
 

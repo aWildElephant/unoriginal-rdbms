@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 
 public final class JoinUtils {
 
@@ -9,7 +10,7 @@ public final class JoinUtils {
 
     }
 
-    public static Record joinRecords(Record leftRecord, Record rightRecord) {
+    public static Tuple joinRecords(Record leftRecord, Record rightRecord) {
         final int numberOfColumnsFromLeftTable = leftRecord.size();
 
         final DomainValue[] values = new DomainValue[numberOfColumnsFromLeftTable + rightRecord.size()];
@@ -23,6 +24,6 @@ public final class JoinUtils {
         }
 
 
-        return new Record(values);
+        return new Tuple(values);
     }
 }

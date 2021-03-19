@@ -23,7 +23,7 @@ public final class SortOperator implements Operator<Table, Table> {
         final List<Record> sortedList = new ArrayList<>(inputTable.numberOfTuples());
 
         for (Record record : inputTable) {
-            sortedList.add(record);
+            sortedList.add(record.materialize());
         }
 
         sortedList.sort(comparator);

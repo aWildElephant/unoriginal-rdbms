@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.operators.join;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -49,6 +50,6 @@ public final class LeftJoinOutputCreator implements JoinOutputCreator {
             values[numberOfColumnsFromLeftTable + i] = nullValue();
         }
 
-        return List.of(new Record(values));
+        return List.of(new Tuple(values));
     }
 }

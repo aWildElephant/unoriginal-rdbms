@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.server;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
@@ -32,7 +32,7 @@ final class Inserter {
         insertInto.rows().rows().forEach(row -> table.add(createTuple(row.values(), domains)));
     }
 
-    private static Record createTuple(List<AST> row, Domain[] domains) {
+    private static Tuple createTuple(List<AST> row, Domain[] domains) {
         checkColumnCount(row.size(), domains.length);
 
         final DomainValue[] values = new DomainValue[domains.length];
@@ -41,7 +41,7 @@ final class Inserter {
             values[i] = wrap(row.get(i), domains[i]);
         }
 
-        return new Record(values);
+        return new Tuple(values);
     }
 
     private static void checkColumnCount(int actual, int expected) {

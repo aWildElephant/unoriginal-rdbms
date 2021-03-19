@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.engine.constraint;
 import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 
-public class UniqueChecker implements ConstraintChecker {
+public final class UniqueChecker implements ConstraintChecker {
 
     private final UniqueIndex index;
 

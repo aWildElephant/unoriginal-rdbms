@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.data.table;
 
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Collection;
@@ -44,8 +45,8 @@ public final class NoColumnTable implements Table {
     }
 
     @Override
-    public Record get(int rowIndex) {
-        return Record.EMPTY_RECORD;
+    public Tuple get(int rowIndex) {
+        return Tuple.EMPTY_TUPLE;
     }
 
     @Override

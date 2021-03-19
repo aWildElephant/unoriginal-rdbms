@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.engine.data.record.Record;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class CompositeChecker implements ConstraintChecker {
+public final class CompositeChecker implements ConstraintChecker {
 
     private final Collection<ConstraintChecker> checkers = new LinkedList<>();
 

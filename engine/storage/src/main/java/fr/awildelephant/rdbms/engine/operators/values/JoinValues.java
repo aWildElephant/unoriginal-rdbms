@@ -4,19 +4,19 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.evaluator.input.Values;
 
-public class JoinValues implements Values {
+public final class JoinValues implements Values {
 
+    private final Record leftRecord;
     private final int numberOfColumnsFromLeftInput;
 
-    private Record leftRecord;
     private Record rightRecord;
 
-    public JoinValues(int numberOfColumnsFromLeftInput) {
-        this.numberOfColumnsFromLeftInput = numberOfColumnsFromLeftInput;
+    public JoinValues(Record leftRecord) {
+        this.leftRecord = leftRecord;
+        this.numberOfColumnsFromLeftInput = leftRecord.size();
     }
 
-    public void setRecords(Record leftRecord, Record rightRecord) {
-        this.leftRecord = leftRecord;
+    public void setRightRecord(Record rightRecord) {
         this.rightRecord = rightRecord;
     }
 

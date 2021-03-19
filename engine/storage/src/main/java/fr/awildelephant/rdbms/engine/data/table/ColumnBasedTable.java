@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.MultipleColumnsIterator;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Collection;
@@ -59,14 +60,14 @@ public final class ColumnBasedTable implements Table {
     }
 
     @Override
-    public Record get(int rowIndex) {
+    public Tuple get(int rowIndex) {
         final DomainValue[] values = new DomainValue[columns.size()];
 
         for (int i = 0; i < columns.size(); i++) {
             values[i] = columns.get(i).get(rowIndex);
         }
 
-        return new Record(values);
+        return new Tuple(values);
     }
 
     @Override

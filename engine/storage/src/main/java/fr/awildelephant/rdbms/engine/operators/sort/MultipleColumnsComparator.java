@@ -10,7 +10,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public class MultipleColumnsComparator implements RecordComparator {
+public final class MultipleColumnsComparator implements RecordComparator {
 
     private final List<Comparator<Record>> comparators;
 

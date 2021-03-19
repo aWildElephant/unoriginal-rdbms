@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.operators.subquery;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -12,9 +12,9 @@ import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constant
 final class ValueExpressionOuterQueryReferenceReplacer extends DefaultValueExpressionVisitor<ValueExpression> {
 
     private final Schema schema;
-    private final Record record;
+    private final Tuple record;
 
-    ValueExpressionOuterQueryReferenceReplacer(Schema schema, Record record) {
+    ValueExpressionOuterQueryReferenceReplacer(Schema schema, Tuple record) {
         this.schema = schema;
         this.record = record;
     }

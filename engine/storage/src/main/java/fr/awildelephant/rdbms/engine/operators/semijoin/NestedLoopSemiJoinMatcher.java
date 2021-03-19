@@ -5,10 +5,7 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.values.JoinValues;
 import fr.awildelephant.rdbms.evaluator.Formula;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class NestedLoopSemiJoinMatcher implements SemiJoinMatcher {
+public final class NestedLoopSemiJoinMatcher implements SemiJoinMatcher {
 
     private final Table rightTable;
     private final Formula joinSpecification;
@@ -20,10 +17,10 @@ public class NestedLoopSemiJoinMatcher implements SemiJoinMatcher {
 
     @Override
     public boolean match(Record leftRecord) {
-        final JoinValues values = new JoinValues(leftRecord.size());
+        final JoinValues values = new JoinValues(leftRecord);
 
         for (Record rightRecord : rightTable) {
-            values.setRecords(leftRecord, rightRecord);
+            values.setRightRecord(rightRecord);
             if (joinSpecification.evaluate(values).getBool()) {
                 return true;
             }

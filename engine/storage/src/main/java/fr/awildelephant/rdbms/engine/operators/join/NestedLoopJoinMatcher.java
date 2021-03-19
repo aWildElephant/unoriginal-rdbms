@@ -20,13 +20,13 @@ public final class NestedLoopJoinMatcher implements JoinMatcher {
 
     @Override
     public List<Record> match(Record leftRecord) {
-        final JoinValues values = new JoinValues(leftRecord.size());
+        final JoinValues values = new JoinValues(leftRecord);
 
         final List<Record> matchingRightRecords = new ArrayList<>();
         for (Record rightRecord : rightTable) {
-            values.setRecords(leftRecord, rightRecord);
+            values.setRightRecord(rightRecord);
             if (joinSpecification.evaluate(values).getBool()) {
-                matchingRightRecords.add(rightRecord);
+                matchingRightRecords.add(rightRecord.materialize());
             }
         }
 

@@ -2,12 +2,13 @@ package fr.awildelephant.rdbms.engine.data.index;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.record.Tuple;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class UniqueIndex {
+public final class UniqueIndex {
 
     private final List<Integer> columnIndexes;
     private final Set<Record> index;
@@ -20,9 +21,21 @@ public class UniqueIndex {
     public void register(Record record) {
         final Record projectedRecord = project(record);
 
-        if (!projectedRecord.anyNull()) {
+        if (!anyNull(projectedRecord)) {
             index.add(projectedRecord);
         }
+    }
+
+    private boolean anyNull(Record record) {
+        final int size = record.size();
+
+        for (int i = 0; i < size; i++) {
+            if (record.get(i).isNull()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean conflictsWith(Record record) {
@@ -39,6 +52,6 @@ public class UniqueIndex {
             i++;
         }
 
-        return new Record(values);
+        return new Tuple(values);
     }
 }
