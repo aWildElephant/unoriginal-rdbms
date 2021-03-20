@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.schema.Schema;
 
+// TODO: the AliasOperator should probably disappear and the alias be set directly by BaseTableOperator or TableConstructorOperator
 public final class AliasOperator implements Operator<Table, Table> {
 
     private final Schema schema;
