@@ -32,10 +32,11 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 
 ## Next steps
 
+- Always hash smallest table when executing a hash join
+- Remove filters with always true predicate from the "optimized" plan
 - Fix TODOs
 - Implement a tool to display the plan of a query, implement the explain statement to retrieve the plan without debugging
-- Remove filters with always true predicate from the "optimized" plan
-- Improve evaluation of formulas: filter nodes are a lot slower than they should be
+- Improve evaluation of formulas: filter and map nodes are a lot slower than they should be
 - Improve loading speed of the TPC-H scale factor 1 dataset (currently around 2 minute)
 
 ## F.A.Q.
