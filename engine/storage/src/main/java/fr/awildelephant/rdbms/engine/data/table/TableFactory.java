@@ -15,16 +15,6 @@ public final class TableFactory {
 
     }
 
-    /**
-     * Returns a Table instance which can only hold distinct tuples.
-     * <p>
-     * Calling add with a record that already exists in the table leaves it unchanged.
-     * </p>
-     */
-    public static Table distinctTable(Schema schema) {
-        throw new UnsupportedOperationException("Must be reimplemented");
-    }
-
     public static Table simpleTable(Schema schema) {
         return simpleTable(schema, 8);
     }

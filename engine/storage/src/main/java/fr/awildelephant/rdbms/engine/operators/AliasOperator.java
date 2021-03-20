@@ -1,10 +1,8 @@
 package fr.awildelephant.rdbms.engine.operators;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.schema.Schema;
-
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
 public final class AliasOperator implements Operator<Table, Table> {
 
@@ -16,13 +14,6 @@ public final class AliasOperator implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {
-        final Table outputTable = simpleTable(schema, inputTable.numberOfTuples());
-
-        // TODO: see how we could avoid to copy the table
-        for (Record record : inputTable) {
-            outputTable.add(record.materialize());
-        }
-
-        return outputTable;
+        return new ColumnBasedTable(schema, inputTable.columns());
     }
 }
