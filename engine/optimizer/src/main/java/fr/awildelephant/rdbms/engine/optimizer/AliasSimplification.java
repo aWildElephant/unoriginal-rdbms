@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
@@ -18,7 +19,6 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.alias.Alias;
@@ -282,9 +282,13 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
             }
         });
 
-        final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
-
-        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(semiJoin.predicate());
+        final ValueExpression aliasedPredicate;
+        if (semiJoin.predicate() != null) {
+            final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
+            aliasedPredicate = expressionAliaser.apply(semiJoin.predicate());
+        } else {
+            aliasedPredicate = null;
+        }
 
         ColumnReference aliasedSemiJoinOutputColumn = aliasing.get(semiJoin.outputColumnName());
         if (aliasedSemiJoinOutputColumn == null) {
@@ -297,7 +301,7 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
 
         return new DependentSemiJoinLop(transformedLeftInput,
                                         transformedRightInput,
-                                        aliasedJoinSpecification,
+                                        aliasedPredicate,
                                         aliasedSemiJoinOutputColumn);
     }
 
@@ -369,8 +373,13 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
             }
         });
 
-        final ExpressionAliaser aliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
-        final ValueExpression aliasedPredicate = aliaser.apply(node.predicate());
+        final ValueExpression aliasedPredicate;
+        if (node.predicate() != null) {
+            final ExpressionAliaser aliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
+            aliasedPredicate = aliaser.apply(node.predicate());
+        } else {
+            aliasedPredicate = null;
+        }
 
         final LogicalOperator transformedLeftInput = new AliasSimplification(leftAliasing).apply(leftInput);
         final LogicalOperator transformedRightInput = new AliasSimplification(rightAliasing).apply(

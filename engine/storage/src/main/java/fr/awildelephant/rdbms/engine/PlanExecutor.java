@@ -20,6 +20,7 @@ import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.join.JoinOutputCreator;
 import fr.awildelephant.rdbms.engine.operators.join.LeftJoinOutputCreator;
 import fr.awildelephant.rdbms.engine.operators.join.NestedLoopJoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.semijoin.ConstantMatcher;
 import fr.awildelephant.rdbms.engine.operators.semijoin.HashSemiJoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.semijoin.NestedLoopSemiJoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.semijoin.SemiJoinMatcher;
@@ -57,7 +58,6 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
-import static fr.awildelephant.rdbms.plan.OutputSchemaFactory.mapOutputSchema;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
@@ -431,9 +431,11 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
         if (canUseHashJoin(expressions)) {
             return createHashSemiJoinMatcher(leftInputSchema, rightInputSchema, rightTable, expressions);
-        } else {
+        } else if (joinPredicate != null) {
             final Formula predicateFormula = createFormula(joinPredicate, leftInputSchema, rightInputSchema);
             return new NestedLoopSemiJoinMatcher(rightTable, predicateFormula);
+        } else {
+            return new ConstantMatcher(!rightTable.isEmpty());
         }
     }
 

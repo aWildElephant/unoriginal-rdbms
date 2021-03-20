@@ -333,9 +333,8 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
 
         final LogicalOperator transformedLeftInput = new ProjectionPushDown(leftInputProjection).apply(leftInput);
         final LogicalOperator transformedRightInput = new ProjectionPushDown(rightInputProjection).apply(rightInput);
-        return new DependentJoinLop(transformedLeftInput,
-                                    transformedRightInput,
-                                    dependentJoin.predicate());
+
+        return new DependentJoinLop(transformedLeftInput, transformedRightInput, dependentJoin.predicate());
     }
 
     private List<ColumnReference> restrictProjectionToAvailableColumns(LogicalOperator node,

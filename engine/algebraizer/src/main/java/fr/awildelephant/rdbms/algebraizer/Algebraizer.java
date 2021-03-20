@@ -34,7 +34,6 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
@@ -55,7 +54,6 @@ import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumn
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.leftJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.alias.TableAlias.tableAlias;
-import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.plan.join.JoinType.SEMI;
 import static fr.awildelephant.rdbms.plan.sort.SortSpecification.ascending;
 import static fr.awildelephant.rdbms.plan.sort.SortSpecification.descending;
@@ -154,18 +152,25 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                 final Algebraizer outerQueryAwareAlgebraizer = withOuterQuerySchema(filterInputSchema);
 
                 for (SubqueryJoiner joiner : joiners) {
-                    final LogicalOperator leftInput = outerQueryAwareAlgebraizer.apply(joiner.subquery());
+                    final LogicalOperator rightInput = outerQueryAwareAlgebraizer.apply(joiner.subquery());
 
                     if (joiner.type() == SEMI) {
-                        plan = new DependentSemiJoinLop(plan,
-                                                        leftInput,
-                                                        createValueExpression(joiner.predicate(),
-                                                                     innerJoinOutputSchema(plan.schema(),
-                                                                                           leftInput.schema()),
-                                                                     outerQuerySchema),
-                                                        new UnqualifiedColumnReference(joiner.identifier()));
+                        final UnqualifiedColumnReference outputColumn
+                                = new UnqualifiedColumnReference(joiner.identifier());
+                        if (joiner.predicate() != null) {
+                            final ValueExpression semiJoinPredicate
+                                    = createValueExpression(joiner.predicate(),
+                                                            innerJoinOutputSchema(plan.schema(), rightInput.schema()),
+                                                            outerQuerySchema);
+                            plan = new DependentSemiJoinLop(plan,
+                                                            rightInput,
+                                                            semiJoinPredicate,
+                                                            outputColumn);
+                        } else {
+                            plan = new DependentSemiJoinLop(plan, rightInput, outputColumn);
+                        }
                     } else {
-                        plan = new DependentJoinLop(plan, leftInput, alwaysTrue());
+                        plan = new DependentJoinLop(plan, rightInput);
                     }
                 }
             }

@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.algebraizer.formula;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.plan.join.JoinType;
 
 import static fr.awildelephant.rdbms.plan.join.JoinType.INNER;
@@ -26,7 +25,7 @@ public final class SubqueryJoiner {
     }
 
     public static SubqueryJoiner semiJoinJoiner(AST subquery, String identifier) {
-        return new SubqueryJoiner(subquery, BooleanLiteral.TRUE, SEMI, identifier);
+        return new SubqueryJoiner(subquery, null, SEMI, identifier);
     }
 
     public static SubqueryJoiner semiJoinJoiner(AST subquery, AST predicate, String identifier) {

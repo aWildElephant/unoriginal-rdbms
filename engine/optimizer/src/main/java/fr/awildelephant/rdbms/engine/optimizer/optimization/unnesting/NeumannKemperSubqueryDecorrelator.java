@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
-import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.optimizer.FreeVariableAliasing;
 import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.DistinctLop;
@@ -12,7 +12,6 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.alias.ExactMatchAlias;
-import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
@@ -31,17 +30,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
-import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
-import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
-import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
 
 /**
@@ -57,7 +51,11 @@ public final class NeumannKemperSubqueryDecorrelator {
 
         final Set<ColumnReference> correlatedVariables = intersection(freeVariables(t2), attributes(t1));
         if (correlatedVariables.isEmpty()) {
-            return new InnerJoinLop(t1, t2, plan.predicate());
+            if (plan.predicate() != null) {
+                return new InnerJoinLop(t1, t2, plan.predicate());
+            } else {
+                return new CartesianProductLop(t1, t2);
+            }
         }
 
         final LogicalOperator rewrittenJoin = rewriteDependentInnerJoin(t1, t2, plan.predicate(), correlatedVariables);
@@ -77,8 +75,7 @@ public final class NeumannKemperSubqueryDecorrelator {
         final LogicalOperator t2WithAliasedOuterQueryVariables = new FreeVariableAliasing(magicSetAlias).apply(t2);
 
         final DependentJoinLop pushedDownDependentJoin = new DependentJoinLop(aliasedMagicSet,
-                                                                              t2WithAliasedOuterQueryVariables,
-                                                                              alwaysTrue());
+                                                                              t2WithAliasedOuterQueryVariables);
 
         return new InnerJoinLop(t1,
                                 pushedDownDependentJoin,
@@ -117,8 +114,7 @@ public final class NeumannKemperSubqueryDecorrelator {
         final LogicalOperator t2WithAliasedOuterQueryVariables = new FreeVariableAliasing(magicSetAlias).apply(t2);
 
         final DependentJoinLop pushedDownDependentJoin = new DependentJoinLop(aliasedMagicSet,
-                                                                              t2WithAliasedOuterQueryVariables,
-                                                                              alwaysTrue());
+                                                                              t2WithAliasedOuterQueryVariables);
 
         return new SemiJoinLop(t1,
                                pushedDownDependentJoin,
@@ -134,7 +130,8 @@ public final class NeumannKemperSubqueryDecorrelator {
             final Optional<String> table = column.table();
 
             if (table.isPresent()) {
-                final String tableAlias = tableAliases.computeIfAbsent(table.get(), unused -> UUID.randomUUID().toString());
+                final String tableAlias = tableAliases.computeIfAbsent(table.get(),
+                                                                       unused -> UUID.randomUUID().toString());
 
                 aliasing.put(column, new QualifiedColumnReference(tableAlias, column.name()));
             } else {
@@ -169,29 +166,14 @@ public final class NeumannKemperSubqueryDecorrelator {
 
         final Optional<ValueExpression> naturalJoinPredicate = collapseFilters(expressions);
 
-        final Optional<ValueExpression> simplifiedDependentJoinPredicate = expandFilters(dependentJoinPredicate)
-                .stream()
-                .filter(expression -> !isAlwaysTrue(expression))
-                .reduce(AndExpression::andExpression);
-
-        if (simplifiedDependentJoinPredicate.isPresent()) {
+        if (dependentJoinPredicate != null) {
             if (naturalJoinPredicate.isPresent()) {
-                return andExpression(simplifiedDependentJoinPredicate.get(), naturalJoinPredicate.get());
+                return andExpression(dependentJoinPredicate, naturalJoinPredicate.get());
             } else {
-                return simplifiedDependentJoinPredicate.get();
+                return dependentJoinPredicate;
             }
         } else {
             return naturalJoinPredicate.orElseGet(ExpressionHelper::alwaysTrue);
         }
-    }
-
-    private boolean isAlwaysTrue(ValueExpression expression) {
-        if (!isConstant(expression)) {
-            return false;
-        }
-
-        final DomainValue value = createFormula(expression, Schema.emptySchema()).evaluate(noValues());
-
-        return !value.isNull() && value.getBool();
     }
 }

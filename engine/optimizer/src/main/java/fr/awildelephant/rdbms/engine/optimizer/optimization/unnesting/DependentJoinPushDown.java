@@ -4,18 +4,14 @@ import fr.awildelephant.rdbms.plan.AggregationLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
 import fr.awildelephant.rdbms.plan.DependentJoinLop;
-import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LeftJoinLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.plan.join.JoinType;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
@@ -24,13 +20,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
-import static fr.awildelephant.rdbms.plan.join.JoinType.SEMI;
 import static java.util.stream.Collectors.toSet;
 
 public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperator> {
@@ -80,7 +74,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
                     .map(Aggregate::outputColumn)
                     .collect(toSet());
 
-            final List<ValueExpression> expandedFilters = expandFilters(predicate);
+            final List<ValueExpression> expandedFilters = expandPredicate();
             final List<ValueExpression> filtersAbove = new ArrayList<>();
             final List<ValueExpression> filtersBelow = new ArrayList<>();
             for (ValueExpression filter : expandedFilters) {
@@ -91,7 +85,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
                 }
             }
 
-            final ValueExpression collapsedFilterBelow = collapseFilters(filtersBelow).orElse(alwaysTrue());
+            final ValueExpression collapsedFilterBelow = collapseFilters(filtersBelow).orElse(null);
             final LogicalOperator transformedInput = new DependentJoinPushDownRules(d, collapsedFilterBelow)
                     .apply(aggregation.input());
 
@@ -100,6 +94,14 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
                                                                       aggregation.aggregates());
 
             return createFilterAbove(transformedNode, filtersAbove);
+        }
+
+        private List<ValueExpression> expandPredicate() {
+            if (predicate == null) {
+                return List.of();
+            }
+
+            return expandFilters(predicate);
         }
 
         private LogicalOperator createFilterAbove(LogicalOperator node, List<ValueExpression> filters) {
@@ -145,7 +147,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
         public LogicalOperator visit(MapLop map) {
             final Set<ColumnReference> expressionOutputs = new HashSet<>(map.expressionsOutputNames());
 
-            final List<ValueExpression> expandedFilters = expandFilters(predicate);
+            final List<ValueExpression> expandedFilters = expandPredicate();
             final List<ValueExpression> filtersAbove = new ArrayList<>();
             final List<ValueExpression> filtersBelow = new ArrayList<>();
             for (ValueExpression filter : expandedFilters) {
@@ -156,7 +158,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
                 }
             }
 
-            final ValueExpression collapsedFilterBelow = collapseFilters(filtersBelow).orElse(alwaysTrue());
+            final ValueExpression collapsedFilterBelow = collapseFilters(filtersBelow).orElse(null);
             final LogicalOperator transformedInput = new DependentJoinPushDownRules(d, collapsedFilterBelow)
                     .apply(map.input());
 
@@ -203,8 +205,12 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
             return intersection(freeVariables(right), attributesD).isEmpty();
         }
 
-        private InnerJoinLop createJoinAndStopVisit(LogicalOperator right) {
-            return new InnerJoinLop(d, right, predicate);
+        private LogicalOperator createJoinAndStopVisit(LogicalOperator right) {
+            if (predicate != null) {
+                return new InnerJoinLop(d, right, predicate);
+            } else {
+                return new CartesianProductLop(d, right);
+            }
         }
     }
 }

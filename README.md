@@ -32,7 +32,6 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 
 ## Next steps
 
-- Remove filters with always true predicate from the "optimized" plan
 - Fix TODOs
 - Implement a tool to display the plan of a query, implement the explain statement to retrieve the plan without debugging
 - Improve evaluation of formulas: filter and map nodes are a lot slower than they should be

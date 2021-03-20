@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -14,6 +13,12 @@ public final class DependentSemiJoinLop extends AbstractBinaryLop {
 
     private final ValueExpression predicate;
     private final ColumnReference outputColumnName;
+
+    public DependentSemiJoinLop(LogicalOperator left,
+                                LogicalOperator right,
+                                ColumnReference outputColumnName) {
+        this(left, right, null, outputColumnName);
+    }
 
     public DependentSemiJoinLop(LogicalOperator left,
                                 LogicalOperator right,

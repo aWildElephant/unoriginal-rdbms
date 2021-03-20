@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.plan.join.JoinType;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Objects;
@@ -15,6 +14,10 @@ public final class DependentJoinLop extends AbstractLop {
     private final LogicalOperator left;
     private final LogicalOperator right;
     private final ValueExpression predicate;
+
+    public DependentJoinLop(LogicalOperator left, LogicalOperator right) {
+        this(left, right, null);
+    }
 
     public DependentJoinLop(LogicalOperator left, LogicalOperator right, ValueExpression predicate) {
         super(createOutputSchema(left.schema(), right.schema()));

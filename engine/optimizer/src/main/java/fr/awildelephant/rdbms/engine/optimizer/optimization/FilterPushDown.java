@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.BaseTableLop;
 import fr.awildelephant.rdbms.plan.CartesianProductLop;
 import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
 import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
@@ -17,7 +18,6 @@ import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.MapLop;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
 import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
-import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
 import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
@@ -50,7 +49,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Moves a filter node down its input node if possible.
  */
-public class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
+public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
 
     private final Collection<ValueExpression> filters;
 
@@ -131,12 +130,14 @@ public class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        // TODO: we should probably avoid representing a dependent cartesuan product by an always true predicate
-        final ValueExpression predicate = collapseFilters(filtersOnBoth).orElse(alwaysTrue());
+        final Optional<ValueExpression> predicate = collapseFilters(filtersOnBoth);
 
-        return new DependentJoinLop(new FilterPushDown(filtersOnLeft).apply(leftInput),
-                                    new FilterPushDown(filtersOnRight).apply(rightInput),
-                                    predicate);
+        final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeft).apply(leftInput);
+        final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRight).apply(rightInput);
+
+        return predicate
+                .map(expression -> new DependentJoinLop(transformedLeftInput, transformedRightInput, expression))
+                .orElseGet(() -> new DependentJoinLop(transformedLeftInput, transformedRightInput));
     }
 
     @Override
