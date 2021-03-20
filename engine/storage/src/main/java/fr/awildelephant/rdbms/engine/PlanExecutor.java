@@ -7,7 +7,6 @@ import fr.awildelephant.rdbms.engine.operators.AliasOperator;
 import fr.awildelephant.rdbms.engine.operators.CartesianProductOperator;
 import fr.awildelephant.rdbms.engine.operators.DistinctOperator;
 import fr.awildelephant.rdbms.engine.operators.FilterOperator;
-import fr.awildelephant.rdbms.engine.operators.InnerJoinOperator;
 import fr.awildelephant.rdbms.engine.operators.JoinOperator;
 import fr.awildelephant.rdbms.engine.operators.LimitOperator;
 import fr.awildelephant.rdbms.engine.operators.MapOperator;
@@ -15,6 +14,7 @@ import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.SortOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
 import fr.awildelephant.rdbms.engine.operators.join.HashJoinMatcher;
+import fr.awildelephant.rdbms.engine.operators.join.InnerJoinOutputCreator;
 import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.join.JoinOutputCreator;
 import fr.awildelephant.rdbms.engine.operators.join.LeftJoinOutputCreator;
@@ -186,14 +186,16 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         final Schema leftInputSchema = leftInputTable.schema();
         final Schema rightInputSchema = rightInput.schema();
         final Schema outputSchema = innerJoinLop.schema();
-        final ValueExpression joinSpecification = innerJoinLop.joinSpecification();
+        final ValueExpression joinPredicate = innerJoinLop.joinSpecification();
+        final InnerJoinOutputCreator outputCreator = new InnerJoinOutputCreator();
 
         final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema,
-                                                                                    outputSchema, joinSpecification);
+                                                                                    outputSchema, joinPredicate);
 
-        final InnerJoinOperator operator = new InnerJoinOperator(matcherCreator, outputSchema);
+        final JoinMatcher matcher = matcherCreator.apply(rightInputTable);
+        final JoinOperator operator = new JoinOperator(matcher, outputCreator, outputSchema);
 
-        final Table outputTable = operator.compute(leftInputTable, rightInputTable);
+        final Table outputTable = operator.compute(leftInputTable);
 
         LOGGER.info("{} - InnerJoinOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
