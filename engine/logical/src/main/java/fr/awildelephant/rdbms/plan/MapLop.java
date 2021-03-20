@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+import static fr.awildelephant.rdbms.plan.OutputSchemaFactory.mapOutputSchema;
 
 public final class MapLop extends AbstractLop {
 
@@ -21,34 +22,11 @@ public final class MapLop extends AbstractLop {
     public MapLop(LogicalOperator input,
                   List<ValueExpression> expressions,
                   List<ColumnReference> expressionsOutputNames) {
-        super(buildOutputSchema(expressions, expressionsOutputNames, input.schema()));
+        super(mapOutputSchema(input.schema(), expressions, expressionsOutputNames));
 
         this.expressions = expressions;
         this.expressionsOutputNames = expressionsOutputNames;
         this.input = input;
-    }
-
-    private static Schema buildOutputSchema(List<ValueExpression> valueExpressions,
-                                            List<ColumnReference> expressionOutputNames,
-                                            Schema schema) {
-        // TODO: can we use Schema#extend
-        final List<ColumnReference> inputColumns = schema.columnNames();
-
-        final List<ColumnMetadata> outputColumns = new ArrayList<>(inputColumns.size() + valueExpressions.size());
-
-        for (ColumnReference columnReference : inputColumns) {
-            outputColumns.add(schema.column(columnReference));
-        }
-
-        int index = inputColumns.size();
-
-        for (int i = 0; i < valueExpressions.size(); i++) {
-            outputColumns.add(
-                    new ColumnMetadata(index++, expressionOutputNames.get(i), valueExpressions.get(i).domain(), false,
-                                       false));
-        }
-
-        return new Schema(outputColumns);
     }
 
     public LogicalOperator input() {

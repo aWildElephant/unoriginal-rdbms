@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.engine.operators.MapOperator;
 import fr.awildelephant.rdbms.engine.operators.ProjectionOperator;
 import fr.awildelephant.rdbms.engine.operators.SortOperator;
 import fr.awildelephant.rdbms.engine.operators.TableConstructorOperator;
+import fr.awildelephant.rdbms.engine.operators.join.FlippedInnerJoinOutputCreator;
 import fr.awildelephant.rdbms.engine.operators.join.HashJoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.join.InnerJoinOutputCreator;
 import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
@@ -56,6 +57,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
+import static fr.awildelephant.rdbms.plan.OutputSchemaFactory.mapOutputSchema;
 import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
@@ -121,17 +123,17 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
     @Override
     public Table visit(CartesianProductLop cartesianProductNode) {
-        final Table leftInput = apply(cartesianProductNode.leftInput());
-        final Table rightInput = apply(cartesianProductNode.rightInput());
+        final Table leftInputTable = apply(cartesianProductNode.leftInput());
+        final Table rightInputTable = apply(cartesianProductNode.rightInput());
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - CartesianProductOperator - leftInputSize: {}, rightInputSize: {}", () -> operatorId,
-                    leftInput::numberOfTuples, rightInput::numberOfTuples);
+                    leftInputTable::numberOfTuples, rightInputTable::numberOfTuples);
 
         final CartesianProductOperator operator = new CartesianProductOperator(cartesianProductNode.schema());
 
-        final Table outputTable = operator.compute(leftInput, rightInput);
+        final Table outputTable = operator.compute(leftInputTable, rightInputTable);
 
         LOGGER.info("{} - CartesianProductOperator - outputSize {}", () -> operatorId,
                     outputTable::numberOfTuples);
@@ -161,7 +163,7 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - FilterOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
-        final FilterOperator operator = new FilterOperator(createFormula(filter.filter(), filter.input().schema()));
+        final FilterOperator operator = new FilterOperator(createFormula(filter.filter(), inputTable.schema()));
 
         final Table outputTable = operator.compute(inputTable);
 
@@ -171,31 +173,43 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(InnerJoinLop innerJoinLop) {
-        final LogicalOperator leftInput = innerJoinLop.left();
-        final Table leftInputTable = apply(leftInput);
-
-        final LogicalOperator rightInput = innerJoinLop.right();
-        final Table rightInputTable = apply(rightInput);
+    public Table visit(InnerJoinLop join) {
+        final Table leftInputTable = apply(join.left());
+        final Table rightInputTable = apply(join.right());
 
         final UUID operatorId = UUID.randomUUID();
 
-        LOGGER.info("{} - InnerJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
-                    leftInputTable::numberOfTuples, rightInputTable::numberOfTuples);
+        final int leftInputSize = leftInputTable.numberOfTuples();
+        final int rightInputSize = rightInputTable.numberOfTuples();
+
+        LOGGER.info("{} - InnerJoinOperator - leftSize: {}, rightSize: {}", operatorId, leftInputSize, rightInputSize);
 
         final Schema leftInputSchema = leftInputTable.schema();
-        final Schema rightInputSchema = rightInput.schema();
-        final Schema outputSchema = innerJoinLop.schema();
-        final ValueExpression joinPredicate = innerJoinLop.joinSpecification();
-        final InnerJoinOutputCreator outputCreator = new InnerJoinOutputCreator();
+        final Schema rightInputSchema = rightInputTable.schema();
+        final Schema outputSchema = join.schema();
 
-        final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema,
-                                                                                    outputSchema, joinPredicate);
+        final Table outputTable;
+        if (rightInputSize > leftInputSize) {
+            final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(rightInputSchema,
+                                                                                        leftInputSchema,
+                                                                                        join.joinSpecification());
 
-        final JoinMatcher matcher = matcherCreator.apply(rightInputTable);
-        final JoinOperator operator = new JoinOperator(matcher, outputCreator, outputSchema);
+            final JoinMatcher matcher = matcherCreator.apply(leftInputTable);
 
-        final Table outputTable = operator.compute(leftInputTable);
+            final JoinOperator operator = new JoinOperator(matcher, new FlippedInnerJoinOutputCreator(), outputSchema);
+
+            outputTable = operator.compute(rightInputTable);
+        } else {
+            final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema,
+                                                                                        rightInputSchema,
+                                                                                        join.joinSpecification());
+
+            final JoinMatcher matcher = matcherCreator.apply(rightInputTable);
+
+            final JoinOperator operator = new JoinOperator(matcher, new InnerJoinOutputCreator(), outputSchema);
+
+            outputTable = operator.compute(leftInputTable);
+        }
 
         LOGGER.info("{} - InnerJoinOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
 
@@ -223,7 +237,7 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         final JoinOutputCreator outputCreator = new LeftJoinOutputCreator(leftInputSchema, rightInputSchema);
 
         final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema, rightInputSchema,
-                                                                                    outputSchema, joinPredicate);
+                                                                                    joinPredicate);
 
         final JoinMatcher matcher = matcherCreator.apply(rightInputTable);
         final JoinOperator operator = new JoinOperator(matcher, outputCreator, outputSchema);
@@ -237,14 +251,14 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
     private Function<Table, JoinMatcher> buildJoinMatcherCreator(Schema leftInputSchema,
                                                                  Schema rightInputSchema,
-                                                                 Schema outputSchema,
                                                                  ValueExpression joinPredicate) {
         final List<ValueExpression> expressions = expandFilters(joinPredicate);
 
         if (canUseHashJoin(expressions)) {
             return table -> createHashJoinMatcher(table, leftInputSchema, rightInputSchema, expressions);
         } else {
-            return table -> createNestedLoopJoinMatcher(table, createFormula(joinPredicate, outputSchema));
+            return table -> createNestedLoopJoinMatcher(table, createFormula(joinPredicate, leftInputSchema,
+                                                                             rightInputSchema));
         }
     }
 
@@ -326,7 +340,7 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - MapOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
-        final Schema inputSchema = mapNode.input().schema();
+        final Schema inputSchema = inputTable.schema();
 
         final List<Formula> formulas = mapNode.expressions()
                 .stream()
@@ -386,22 +400,20 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
     @Override
     public Table visit(SemiJoinLop semiJoin) {
-        final LogicalOperator leftInput = semiJoin.left();
-        final Table leftInputTable = apply(leftInput);
-
-        final LogicalOperator rightInput = semiJoin.right();
-        final Table rightInputTable = apply(rightInput);
+        final Table leftInputTable = apply(semiJoin.left());
+        final Table rightInputTable = apply(semiJoin.right());
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - SemiJoinOperator - leftSize: {}, rightSize: {}", () -> operatorId,
                     leftInputTable::numberOfTuples, rightInputTable::numberOfTuples);
 
-        final Schema leftInputSchema = leftInput.schema();
-        final Schema rightInputSchema = rightInput.schema();
+        final Schema leftInputSchema = leftInputTable.schema();
+        final Schema rightInputSchema = rightInputTable.schema();
 
-        final SemiJoinMatcher matcher = createSemiJoinMatcher(leftInputSchema, rightInputSchema,
-                                                              semiJoin.predicate(), rightInputTable);
+        final SemiJoinMatcher matcher = createSemiJoinMatcher(leftInputSchema, rightInputSchema, semiJoin.predicate(),
+                                                              rightInputTable);
+
         final SemiJoinOperator operator = new SemiJoinOperator(semiJoin.schema(), matcher);
 
         final Table outputTable = operator.compute(leftInputTable);
