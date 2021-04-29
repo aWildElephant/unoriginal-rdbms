@@ -66,6 +66,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VARCHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VIEW;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WITH;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 
 public enum Keywords implements Token {
@@ -771,6 +772,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return VIEW;
+        }
+    },
+    WITH_TOKEN {
+        @Override
+        public String text() {
+            return "with";
+        }
+
+        @Override
+        public TokenType type() {
+            return WITH;
         }
     },
     WHEN_TOKEN {

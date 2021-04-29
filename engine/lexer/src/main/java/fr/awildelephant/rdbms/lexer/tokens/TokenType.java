@@ -88,5 +88,6 @@ public enum TokenType {
     VIEW,
     WHEN,
     WHERE,
+    WITH,
     YEAR
 }

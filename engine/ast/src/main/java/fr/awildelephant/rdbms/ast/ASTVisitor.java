@@ -139,4 +139,10 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Values values);
 
     T visit(IsNull isNull);
+
+    T visit(With with);
+
+    T visit(WithElement withElement);
+
+    T visit(WithList withList);
 }

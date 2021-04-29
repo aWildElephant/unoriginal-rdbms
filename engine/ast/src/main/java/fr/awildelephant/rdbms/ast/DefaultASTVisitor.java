@@ -362,5 +362,20 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
         return defaultVisit(unqualifiedColumnReference);
     }
 
+    @Override
+    public T visit(With with) {
+        return defaultVisit(with);
+    }
+
+    @Override
+    public T visit(WithElement withElement) {
+        return defaultVisit(withElement);
+    }
+
+    @Override
+    public T visit(WithList withList) {
+        return defaultVisit(withList);
+    }
+
     public abstract T defaultVisit(AST node);
 }

@@ -45,6 +45,7 @@ public final class StatementRule {
             case SELECT:
             case TABLE:
             case VALUES:
+            case WITH:
                 return deriveQueryExpression(lexer);
             default:
                 throw unexpectedToken(token);
