@@ -22,6 +22,7 @@
         <module>feature-tests</module>
         <module>tpch-tests</module>
         <module>test-commons</module>
+        <module>tpcds-tests</module>
     </modules>
 
     <dependencyManagement>
