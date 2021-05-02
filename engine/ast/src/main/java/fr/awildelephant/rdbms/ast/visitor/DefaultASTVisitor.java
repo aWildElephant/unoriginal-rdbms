@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.ast.visitor;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.AntiJoin;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
@@ -75,11 +74,6 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(And and) {
         return defaultVisit(and);
-    }
-
-    @Override
-    public T visit(AntiJoin antiJoin) {
-        return defaultVisit(antiJoin);
     }
 
     @Override
