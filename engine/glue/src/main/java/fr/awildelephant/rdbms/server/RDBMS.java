@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
+import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,8 +24,10 @@ public final class RDBMS {
         final Storage storage = new Storage();
         final Algebraizer algebraizer = new Algebraizer(storage);
         final Optimizer optimizer = new Optimizer();
+        final WithInlinerFactory withInlinerFactory = new WithInlinerFactory();
 
-        executor = new ConcurrentQueryExecutor(new QueryDispatcher(storage, algebraizer, optimizer));
+        final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory);
+        executor = new ConcurrentQueryExecutor(dispatcher);
     }
 
     private static AST parse(final String query) {

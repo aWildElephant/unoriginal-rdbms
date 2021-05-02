@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Values;
+import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
@@ -22,6 +23,8 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.server.with.WithInliner;
+import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,11 +40,16 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     private final Storage storage;
     private final Algebraizer algebraizer;
     private final Optimizer optimizer;
+    private final WithInliner<Table> withInliner;
 
-    QueryDispatcher(Storage storage, Algebraizer algebraizer, Optimizer optimizer) {
+    QueryDispatcher(Storage storage,
+                    Algebraizer algebraizer,
+                    Optimizer optimizer,
+                    WithInlinerFactory withInlinerFactory) {
         this.storage = storage;
         this.algebraizer = algebraizer;
         this.optimizer = optimizer;
+        this.withInliner = withInlinerFactory.build(this);
     }
 
     @Override
@@ -121,6 +129,11 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     @Override
     public Table visit(Values values) {
         return executeReadQuery(values);
+    }
+
+    @Override
+    public Table visit(With with) {
+        return withInliner.apply(with);
     }
 
     private Table executeReadQuery(AST ast) {
