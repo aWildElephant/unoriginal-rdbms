@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.algebraizer.formula;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
-import fr.awildelephant.rdbms.ast.DefaultASTVisitor;
+import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.*;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;

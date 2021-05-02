@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.ASTVisitor;
+import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 public final class Placeholder implements AST {
 

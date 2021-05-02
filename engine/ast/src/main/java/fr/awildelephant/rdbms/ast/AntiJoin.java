@@ -1,9 +1,11 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.annotation.Intermediate;
+import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 import java.util.Objects;
 
+// TODO: unused, remove ?
 @Intermediate
 public final class AntiJoin implements AST {
 
@@ -15,7 +17,7 @@ public final class AntiJoin implements AST {
         this.right = right;
     }
 
-    public AntiJoin antiJoin(AST left, AST right) {
+    public static AntiJoin antiJoin(AST left, AST right) {
         return new AntiJoin(left, right);
     }
 

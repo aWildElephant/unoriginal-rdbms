@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.ast;
 import fr.awildelephant.rdbms.ast.constraints.ForeignKeyConstraint;
 import fr.awildelephant.rdbms.ast.constraints.NotNullConstraint;
 import fr.awildelephant.rdbms.ast.constraints.UniqueConstraint;
+import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 import java.util.LinkedList;
 import java.util.List;

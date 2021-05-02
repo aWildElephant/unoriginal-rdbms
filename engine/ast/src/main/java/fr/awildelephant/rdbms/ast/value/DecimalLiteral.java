@@ -1,8 +1,7 @@
 package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.ASTVisitor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 import java.math.BigDecimal;
 import java.util.Objects;

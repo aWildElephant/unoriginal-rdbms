@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 import java.util.Objects;
 

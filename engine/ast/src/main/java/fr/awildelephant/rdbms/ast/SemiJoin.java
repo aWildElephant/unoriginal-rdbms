@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.annotation.Intermediate;
+import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 import java.util.Objects;
 
