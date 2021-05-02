@@ -22,6 +22,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
@@ -66,9 +67,7 @@ final class TableReferenceRule {
 
     private static AST deriveTablePrimary(Lexer lexer) {
         final AST tablePrimary;
-        if (nextTokenIs(LEFT_PAREN, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(LEFT_PAREN, lexer)) {
             tablePrimary = deriveQueryExpression(lexer);
 
             consumeAndExpect(RIGHT_PAREN, lexer);
@@ -76,9 +75,7 @@ final class TableReferenceRule {
             tablePrimary = deriveTableName(lexer);
         }
 
-        if (nextTokenIs(AS, lexer)) {
-            lexer.consumeNextToken();
-        }
+        consumeIfNextTokenIs(AS, lexer);
 
         if (!nextTokenIs(IDENTIFIER, lexer)) {
             return tablePrimary;
@@ -96,9 +93,7 @@ final class TableReferenceRule {
 
         columnAliases.add(consumeIdentifier(lexer));
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
+        while (consumeIfNextTokenIs(COMMA, lexer)) {
             columnAliases.add(consumeIdentifier(lexer));
         }
 

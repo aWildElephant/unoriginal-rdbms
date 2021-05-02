@@ -9,7 +9,7 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.SortSpecificationList.sortSpecificationList;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.SortSpecificationRule.deriveSortSpecification;
 
 final class SortSpecificationListRule {
@@ -23,9 +23,7 @@ final class SortSpecificationListRule {
 
         columns.add(deriveSortSpecification(lexer));
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
+        while (consumeIfNextTokenIs(COMMA, lexer)) {
             columns.add(deriveSortSpecification(lexer));
         }
 

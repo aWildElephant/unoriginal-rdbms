@@ -7,7 +7,7 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 
 public final class ColumnNameListRule {
 
@@ -19,9 +19,7 @@ public final class ColumnNameListRule {
         final List<String> columnNames = new ArrayList<>();
         columnNames.add(consumeIdentifier(lexer));
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
+        while (consumeIfNextTokenIs(COMMA, lexer)) {
             columnNames.add(consumeIdentifier(lexer));
         }
 

@@ -35,6 +35,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 import static fr.awildelephant.rdbms.parser.rules.QuerySpecificationRule.deriveQuerySpecificationRule;
@@ -49,9 +50,7 @@ final class BooleanValueExpressionRule {
     static AST deriveBooleanValueExpressionRule(final Lexer lexer) {
         final AST left = deriveTerm(lexer);
 
-        if (nextTokenIs(OR, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(OR, lexer)) {
             return or(left, deriveBooleanValueExpressionRule(lexer));
         }
 
@@ -61,9 +60,7 @@ final class BooleanValueExpressionRule {
     private static AST deriveTerm(final Lexer lexer) {
         final AST left = deriveFactor(lexer);
 
-        if (nextTokenIs(AND, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(AND, lexer)) {
             return and(left, deriveTerm(lexer));
         }
 
@@ -71,9 +68,7 @@ final class BooleanValueExpressionRule {
     }
 
     private static AST deriveFactor(final Lexer lexer) {
-        if (nextTokenIs(NOT, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(NOT, lexer)) {
             return not(deriveBooleanTest(lexer));
         }
 
@@ -173,9 +168,7 @@ final class BooleanValueExpressionRule {
 
         values.add(deriveBooleanValueExpressionRule(lexer));
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
+        while (consumeIfNextTokenIs(COMMA, lexer)) {
             values.add(deriveBooleanValueExpressionRule(lexer));
         }
 
@@ -187,13 +180,7 @@ final class BooleanValueExpressionRule {
     private static AST deriveIsPredicate(AST left, Lexer lexer) {
         consumeAndExpect(IS, lexer);
 
-        final boolean negate;
-        if (nextTokenIs(NOT, lexer)) {
-            negate = true;
-            lexer.consumeNextToken();
-        } else {
-            negate = false;
-        }
+        final boolean negate = consumeIfNextTokenIs(NOT, lexer);
 
         consumeAndExpect(NULL, lexer);
 

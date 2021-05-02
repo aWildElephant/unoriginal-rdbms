@@ -54,6 +54,7 @@ import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 
@@ -194,9 +195,7 @@ final class ValueExpressionRule {
 
                 Integer precision = null;
 
-                if (nextTokenIs(LEFT_PAREN, lexer)) {
-                    lexer.consumeNextToken();
-
+                if (consumeIfNextTokenIs(LEFT_PAREN, lexer)) {
                     precision = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
 
                     consumeAndExpect(RIGHT_PAREN, lexer);
@@ -234,20 +233,13 @@ final class ValueExpressionRule {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
 
-                if (nextTokenIs(ASTERISK, lexer)) {
-                    lexer.consumeNextToken();
+                if (consumeIfNextTokenIs(ASTERISK, lexer)) {
                     consumeAndExpect(RIGHT_PAREN, lexer);
 
                     return countStar();
                 }
 
-                final boolean distinct;
-                if (nextTokenIs(DISTINCT, lexer)) {
-                    lexer.consumeNextToken();
-                    distinct = true;
-                } else {
-                    distinct = false;
-                }
+                final boolean distinct = consumeIfNextTokenIs(DISTINCT, lexer);
 
                 final AST input = deriveBooleanValueExpressionRule(lexer);
 
@@ -304,13 +296,7 @@ final class ValueExpressionRule {
     private static AST deriveDateValueExpression(Lexer lexer) {
         consumeAndExpect(DATE, lexer);
 
-        final boolean parenthesis;
-        if (nextTokenIs(LEFT_PAREN, lexer)) {
-            lexer.consumeNextToken();
-            parenthesis = true;
-        } else {
-            parenthesis = false;
-        }
+        final boolean parenthesis = consumeIfNextTokenIs(LEFT_PAREN, lexer);
 
         final Cast node = cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
 

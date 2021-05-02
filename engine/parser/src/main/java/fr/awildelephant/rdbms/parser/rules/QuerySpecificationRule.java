@@ -24,7 +24,7 @@ import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.der
 import static fr.awildelephant.rdbms.parser.rules.FromClauseRule.deriveFromClauseRule;
 import static fr.awildelephant.rdbms.parser.rules.GroupingSpecificationRule.deriveGroupingSpecification;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.SelectListRule.deriveSelectListRule;
 import static fr.awildelephant.rdbms.parser.rules.SortSpecificationListRule.deriveSortSpecificationList;
 
@@ -37,25 +37,21 @@ final class QuerySpecificationRule {
     static AST deriveQuerySpecificationRule(final Lexer lexer) {
         consumeAndExpect(SELECT, lexer);
 
-        final boolean distinct = consumeIfDistinct(lexer);
+        final boolean distinct = consumeIfNextTokenIs(DISTINCT, lexer);
 
         final List<AST> outputColumns = deriveSelectListRule(lexer);
 
         final AST fromClause = deriveFromClauseRule(lexer);
 
         final AST whereClause;
-        if (nextTokenIs(WHERE, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(WHERE, lexer)) {
             whereClause = deriveBooleanValueExpressionRule(lexer);
         } else {
             whereClause = null;
         }
 
         final GroupingSetsList groupByClause;
-        if (nextTokenIs(GROUP, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(GROUP, lexer)) {
             consumeAndExpect(BY, lexer);
 
             groupByClause = deriveGroupingSpecification(lexer);
@@ -64,18 +60,14 @@ final class QuerySpecificationRule {
         }
 
         final AST havingClause;
-        if (nextTokenIs(HAVING, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(HAVING, lexer)) {
             havingClause = deriveBooleanValueExpressionRule(lexer);
         } else {
             havingClause = null;
         }
 
         final SortSpecificationList orderByClause;
-        if (nextTokenIs(ORDER, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(ORDER, lexer)) {
             consumeAndExpect(BY, lexer);
 
             orderByClause = deriveSortSpecificationList(lexer);
@@ -90,24 +82,12 @@ final class QuerySpecificationRule {
             output = distinct(output);
         }
 
-        if (nextTokenIs(LIMIT, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(LIMIT, lexer)) {
             final int limit = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
 
             output = limit(output, limit);
         }
 
         return output;
-    }
-
-    private static boolean consumeIfDistinct(Lexer lexer) {
-        if (nextTokenIs(DISTINCT, lexer)) {
-            lexer.consumeNextToken();
-
-            return true;
-        }
-
-        return false;
     }
 }

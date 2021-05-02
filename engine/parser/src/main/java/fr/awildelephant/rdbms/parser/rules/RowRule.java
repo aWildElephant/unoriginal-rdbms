@@ -13,7 +13,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 
 final class RowRule {
 
@@ -27,9 +27,7 @@ final class RowRule {
         final List<AST> values = new LinkedList<>();
         values.add(deriveBooleanValueExpressionRule(lexer));
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
+        while (consumeIfNextTokenIs(COMMA, lexer)) {
             values.add(deriveBooleanValueExpressionRule(lexer));
         }
 

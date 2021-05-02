@@ -8,7 +8,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.TableElementRule.deriveTableElement;
 
 final class TableElementListRule {
@@ -24,9 +24,7 @@ final class TableElementListRule {
 
         deriveTableElement(builder, lexer);
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
+        while (consumeIfNextTokenIs(COMMA, lexer)) {
             deriveTableElement(builder, lexer);
         }
 

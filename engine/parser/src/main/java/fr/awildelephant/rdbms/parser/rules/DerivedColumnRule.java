@@ -7,7 +7,7 @@ import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 
 final class DerivedColumnRule {
 
@@ -18,9 +18,7 @@ final class DerivedColumnRule {
     static AST deriveDerivedColumn(final Lexer lexer) {
         final AST expression = deriveBooleanValueExpressionRule(lexer);
 
-        if (nextTokenIs(AS, lexer)) {
-            lexer.consumeNextToken();
-
+        if (consumeIfNextTokenIs(AS, lexer)) {
             final String alias = consumeIdentifier(lexer);
 
             return columnAlias(expression, alias);

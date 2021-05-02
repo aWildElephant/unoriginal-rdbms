@@ -10,6 +10,7 @@ import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.TableReferenceRule.deriveTableReferenceRule;
 
@@ -38,11 +39,9 @@ final class FromClauseRule {
 
         final List<AST> additionalTableReferences = new ArrayList<>();
 
-        do {
-            lexer.consumeNextToken();
-
+        while(consumeIfNextTokenIs(COMMA, lexer)) {
             additionalTableReferences.add(deriveTableReferenceRule(lexer));
-        } while (nextTokenIs(COMMA, lexer));
+        }
 
         return tableReferenceList(tableReference, secondTableReference, additionalTableReferences);
     }

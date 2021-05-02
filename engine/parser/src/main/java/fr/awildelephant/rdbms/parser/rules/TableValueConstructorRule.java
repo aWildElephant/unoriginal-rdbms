@@ -10,7 +10,7 @@ import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.RowRule.deriveRowRule;
 
 final class TableValueConstructorRule {
@@ -25,9 +25,7 @@ final class TableValueConstructorRule {
         final ArrayList<Row> rows = new ArrayList<>();
         rows.add(deriveRowRule(lexer));
 
-        while (nextTokenIs(COMMA, lexer)) {
-            lexer.consumeNextToken();
-
+        while (consumeIfNextTokenIs(COMMA, lexer)) {
             rows.add(deriveRowRule(lexer));
         }
 
