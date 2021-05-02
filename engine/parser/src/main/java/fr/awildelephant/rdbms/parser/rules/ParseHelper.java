@@ -17,6 +17,16 @@ final class ParseHelper {
         return lexer.lookupNextToken().type() == expectedType;
     }
 
+    static boolean consumeIfNextTokenIs(TokenType expectedType, Lexer lexer) {
+        if (lexer.lookupNextToken().type() == expectedType) {
+            lexer.consumeNextToken();
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static Token consumeAndExpect(final TokenType expectedType, final Lexer lexer) {
         final Token actual = lexer.consumeNextToken();
 

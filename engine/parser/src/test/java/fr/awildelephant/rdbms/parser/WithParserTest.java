@@ -7,6 +7,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
 import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
+import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.ast.With.with;
 import static fr.awildelephant.rdbms.ast.WithElement.withElement;
 import static fr.awildelephant.rdbms.ast.WithList.withList;
@@ -30,5 +31,31 @@ public class WithParserTest {
                                   null,
                                   null,
                                   null)));
+    }
+
+    @Test
+    void it_should_parse_a_with_statement_with_several_elements() {
+        assertParsing("WITH first AS (select * from t1), second AS (select * from t2), third AS (select * from t3) select * from t1, t2, t3",
+                      with(withList(List.of(withElement("first", select(List.of(asterisk()),
+                                                                        tableName("t1"),
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null)),
+                                            withElement("second", select(List.of(asterisk()),
+                                                                        tableName("t2"),
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null)),
+                                            withElement("third", select(List.of(asterisk()),
+                                                                        tableName("t3"),
+                                                                        null,
+                                                                        null,
+                                                                        null,
+                                                                        null)))),
+                           select(List.of(asterisk()),
+                                  tableReferenceList(tableName("t1"), tableName("t2"), List.of(tableName("t3"))),
+                                  null, null, null, null)));
     }
 }
