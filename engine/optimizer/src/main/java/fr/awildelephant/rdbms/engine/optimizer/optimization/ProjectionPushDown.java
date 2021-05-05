@@ -38,8 +38,6 @@ import static java.util.stream.Collectors.toList;
 // 3) Re-test
 public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator> {
 
-    private final FreeVariablesFunction freeVariablesFunction = new FreeVariablesFunction();
-
     private final List<ColumnReference> projection;
 
     private ProjectionPushDown(List<ColumnReference> projection) {
