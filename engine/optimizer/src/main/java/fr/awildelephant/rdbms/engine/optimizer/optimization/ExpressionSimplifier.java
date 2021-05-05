@@ -1,5 +1,8 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
+import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer;
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.BinaryExpression;
@@ -16,8 +19,10 @@ import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
+import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
 import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
 
 /**
@@ -25,7 +30,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constant
  *
  * TODO: we can simplify some more (x * 0, x + 0, x * 1, etc..)
  */
-public class ExpressionSimplifier extends DefaultValueExpressionVisitor<ValueExpression> {
+public final class ExpressionSimplifier extends DefaultValueExpressionVisitor<ValueExpression> {
 
     @Override
     public ValueExpression visit(AddExpression add) {
@@ -92,7 +97,7 @@ public class ExpressionSimplifier extends DefaultValueExpressionVisitor<ValueExp
             return constantExpression(nullValue(), expression.domain());
         }
 
-        return expression;
+        return simplifyIfConstant(expression);
     }
 
     private boolean isNull(ValueExpression expression) {
@@ -100,7 +105,26 @@ public class ExpressionSimplifier extends DefaultValueExpressionVisitor<ValueExp
     }
 
     @Override
+    public ValueExpression visit(ConstantExpression constant) {
+        return constant;
+    }
+
+    @Override
     protected ValueExpression defaultVisit(ValueExpression expression) {
-        return expression;
+        return simplifyIfConstant(expression);
+    }
+
+    private ValueExpression simplifyIfConstant(ValueExpression expression) {
+        if (isConstant(expression)) {
+            final DomainValue value = createFormula(expression).evaluate();
+
+            return constantExpression(value, expression.domain());
+        } else {
+            return expression.transformInputs(this);
+        }
+    }
+
+    private Operation createFormula(ValueExpression expression) {
+        return new ValueExpressionToFormulaTransformer(Schema.EMPTY_SCHEMA).apply(expression);
     }
 }

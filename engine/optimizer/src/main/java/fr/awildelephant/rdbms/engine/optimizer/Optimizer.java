@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.optimizer;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.FilterPushDown;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.JoinReordering;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.ProjectionPushDown;
+import fr.awildelephant.rdbms.engine.optimizer.optimization.SimplifyExpressions;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.SubqueryUnnesting;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 
@@ -28,6 +29,7 @@ public class Optimizer {
         optimizedPlan = new FilterPushDown().apply(optimizedPlan);
         // At the time of writing filters materialize their output but projections do not, so executing projections first is a no-brainer
         optimizedPlan = ProjectionPushDown.pushDownProjections(optimizedPlan);
+        optimizedPlan = new SimplifyExpressions().apply(optimizedPlan);
         return optimizedPlan;
     }
 }
