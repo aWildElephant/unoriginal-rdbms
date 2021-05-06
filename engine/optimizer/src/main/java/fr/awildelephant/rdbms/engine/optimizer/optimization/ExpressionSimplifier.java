@@ -100,6 +100,7 @@ public final class ExpressionSimplifier extends DefaultValueExpressionVisitor<Va
         return simplifyIfConstant(expression);
     }
 
+    // FIXME: if expression is constant and evaluates to null but is not a ConstantExpression, this returns false
     private boolean isNull(ValueExpression expression) {
         return expression instanceof ConstantExpression && ((ConstantExpression) expression).value().isNull();
     }
