@@ -97,6 +97,26 @@ public class StepDefs implements En {
         });
 
         Then("^I expect an error with the message$", this::assertException);
+
+        Then("^I expect the plan$", (String expectedPlan) -> {
+            testWrapper.forwardExceptionIfPresent();
+
+            final ResultSet lastResult = testWrapper.getStatement().getResultSet();
+
+            assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
+
+            // TODO: assert number of rows/columns
+
+            lastResult.next();
+
+            final String plan = lastResult.getString(1);
+
+            assertEquals(removeBlankCharacters(expectedPlan), removeBlankCharacters(plan));
+        });
+    }
+
+    private String removeBlankCharacters(String text) {
+        return text.replaceAll("\\s", "");
     }
 
     private void assertException(String expectedErrorMessage) {

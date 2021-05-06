@@ -15,14 +15,20 @@ import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.engine.Storage;
+import fr.awildelephant.rdbms.engine.data.column.TextColumn;
+import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
+import fr.awildelephant.rdbms.server.explain.PlanJsonBuilder;
 import fr.awildelephant.rdbms.server.with.WithInliner;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +36,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
+import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static fr.awildelephant.rdbms.server.Inserter.insertRows;
 import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 
@@ -94,7 +102,24 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     @Override
     public Table visit(Explain explain) {
-        throw new UnsupportedOperationException("EXPLAIN is not yet implemented");
+        final LogicalOperator plan = optimizer.optimize(algebraizer.apply(explain.input()));
+        final PlanJsonBuilder planJsonBuilder = new PlanJsonBuilder();
+        planJsonBuilder.apply(plan);
+
+        return explainTable(planJsonBuilder.toString());
+    }
+
+    private Table explainTable(String explanation) {
+        final Schema schema = new Schema(List.of(new ColumnMetadata(0,
+                                                                    new UnqualifiedColumnReference("plan"),
+                                                                    Domain.TEXT,
+                                                                    true,
+                                                                    false)));
+
+        final TextColumn column = new TextColumn(1);
+        column.add(textValue(explanation));
+
+        return new ColumnBasedTable(schema, List.of(column));
     }
 
     @Override
