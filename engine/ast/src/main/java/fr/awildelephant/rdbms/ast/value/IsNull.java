@@ -35,11 +35,9 @@ public final class IsNull implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IsNull)) {
+        if (!(obj instanceof final IsNull other)) {
             return false;
         }
-
-        final IsNull other = (IsNull) obj;
 
         return Objects.equals(input, other.input);
     }

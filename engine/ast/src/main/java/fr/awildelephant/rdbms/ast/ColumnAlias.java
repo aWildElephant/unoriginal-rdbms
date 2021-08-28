@@ -40,11 +40,9 @@ public final class ColumnAlias implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ColumnAlias)) {
+        if (!(obj instanceof final ColumnAlias other)) {
             return false;
         }
-
-        final ColumnAlias other = (ColumnAlias) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(alias, other.alias);

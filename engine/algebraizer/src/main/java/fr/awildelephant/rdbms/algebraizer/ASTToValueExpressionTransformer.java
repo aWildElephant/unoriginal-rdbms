@@ -121,17 +121,11 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(BooleanLiteral booleanLiteral) {
-        final DomainValue value;
-        switch (booleanLiteral) {
-            case TRUE:
-                value = trueValue();
-                break;
-            case FALSE:
-                value = falseValue();
-                break;
-            default:
-                value = nullValue();
-        }
+        final DomainValue value = switch (booleanLiteral) {
+            case TRUE -> trueValue();
+            case FALSE -> falseValue();
+            default -> nullValue();
+        };
 
         return constantExpression(value, BOOLEAN);
     }
@@ -247,17 +241,11 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(IntervalLiteral intervalLiteral) {
-        final Period period;
-        switch (intervalLiteral.granularity()) {
-            case DAY_GRANULARITY:
-                period = Period.ofDays(parseInt(intervalLiteral.intervalString()));
-                break;
-            case MONTH_GRANULARITY:
-                period = Period.ofMonths(parseInt(intervalLiteral.intervalString()));
-                break;
-            default:
-                period = Period.ofYears(parseInt(intervalLiteral.intervalString()));
-        }
+        final Period period = switch (intervalLiteral.granularity()) {
+            case DAY_GRANULARITY -> Period.ofDays(parseInt(intervalLiteral.intervalString()));
+            case MONTH_GRANULARITY -> Period.ofMonths(parseInt(intervalLiteral.intervalString()));
+            default -> Period.ofYears(parseInt(intervalLiteral.intervalString()));
+        };
 
         return constantExpression(intervalValue(period), INTERVAL);
     }

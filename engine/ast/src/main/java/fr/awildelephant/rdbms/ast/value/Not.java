@@ -33,11 +33,9 @@ public final class Not implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Not)) {
+        if (!(obj instanceof final Not other)) {
             return false;
         }
-
-        final Not other = (Not) obj;
 
         return Objects.equals(input, other.input);
     }

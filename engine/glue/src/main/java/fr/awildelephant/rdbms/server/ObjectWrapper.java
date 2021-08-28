@@ -24,14 +24,11 @@ public class ObjectWrapper extends DefaultASTVisitor<DomainValue> {
 
     @Override
     public DomainValue visit(BooleanLiteral booleanLiteral) {
-        switch (booleanLiteral) {
-            case TRUE:
-                return trueValue();
-            case FALSE:
-                return falseValue();
-            default:
-                return nullValue();
-        }
+        return switch (booleanLiteral) {
+            case TRUE -> trueValue();
+            case FALSE -> falseValue();
+            default -> nullValue();
+        };
     }
 
     @Override

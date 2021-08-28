@@ -40,11 +40,9 @@ public final class WithElement implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof WithElement)) {
+        if (!(obj instanceof final WithElement other)) {
             return false;
         }
-
-        final WithElement other = (WithElement) obj;
 
         return Objects.equals(name, other.name)
                 && Objects.equals(definition, other.definition);

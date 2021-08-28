@@ -49,11 +49,9 @@ public final class Divide implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Divide)) {
+        if (!(obj instanceof final Divide other)) {
             return false;
         }
-
-        final Divide other = (Divide) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

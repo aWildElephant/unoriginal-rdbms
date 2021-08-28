@@ -59,17 +59,12 @@ class RDBMSResultSetMetaData extends AbstractResultSetMetaData {
     }
 
     private int getJDBCTypeFor(String domainName) throws SQLException {
-        switch (domainName) {
-            case "DATE":
-                return Types.DATE;
-            case "DECIMAL":
-                return Types.DECIMAL;
-            case "INTEGER":
-                return Types.INTEGER;
-            case "TEXT":
-                return Types.VARCHAR; // TODO: probably not exactly what we want
-            default:
-                throw new SQLException("Unknown domain " + domainName);
-        }
+        return switch (domainName) {
+            case "DATE" -> Types.DATE;
+            case "DECIMAL" -> Types.DECIMAL;
+            case "INTEGER" -> Types.INTEGER;
+            case "TEXT" -> Types.VARCHAR; // TODO: probably not exactly what we want
+            default -> throw new SQLException("Unknown domain " + domainName);
+        };
     }
 }

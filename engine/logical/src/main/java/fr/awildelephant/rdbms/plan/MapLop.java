@@ -1,11 +1,8 @@
 package fr.awildelephant.rdbms.plan;
 
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -58,11 +55,9 @@ public final class MapLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof MapLop)) {
+        if (!(obj instanceof final MapLop other)) {
             return false;
         }
-
-        final MapLop other = (MapLop) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(expressions, other.expressions)

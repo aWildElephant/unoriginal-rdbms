@@ -102,19 +102,13 @@ final class TableCreator {
     }
 
     private static Domain domainOf(int columnType) {
-        switch (columnType) {
-            case BOOLEAN:
-                return Domain.BOOLEAN;
-            case DATE:
-                return Domain.DATE;
-            case DECIMAL:
-                return Domain.DECIMAL;
-            case INTEGER:
-                return Domain.INTEGER;
-            case TEXT:
-                return Domain.TEXT;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (columnType) {
+            case BOOLEAN -> Domain.BOOLEAN;
+            case DATE -> Domain.DATE;
+            case DECIMAL -> Domain.DECIMAL;
+            case INTEGER -> Domain.INTEGER;
+            case TEXT -> Domain.TEXT;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }

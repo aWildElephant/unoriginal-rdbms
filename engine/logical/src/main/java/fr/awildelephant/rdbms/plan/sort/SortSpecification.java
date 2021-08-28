@@ -39,11 +39,9 @@ public final class SortSpecification {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SortSpecification)) {
+        if (!(obj instanceof final SortSpecification other)) {
             return false;
         }
-
-        final SortSpecification other = (SortSpecification) obj;
 
         return ascending == other.ascending
                 && Objects.equals(column, other.column);

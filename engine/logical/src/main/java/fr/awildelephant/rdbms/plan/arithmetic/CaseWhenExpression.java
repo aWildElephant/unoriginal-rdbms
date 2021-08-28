@@ -77,11 +77,9 @@ public final class CaseWhenExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CaseWhenExpression)) {
+        if (!(obj instanceof final CaseWhenExpression other)) {
             return false;
         }
-
-        final CaseWhenExpression other = (CaseWhenExpression) obj;
 
         return outputDomain == other.outputDomain
                 && Objects.equals(condition, other.condition)

@@ -33,11 +33,9 @@ public final class ScalarSubquery implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ScalarSubquery)) {
+        if (!(obj instanceof final ScalarSubquery other)) {
             return false;
         }
-
-        final ScalarSubquery other = (ScalarSubquery) obj;
 
         return Objects.equals(input, other.input);
     }

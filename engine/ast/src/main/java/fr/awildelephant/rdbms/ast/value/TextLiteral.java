@@ -42,11 +42,9 @@ public final class TextLiteral implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TextLiteral)) {
+        if (!(obj instanceof final TextLiteral other)) {
             return false;
         }
-
-        final TextLiteral other = (TextLiteral) obj;
 
         return Objects.equals(value, other.value);
     }

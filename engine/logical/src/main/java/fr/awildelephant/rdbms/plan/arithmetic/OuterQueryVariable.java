@@ -60,11 +60,9 @@ public final class OuterQueryVariable implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof OuterQueryVariable)) {
+        if (!(obj instanceof final OuterQueryVariable other)) {
             return false;
         }
-
-        final OuterQueryVariable other = (OuterQueryVariable) obj;
 
         return domain == other.domain
                 && Objects.equals(reference, other.reference);

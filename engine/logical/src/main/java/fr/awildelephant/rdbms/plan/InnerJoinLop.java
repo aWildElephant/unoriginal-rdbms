@@ -56,11 +56,9 @@ public final class InnerJoinLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof InnerJoinLop)) {
+        if (!(obj instanceof final InnerJoinLop other)) {
             return false;
         }
-
-        final InnerJoinLop other = (InnerJoinLop) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)

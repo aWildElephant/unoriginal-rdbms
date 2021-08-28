@@ -59,11 +59,9 @@ public final class ExtractYearExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ExtractYearExpression)) {
+        if (!(obj instanceof final ExtractYearExpression other)) {
             return false;
         }
-
-        final ExtractYearExpression other = (ExtractYearExpression) obj;
 
         return Objects.equals(input, other.input);
     }

@@ -33,11 +33,9 @@ public final class Avg implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Avg)) {
+        if (!(obj instanceof final Avg other)) {
             return false;
         }
-
-        final Avg other = (Avg) obj;
 
         return Objects.equals(input, other.input);
     }

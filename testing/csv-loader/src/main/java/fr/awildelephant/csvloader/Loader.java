@@ -133,18 +133,17 @@ public class Loader {
             }
 
             switch (types[j]) {
-                case Types.VARCHAR:
+                case Types.VARCHAR -> {
                     queryBuilder.append('\'');
                     queryBuilder.append(record.get(j));
                     queryBuilder.append('\'');
-                    break;
-                case Types.DATE:
+                }
+                case Types.DATE -> {
                     queryBuilder.append("date '");
                     queryBuilder.append(record.get(j));
                     queryBuilder.append('\'');
-                    break;
-                default:
-                    queryBuilder.append(record.get(j));
+                }
+                default -> queryBuilder.append(record.get(j));
             }
 
             commaSeparatorNeeded = true;

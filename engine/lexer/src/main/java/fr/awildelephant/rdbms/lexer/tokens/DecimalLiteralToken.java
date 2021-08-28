@@ -34,11 +34,9 @@ public final class DecimalLiteralToken implements Token {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DecimalLiteralToken)) {
+        if (!(obj instanceof final DecimalLiteralToken other)) {
             return false;
         }
-
-        final DecimalLiteralToken other = (DecimalLiteralToken) obj;
 
         return Objects.equals(value, other.value);
     }

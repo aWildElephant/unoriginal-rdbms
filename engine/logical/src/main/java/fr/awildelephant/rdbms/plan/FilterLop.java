@@ -43,11 +43,9 @@ public final class FilterLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof FilterLop)) {
+        if (!(obj instanceof final FilterLop other)) {
             return false;
         }
-
-        final FilterLop other = (FilterLop) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(filter, other.filter);

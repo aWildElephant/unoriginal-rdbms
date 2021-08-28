@@ -35,11 +35,9 @@ public final class WithList implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof WithList)) {
+        if (!(obj instanceof final WithList other)) {
             return false;
         }
-
-        final WithList other = (WithList) obj;
 
         return Objects.equals(elements, other.elements);
     }

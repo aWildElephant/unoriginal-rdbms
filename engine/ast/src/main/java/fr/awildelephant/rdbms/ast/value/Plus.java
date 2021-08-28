@@ -49,11 +49,9 @@ public final class Plus implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Plus)) {
+        if (!(obj instanceof final Plus other)) {
             return false;
         }
-
-        final Plus other = (Plus) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

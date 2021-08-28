@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.plan.aggregation;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -38,11 +37,9 @@ public final class AnyAggregate extends AbstractAggregate {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AnyAggregate)) {
+        if (!(obj instanceof final AnyAggregate other)) {
             return false;
         }
-
-        final AnyAggregate other = (AnyAggregate) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(outputColumn, other.outputColumn);

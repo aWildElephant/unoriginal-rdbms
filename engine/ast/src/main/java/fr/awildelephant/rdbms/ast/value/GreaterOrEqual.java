@@ -39,11 +39,9 @@ public final class GreaterOrEqual implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof GreaterOrEqual)) {
+        if (!(obj instanceof final GreaterOrEqual other)) {
             return false;
         }
-
-        final GreaterOrEqual other = (GreaterOrEqual) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

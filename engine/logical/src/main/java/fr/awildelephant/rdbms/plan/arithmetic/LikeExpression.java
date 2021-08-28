@@ -65,11 +65,9 @@ public final class LikeExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LikeExpression)) {
+        if (!(obj instanceof final LikeExpression other)) {
             return false;
         }
-
-        final LikeExpression other = (LikeExpression) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(pattern, other.pattern);

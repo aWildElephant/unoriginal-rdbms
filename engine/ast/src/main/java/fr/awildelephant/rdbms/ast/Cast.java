@@ -38,11 +38,9 @@ public final class Cast implements AST {
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof Cast)) {
+        if (!(obj instanceof final Cast other)) {
             return false;
         }
-
-        final Cast other = (Cast) obj;
 
         return targetType == other.targetType
                 && Objects.equals(input, other.input);

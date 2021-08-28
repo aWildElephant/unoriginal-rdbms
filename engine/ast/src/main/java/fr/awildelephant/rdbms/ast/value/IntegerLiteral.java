@@ -31,11 +31,9 @@ public final class IntegerLiteral implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IntegerLiteral)) {
+        if (!(obj instanceof final IntegerLiteral other)) {
             return false;
         }
-
-        final IntegerLiteral other = (IntegerLiteral) obj;
 
         return value == other.value;
     }

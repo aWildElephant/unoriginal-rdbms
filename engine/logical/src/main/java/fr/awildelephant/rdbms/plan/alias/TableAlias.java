@@ -29,7 +29,7 @@ public final class TableAlias implements Alias {
 
     @Override
     public ColumnReference unalias(ColumnReference reference) {
-        if (!reference.table().isPresent()) {
+        if (reference.table().isEmpty()) {
             return reference;
         }
 
@@ -51,11 +51,9 @@ public final class TableAlias implements Alias {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TableAlias)) {
+        if (!(obj instanceof final TableAlias other)) {
             return false;
         }
-
-        final TableAlias other = (TableAlias) obj;
 
         return Objects.equals(source, other.source)
                 && Objects.equals(alias, other.alias);

@@ -65,11 +65,9 @@ public final class ColumnAlias implements Alias {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ColumnAlias)) {
+        if (!(obj instanceof final ColumnAlias other)) {
             return false;
         }
-
-        final ColumnAlias other = (ColumnAlias) obj;
 
         return Objects.equals(aliases, other.aliases);
     }

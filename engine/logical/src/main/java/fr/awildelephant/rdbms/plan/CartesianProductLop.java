@@ -49,11 +49,9 @@ public final class CartesianProductLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CartesianProductLop)) {
+        if (!(obj instanceof final CartesianProductLop other)) {
             return false;
         }
-
-        final CartesianProductLop other = (CartesianProductLop) obj;
 
         return Objects.equals(leftInput, other.leftInput)
                 && Objects.equals(rightInput, other.rightInput);

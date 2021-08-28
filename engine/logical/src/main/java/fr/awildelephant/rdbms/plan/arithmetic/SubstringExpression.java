@@ -75,11 +75,9 @@ public final class SubstringExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SubstringExpression)) {
+        if (!(obj instanceof final SubstringExpression other)) {
             return false;
         }
-
-        final SubstringExpression other = (SubstringExpression) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(start, other.start)

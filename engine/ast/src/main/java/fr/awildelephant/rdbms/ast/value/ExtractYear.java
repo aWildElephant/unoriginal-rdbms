@@ -33,11 +33,9 @@ public final class ExtractYear implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ExtractYear)) {
+        if (!(obj instanceof final ExtractYear other)) {
             return false;
         }
-
-        final ExtractYear other = (ExtractYear) obj;
 
         return Objects.equals(input, other.input);
     }

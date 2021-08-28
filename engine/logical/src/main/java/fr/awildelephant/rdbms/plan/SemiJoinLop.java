@@ -5,7 +5,6 @@ import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.List;
 import java.util.Objects;
@@ -66,11 +65,9 @@ public final class SemiJoinLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SemiJoinLop)) {
+        if (!(obj instanceof final SemiJoinLop other)) {
             return false;
         }
-
-        final SemiJoinLop other = (SemiJoinLop) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)

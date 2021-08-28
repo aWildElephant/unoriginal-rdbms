@@ -39,11 +39,9 @@ public final class Count implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Count)) {
+        if (!(obj instanceof final Count other)) {
             return false;
         }
-
-        final Count other = (Count) obj;
 
         return distinct == other.distinct
                 && Objects.equals(input, other.input);

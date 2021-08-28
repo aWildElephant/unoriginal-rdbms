@@ -48,11 +48,9 @@ public final class Limit implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Limit)) {
+        if (!(obj instanceof final Limit other)) {
             return false;
         }
-
-        final Limit other = (Limit) obj;
 
         return limit == other.limit
                 && Objects.equals(input, other.input);

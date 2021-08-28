@@ -17,52 +17,38 @@ public final class JsonBuilder {
         return this;
     }
 
-    public JsonBuilder endObject() {
+    public void endObject() {
         indentation--;
         indent().append("}\n");
-
-        return this;
     }
 
-    public JsonBuilder startArray() {
+    public void startArray() {
         stringBuilder.append("[\n");
         indentation++;
-
-        return this;
     }
 
-    public JsonBuilder nextArrayElement() {
+    public void nextArrayElement() {
         stringBuilder.append(',');
         newline();
-
-        return this;
     }
 
-    public JsonBuilder endArray() {
+    public void endArray() {
         indentation--;
         indent().append("]\n");
-
-        return this;
     }
 
-    public JsonBuilder field(String key) {
+    public void field(String key) {
         indent().append('"').append(key).append('"').append(": ");
-
-        return this;
     }
 
-    public JsonBuilder field(String key, char character) {
+    public void field(String key, char character) {
         field(key);
         stringBuilder.append('"').append(character).append('"');
-
-        return this;
     }
 
-    public JsonBuilder field(String key, boolean value) {
+    public void field(String key, boolean value) {
         field(key);
         stringBuilder.append(value);
-
-        return this;
     }
 
     public JsonBuilder field(String key, Object value) {
@@ -72,11 +58,9 @@ public final class JsonBuilder {
         return this;
     }
 
-    public JsonBuilder nextField() {
+    public void nextField() {
         stringBuilder.append(',');
         newline();
-
-        return this;
     }
 
     private void newline() {
@@ -84,9 +68,7 @@ public final class JsonBuilder {
     }
 
     private StringBuilder indent() {
-        for (int i = 0; i < indentation; i++) {
-            stringBuilder.append('\t');
-        }
+        stringBuilder.append("\t".repeat(Math.max(0, indentation)));
 
         return stringBuilder;
     }

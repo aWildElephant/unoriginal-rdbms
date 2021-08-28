@@ -38,31 +38,23 @@ final class TableDefinitionRule {
 
         final Token nextToken = lexer.lookupNextToken();
         switch (nextToken.type()) {
-            case TABLE:
+            case TABLE -> {
                 lexer.consumeNextToken();
-
                 final TableName tableName = deriveTableName(lexer);
                 final TableElementList tableContentsSource = deriveTableContentsSourceRule(lexer);
-
                 return createTable(tableName, tableContentsSource);
-            case VIEW:
+            }
+            case VIEW -> {
                 lexer.consumeNextToken();
-
                 final String viewName = consumeIdentifier(lexer);
-
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final List<String> columnNames = deriveColumnNameList(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 consumeAndExpect(AS, lexer);
-
                 final AST query = deriveQueryExpression(lexer);
-
                 return createView(viewName, columnNames, query);
-            default:
-                throw unexpectedToken(nextToken, EXPECTED_AFTER_CREATE);
+            }
+            default -> throw unexpectedToken(nextToken, EXPECTED_AFTER_CREATE);
         }
     }
 }

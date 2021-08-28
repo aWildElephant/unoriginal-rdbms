@@ -43,11 +43,9 @@ public final class DecimalLiteral implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DecimalLiteral)) {
+        if (!(obj instanceof final DecimalLiteral other)) {
             return false;
         }
-
-        final DecimalLiteral other = (DecimalLiteral) obj;
 
         return Objects.equals(value, other.value);
     }

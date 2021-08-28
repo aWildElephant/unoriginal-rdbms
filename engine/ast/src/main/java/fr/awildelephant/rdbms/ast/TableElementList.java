@@ -54,11 +54,9 @@ public final class TableElementList implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TableElementList)) {
+        if (!(obj instanceof final TableElementList other)) {
             return false;
         }
-
-        final TableElementList other = (TableElementList) obj;
 
         return Objects.equals(columns, other.columns)
                 && Objects.equals(notNullConstraints, other.notNullConstraints)
@@ -68,10 +66,10 @@ public final class TableElementList implements AST {
 
     public static class Builder {
 
-        private List<ColumnDefinition> columns = new LinkedList<>();
-        private List<NotNullConstraint> notNullConstraints = new LinkedList<>();
-        private List<UniqueConstraint> uniqueConstraints = new LinkedList<>();
-        private List<ForeignKeyConstraint> foreignKeyConstraints = new LinkedList<>();
+        private final List<ColumnDefinition> columns = new LinkedList<>();
+        private final List<NotNullConstraint> notNullConstraints = new LinkedList<>();
+        private final List<UniqueConstraint> uniqueConstraints = new LinkedList<>();
+        private final List<ForeignKeyConstraint> foreignKeyConstraints = new LinkedList<>();
 
         public Builder addColumn(String columnName, int columnType) {
             columns.add(column(columnName, columnType));

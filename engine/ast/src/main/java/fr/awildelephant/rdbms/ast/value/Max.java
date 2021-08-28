@@ -33,11 +33,9 @@ public final class Max implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Max)) {
+        if (!(obj instanceof final Max other)) {
             return false;
         }
-
-        final Max other = (Max) obj;
 
         return Objects.equals(input, other.input);
     }

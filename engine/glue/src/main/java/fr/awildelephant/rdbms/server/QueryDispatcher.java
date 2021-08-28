@@ -1,19 +1,8 @@
 package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
-import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.CreateTable;
-import fr.awildelephant.rdbms.ast.CreateView;
+import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.Distinct;
-import fr.awildelephant.rdbms.ast.DropTable;
-import fr.awildelephant.rdbms.ast.Explain;
-import fr.awildelephant.rdbms.ast.InsertInto;
-import fr.awildelephant.rdbms.ast.Limit;
-import fr.awildelephant.rdbms.ast.Select;
-import fr.awildelephant.rdbms.ast.TableName;
-import fr.awildelephant.rdbms.ast.Values;
-import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.engine.Storage;
 import fr.awildelephant.rdbms.engine.data.column.TextColumn;
 import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
@@ -23,11 +12,7 @@ import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
-import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Domain;
-import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
+import fr.awildelephant.rdbms.schema.*;
 import fr.awildelephant.rdbms.server.explain.PlanJsonBuilder;
 import fr.awildelephant.rdbms.server.with.WithInliner;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
@@ -37,7 +22,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 import static fr.awildelephant.rdbms.server.Inserter.insertRows;
 import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 

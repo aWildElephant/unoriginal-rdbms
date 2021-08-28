@@ -49,11 +49,9 @@ public final class And implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof And)) {
+        if (!(obj instanceof final And other)) {
             return false;
         }
-
-        final And other = (And) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

@@ -32,11 +32,9 @@ public final class IntegerLiteralToken implements Token {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IntegerLiteralToken)) {
+        if (!(obj instanceof final IntegerLiteralToken other)) {
             return false;
         }
-
-        final IntegerLiteralToken other = (IntegerLiteralToken) obj;
 
         return value == other.value;
     }

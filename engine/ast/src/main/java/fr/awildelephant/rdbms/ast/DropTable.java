@@ -32,11 +32,9 @@ public final class DropTable implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DropTable)) {
+        if (!(obj instanceof final DropTable other)) {
             return false;
         }
-
-        final DropTable other = (DropTable) obj;
 
         return Objects.equals(tableName, other.tableName);
     }

@@ -40,11 +40,9 @@ public final class InsertInto implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof InsertInto)) {
+        if (!(obj instanceof final InsertInto other)) {
             return false;
         }
-
-        final InsertInto other = (InsertInto) obj;
 
         return Objects.equals(targetTable, other.targetTable)
                 && Objects.equals(values, other.values);

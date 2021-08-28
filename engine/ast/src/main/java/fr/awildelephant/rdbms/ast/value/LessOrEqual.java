@@ -39,11 +39,9 @@ public final class LessOrEqual implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LessOrEqual)) {
+        if (!(obj instanceof final LessOrEqual other)) {
             return false;
         }
-
-        final LessOrEqual other = (LessOrEqual) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

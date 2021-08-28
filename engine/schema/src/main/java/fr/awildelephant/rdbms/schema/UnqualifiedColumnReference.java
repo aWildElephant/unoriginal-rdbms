@@ -38,11 +38,9 @@ public final class UnqualifiedColumnReference implements ColumnReference {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UnqualifiedColumnReference)) {
+        if (!(obj instanceof final UnqualifiedColumnReference other)) {
             return false;
         }
-
-        final UnqualifiedColumnReference other = (UnqualifiedColumnReference) obj;
 
         return Objects.equals(name, other.name);
     }

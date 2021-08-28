@@ -33,11 +33,9 @@ public final class Any implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Any)) {
+        if (!(obj instanceof final Any other)) {
             return false;
         }
-
-        final Any other = (Any) obj;
 
         return Objects.equals(input, other.input);
     }

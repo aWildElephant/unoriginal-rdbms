@@ -45,11 +45,9 @@ public final class ProjectionLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ProjectionLop)) {
+        if (!(obj instanceof final ProjectionLop other)) {
             return false;
         }
-
-        final ProjectionLop other = (ProjectionLop) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(outputColumns, other.outputColumns);

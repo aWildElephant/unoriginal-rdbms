@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 public final class Asterisk implements AST {
 
-    private static Asterisk ASTERISK = new Asterisk();
+    private static final Asterisk ASTERISK = new Asterisk();
 
     private Asterisk() {
 

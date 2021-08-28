@@ -42,8 +42,7 @@ final class ExpressionSplitter {
         for (AST aggregate : aggregationsExtractor.collectedAggregates()) {
             final ColumnReference outputName = columnReferenceTransformer.apply(aggregate);
 
-            if (aggregate instanceof Any) {
-                final Any anyAggregate = (Any) aggregate;
+            if (aggregate instanceof final Any anyAggregate) {
                 final AST anyInput = anyAggregate.input();
 
                 if (!(anyInput instanceof ColumnName)) {
@@ -51,8 +50,7 @@ final class ExpressionSplitter {
                 }
 
                 collector.addAggregate(new AnyAggregate(columnReferenceTransformer.apply(anyInput), outputName));
-            } else if (aggregate instanceof Count) {
-                final Count countAggregate = (Count) aggregate;
+            } else if (aggregate instanceof final Count countAggregate) {
                 final AST countInput = countAggregate.input();
 
                 if (!(countInput instanceof ColumnName)) {

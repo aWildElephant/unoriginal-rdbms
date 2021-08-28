@@ -95,16 +95,15 @@ final class ValueExpressionRule {
                 final Token numericValueToNegate = lexer.consumeNextToken();
 
                 switch (numericValueToNegate.type()) {
-                    case INTEGER_LITERAL:
+                    case INTEGER_LITERAL -> {
                         final IntegerLiteralToken integerValue = (IntegerLiteralToken) numericValueToNegate;
-
                         return integerLiteral(-integerValue.value());
-                    case DECIMAL_LITERAL:
+                    }
+                    case DECIMAL_LITERAL -> {
                         final DecimalLiteralToken decimalValue = (DecimalLiteralToken) numericValueToNegate;
-
                         return decimalLiteral(decimalValue.value().negate());
-                    default:
-                        throw unexpectedToken(numericValueToNegate);
+                    }
+                    default -> throw unexpectedToken(numericValueToNegate);
                 }
             default:
                 return deriveNumericValueExpression(lexer);
@@ -178,20 +177,12 @@ final class ValueExpressionRule {
                 final String intervalString = ((TextLiteralToken) consumeAndExpect(TEXT_LITERAL, lexer)).content();
 
                 final Token yetAnotherToken = lexer.consumeNextToken();
-                final IntervalGranularity granularity;
-                switch (yetAnotherToken.type()) {
-                    case DAY:
-                        granularity = DAY_GRANULARITY;
-                        break;
-                    case MONTH:
-                        granularity = MONTH_GRANULARITY;
-                        break;
-                    case YEAR:
-                        granularity = YEAR_GRANULARITY;
-                        break;
-                    default:
-                        throw unexpectedToken(yetAnotherToken);
-                }
+                final IntervalGranularity granularity = switch (yetAnotherToken.type()) {
+                    case DAY -> DAY_GRANULARITY;
+                    case MONTH -> MONTH_GRANULARITY;
+                    case YEAR -> YEAR_GRANULARITY;
+                    default -> throw unexpectedToken(yetAnotherToken);
+                };
 
                 Integer precision = null;
 

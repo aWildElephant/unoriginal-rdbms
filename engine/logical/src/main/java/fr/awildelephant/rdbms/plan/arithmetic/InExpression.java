@@ -81,11 +81,9 @@ public final class InExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ValueExpression)) {
+        if (!(obj instanceof final InExpression other)) {
             return false;
         }
-
-        final InExpression other = (InExpression) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(values, other.values);

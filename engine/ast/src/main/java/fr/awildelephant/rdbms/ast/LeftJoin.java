@@ -44,11 +44,9 @@ public final class LeftJoin implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LeftJoin)) {
+        if (!(obj instanceof final LeftJoin other)) {
             return false;
         }
-
-        final LeftJoin other = (LeftJoin) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)

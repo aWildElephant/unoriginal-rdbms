@@ -21,11 +21,9 @@ public final class Arguments {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Arguments)) {
+        if (!(obj instanceof final Arguments other)) {
             return false;
         }
-
-        final Arguments other = (Arguments) obj;
 
         return Objects.equals(port, other.port);
     }

@@ -31,11 +31,9 @@ public final class IntegerValue extends AbstractValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IntegerValue)) {
+        if (!(obj instanceof final IntegerValue other)) {
             return false;
         }
-
-        final IntegerValue other = (IntegerValue) obj;
 
         return value == other.value;
     }

@@ -26,11 +26,9 @@ public final class TextValue extends AbstractValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TextValue)) {
+        if (!(obj instanceof final TextValue other)) {
             return false;
         }
-
-        final TextValue other = (TextValue) obj;
 
         return Objects.equals(value, other.value);
     }

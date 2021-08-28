@@ -44,11 +44,9 @@ public final class InnerJoin implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof InnerJoin)) {
+        if (!(obj instanceof final InnerJoin other)) {
             return false;
         }
-
-        final InnerJoin other = (InnerJoin) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)

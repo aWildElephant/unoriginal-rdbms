@@ -27,11 +27,9 @@ public final class DecimalValue extends AbstractValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DecimalValue)) {
+        if (!(obj instanceof final DecimalValue other)) {
             return false;
         }
-
-        final DecimalValue other = (DecimalValue) obj;
 
         return Objects.equals(value, other.value);
     }

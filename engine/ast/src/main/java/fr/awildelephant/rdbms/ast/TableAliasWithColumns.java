@@ -45,11 +45,9 @@ public final class TableAliasWithColumns implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TableAliasWithColumns)) {
+        if (!(obj instanceof final TableAliasWithColumns other)) {
             return false;
         }
-
-        final TableAliasWithColumns other = (TableAliasWithColumns) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(tableAlias, other.tableAlias)

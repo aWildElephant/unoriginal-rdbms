@@ -61,11 +61,9 @@ public final class ConstantExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ConstantExpression)) {
+        if (!(obj instanceof final ConstantExpression other)) {
             return false;
         }
-
-        final ConstantExpression other = (ConstantExpression) obj;
 
         return domain == other.domain
                 && Objects.equals(value, other.value);

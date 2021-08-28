@@ -75,18 +75,13 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
     }
 
     private Rdbms.QueryResult.Type getType(Schema schema, ColumnReference columnReference) {
-        switch (schema.column(columnReference).domain()) {
-            case BOOLEAN:
-                return Rdbms.QueryResult.Type.BOOLEAN;
-            case DECIMAL:
-                return Rdbms.QueryResult.Type.DECIMAL;
-            case INTEGER:
-                return Rdbms.QueryResult.Type.INTEGER;
-            case TEXT:
-                return Rdbms.QueryResult.Type.TEXT;
-            default:
-                throw new IllegalStateException();
-        }
+        return switch (schema.column(columnReference).domain()) {
+            case BOOLEAN -> Rdbms.QueryResult.Type.BOOLEAN;
+            case DECIMAL -> Rdbms.QueryResult.Type.DECIMAL;
+            case INTEGER -> Rdbms.QueryResult.Type.INTEGER;
+            case TEXT -> Rdbms.QueryResult.Type.TEXT;
+            default -> throw new IllegalStateException();
+        };
     }
 
     private Rdbms.QueryResult.Row.Builder toRow(Record record) {

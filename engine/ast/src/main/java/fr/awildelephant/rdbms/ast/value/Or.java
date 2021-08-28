@@ -39,11 +39,9 @@ public final class Or implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Or)) {
+        if (!(obj instanceof final Or other)) {
             return false;
         }
-
-        final Or other = (Or) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

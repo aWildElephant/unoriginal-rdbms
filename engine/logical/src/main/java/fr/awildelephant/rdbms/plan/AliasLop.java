@@ -44,11 +44,9 @@ public final class AliasLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AliasLop)) {
+        if (!(obj instanceof final AliasLop other)) {
             return false;
         }
-
-        final AliasLop other = (AliasLop) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(alias, other.alias);

@@ -39,11 +39,9 @@ public final class LessExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LessExpression)) {
+        if (!(obj instanceof final LessExpression other)) {
             return false;
         }
-
-        final LessExpression other = (LessExpression) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

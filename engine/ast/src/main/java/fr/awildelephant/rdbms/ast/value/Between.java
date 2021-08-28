@@ -21,6 +21,18 @@ public final class Between implements AST {
         return new Between(value, lowerBound, upperBound);
     }
 
+    public AST value() {
+        return value;
+    }
+
+    public AST lowerBound() {
+        return lowerBound;
+    }
+
+    public AST upperBound() {
+        return upperBound;
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
@@ -33,26 +45,12 @@ public final class Between implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Between)) {
+        if (!(obj instanceof final Between other)) {
             return false;
         }
-
-        final Between other = (Between) obj;
 
         return Objects.equals(value, other.value)
                 && Objects.equals(lowerBound, other.lowerBound)
                 && Objects.equals(upperBound, other.upperBound);
-    }
-
-    public AST value() {
-        return value;
-    }
-
-    public AST lowerBound() {
-        return lowerBound;
-    }
-
-    public AST upperBound() {
-        return upperBound;
     }
 }

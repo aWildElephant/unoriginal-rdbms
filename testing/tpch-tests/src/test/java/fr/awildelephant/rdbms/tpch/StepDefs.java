@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class StepDefs implements En {
 
@@ -75,6 +76,10 @@ public class StepDefs implements En {
 
         Then("^I expect the result described in (.+)$", fileName -> {
             final InputStream inputStream = this.getClass().getResourceAsStream("/results/" + fileName);
+
+            if (inputStream == null) {
+                fail("Failed to open " + fileName);
+            }
 
             final CSVParser parser = CSVFormat.DEFAULT.parse(new BufferedReader(new InputStreamReader(inputStream)));
 

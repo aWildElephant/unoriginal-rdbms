@@ -57,11 +57,9 @@ public final class TableReferenceList implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TableReferenceList)) {
+        if (!(obj instanceof final TableReferenceList other)) {
             return false;
         }
-
-        final TableReferenceList other = (TableReferenceList) obj;
 
         return Objects.equals(first, other.first)
                 && Objects.equals(second, other.second)

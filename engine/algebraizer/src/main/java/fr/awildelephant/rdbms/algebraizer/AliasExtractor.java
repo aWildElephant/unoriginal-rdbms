@@ -13,8 +13,7 @@ final class AliasExtractor {
     }
 
     void extractAlias(AST column, AliasCollector collector) {
-        if (column instanceof ColumnAlias) {
-            final ColumnAlias aliasedColumn = (ColumnAlias) column;
+        if (column instanceof final ColumnAlias aliasedColumn) {
 
             final AST unaliasedColumn = aliasedColumn.input();
 

@@ -41,11 +41,9 @@ public final class Explain implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Explain)) {
+        if (!(obj instanceof final Explain other)) {
             return false;
         }
-
-        final Explain other = (Explain) obj;
 
         return Objects.equals(input, other.input);
     }

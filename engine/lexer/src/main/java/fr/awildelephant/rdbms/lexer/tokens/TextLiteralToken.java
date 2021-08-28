@@ -31,11 +31,9 @@ public final class TextLiteralToken implements Token {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TextLiteralToken)) {
+        if (!(obj instanceof final TextLiteralToken other)) {
             return false;
         }
-
-        final TextLiteralToken other = (TextLiteralToken) obj;
 
         return content.equals(other.content);
     }

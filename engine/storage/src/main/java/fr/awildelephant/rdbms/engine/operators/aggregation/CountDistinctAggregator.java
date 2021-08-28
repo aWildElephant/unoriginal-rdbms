@@ -9,7 +9,7 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 
 public final class CountDistinctAggregator implements Aggregator {
 
-    private Set<DomainValue> distinctValues = new HashSet<>();
+    private final Set<DomainValue> distinctValues = new HashSet<>();
 
     @Override
     public boolean accumulate(DomainValue value) {

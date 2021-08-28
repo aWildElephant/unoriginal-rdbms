@@ -39,11 +39,9 @@ public final class In implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof In)) {
+        if (!(obj instanceof final In other)) {
             return false;
         }
-
-        final In other = (In) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(value, other.value);

@@ -39,11 +39,9 @@ public final class DivideExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DivideExpression)) {
+        if (!(obj instanceof final DivideExpression other)) {
             return false;
         }
-
-        final DivideExpression other = (DivideExpression) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

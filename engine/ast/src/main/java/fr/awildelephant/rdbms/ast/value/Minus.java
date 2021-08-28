@@ -39,11 +39,9 @@ public final class Minus implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Minus)) {
+        if (!(obj instanceof final Minus other)) {
             return false;
         }
-
-        final Minus other = (Minus) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

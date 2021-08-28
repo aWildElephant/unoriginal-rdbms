@@ -74,11 +74,9 @@ public final class BetweenExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof BetweenExpression)) {
+        if (!(obj instanceof final BetweenExpression other)) {
             return false;
         }
-
-        final BetweenExpression other = (BetweenExpression) obj;
 
         return Objects.equals(value, other.value)
                 && Objects.equals(lowerBound, other.lowerBound)

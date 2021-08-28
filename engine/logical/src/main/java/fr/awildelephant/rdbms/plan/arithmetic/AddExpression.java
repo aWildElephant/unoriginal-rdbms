@@ -41,11 +41,9 @@ public final class AddExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AddExpression)) {
+        if (!(obj instanceof final AddExpression other)) {
             return false;
         }
-
-        final AddExpression other = (AddExpression) obj;
 
         return domain == other.domain
                 && Objects.equals(left, other.left)

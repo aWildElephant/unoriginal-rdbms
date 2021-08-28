@@ -40,11 +40,9 @@ public final class QualifiedColumnReference implements ColumnReference {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof QualifiedColumnReference)) {
+        if (!(obj instanceof final QualifiedColumnReference other)) {
             return false;
         }
-
-        final QualifiedColumnReference other = (QualifiedColumnReference) obj;
 
         return Objects.equals(table, other.table)
                 && Objects.equals(name, other.name);

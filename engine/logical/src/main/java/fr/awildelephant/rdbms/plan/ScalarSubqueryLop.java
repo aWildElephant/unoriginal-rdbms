@@ -36,11 +36,9 @@ public final class ScalarSubqueryLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ScalarSubqueryLop)) {
+        if (!(obj instanceof final ScalarSubqueryLop other)) {
             return false;
         }
-
-        final ScalarSubqueryLop other = (ScalarSubqueryLop) obj;
 
         return Objects.equals(input, other.input);
     }

@@ -35,11 +35,9 @@ public final class Sum implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Sum)) {
+        if (!(obj instanceof final Sum other)) {
             return false;
         }
-
-        final Sum other = (Sum) obj;
 
         return Objects.equals(input, other.input);
     }

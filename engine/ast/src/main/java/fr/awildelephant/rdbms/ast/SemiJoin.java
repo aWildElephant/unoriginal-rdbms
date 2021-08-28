@@ -46,11 +46,9 @@ public final class SemiJoin implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SemiJoin)) {
+        if (!(obj instanceof final SemiJoin other)) {
             return false;
         }
-
-        final SemiJoin other = (SemiJoin) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)

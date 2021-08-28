@@ -49,11 +49,9 @@ public final class Like implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Like)) {
+        if (!(obj instanceof final Like other)) {
             return false;
         }
-
-        final Like other = (Like) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(pattern, other.pattern);

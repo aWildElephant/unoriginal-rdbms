@@ -49,11 +49,9 @@ public final class ColumnMetadata {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ColumnMetadata)) {
+        if (!(obj instanceof final ColumnMetadata other)) {
             return false;
         }
-
-        final ColumnMetadata other = (ColumnMetadata) obj;
 
         return index == other.index
                 && notNull == other.notNull

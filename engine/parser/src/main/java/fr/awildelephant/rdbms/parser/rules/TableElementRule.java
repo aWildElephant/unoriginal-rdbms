@@ -30,66 +30,45 @@ final class TableElementRule {
         final Token token = lexer.lookupNextToken();
 
         switch (token.type()) {
-            case FOREIGN:
+            case FOREIGN -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(KEY, lexer);
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final Set<String> columnNames = new HashSet<>();
-
                 columnNames.add(consumeIdentifier(lexer));
-
                 while (consumeIfNextTokenIs(COMMA, lexer)) {
                     columnNames.add(consumeIdentifier(lexer));
                 }
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
                 consumeAndExpect(REFERENCES, lexer);
-
                 final String targetTableName = consumeIdentifier(lexer);
-
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final Set<String> targetColumnNames = new HashSet<>();
-
                 targetColumnNames.add(consumeIdentifier(lexer));
-
                 while (consumeIfNextTokenIs(COMMA, lexer)) {
                     targetColumnNames.add(consumeIdentifier(lexer));
                 }
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 tableElementListBuilder.addForeignKeyConstraint(columnNames, targetTableName, targetColumnNames);
-
-                break;
-            case UNIQUE:
+            }
+            case UNIQUE -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final HashSet<String> columns = new HashSet<>();
-
                 columns.add(consumeIdentifier(lexer));
-
                 while (consumeIfNextTokenIs(COMMA, lexer)) {
                     columns.add(consumeIdentifier(lexer));
                 }
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 tableElementListBuilder.addUniqueConstraint(columns);
-
-                break;
-            default:
+            }
+            default -> {
                 final String columnName = consumeIdentifier(lexer);
                 final Token columnTypeToken = lexer.consumeNextToken();
                 final int columnType = columnType(columnTypeToken, lexer);
-
                 tableElementListBuilder.addColumn(columnName, columnType);
-
                 deriveColumnConstraintDefinitions(columnName, tableElementListBuilder, lexer);
+            }
         }
     }
 

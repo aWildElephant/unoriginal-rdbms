@@ -32,11 +32,9 @@ public final class Exists implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Exists)) {
+        if (!(obj instanceof final Exists other)) {
             return false;
         }
-
-        final Exists other = (Exists) obj;
 
         return Objects.equals(input, other.input);
     }

@@ -44,11 +44,9 @@ public final class Less implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Less)) {
+        if (!(obj instanceof final Less other)) {
             return false;
         }
-
-        final Less other = (Less) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

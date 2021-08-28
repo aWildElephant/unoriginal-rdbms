@@ -27,11 +27,9 @@ public final class DateValue extends AbstractValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DateValue)) {
+        if (!(obj instanceof final DateValue other)) {
             return false;
         }
-
-        final DateValue other = (DateValue) obj;
 
         return Objects.equals(value, other.value);
     }

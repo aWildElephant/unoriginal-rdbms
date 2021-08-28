@@ -60,11 +60,9 @@ public final class Variable implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Variable)) {
+        if (!(obj instanceof final Variable other)) {
             return false;
         }
-
-        final Variable other = (Variable) obj;
 
         return domain == other.domain
                 && Objects.equals(reference, other.reference);

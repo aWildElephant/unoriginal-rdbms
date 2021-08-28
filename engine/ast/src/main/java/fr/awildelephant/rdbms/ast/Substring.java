@@ -44,11 +44,9 @@ public final class Substring implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Substring)) {
+        if (!(obj instanceof final Substring other)) {
             return false;
         }
-
-        final Substring other = (Substring) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(start, other.start)

@@ -60,11 +60,9 @@ public final class DependentJoinLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DependentJoinLop)) {
+        if (!(obj instanceof final DependentJoinLop other)) {
             return false;
         }
-
-        final DependentJoinLop other = (DependentJoinLop) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)

@@ -42,11 +42,9 @@ public final class MultiplyExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof MultiplyExpression)) {
+        if (!(obj instanceof final MultiplyExpression other)) {
             return false;
         }
-
-        final MultiplyExpression other = (MultiplyExpression) obj;
 
         return domain == other.domain
                 && Objects.equals(left, other.left)

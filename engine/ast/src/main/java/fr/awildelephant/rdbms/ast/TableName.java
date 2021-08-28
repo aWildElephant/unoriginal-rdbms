@@ -41,11 +41,9 @@ public final class TableName implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TableName)) {
+        if (!(obj instanceof final TableName other)) {
             return false;
         }
-
-        final TableName other = (TableName) obj;
 
         return Objects.equals(name, other.name);
     }

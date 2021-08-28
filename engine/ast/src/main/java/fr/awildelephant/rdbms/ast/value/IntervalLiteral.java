@@ -41,11 +41,9 @@ public final class IntervalLiteral implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IntervalLiteral)) {
+        if (!(obj instanceof final IntervalLiteral other)) {
             return false;
         }
-
-        final IntervalLiteral other = (IntervalLiteral) obj;
 
         return granularity == other.granularity
                 && Objects.equals(intervalString, other.intervalString)

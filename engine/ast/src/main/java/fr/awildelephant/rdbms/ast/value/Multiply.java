@@ -49,11 +49,9 @@ public final class Multiply implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Multiply)) {
+        if (!(obj instanceof final Multiply other)) {
             return false;
         }
-
-        final Multiply other = (Multiply) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

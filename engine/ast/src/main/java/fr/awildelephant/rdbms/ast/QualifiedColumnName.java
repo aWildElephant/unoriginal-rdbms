@@ -41,11 +41,9 @@ public final class QualifiedColumnName implements ColumnName {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof QualifiedColumnName)) {
+        if (!(obj instanceof final QualifiedColumnName other)) {
             return false;
         }
-
-        final QualifiedColumnName other = (QualifiedColumnName) obj;
 
         return Objects.equals(qualifier, other.qualifier)
                 && Objects.equals(name, other.name);

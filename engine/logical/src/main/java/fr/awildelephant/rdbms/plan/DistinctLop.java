@@ -35,11 +35,9 @@ public final class DistinctLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DistinctLop)) {
+        if (!(obj instanceof final DistinctLop other)) {
             return false;
         }
-
-        final DistinctLop other = (DistinctLop) obj;
 
         return Objects.equals(input, other.input);
     }

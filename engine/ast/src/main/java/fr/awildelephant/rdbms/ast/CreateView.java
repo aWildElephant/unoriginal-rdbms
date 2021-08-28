@@ -45,11 +45,9 @@ public final class CreateView implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CreateView)) {
+        if (!(obj instanceof final CreateView other)) {
             return false;
         }
-
-        final CreateView other = (CreateView) obj;
 
         return Objects.equals(name, other.name)
                 && Objects.equals(columnNames, other.columnNames)

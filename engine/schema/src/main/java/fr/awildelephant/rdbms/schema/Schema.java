@@ -167,11 +167,9 @@ public final class Schema {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Schema)) {
+        if (!(obj instanceof final Schema other)) {
             return false;
         }
-
-        final Schema other = (Schema) obj;
 
         return Objects.equals(allColumns, other.allColumns)
                 && Objects.equals(columnIndex, other.columnIndex);

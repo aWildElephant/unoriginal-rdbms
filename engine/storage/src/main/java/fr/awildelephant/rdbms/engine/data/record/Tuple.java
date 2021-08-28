@@ -36,11 +36,9 @@ public final class Tuple implements Record {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Tuple)) {
+        if (!(obj instanceof final Tuple other)) {
             return false;
         }
-
-        final Tuple other = (Tuple) obj;
 
         return Arrays.equals(values, other.values);
     }

@@ -17,11 +17,9 @@ public final class NotNullConstraint {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof NotNullConstraint)) {
+        if (!(obj instanceof final NotNullConstraint other)) {
             return false;
         }
-
-        final NotNullConstraint other = (NotNullConstraint) obj;
 
         return Objects.equals(columnName, other.columnName);
     }

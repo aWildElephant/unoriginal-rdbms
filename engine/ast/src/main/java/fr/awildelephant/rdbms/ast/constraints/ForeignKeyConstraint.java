@@ -22,11 +22,9 @@ public final class ForeignKeyConstraint {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ForeignKeyConstraint)) {
+        if (!(obj instanceof final ForeignKeyConstraint other)) {
             return false;
         }
-
-        final ForeignKeyConstraint other = (ForeignKeyConstraint) obj;
 
         return Objects.equals(targetTable, other.targetTable)
                 && Objects.equals(columns, other.columns)

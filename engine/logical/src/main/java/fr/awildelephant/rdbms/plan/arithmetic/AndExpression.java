@@ -39,11 +39,9 @@ public final class AndExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AndExpression)) {
+        if (!(obj instanceof final AndExpression other)) {
             return false;
         }
-
-        final AndExpression other = (AndExpression) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

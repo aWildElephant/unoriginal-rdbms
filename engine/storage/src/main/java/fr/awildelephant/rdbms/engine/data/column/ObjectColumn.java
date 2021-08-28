@@ -3,7 +3,6 @@ package fr.awildelephant.rdbms.engine.data.column;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 

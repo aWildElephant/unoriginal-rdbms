@@ -60,11 +60,9 @@ public final class CastExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CastExpression)) {
+        if (!(obj instanceof final CastExpression other)) {
             return false;
         }
-
-        final CastExpression other = (CastExpression) obj;
 
         return domain == other.domain
                 && Objects.equals(input, other.input);

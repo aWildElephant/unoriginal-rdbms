@@ -4,10 +4,8 @@ public final class ArgumentsBuilder {
 
     private int port;
 
-    public ArgumentsBuilder port(int port) {
+    public void port(int port) {
         this.port = port;
-
-        return this;
     }
 
     public Arguments build() {

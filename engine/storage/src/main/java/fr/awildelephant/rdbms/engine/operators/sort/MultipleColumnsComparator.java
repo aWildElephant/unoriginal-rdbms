@@ -25,18 +25,13 @@ public final class MultipleColumnsComparator implements RecordComparator {
     }
 
     private RecordComparator comparatorForDomain(ColumnMetadata column) {
-        switch (column.domain()) {
-            case DATE:
-                return new DateColumnComparator(column.index());
-            case DECIMAL:
-                return new DecimalColumnComparator(column.index());
-            case INTEGER:
-                return new IntegerColumnComparator(column.index());
-            case TEXT:
-                return new TextColumnComparator(column.index());
-            default:
-                throw new UnsupportedOperationException("Sort on something else than a text column");
-        }
+        return switch (column.domain()) {
+            case DATE -> new DateColumnComparator(column.index());
+            case DECIMAL -> new DecimalColumnComparator(column.index());
+            case INTEGER -> new IntegerColumnComparator(column.index());
+            case TEXT -> new TextColumnComparator(column.index());
+            default -> throw new UnsupportedOperationException("Sort on something else than a text column");
+        };
     }
 
     public int compare(Record record, Record reference) {

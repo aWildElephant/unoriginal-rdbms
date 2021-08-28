@@ -38,11 +38,9 @@ public final class BaseTableLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof BaseTableLop)) {
+        if (!(obj instanceof final BaseTableLop other)) {
             return false;
         }
-
-        final BaseTableLop other = (BaseTableLop) obj;
 
         return Objects.equals(name, other.name);
     }

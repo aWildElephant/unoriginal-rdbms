@@ -111,11 +111,9 @@ public final class AggregationLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AggregationLop)) {
+        if (!(obj instanceof final AggregationLop other)) {
             return false;
         }
-
-        final AggregationLop other = (AggregationLop) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(breakdowns, other.breakdowns)

@@ -44,11 +44,9 @@ public final class Greater implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Greater)) {
+        if (!(obj instanceof final Greater other)) {
             return false;
         }
-
-        final Greater other = (Greater) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

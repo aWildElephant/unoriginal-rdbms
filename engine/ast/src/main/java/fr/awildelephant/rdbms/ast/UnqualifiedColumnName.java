@@ -35,11 +35,9 @@ public final class UnqualifiedColumnName implements ColumnName {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UnqualifiedColumnName)) {
+        if (!(obj instanceof final UnqualifiedColumnName other)) {
             return false;
         }
-
-        final UnqualifiedColumnName other = (UnqualifiedColumnName) obj;
 
         return Objects.equals(name, other.name);
     }

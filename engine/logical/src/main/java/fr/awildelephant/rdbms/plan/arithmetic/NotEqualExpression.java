@@ -39,11 +39,9 @@ public final class NotEqualExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof NotEqualExpression)) {
+        if (!(obj instanceof final NotEqualExpression other)) {
             return false;
         }
-
-        final NotEqualExpression other = (NotEqualExpression) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

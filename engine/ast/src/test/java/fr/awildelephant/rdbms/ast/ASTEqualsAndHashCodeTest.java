@@ -25,7 +25,7 @@ class ASTEqualsAndHashCodeTest {
     }
 
     private static Stream<Class<? extends AST>> implementationsOfAST() {
-        final Set<Class> exceptions = Set.of(Asterisk.class, CountStar.class, NullLiteral.class, Placeholder.class);
+        final Set<Class<? extends AST>> exceptions = Set.of(Asterisk.class, CountStar.class, NullLiteral.class, Placeholder.class);
 
         return new Reflections("fr.awildelephant.rdbms.ast")
                 .getSubTypesOf(AST.class)

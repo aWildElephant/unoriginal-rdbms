@@ -40,11 +40,9 @@ public final class With implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof With)) {
+        if (!(obj instanceof final With other)) {
             return false;
         }
-
-        final With other = (With) obj;
 
         return Objects.equals(withList, other.withList)
                 && Objects.equals(query, other.query);

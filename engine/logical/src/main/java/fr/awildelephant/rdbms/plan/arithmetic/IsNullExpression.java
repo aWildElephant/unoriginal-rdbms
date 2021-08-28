@@ -58,11 +58,9 @@ public final class IsNullExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IsNullExpression)) {
+        if (!(obj instanceof final IsNullExpression other)) {
             return false;
         }
-
-        final IsNullExpression other = (IsNullExpression) obj;
 
         return Objects.equals(input, other.input);
     }

@@ -10,7 +10,7 @@ public final class ColumnAliasBuilder {
 
     private final Map<String, Map<String, String>> aliasing = new HashMap<>();
 
-    public ColumnAliasBuilder add(ColumnReference original, String alias) {
+    public void add(ColumnReference original, String alias) {
         final String table = original.table().orElse("");
         final String column = original.name();
 
@@ -23,8 +23,6 @@ public final class ColumnAliasBuilder {
 
             return aliases;
         });
-
-        return this;
     }
 
     public Optional<ColumnAlias> build() {

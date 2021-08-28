@@ -22,11 +22,9 @@ public final class UniqueConstraint {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UniqueConstraint)) {
+        if (!(obj instanceof final UniqueConstraint other)) {
             return false;
         }
-
-        final UniqueConstraint other = (UniqueConstraint) obj;
 
         return Objects.equals(columnNames, other.columnNames);
     }

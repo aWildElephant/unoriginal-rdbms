@@ -54,11 +54,9 @@ public final class DependentSemiJoinLop extends AbstractBinaryLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof DependentSemiJoinLop)) {
+        if (!(obj instanceof final DependentSemiJoinLop other)) {
             return false;
         }
-
-        final DependentSemiJoinLop other = (DependentSemiJoinLop) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right)

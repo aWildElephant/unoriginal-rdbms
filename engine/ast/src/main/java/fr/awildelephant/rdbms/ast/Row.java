@@ -39,11 +39,9 @@ public final class Row implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Row)) {
+        if (!(obj instanceof final Row other)) {
             return false;
         }
-
-        final Row other = (Row) obj;
 
         return Objects.equals(values, other.values);
     }

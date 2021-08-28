@@ -78,11 +78,9 @@ public final class Select implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Select)) {
+        if (!(obj instanceof final Select other)) {
             return false;
         }
-
-        final Select other = (Select) obj;
 
         return Objects.equals(outputColumns, other.outputColumns)
                 && Objects.equals(fromClause, other.fromClause)

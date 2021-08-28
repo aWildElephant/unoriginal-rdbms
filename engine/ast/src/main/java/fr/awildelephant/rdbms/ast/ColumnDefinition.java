@@ -45,11 +45,9 @@ public final class ColumnDefinition implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ColumnDefinition)) {
+        if (!(obj instanceof final ColumnDefinition other)) {
             return false;
         }
-
-        final ColumnDefinition other = (ColumnDefinition) obj;
 
         return columnType == other.columnType
                 && Objects.equals(columnName, other.columnName);

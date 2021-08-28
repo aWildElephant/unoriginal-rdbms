@@ -70,7 +70,7 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
 
         final Optional<ValueExpression> applicableFilter = getAnyApplicableFilter(remainingFilters, leftmostInput);
 
-        if (!applicableFilter.isPresent()) {
+        if (applicableFilter.isEmpty()) {
             final LogicalOperator right = remainingInputs.get(0);
             final Schema joinOutputSchema = joinOutputSchema(leftmostInput.schema(), right.schema());
             final CartesianProductLop join = new CartesianProductLop(leftmostInput, right, joinOutputSchema);

@@ -39,11 +39,9 @@ public final class GreaterExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof GreaterExpression)) {
+        if (!(obj instanceof final GreaterExpression other)) {
             return false;
         }
-
-        final GreaterExpression other = (GreaterExpression) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

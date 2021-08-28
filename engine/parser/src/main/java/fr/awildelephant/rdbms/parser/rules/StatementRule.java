@@ -33,22 +33,13 @@ public final class StatementRule {
     private static AST parseStatement(Lexer lexer) {
         final Token token = lexer.lookupNextToken();
 
-        switch (token.type()) {
-            case CREATE:
-                return deriveCreateStatement(lexer);
-            case DROP:
-                return deriveDropTableStatement(lexer);
-            case EXPLAIN:
-                return deriveExplainStatement(lexer);
-            case INSERT:
-                return deriveInsertStatementRule(lexer);
-            case SELECT:
-            case TABLE:
-            case VALUES:
-            case WITH:
-                return deriveQueryExpression(lexer);
-            default:
-                throw unexpectedToken(token);
-        }
+        return switch (token.type()) {
+            case CREATE -> deriveCreateStatement(lexer);
+            case DROP -> deriveDropTableStatement(lexer);
+            case EXPLAIN -> deriveExplainStatement(lexer);
+            case INSERT -> deriveInsertStatementRule(lexer);
+            case SELECT, TABLE, VALUES, WITH -> deriveQueryExpression(lexer);
+            default -> throw unexpectedToken(token);
+        };
     }
 }

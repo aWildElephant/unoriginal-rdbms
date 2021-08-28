@@ -264,11 +264,9 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
     private boolean canUseHashJoin(List<ValueExpression> expressions) {
         for (ValueExpression expression : expressions) {
-            if (!(expression instanceof EqualExpression)) {
+            if (!(expression instanceof final EqualExpression equalExpression)) {
                 return false;
             }
-
-            final EqualExpression equalExpression = (EqualExpression) expression;
 
             if (!(equalExpression.left() instanceof Variable) || !(equalExpression.right() instanceof Variable)) {
                 return false;
@@ -375,6 +373,7 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     @Override
     public Table visit(ScalarSubqueryLop scalarSubquery) {
         return apply(scalarSubquery.input());
+        // TODO: scalar subquery operator not implemented but still there
 //        final Table inputTable = apply(scalarSubquery.input());
 //
 //        final UUID operatorId = UUID.randomUUID();

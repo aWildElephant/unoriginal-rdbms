@@ -4,7 +4,6 @@ import fr.awildelephant.rdbms.algebraizer.FirstColumnNameResolver;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.Select;
-import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.In;
 
 import java.util.ArrayList;

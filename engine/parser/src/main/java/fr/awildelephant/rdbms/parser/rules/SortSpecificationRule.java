@@ -24,12 +24,11 @@ final class SortSpecificationRule {
 
     private static OrderingSpecification deriveOrderingSpecification(Lexer lexer) {
         switch (lexer.lookupNextToken().type()) {
-            case ASC:
-                lexer.consumeNextToken();
-                break;
-            case DESC:
+            case ASC -> lexer.consumeNextToken();
+            case DESC -> {
                 lexer.consumeNextToken();
                 return DESCENDING;
+            }
         }
 
         return ASCENDING;

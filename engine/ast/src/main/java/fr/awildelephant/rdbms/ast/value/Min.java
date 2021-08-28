@@ -42,11 +42,9 @@ public final class Min implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Min)) {
+        if (!(obj instanceof final Min other)) {
             return false;
         }
-
-        final Min other = (Min) obj;
 
         return Objects.equals(input, other.input);
     }

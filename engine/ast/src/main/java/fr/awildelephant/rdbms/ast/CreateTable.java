@@ -38,11 +38,9 @@ public final class CreateTable implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CreateTable)) {
+        if (!(obj instanceof final CreateTable other)) {
             return false;
         }
-
-        final CreateTable other = (CreateTable) obj;
 
         return Objects.equals(tableName, other.tableName)
                 && Objects.equals(columns, other.columns);

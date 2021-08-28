@@ -27,11 +27,9 @@ public final class IntervalValue extends AbstractValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IntervalValue)) {
+        if (!(obj instanceof final IntervalValue other)) {
             return false;
         }
-
-        final IntervalValue other = (IntervalValue) obj;
 
         return Objects.equals(period, other.period);
     }

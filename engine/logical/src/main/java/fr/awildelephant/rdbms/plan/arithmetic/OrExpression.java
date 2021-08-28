@@ -39,11 +39,9 @@ public final class OrExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof OrExpression)) {
+        if (!(obj instanceof final OrExpression other)) {
             return false;
         }
-
-        final OrExpression other = (OrExpression) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

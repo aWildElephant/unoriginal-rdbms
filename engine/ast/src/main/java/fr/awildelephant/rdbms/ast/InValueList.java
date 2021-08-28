@@ -33,11 +33,9 @@ public final class InValueList implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof InValueList)) {
+        if (!(obj instanceof final InValueList other)) {
             return false;
         }
-
-        final InValueList other = (InValueList) obj;
 
         return Objects.equals(values, other.values);
     }

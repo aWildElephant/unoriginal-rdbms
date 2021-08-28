@@ -48,11 +48,10 @@ public final class SortSpecification implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SortSpecification)) {
+        if (!(obj instanceof final SortSpecification other)) {
             return false;
         }
 
-        final SortSpecification other = (SortSpecification) obj;
         return Objects.equals(sortKey, other.sortKey)
                 && ordering == other.ordering;
     }

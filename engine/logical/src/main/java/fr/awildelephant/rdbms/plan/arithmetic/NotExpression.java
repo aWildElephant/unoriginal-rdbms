@@ -59,11 +59,9 @@ public final class NotExpression implements ValueExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof NotExpression)) {
+        if (!(obj instanceof final NotExpression other)) {
             return false;
         }
-
-        final NotExpression other = (NotExpression) obj;
 
         return Objects.equals(input, other.input);
     }

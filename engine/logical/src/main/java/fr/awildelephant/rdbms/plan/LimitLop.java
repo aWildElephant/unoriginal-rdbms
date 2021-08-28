@@ -42,11 +42,9 @@ public final class LimitLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LimitLop)) {
+        if (!(obj instanceof final LimitLop other)) {
             return false;
         }
-
-        final LimitLop other = (LimitLop) obj;
 
         return limit == other.limit
                 && Objects.equals(input, other.input);

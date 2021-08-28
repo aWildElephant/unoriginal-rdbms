@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.plan.aggregation;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -44,11 +43,9 @@ public final class CountAggregate extends AbstractAggregate {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CountAggregate)) {
+        if (!(obj instanceof final CountAggregate other)) {
             return false;
         }
-
-        final CountAggregate other = (CountAggregate) obj;
 
         return distinct == other.distinct
                 && Objects.equals(input, other.input)

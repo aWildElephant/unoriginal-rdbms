@@ -44,11 +44,9 @@ public final class SortLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SortLop)) {
+        if (!(obj instanceof final SortLop other)) {
             return false;
         }
-
-        final SortLop other = (SortLop) obj;
 
         return Objects.equals(input, other.input)
                 && Objects.equals(columns, other.columns);

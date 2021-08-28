@@ -45,11 +45,9 @@ public final class CaseWhen implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CaseWhen)) {
+        if (!(obj instanceof final CaseWhen other)) {
             return false;
         }
-
-        final CaseWhen other = (CaseWhen) obj;
 
         return Objects.equals(condition, other.condition)
                 && Objects.equals(thenExpression, other.thenExpression)

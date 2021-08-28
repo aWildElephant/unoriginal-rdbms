@@ -208,17 +208,12 @@ public final class AggregationOperator implements Operator<Table, Table> {
     }
 
     private Comparator<DomainValue> comparator(ColumnMetadata column) {
-        switch (column.domain()) {
-            case DATE:
-                return Comparator.comparing(DomainValue::getLocalDate);
-            case DECIMAL:
-                return Comparator.comparing(DomainValue::getBigDecimal);
-            case INTEGER:
-                return Comparator.comparingInt(DomainValue::getInt);
-            case TEXT:
-                return Comparator.comparing(DomainValue::getString);
-            default:
-                throw new UnsupportedOperationException(); // TODO
-        }
+        return switch (column.domain()) {
+            case DATE -> Comparator.comparing(DomainValue::getLocalDate);
+            case DECIMAL -> Comparator.comparing(DomainValue::getBigDecimal);
+            case INTEGER -> Comparator.comparingInt(DomainValue::getInt);
+            case TEXT -> Comparator.comparing(DomainValue::getString);
+            default -> throw new UnsupportedOperationException(); // TODO
+        };
     }
 }

@@ -28,11 +28,9 @@ public final class IdentifierToken implements Token {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof IdentifierToken)) {
+        if (!(obj instanceof final IdentifierToken other)) {
             return false;
         }
-
-        final IdentifierToken other = (IdentifierToken) obj;
 
         return text.equals(other.text);
     }

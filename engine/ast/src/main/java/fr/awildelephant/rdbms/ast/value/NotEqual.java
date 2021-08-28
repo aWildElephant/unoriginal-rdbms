@@ -49,11 +49,9 @@ public final class NotEqual implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof NotEqual)) {
+        if (!(obj instanceof final NotEqual other)) {
             return false;
         }
-
-        final NotEqual other = (NotEqual) obj;
 
         return Objects.equals(left, other.left)
                 && Objects.equals(right, other.right);

@@ -32,11 +32,9 @@ public final class Distinct implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Distinct)) {
+        if (!(obj instanceof final Distinct other)) {
             return false;
         }
-
-        final Distinct other = (Distinct) obj;
 
         return Objects.equals(input, other.input);
     }

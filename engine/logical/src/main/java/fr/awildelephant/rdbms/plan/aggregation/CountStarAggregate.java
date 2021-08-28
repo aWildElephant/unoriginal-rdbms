@@ -30,11 +30,9 @@ public final class CountStarAggregate extends AbstractAggregate {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CountStarAggregate)) {
+        if (!(obj instanceof final CountStarAggregate other)) {
             return false;
         }
-
-        final CountStarAggregate other = (CountStarAggregate) obj;
 
         return Objects.equals(outputColumn, other.outputColumn);
     }

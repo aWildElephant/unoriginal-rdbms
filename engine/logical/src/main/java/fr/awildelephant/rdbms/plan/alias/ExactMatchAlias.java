@@ -39,11 +39,9 @@ public final class ExactMatchAlias implements Alias {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ExactMatchAlias)) {
+        if (!(obj instanceof final ExactMatchAlias other)) {
             return false;
         }
-
-        final ExactMatchAlias other = (ExactMatchAlias) obj;
 
         return Objects.equals(aliasing, other.aliasing);
     }

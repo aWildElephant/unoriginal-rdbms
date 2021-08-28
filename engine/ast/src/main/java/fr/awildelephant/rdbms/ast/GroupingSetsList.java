@@ -35,11 +35,9 @@ public final class GroupingSetsList implements AST {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof GroupingSetsList)) {
+        if (!(obj instanceof final GroupingSetsList other)) {
             return false;
         }
-
-        final GroupingSetsList other = (GroupingSetsList) obj;
 
         return Objects.equals(columns, other.columns);
     }

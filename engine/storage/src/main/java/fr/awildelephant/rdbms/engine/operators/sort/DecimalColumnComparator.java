@@ -4,7 +4,6 @@ import fr.awildelephant.rdbms.engine.data.record.Record;
 
 public class DecimalColumnComparator implements RecordComparator {
 
-
     private final int index;
 
     public DecimalColumnComparator(int index) {
