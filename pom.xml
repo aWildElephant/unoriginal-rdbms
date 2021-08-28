@@ -15,6 +15,7 @@
         <module>testing</module>
         <module>server</module>
         <module>embedded</module>
+        <module>util</module>
     </modules>
 
     <properties>

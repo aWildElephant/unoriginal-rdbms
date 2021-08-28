@@ -89,11 +89,9 @@ public final class TableConstructorLop extends AbstractLop {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TableConstructorLop)) {
+        if (!(obj instanceof final TableConstructorLop other)) {
             return false;
         }
-
-        final TableConstructorLop other = (TableConstructorLop) obj;
 
         return Objects.equals(matrix, other.matrix);
     }

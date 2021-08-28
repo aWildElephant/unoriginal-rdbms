@@ -15,10 +15,6 @@
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-ast</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-value</artifactId>
         </dependency>
         <dependency>

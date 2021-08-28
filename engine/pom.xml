@@ -81,6 +81,11 @@
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-tostring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-parser</artifactId>
                 <version>${project.version}</version>
             </dependency>

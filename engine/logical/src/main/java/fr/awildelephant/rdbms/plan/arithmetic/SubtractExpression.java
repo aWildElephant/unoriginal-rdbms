@@ -40,11 +40,9 @@ public final class SubtractExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SubtractExpression)) {
+        if (!(obj instanceof final SubtractExpression other)) {
             return false;
         }
-
-        final SubtractExpression other = (SubtractExpression) obj;
 
         return domain == other.domain
                 && Objects.equals(left, other.left)
