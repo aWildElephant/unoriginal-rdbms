@@ -8,12 +8,12 @@ import fr.awildelephant.rdbms.engine.data.column.TextColumn;
 import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
+import fr.awildelephant.rdbms.explain.PlanJsonBuilder;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.schema.*;
-import fr.awildelephant.rdbms.server.explain.PlanJsonBuilder;
 import fr.awildelephant.rdbms.server.with.WithInliner;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
 import org.apache.logging.log4j.LogManager;
@@ -87,6 +87,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     @Override
     public Table visit(Explain explain) {
         final LogicalOperator plan = optimizer.optimize(algebraizer.apply(explain.input()));
+        // TODO: if possible, instantiate once
         final PlanJsonBuilder planJsonBuilder = new PlanJsonBuilder();
         planJsonBuilder.apply(plan);
 
@@ -95,10 +96,10 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     private Table explainTable(String explanation) {
         final Schema schema = new Schema(List.of(new ColumnMetadata(0,
-                                                                    new UnqualifiedColumnReference("plan"),
-                                                                    Domain.TEXT,
-                                                                    true,
-                                                                    false)));
+                new UnqualifiedColumnReference("plan"),
+                Domain.TEXT,
+                true,
+                false)));
 
         final TextColumn column = new TextColumn(1);
         column.add(textValue(explanation));

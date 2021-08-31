@@ -7,7 +7,6 @@ import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
-import fr.awildelephant.rdbms.server.explain.PlanJsonBuilder;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +25,6 @@ public final class RDBMS {
         final Algebraizer algebraizer = new Algebraizer(storage);
         final Optimizer optimizer = new Optimizer();
         final WithInlinerFactory withInlinerFactory = new WithInlinerFactory();
-        final PlanJsonBuilder planJsonBuilder = new PlanJsonBuilder();
 
         final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory
         );

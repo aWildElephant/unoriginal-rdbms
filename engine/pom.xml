@@ -20,6 +20,7 @@
     <modules>
         <module>algebraizer</module>
         <module>ast</module>
+        <module>explain</module>
         <module>formula</module>
         <module>formula-creation</module>
         <module>glue</module>
@@ -47,6 +48,11 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-ast</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-explain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

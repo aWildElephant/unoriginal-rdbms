@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.server.explain;
+package fr.awildelephant.rdbms.explain;
 
 import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
@@ -120,8 +120,8 @@ public final class ExpressionJsonBuilder implements ValueExpressionVisitor<Void>
     }
 
     private void appendBinaryExpression(char symbol, BinaryExpression expression) {
-        jsonBuilder.startObject()
-                .field("type", symbol);
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", symbol);
         jsonBuilder.nextField();
         jsonBuilder.field("left");
         apply(expression.left());
@@ -132,8 +132,8 @@ public final class ExpressionJsonBuilder implements ValueExpressionVisitor<Void>
     }
 
     private void appendBinaryExpression(String symbol, BinaryExpression expression) {
-        jsonBuilder.startObject()
-                .field("type", symbol);
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", symbol);
         jsonBuilder.nextField();
         jsonBuilder.field("left");
         apply(expression.left());
@@ -145,8 +145,8 @@ public final class ExpressionJsonBuilder implements ValueExpressionVisitor<Void>
 
     @Override
     public Void visit(BetweenExpression between) {
-        jsonBuilder.startObject()
-                .field("type", "between");
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", "between");
         jsonBuilder.nextField();
         jsonBuilder.field("input");
         apply(between.value());
@@ -163,11 +163,10 @@ public final class ExpressionJsonBuilder implements ValueExpressionVisitor<Void>
 
     @Override
     public Void visit(CaseWhenExpression caseWhen) {
-        jsonBuilder.startObject()
-                .field("type", "case_when");
-
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", "case_when");
         jsonBuilder.nextField();
-                jsonBuilder.field("condition");
+        jsonBuilder.field("condition");
         apply(caseWhen.condition());
         jsonBuilder.nextField();
         jsonBuilder.field("then");
@@ -182,13 +181,15 @@ public final class ExpressionJsonBuilder implements ValueExpressionVisitor<Void>
 
     @Override
     public Void visit(CastExpression cast) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(ConstantExpression constant) {
-        jsonBuilder.startObject()
-                .field("type", "constant");
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", "constant");
         jsonBuilder.nextField();
         jsonBuilder.field("value", constant.value());
         jsonBuilder.endObject();
@@ -198,35 +199,47 @@ public final class ExpressionJsonBuilder implements ValueExpressionVisitor<Void>
 
     @Override
     public Void visit(ExtractYearExpression extractYear) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(InExpression in) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(IsNullExpression isNull) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(LikeExpression like) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(NotExpression not) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(OuterQueryVariable outerQueryVariable) {
-        jsonBuilder.startObject()
-                .field("type", "variable")
-                .field("name", outerQueryVariable.reference().fullName())
-                .field("outer", true);
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", "variable");
+        jsonBuilder.nextField();
+        jsonBuilder.field("name", outerQueryVariable.reference().fullName());
+        jsonBuilder.nextField();
+        jsonBuilder.field("outer", true);
         jsonBuilder.endObject();
 
         return null;
@@ -234,15 +247,30 @@ public final class ExpressionJsonBuilder implements ValueExpressionVisitor<Void>
 
     @Override
     public Void visit(SubstringExpression substring) {
+        jsonBuilder.startObject();
+        jsonBuilder.type(NodeType.SUBSTRING);
+        jsonBuilder.nextField();
+        jsonBuilder.field("input");
+        apply(substring.input());
+        jsonBuilder.nextField();
+        jsonBuilder.field("start");
+        apply(substring.start());
+        jsonBuilder.nextField();
+        jsonBuilder.field("length");
+        apply(substring.length());
+        jsonBuilder.endObject();
+
         return null;
     }
 
     @Override
     public Void visit(Variable variable) {
-        jsonBuilder.startObject()
-                .field("type", "variable")
-                .field("name", variable.reference().fullName())
-                .field("outer", false);
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", "variable");
+        jsonBuilder.nextField();
+        jsonBuilder.field("name", variable.reference().fullName());
+        jsonBuilder.nextField();
+        jsonBuilder.field("outer", false);
         jsonBuilder.endObject();
 
         return null;

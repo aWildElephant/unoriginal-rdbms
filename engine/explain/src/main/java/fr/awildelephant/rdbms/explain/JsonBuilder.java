@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.server.explain;
+package fr.awildelephant.rdbms.explain;
 
 /**
  * Q: Why not use jackson or google json?
@@ -54,6 +54,12 @@ public final class JsonBuilder {
     public JsonBuilder field(String key, Object value) {
         field(key);
         stringBuilder.append('"').append(value).append('"');
+
+        return this;
+    }
+
+    public JsonBuilder type(NodeType type) {
+        field("type", type.toString());
 
         return this;
     }

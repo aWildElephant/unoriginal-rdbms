@@ -1,23 +1,6 @@
-package fr.awildelephant.rdbms.server.explain;
+package fr.awildelephant.rdbms.explain;
 
-import fr.awildelephant.rdbms.plan.AggregationLop;
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.BaseTableLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
-import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
-import fr.awildelephant.rdbms.plan.DistinctLop;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LeftJoinLop;
-import fr.awildelephant.rdbms.plan.LimitLop;
-import fr.awildelephant.rdbms.plan.LopVisitor;
-import fr.awildelephant.rdbms.plan.MapLop;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.SemiJoinLop;
-import fr.awildelephant.rdbms.plan.SortLop;
-import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
 import java.util.List;
@@ -49,63 +32,85 @@ public final class PlanJsonBuilder implements LopVisitor<Void> {
 
     @Override
     public Void visit(DistinctLop distinctNode) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(FilterLop filter) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(InnerJoinLop innerJoinLop) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(LeftJoinLop leftJoinLop) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(LimitLop limitLop) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(MapLop mapNode) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(ProjectionLop projectionNode) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(ScalarSubqueryLop scalarSubquery) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(SemiJoinLop semiJoin) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(SortLop sortLop) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(DependentJoinLop subqueryExecutionLop) {
+        // TODO
+
         return null;
     }
 
     @Override
     public Void visit(TableConstructorLop tableConstructor) {
-        jsonBuilder.startObject()
-                .field("type", "constructor");
+        jsonBuilder.startObject();
+        jsonBuilder.field("type", "constructor");
         jsonBuilder.nextField();
         jsonBuilder.field("matrix");
         jsonBuilder.startArray();
@@ -137,6 +142,8 @@ public final class PlanJsonBuilder implements LopVisitor<Void> {
 
     @Override
     public Void visit(DependentSemiJoinLop dependentSemiJoinLop) {
+        // TODO
+
         return null;
     }
 
