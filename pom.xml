@@ -16,7 +16,6 @@
         <module>server</module>
         <module>embedded</module>
         <module>util</module>
-        <module>util/multimap</module>
     </modules>
 
     <properties>
@@ -64,6 +63,11 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-embedded</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-database</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

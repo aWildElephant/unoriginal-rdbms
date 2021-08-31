@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.server;
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
-import fr.awildelephant.rdbms.engine.Storage;
+import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.column.TextColumn;
 import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;

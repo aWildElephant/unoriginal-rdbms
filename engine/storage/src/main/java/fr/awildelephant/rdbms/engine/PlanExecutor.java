@@ -62,13 +62,14 @@ import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilter
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
+// TODO: move to rdbms-database package, then will probably be removed after execution refactoring
 public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
     private static final Logger LOGGER = LogManager.getLogger("Executor");
 
     private final Map<String, ManagedTable> tables;
 
-    PlanExecutor(Map<String, ManagedTable> tables) {
+    public PlanExecutor(Map<String, ManagedTable> tables) {
         this.tables = tables;
     }
 

@@ -19,5 +19,6 @@
 
     <modules>
         <module>tostring</module>
+        <module>multimap</module>
     </modules>
 </project>

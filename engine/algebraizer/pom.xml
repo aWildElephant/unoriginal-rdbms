@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-database</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-storage</artifactId>
         </dependency>
         <dependency>
