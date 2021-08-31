@@ -16,6 +16,7 @@
         <module>server</module>
         <module>embedded</module>
         <module>util</module>
+        <module>util/multimap</module>
     </modules>
 
     <properties>
