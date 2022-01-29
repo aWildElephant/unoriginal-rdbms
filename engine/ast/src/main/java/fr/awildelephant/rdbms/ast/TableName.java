@@ -2,24 +2,12 @@ package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
-import java.util.Objects;
-
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class TableName implements AST {
-
-    private final String name;
-
-    private TableName(String name) {
-        this.name = name;
-    }
+public record TableName(String name) implements AST {
 
     public static TableName tableName(String name) {
         return new TableName(name);
-    }
-
-    public String name() {
-        return name;
     }
 
     @Override
@@ -32,19 +20,5 @@ public final class TableName implements AST {
         return toStringBuilder(this)
                 .append(name)
                 .toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(name);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final TableName other)) {
-            return false;
-        }
-
-        return Objects.equals(name, other.name);
     }
 }

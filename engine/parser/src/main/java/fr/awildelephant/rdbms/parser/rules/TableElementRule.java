@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.parser.rules;
 
-import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.ColumnType;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
@@ -8,17 +8,10 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import java.util.HashSet;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnConstraintDefinitionsRule.deriveColumnConstraintDefinitions;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.*;
 
 final class TableElementRule {
 
@@ -65,33 +58,30 @@ final class TableElementRule {
             default -> {
                 final String columnName = consumeIdentifier(lexer);
                 final Token columnTypeToken = lexer.consumeNextToken();
-                final int columnType = columnType(columnTypeToken, lexer);
+                final ColumnType columnType = columnType(columnTypeToken, lexer);
                 tableElementListBuilder.addColumn(columnName, columnType);
                 deriveColumnConstraintDefinitions(columnName, tableElementListBuilder, lexer);
             }
         }
     }
 
-    private static int columnType(final Token columnTypeToken, final Lexer lexer) {
+    private static ColumnType columnType(final Token columnTypeToken, final Lexer lexer) {
         switch (columnTypeToken.type()) {
             case BOOLEAN:
-                return ColumnDefinition.BOOLEAN;
-            case CHAR:
-                ignoreLengthInformation(lexer);
-
-                return ColumnDefinition.TEXT;
+                return ColumnType.BOOLEAN;
             case DATE:
-                return ColumnDefinition.DATE;
+                return ColumnType.DATE;
             case DECIMAL:
-                return ColumnDefinition.DECIMAL;
+                return ColumnType.DECIMAL;
             case INTEGER:
-                return ColumnDefinition.INTEGER;
+                return ColumnType.INTEGER;
             case TEXT:
-                return ColumnDefinition.TEXT;
+                return ColumnType.TEXT;
+            case CHAR:
             case VARCHAR:
                 ignoreLengthInformation(lexer);
 
-                return ColumnDefinition.TEXT;
+                return ColumnType.TEXT;
             default:
                 throw unexpectedToken(columnTypeToken);
         }

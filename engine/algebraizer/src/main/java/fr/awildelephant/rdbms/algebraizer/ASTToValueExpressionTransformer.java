@@ -1,48 +1,11 @@
 package fr.awildelephant.rdbms.algebraizer;
 
-import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.Cast;
-import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.*;
+import fr.awildelephant.rdbms.ast.value.*;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.InValueList;
-import fr.awildelephant.rdbms.ast.QualifiedColumnName;
-import fr.awildelephant.rdbms.ast.Substring;
-import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
-import fr.awildelephant.rdbms.ast.value.And;
-import fr.awildelephant.rdbms.ast.value.Between;
-import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
-import fr.awildelephant.rdbms.ast.value.CaseWhen;
-import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
-import fr.awildelephant.rdbms.ast.value.Divide;
-import fr.awildelephant.rdbms.ast.value.Equal;
-import fr.awildelephant.rdbms.ast.value.ExtractYear;
-import fr.awildelephant.rdbms.ast.value.Greater;
-import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
-import fr.awildelephant.rdbms.ast.value.In;
-import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
-import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
-import fr.awildelephant.rdbms.ast.value.IsNull;
-import fr.awildelephant.rdbms.ast.value.Less;
-import fr.awildelephant.rdbms.ast.value.LessOrEqual;
-import fr.awildelephant.rdbms.ast.value.Like;
-import fr.awildelephant.rdbms.ast.value.Minus;
-import fr.awildelephant.rdbms.ast.value.Multiply;
-import fr.awildelephant.rdbms.ast.value.Not;
-import fr.awildelephant.rdbms.ast.value.NotEqual;
-import fr.awildelephant.rdbms.ast.value.NullLiteral;
-import fr.awildelephant.rdbms.ast.value.Or;
-import fr.awildelephant.rdbms.ast.value.Placeholder;
-import fr.awildelephant.rdbms.ast.value.Plus;
-import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
-import fr.awildelephant.rdbms.schema.ColumnNotFoundException;
-import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Domain;
-import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
-import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
+import fr.awildelephant.rdbms.schema.*;
 
 import java.time.Period;
 import java.util.ArrayList;
@@ -79,13 +42,7 @@ import static fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable.outerQue
 import static fr.awildelephant.rdbms.plan.arithmetic.SubstringExpression.substringExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression.subtractExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
-import static fr.awildelephant.rdbms.schema.Domain.DATE;
-import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
-import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
-import static fr.awildelephant.rdbms.schema.Domain.INTERVAL;
-import static fr.awildelephant.rdbms.schema.Domain.NULL;
-import static fr.awildelephant.rdbms.schema.Domain.TEXT;
+import static fr.awildelephant.rdbms.schema.Domain.*;
 import static java.lang.Integer.parseInt;
 
 public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpression> {
@@ -159,7 +116,7 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Cast cast) {
-        if (cast.targetType() != ColumnDefinition.DATE) {
+        if (cast.targetType() != ColumnType.DATE) {
             throw new UnsupportedOperationException("Unsupported cast to type " + cast.targetType());
         }
 

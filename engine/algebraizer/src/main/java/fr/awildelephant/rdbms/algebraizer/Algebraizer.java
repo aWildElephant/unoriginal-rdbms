@@ -74,9 +74,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Schema outputSchema = innerJoinOutputSchema(leftInput.schema(), rightInput.schema());
 
         return new InnerJoinLop(leftInput,
-                                rightInput,
-                                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema),
-                                outputSchema);
+                rightInput,
+                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema),
+                outputSchema);
     }
 
     @Override
@@ -87,9 +87,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final Schema outputSchema = leftJoinOutputSchema(leftInput.schema(), rightInput.schema());
 
         return new LeftJoinLop(leftInput,
-                               rightInput,
-                               createValueExpression(leftJoin.joinSpecification(), outputSchema, outerQuerySchema),
-                               outputSchema);
+                rightInput,
+                createValueExpression(leftJoin.joinSpecification(), outputSchema, outerQuerySchema),
+                outputSchema);
     }
 
     @Override
@@ -106,10 +106,10 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     public LogicalOperator visit(Select select) {
         LogicalOperator plan = apply(select.fromClause());
 
-        final Optional<AST> whereClause = select.whereClause();
-        if (whereClause.isPresent()) {
+        final AST whereClause = select.whereClause();
+        if (whereClause != null) {
             final SplitExpressionCollector filter = new SplitExpressionCollector();
-            expressionSplitter.split(whereClause.get(), filter);
+            expressionSplitter.split(whereClause, filter);
 
             if (!filter.aggregates().isEmpty()) {
                 throw new IllegalArgumentException("Aggregate are not allowed in the where clause");
@@ -131,12 +131,12 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                         if (joiner.predicate() != null) {
                             final ValueExpression semiJoinPredicate
                                     = createValueExpression(joiner.predicate(),
-                                                            innerJoinOutputSchema(plan.schema(), rightInput.schema()),
-                                                            outerQuerySchema);
+                                    innerJoinOutputSchema(plan.schema(), rightInput.schema()),
+                                    outerQuerySchema);
                             plan = new DependentSemiJoinLop(plan,
-                                                            rightInput,
-                                                            semiJoinPredicate,
-                                                            outputColumn);
+                                    rightInput,
+                                    semiJoinPredicate,
+                                    outputColumn);
                         } else {
                             plan = new DependentSemiJoinLop(plan, rightInput, outputColumn);
                         }
@@ -166,11 +166,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             expressionSplitter.split(column, havingAndOutputColumns);
         }
 
-        final Optional<AST> havingClause = select.havingClause();
+        final AST havingClause = select.havingClause();
         final AST havingFilter;
         final SubqueryExtractor havingSubqueryExtractor = new SubqueryExtractor();
-        if (havingClause.isPresent()) {
-            havingFilter = havingSubqueryExtractor.apply(havingClause.get());
+        if (havingClause != null) {
+            havingFilter = havingSubqueryExtractor.apply(havingClause);
 
             expressionSplitter.split(havingFilter, havingAndOutputColumns);
         } else {
@@ -185,8 +185,8 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final List<Aggregate> aggregates = havingAndOutputColumns.aggregates();
         if (!aggregates.isEmpty()) {
             final Schema aggregationInputSchema = plan.schema();
-            final List<ColumnReference> breakdowns = select.groupByClause()
-                    .map(groupingSetsList -> groupingSetsList.breakdowns().stream()
+            final List<ColumnReference> breakdowns = Optional.ofNullable(select.groupByClause())
+                    .map(groupingSetsList -> groupingSetsList.columns().stream()
                             .map(columnReferenceTransformer)
                             .map(aggregationInputSchema::normalize)
                             .collect(toList()))
@@ -213,13 +213,13 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             plan = new AliasLop(plan, aliasing.get());
         }
 
-        final Optional<SortSpecificationList> orderByClause = select.orderByClause();
-        if (orderByClause.isPresent()) {
-            final List<SortSpecification> specifications = orderByClause.get().columns()
+        final SortSpecificationList orderByClause = select.orderByClause();
+        if (orderByClause != null) {
+            final List<SortSpecification> specifications = orderByClause.sortSpecificationList()
                     .stream()
                     .map(element -> {
                         final ColumnReference reference = columnReferenceTransformer.apply(element.sortKey());
-                        if (element.orderingSpecification() == OrderingSpecification.DESCENDING) {
+                        if (element.ordering() == OrderingSpecification.DESCENDING) {
                             return descending(reference);
                         } else {
                             return ascending(reference);
@@ -295,7 +295,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         final LogicalOperator input = apply(tableAlias.input());
 
         final Optional<String> source = input.schema().columnNames().stream().map(ColumnReference::table).filter(
-                Optional::isPresent)
+                        Optional::isPresent)
                 .map(Optional::get).findAny();
 
         return new AliasLop(input, tableAlias(source.orElse(null), tableAlias.alias()));
@@ -312,12 +312,12 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
         }
 
         final Optional<String> sourceTable = input.schema().columnNames().stream().map(ColumnReference::table).filter(
-                Optional::isPresent)
+                        Optional::isPresent)
                 .map(Optional::get).findAny();
 
         return new AliasLop(new AliasLop(input,
-                                         tableAlias(sourceTable.orElse(null), tableAliasWithColumns.tableAlias())),
-                            columnAliasBuilder.build().orElseThrow());
+                tableAlias(sourceTable.orElse(null), tableAliasWithColumns.tableAlias())),
+                columnAliasBuilder.build().orElseThrow());
     }
 
     @Override

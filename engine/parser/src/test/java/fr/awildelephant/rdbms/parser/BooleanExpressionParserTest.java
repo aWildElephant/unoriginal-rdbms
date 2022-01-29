@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
+import static fr.awildelephant.rdbms.ast.ColumnType.DATE;
 import static fr.awildelephant.rdbms.ast.Exists.exists;
 import static fr.awildelephant.rdbms.ast.InValueList.inValueList;
 import static fr.awildelephant.rdbms.ast.Row.row;

@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.ColumnType;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.constraints.NotNullConstraint;
@@ -19,11 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.BOOLEAN;
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.DATE;
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.DECIMAL;
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.INTEGER;
-import static fr.awildelephant.rdbms.ast.ColumnDefinition.TEXT;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.tableWithChecker;
 
 final class TableCreator {
@@ -37,7 +33,7 @@ final class TableCreator {
         final Schema schema = new Schema(columns);
         final TableWithChecker table = tableWithChecker(schema);
 
-        createConstraintsOn(createTable.tableElementList(), table);
+        createConstraintsOn(createTable.columns(), table);
 
         return table;
     }
@@ -72,11 +68,11 @@ final class TableCreator {
 
     private static List<ColumnMetadata> attributesOf(CreateTable createTable) {
         final String tableName = createTable.tableName().name();
-        final TableElementList elements = createTable.tableElementList();
+        final TableElementList elements = createTable.columns();
         final List<ColumnDefinition> columnDefinitions = elements.columns();
         final ArrayList<ColumnMetadata> columns = new ArrayList<>(columnDefinitions.size());
 
-        final Set<String> notNullColumns = notNullColumns(createTable.tableElementList().notNullConstraints());
+        final Set<String> notNullColumns = notNullColumns(createTable.columns().notNullConstraints());
 
         int i = 0;
         for (ColumnDefinition element : columnDefinitions) {
@@ -101,14 +97,13 @@ final class TableCreator {
         return notNullColumns;
     }
 
-    private static Domain domainOf(int columnType) {
+    private static Domain domainOf(ColumnType columnType) {
         return switch (columnType) {
             case BOOLEAN -> Domain.BOOLEAN;
             case DATE -> Domain.DATE;
             case DECIMAL -> Domain.DECIMAL;
             case INTEGER -> Domain.INTEGER;
             case TEXT -> Domain.TEXT;
-            default -> throw new IllegalArgumentException();
         };
     }
 }

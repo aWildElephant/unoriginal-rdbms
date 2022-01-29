@@ -2,30 +2,12 @@ package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
-import java.util.Objects;
-
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class Limit implements AST {
-
-    private final AST input;
-    private final int limit;
-
-    private Limit(AST input, int limit) {
-        this.input = input;
-        this.limit = limit;
-    }
+public record Limit(AST input, int limit) implements AST {
 
     public static Limit limit(AST input, int limit) {
         return new Limit(input, limit);
-    }
-
-    public AST input() {
-        return input;
-    }
-
-    public int limit() {
-        return limit;
     }
 
     @Override
@@ -39,20 +21,5 @@ public final class Limit implements AST {
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(input, limit);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final Limit other)) {
-            return false;
-        }
-
-        return limit == other.limit
-                && Objects.equals(input, other.input);
     }
 }

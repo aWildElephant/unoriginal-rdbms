@@ -2,14 +2,10 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
-import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.ColumnType;
 import fr.awildelephant.rdbms.ast.value.IntervalGranularity;
 import fr.awildelephant.rdbms.lexer.Lexer;
-import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
-import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
-import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
-import fr.awildelephant.rdbms.lexer.tokens.Token;
-import fr.awildelephant.rdbms.lexer.tokens.TokenType;
+import fr.awildelephant.rdbms.lexer.tokens.*;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.Substring.substring;
@@ -22,9 +18,7 @@ import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Divide.divide;
 import static fr.awildelephant.rdbms.ast.value.ExtractYear.extractYear;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
-import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.DAY_GRANULARITY;
-import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.MONTH_GRANULARITY;
-import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.YEAR_GRANULARITY;
+import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.*;
 import static fr.awildelephant.rdbms.ast.value.IntervalLiteral.intervalLiteral;
 import static fr.awildelephant.rdbms.ast.value.Max.max;
 import static fr.awildelephant.rdbms.ast.value.Min.min;
@@ -35,27 +29,11 @@ import static fr.awildelephant.rdbms.ast.value.Placeholder.placeholder;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ELSE;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.END;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOR;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT_LITERAL;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.THEN;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHEN;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.*;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 
 final class ValueExpressionRule {
@@ -289,7 +267,7 @@ final class ValueExpressionRule {
 
         final boolean parenthesis = consumeIfNextTokenIs(LEFT_PAREN, lexer);
 
-        final Cast node = cast(deriveTextLiteral(lexer), ColumnDefinition.DATE);
+        final Cast node = cast(deriveTextLiteral(lexer), ColumnType.DATE);
 
         if (parenthesis) {
             consumeAndExpect(RIGHT_PAREN, lexer);

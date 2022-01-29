@@ -2,51 +2,17 @@ package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
-import java.util.Objects;
-
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class QualifiedColumnName implements ColumnName {
-
-    private final String qualifier;
-    private final String name;
-
-    private QualifiedColumnName(String qualifier, String name) {
-        this.qualifier = qualifier;
-        this.name = name;
-    }
+public record QualifiedColumnName(String qualifier, String name) implements ColumnName {
 
     public static QualifiedColumnName qualifiedColumnName(String qualifier, String name) {
         return new QualifiedColumnName(qualifier, name);
     }
 
-    public String qualifier() {
-        return qualifier;
-    }
-
-    @Override
-    public String name() {
-        return name;
-    }
-
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(qualifier, name);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final QualifiedColumnName other)) {
-            return false;
-        }
-
-        return Objects.equals(qualifier, other.qualifier)
-                && Objects.equals(name, other.name);
     }
 
     @Override

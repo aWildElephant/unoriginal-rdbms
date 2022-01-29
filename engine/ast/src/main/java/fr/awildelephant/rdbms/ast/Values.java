@@ -3,17 +3,10 @@ package fr.awildelephant.rdbms.ast;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
 import java.util.List;
-import java.util.Objects;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class Values implements AST {
-
-    private final List<Row> rows;
-
-    private Values(List<Row> rows) {
-        this.rows = rows;
-    }
+public record Values(List<Row> rows) implements AST {
 
     public static Values rows(final List<Row> rows) {
         return new Values(List.copyOf(rows));
@@ -23,27 +16,9 @@ public final class Values implements AST {
         return new Values(List.of(rows));
     }
 
-    public List<Row> rows() {
-        return rows;
-    }
-
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(rows);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final Values other)) {
-            return false;
-        }
-
-        return Objects.equals(rows, other.rows);
     }
 
     @Override

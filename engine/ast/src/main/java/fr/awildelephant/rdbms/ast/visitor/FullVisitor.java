@@ -1,74 +1,9 @@
 package fr.awildelephant.rdbms.ast.visitor;
 
-import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.Asterisk;
-import fr.awildelephant.rdbms.ast.Cast;
-import fr.awildelephant.rdbms.ast.ColumnAlias;
-import fr.awildelephant.rdbms.ast.ColumnDefinition;
-import fr.awildelephant.rdbms.ast.CreateTable;
-import fr.awildelephant.rdbms.ast.CreateView;
-import fr.awildelephant.rdbms.ast.Distinct;
-import fr.awildelephant.rdbms.ast.DropTable;
-import fr.awildelephant.rdbms.ast.Exists;
-import fr.awildelephant.rdbms.ast.Explain;
-import fr.awildelephant.rdbms.ast.GroupingSetsList;
-import fr.awildelephant.rdbms.ast.InValueList;
-import fr.awildelephant.rdbms.ast.InnerJoin;
-import fr.awildelephant.rdbms.ast.InsertInto;
-import fr.awildelephant.rdbms.ast.LeftJoin;
-import fr.awildelephant.rdbms.ast.Limit;
-import fr.awildelephant.rdbms.ast.QualifiedColumnName;
-import fr.awildelephant.rdbms.ast.Row;
-import fr.awildelephant.rdbms.ast.Select;
-import fr.awildelephant.rdbms.ast.SemiJoin;
-import fr.awildelephant.rdbms.ast.SortSpecification;
-import fr.awildelephant.rdbms.ast.SortSpecificationList;
-import fr.awildelephant.rdbms.ast.Substring;
-import fr.awildelephant.rdbms.ast.TableAlias;
-import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
-import fr.awildelephant.rdbms.ast.TableElementList;
-import fr.awildelephant.rdbms.ast.TableName;
-import fr.awildelephant.rdbms.ast.TableReferenceList;
-import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
-import fr.awildelephant.rdbms.ast.Values;
-import fr.awildelephant.rdbms.ast.With;
-import fr.awildelephant.rdbms.ast.WithElement;
-import fr.awildelephant.rdbms.ast.WithList;
-import fr.awildelephant.rdbms.ast.value.And;
-import fr.awildelephant.rdbms.ast.value.Any;
-import fr.awildelephant.rdbms.ast.value.Avg;
-import fr.awildelephant.rdbms.ast.value.Between;
-import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
-import fr.awildelephant.rdbms.ast.value.CaseWhen;
-import fr.awildelephant.rdbms.ast.value.Count;
-import fr.awildelephant.rdbms.ast.value.CountStar;
-import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
-import fr.awildelephant.rdbms.ast.value.Divide;
-import fr.awildelephant.rdbms.ast.value.Equal;
-import fr.awildelephant.rdbms.ast.value.ExtractYear;
-import fr.awildelephant.rdbms.ast.value.Greater;
-import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
-import fr.awildelephant.rdbms.ast.value.In;
-import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
-import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
-import fr.awildelephant.rdbms.ast.value.IsNull;
-import fr.awildelephant.rdbms.ast.value.Less;
-import fr.awildelephant.rdbms.ast.value.LessOrEqual;
-import fr.awildelephant.rdbms.ast.value.Like;
-import fr.awildelephant.rdbms.ast.value.Max;
-import fr.awildelephant.rdbms.ast.value.Min;
-import fr.awildelephant.rdbms.ast.value.Minus;
-import fr.awildelephant.rdbms.ast.value.Multiply;
-import fr.awildelephant.rdbms.ast.value.Not;
-import fr.awildelephant.rdbms.ast.value.NotEqual;
-import fr.awildelephant.rdbms.ast.value.NullLiteral;
-import fr.awildelephant.rdbms.ast.value.Or;
-import fr.awildelephant.rdbms.ast.value.Placeholder;
-import fr.awildelephant.rdbms.ast.value.Plus;
-import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
-import fr.awildelephant.rdbms.ast.value.Sum;
-import fr.awildelephant.rdbms.ast.value.TextLiteral;
+import fr.awildelephant.rdbms.ast.*;
+import fr.awildelephant.rdbms.ast.value.*;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -152,8 +87,8 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(Between between) {
         return between(function.apply(between.value()),
-                       function.apply(between.lowerBound()),
-                       function.apply(between.upperBound()));
+                function.apply(between.lowerBound()),
+                function.apply(between.upperBound()));
     }
 
     @Override
@@ -164,8 +99,8 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(CaseWhen caseWhen) {
         return caseWhen(function.apply(caseWhen.condition()),
-                        function.apply(caseWhen.thenExpression()),
-                        function.apply(caseWhen.elseExpression()));
+                function.apply(caseWhen.thenExpression()),
+                function.apply(caseWhen.elseExpression()));
     }
 
     @Override
@@ -266,8 +201,8 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(InnerJoin innerJoin) {
         return innerJoin(function.apply(innerJoin.left()),
-                         function.apply(innerJoin.right()),
-                         function.apply(innerJoin.joinSpecification()));
+                function.apply(innerJoin.right()),
+                function.apply(innerJoin.joinSpecification()));
     }
 
     @Override
@@ -293,8 +228,8 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(LeftJoin leftJoin) {
         return leftJoin(function.apply(leftJoin.left()),
-                        function.apply(leftJoin.right()),
-                        function.apply(leftJoin.joinSpecification()));
+                function.apply(leftJoin.right()),
+                function.apply(leftJoin.joinSpecification()));
     }
 
     @Override
@@ -390,18 +325,18 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(Select select) {
         return select(select.outputColumns().stream().map(function).collect(Collectors.toList()),
-                      function.apply(select.fromClause()),
-                      select.whereClause().map(function).orElse(null),
-                      select.groupByClause().orElse(null),
-                      select.havingClause().map(function).orElse(null),
-                      select.orderByClause().orElse(null));
+                function.apply(select.fromClause()),
+                Optional.ofNullable(select.whereClause()).map(function).orElse(null),
+                select.groupByClause(),
+                Optional.ofNullable(select.havingClause()).map(function).orElse(null),
+                select.orderByClause());
     }
 
     @Override
     public AST visit(SemiJoin semiJoin) {
         return semiJoin(function.apply(semiJoin.left()),
-                        function.apply(semiJoin.right()),
-                        function.apply(semiJoin.predicate()));
+                function.apply(semiJoin.right()),
+                function.apply(semiJoin.predicate()));
     }
 
     @Override
@@ -417,8 +352,8 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(Substring substring) {
         return substring(function.apply(substring.input()),
-                         function.apply(substring.start()),
-                         function.apply(substring.length()));
+                function.apply(substring.start()),
+                function.apply(substring.length()));
     }
 
     @Override
@@ -429,8 +364,8 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(TableAliasWithColumns tableAliasWithColumns) {
         return tableAliasWithColumns(function.apply(tableAliasWithColumns.input()),
-                                     tableAliasWithColumns.tableAlias(),
-                                     tableAliasWithColumns.columnAliases());
+                tableAliasWithColumns.tableAlias(),
+                tableAliasWithColumns.columnAliases());
     }
 
     @Override
@@ -446,8 +381,8 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(TableReferenceList tableReferenceList) {
         return tableReferenceList(function.apply(tableReferenceList.first()),
-                                  function.apply(tableReferenceList.second()),
-                                  tableReferenceList.others().stream().map(function).collect(Collectors.toList()));
+                function.apply(tableReferenceList.second()),
+                tableReferenceList.others().stream().map(function).collect(Collectors.toList()));
     }
 
     @Override
