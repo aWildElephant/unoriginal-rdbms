@@ -1,9 +1,9 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
+import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
@@ -12,7 +12,7 @@ public final class ColumnReferenceTransformer extends DefaultASTVisitor<ColumnRe
 
     private final ColumnNameResolver columnNameResolver;
 
-    ColumnReferenceTransformer(ColumnNameResolver columnNameResolver) {
+    public ColumnReferenceTransformer(ColumnNameResolver columnNameResolver) {
         this.columnNameResolver = columnNameResolver;
     }
 

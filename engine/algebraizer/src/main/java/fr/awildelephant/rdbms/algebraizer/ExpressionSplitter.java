@@ -3,30 +3,18 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.algebraizer.formula.SubqueryExtractor;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
-import fr.awildelephant.rdbms.ast.value.Any;
-import fr.awildelephant.rdbms.ast.value.Avg;
-import fr.awildelephant.rdbms.ast.value.Count;
-import fr.awildelephant.rdbms.ast.value.CountStar;
-import fr.awildelephant.rdbms.ast.value.Max;
-import fr.awildelephant.rdbms.ast.value.Min;
-import fr.awildelephant.rdbms.ast.value.Sum;
-import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
-import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
+import fr.awildelephant.rdbms.ast.value.*;
+import fr.awildelephant.rdbms.plan.aggregation.*;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
 
-final class ExpressionSplitter {
+public final class ExpressionSplitter {
 
     private final ColumnNameResolver columnNameResolver;
     private final ColumnReferenceTransformer columnReferenceTransformer;
 
-    ExpressionSplitter(ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer) {
+    public ExpressionSplitter(ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer) {
         this.columnNameResolver = columnNameResolver;
         this.columnReferenceTransformer = columnReferenceTransformer;
     }
@@ -58,8 +46,8 @@ final class ExpressionSplitter {
                 }
 
                 collector.addAggregate(new CountAggregate(columnReferenceTransformer.apply(countInput),
-                                                          outputName,
-                                                          countAggregate.distinct()));
+                        outputName,
+                        countAggregate.distinct()));
             } else if (aggregate instanceof CountStar) {
                 collector.addAggregate(new CountStarAggregate(outputName));
             } else if (aggregate instanceof Avg) {

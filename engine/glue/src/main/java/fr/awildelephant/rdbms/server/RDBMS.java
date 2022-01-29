@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.server;
 
-import fr.awildelephant.rdbms.algebraizer.Algebraizer;
+import fr.awildelephant.rdbms.algebraizer.*;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
@@ -22,13 +22,19 @@ public final class RDBMS {
 
     public RDBMS() {
         final Storage storage = new Storage();
-        final Algebraizer algebraizer = new Algebraizer(storage);
+        final Algebraizer algebraizer = buildAlgebraizerAndDependencies(storage);
         final Optimizer optimizer = new Optimizer();
         final WithInlinerFactory withInlinerFactory = new WithInlinerFactory();
-
-        final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory
-        );
+        final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory);
         executor = new ConcurrentQueryExecutor(dispatcher);
+    }
+
+    private Algebraizer buildAlgebraizerAndDependencies(Storage storage) {
+        final ColumnNameResolver columnNrmeResolver = new ColumnNameResolver();
+        final ColumnReferenceTransformer columnReferenceTransformer = new ColumnReferenceTransformer(columnNrmeResolver);
+        final ExpressionSplitter expressionSplitter = new ExpressionSplitter(columnNrmeResolver, columnReferenceTransformer);
+        final AliasExtractor aliasExtractor = new AliasExtractor(columnReferenceTransformer);
+        return new Algebraizer(storage, columnNrmeResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
     }
 
     private static AST parse(final String query) {

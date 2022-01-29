@@ -4,11 +4,11 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
-final class AliasExtractor {
+public final class AliasExtractor {
 
     private final ColumnReferenceTransformer columnReferenceTransformer;
 
-    AliasExtractor(ColumnReferenceTransformer columnReferenceTransformer) {
+    public AliasExtractor(ColumnReferenceTransformer columnReferenceTransformer) {
         this.columnReferenceTransformer = columnReferenceTransformer;
     }
 

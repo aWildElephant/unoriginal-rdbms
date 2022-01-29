@@ -41,24 +41,22 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     private final ColumnNameResolver columnNameResolver;
     private final ColumnReferenceTransformer columnReferenceTransformer;
 
-    public Algebraizer(Storage storage) {
-        this(storage, EMPTY_SCHEMA);
+    public Algebraizer(Storage storage, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
+        this(storage, EMPTY_SCHEMA, columnNameResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
     }
 
-    public Algebraizer(Storage storage, Schema outerQuerySchema) {
+    public Algebraizer(Storage storage, Schema outerQuerySchema, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
         this.storage = storage;
         this.outerQuerySchema = outerQuerySchema;
-
-        // TODO: ne pas créer ces dépendances à chaque fois
-        columnNameResolver = new ColumnNameResolver();
-        columnReferenceTransformer = new ColumnReferenceTransformer(columnNameResolver);
-        expressionSplitter = new ExpressionSplitter(columnNameResolver, columnReferenceTransformer);
-        aliasExtractor = new AliasExtractor(columnReferenceTransformer);
+        this.columnNameResolver = columnNameResolver;
+        this.columnReferenceTransformer = columnReferenceTransformer;
+        this.expressionSplitter = expressionSplitter;
+        this.aliasExtractor = aliasExtractor;
 
     }
 
     private Algebraizer withOuterQuerySchema(Schema outerQuerySchema) {
-        return new Algebraizer(storage, outerQuerySchema);
+        return new Algebraizer(storage, outerQuerySchema, columnNameResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
     }
 
     @Override
