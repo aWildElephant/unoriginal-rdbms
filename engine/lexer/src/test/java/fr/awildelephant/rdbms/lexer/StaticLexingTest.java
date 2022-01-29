@@ -15,7 +15,7 @@ import static java.util.Arrays.stream;
 class StaticLexingTest {
 
     private static Object[][] staticTokensParams() {
-        return Stream.concat(stream(Keywords.values()), stream(StaticToken.values()))
+        return Stream.<Token>concat(stream(Keywords.values()), stream(StaticToken.values()))
                 .filter(token -> token != END_OF_FILE_TOKEN)
                 .map(token -> new Object[]{token.text(), token})
                 .toArray(Object[][]::new);
