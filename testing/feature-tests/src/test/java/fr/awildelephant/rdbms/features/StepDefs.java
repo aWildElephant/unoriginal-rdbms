@@ -1,16 +1,15 @@
 package fr.awildelephant.rdbms.features;
 
-import io.cucumber.java8.En;
 import fr.awildelephant.rdbms.test.commons.ExpectedResult;
 import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java8.En;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
-import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -27,8 +26,9 @@ public class StepDefs implements En {
 
             final List<String> columnNames = content.row(0);
             final List<String> columnDefinitions = content.row(1);
-            final List<String> columnTypes = columnDefinitions.stream().map(definition -> definition.split(" ")[0])
-                                                              .collect(toList());
+            final List<String> columnTypes = columnDefinitions.stream()
+                    .map(definition -> definition.split(" ")[0])
+                    .toList();
 
             final StringBuilder createTableBuilder = new StringBuilder("CREATE TABLE ").append(name).append(" (");
             for (int i = 0; i < columnNames.size(); i++) {
