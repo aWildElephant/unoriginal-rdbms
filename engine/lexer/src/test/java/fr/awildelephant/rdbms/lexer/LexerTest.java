@@ -20,7 +20,14 @@ import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TABLE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TEXT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TRUE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.VALUES_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.*;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.EQUAL_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LESS_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PERIOD_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LexerTest {
@@ -132,5 +139,12 @@ class LexerTest {
 
         assertThat(lexer.consumeNextToken()).isEqualTo(LESS_TOKEN);
         assertThat(lexer.consumeNextToken()).isEqualTo(EQUAL_TOKEN);
+    }
+
+    @Test
+    void it_should_properly_handle_accents_in_text_literals() {
+        final Lexer lexer = new Lexer(InputStreamWrapper.wrap("'àéïôù'"));
+
+        assertThat(lexer.consumeNextToken()).isEqualTo(new TextLiteralToken("àéïôù"));
     }
 }

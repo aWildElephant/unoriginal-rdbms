@@ -3,23 +3,25 @@ package fr.awildelephant.rdbms.lexer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 public final class InputStreamWrapper {
 
     private static final int END_OF_FILE_CODE = -1;
 
-    private final InputStream inputStream;
+    private final Reader reader;
 
     private int next;
 
-    private InputStreamWrapper(InputStream inputStream) {
-        this.inputStream = inputStream;
+    private InputStreamWrapper(Reader reader) {
+        this.reader = reader;
 
         storeNextCharacter();
     }
 
     private static InputStreamWrapper wrap(InputStream inputStream) {
-        return new InputStreamWrapper(inputStream);
+        return new InputStreamWrapper(new InputStreamReader(inputStream));
     }
 
     public static InputStreamWrapper wrap(String input) {
@@ -42,7 +44,7 @@ public final class InputStreamWrapper {
 
     private void storeNextCharacter() {
         try {
-            next = inputStream.read();
+            next = reader.read();
         } catch (IOException e) {
             throw new IllegalStateException(e); // Throw a customized exception
         }

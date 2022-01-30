@@ -51,9 +51,8 @@ class BooleanExpressionParserTest {
 
     @Test
     void it_should_parse_an_equal_comparison() {
-        // TODO: I didn't put ê/à because the lexer doesn't handle them properly
-        assertParsing("VALUES ((0 + 0) = 'la tete a toto')",
-                rows(row(equal(plus(integerLiteral(0), integerLiteral(0)), textLiteral("la tete a toto")))));
+        assertParsing("VALUES ((0 + 0) = 'la tête à toto')",
+                rows(row(equal(plus(integerLiteral(0), integerLiteral(0)), textLiteral("la tête à toto")))));
     }
 
     @Test
