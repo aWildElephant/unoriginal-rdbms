@@ -84,7 +84,6 @@ public final class Lexer {
                 return EQUAL_TOKEN;
             case '<':
                 if (input.get() == '=') {
-                    // TODO: we tokenize "< =" to LESS_OR_EQUAL_TOKEN
                     input.next();
 
                     return LESS_OR_EQUAL_TOKEN;

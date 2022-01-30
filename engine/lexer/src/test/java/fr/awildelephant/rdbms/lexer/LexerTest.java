@@ -20,12 +20,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TABLE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TEXT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.TRUE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.VALUES_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.ASTERISK_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.COMMA_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.LEFT_PAREN_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PERIOD_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
-import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
+import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LexerTest {
@@ -129,5 +124,13 @@ class LexerTest {
         lexer.restore(snapshot);
 
         assertThat(lexer.lookupNextToken()).isEqualTo(ASTERISK_TOKEN);
+    }
+
+    @Test
+    void it_should_not_tokenize_less_than_and_equal_as_less_than_or_equal_to() {
+        final Lexer lexer = new Lexer(InputStreamWrapper.wrap("< ="));
+
+        assertThat(lexer.consumeNextToken()).isEqualTo(LESS_TOKEN);
+        assertThat(lexer.consumeNextToken()).isEqualTo(EQUAL_TOKEN);
     }
 }
