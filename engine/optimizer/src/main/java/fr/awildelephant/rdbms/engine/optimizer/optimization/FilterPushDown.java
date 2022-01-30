@@ -3,37 +3,15 @@ package fr.awildelephant.rdbms.engine.optimizer.optimization;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.data.value.NullValue;
 import fr.awildelephant.rdbms.evaluator.Formula;
-import fr.awildelephant.rdbms.plan.AggregationLop;
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.BaseTableLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
-import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LeftJoinLop;
-import fr.awildelephant.rdbms.plan.LimitLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.MapLop;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.SemiJoinLop;
-import fr.awildelephant.rdbms.plan.TableConstructorLop;
+import fr.awildelephant.rdbms.plan.*;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
@@ -406,16 +384,6 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
                 semiJoin.outputColumnName());
 
         return createFilterAbove(filtersReferencingSemiJoin, transformedJoin);
-    }
-
-    private Predicate<ColumnReference> semiJoinReference(String semiJoinOutputColumnName) {
-        return columnReference -> {
-            if (columnReference instanceof QualifiedColumnReference) {
-                return false;
-            }
-
-            return semiJoinOutputColumnName.equals(columnReference.name());
-        };
     }
 
     @Override
