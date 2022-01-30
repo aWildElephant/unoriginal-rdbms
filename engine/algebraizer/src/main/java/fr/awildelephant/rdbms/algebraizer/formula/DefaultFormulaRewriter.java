@@ -20,7 +20,6 @@ import static fr.awildelephant.rdbms.ast.value.NotEqual.notEqual;
 import static fr.awildelephant.rdbms.ast.value.Or.or;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 
-// TODO: gérer les constantes ici
 public abstract class DefaultFormulaRewriter extends DefaultASTVisitor<AST> {
 
     @Override
