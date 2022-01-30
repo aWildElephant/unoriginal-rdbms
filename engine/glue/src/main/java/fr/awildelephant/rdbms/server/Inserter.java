@@ -5,9 +5,9 @@ import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.List;
@@ -24,9 +24,9 @@ final class Inserter {
         final Domain[] domains = new Domain[schema.numberOfAttributes()];
 
         for (ColumnReference columnReference : schema.columnNames()) {
-            final ColumnMetadata column = schema.column(columnReference);
+            final OrderedColumnMetadata column = schema.column(columnReference);
 
-            domains[column.index()] = column.domain();
+            domains[column.index()] = column.metadata().domain();
         }
 
         insertInto.rows().rows().forEach(row -> table.add(createTuple(row.values(), domains)));

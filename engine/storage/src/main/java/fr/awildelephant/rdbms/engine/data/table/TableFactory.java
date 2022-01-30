@@ -1,6 +1,12 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
-import fr.awildelephant.rdbms.engine.data.column.*;
+import fr.awildelephant.rdbms.engine.data.column.BooleanColumn;
+import fr.awildelephant.rdbms.engine.data.column.Column;
+import fr.awildelephant.rdbms.engine.data.column.DateColumn;
+import fr.awildelephant.rdbms.engine.data.column.DecimalColumn;
+import fr.awildelephant.rdbms.engine.data.column.IntegerColumn;
+import fr.awildelephant.rdbms.engine.data.column.NonNullableIntegerColumn;
+import fr.awildelephant.rdbms.engine.data.column.TextColumn;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
@@ -29,7 +35,7 @@ public final class TableFactory {
         final List<Column> columns = new ArrayList<>(schema.numberOfAttributes());
 
         for (ColumnReference columnName : schema.columnNames()) {
-            final ColumnMetadata columnMetadata = schema.column(columnName);
+            final ColumnMetadata columnMetadata = schema.column(columnName).metadata();
 
             final Column column = createColumn(columnMetadata, initialCapacity);
 

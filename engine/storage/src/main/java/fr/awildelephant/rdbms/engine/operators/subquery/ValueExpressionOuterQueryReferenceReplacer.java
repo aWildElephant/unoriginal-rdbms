@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
@@ -21,9 +21,9 @@ final class ValueExpressionOuterQueryReferenceReplacer extends DefaultValueExpre
 
     @Override
     public ValueExpression visit(OuterQueryVariable outerQueryVariable) {
-        final ColumnMetadata column = schema.column(outerQueryVariable.reference());
+        final OrderedColumnMetadata column = schema.column(outerQueryVariable.reference());
 
-        return constantExpression(record.get(column.index()), column.domain());
+        return constantExpression(record.get(column.index()), column.metadata().domain());
     }
 
     @Override

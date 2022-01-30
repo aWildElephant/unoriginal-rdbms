@@ -25,9 +25,8 @@ public final class ExplanationTableBuilder {
     }
 
     private Table explainTable() {
-        final ColumnMetadata column = new ColumnMetadata(0, new UnqualifiedColumnReference("explain"), Domain.TEXT, true, false);
-        final Schema schema = new Schema(List.of(column));
-        return simpleTable(schema);
+        final ColumnMetadata column = new ColumnMetadata(new UnqualifiedColumnReference("explain"), Domain.TEXT, true, false);
+        return simpleTable(Schema.of(column));
     }
 
     private Record record(String value) {

@@ -29,7 +29,7 @@ public final class SemiJoinLop extends AbstractLop {
     }
 
     private static Schema outputSchema(LogicalOperator left, ColumnReference outputColumnName) {
-        return left.schema().extend(List.of(new ColumnMetadata(0, outputColumnName, Domain.BOOLEAN, true, false)));
+        return left.schema().extend(List.of(new ColumnMetadata(outputColumnName, Domain.BOOLEAN, true, false)));
     }
 
     public LogicalOperator left() {

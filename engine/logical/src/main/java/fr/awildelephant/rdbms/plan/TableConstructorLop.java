@@ -33,10 +33,10 @@ public final class TableConstructorLop extends AbstractLop {
             final UnqualifiedColumnReference columnName = new UnqualifiedColumnReference("column" + (i + 1));
 
             // TODO: try to determine whether or not the formula is nullable
-            columns.add(new ColumnMetadata(i, columnName, columnTypes.get(i), false, false));
+            columns.add(new ColumnMetadata(columnName, columnTypes.get(i), false, false));
         }
 
-        return new Schema(columns);
+        return Schema.of(columns);
     }
 
     private static List<Domain> determineColumnTypes(List<List<ValueExpression>> matrix) {

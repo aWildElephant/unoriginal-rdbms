@@ -51,8 +51,8 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
         final LogicalOperator leftInput = apply(inputsToJoin.get(0));
         final LogicalOperator rightInput = cartesianProducts(listExcludingFirstElement(inputsToJoin));
         final LogicalOperator leftmostInput = new InnerJoinLop(leftInput, rightInput, filter,
-                                                               joinOutputSchema(leftInput.schema(),
-                                                                                rightInput.schema()));
+                joinOutputSchema(leftInput.schema(),
+                        rightInput.schema()));
 
         return continueReordering(leftmostInput, inputs, filters);
     }
@@ -104,16 +104,16 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
         final Schema schema = operator.schema();
 
         return filters.stream()
-                      .filter(filter -> filter.variables().anyMatch(schema::contains))
-                      .findAny();
+                .filter(filter -> filter.variables().anyMatch(schema::contains))
+                .findAny();
     }
 
     private List<LogicalOperator> inputsToHaveAllColumns(List<LogicalOperator> inputs, ValueExpression filter) {
         final List<ColumnReference> columns = filter.variables().collect(toList());
 
         return inputs.stream()
-                     .filter(input -> providesAnyColumn(columns, input.schema()))
-                     .collect(toList());
+                .filter(input -> providesAnyColumn(columns, input.schema()))
+                .collect(toList());
     }
 
     private boolean providesAnyColumn(List<ColumnReference> columns, Schema inputSchema) {
@@ -138,7 +138,7 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
     }
 
     private static Schema joinOutputSchema(Schema leftSchema, Schema rightSchema) {
-        return leftSchema.extend(rightSchema.columnNames().stream().map(rightSchema::column).collect(toList()));
+        return leftSchema.extend(rightSchema.columnMetadataList());
     }
 
     @Override

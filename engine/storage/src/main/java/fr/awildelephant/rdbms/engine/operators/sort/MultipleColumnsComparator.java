@@ -2,7 +2,8 @@ package fr.awildelephant.rdbms.engine.operators.sort;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.plan.sort.SortSpecification;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Comparator;
@@ -16,7 +17,7 @@ public final class MultipleColumnsComparator implements RecordComparator {
 
     public MultipleColumnsComparator(Schema schema, List<SortSpecification> sortSpecificationList) {
         comparators = sortSpecificationList.stream().map(sortSpecification -> {
-            final ColumnMetadata column = schema.column(sortSpecification.column());
+            final OrderedColumnMetadata column = schema.column(sortSpecification.column());
 
             final RecordComparator comparator = comparatorForDomain(column);
 
@@ -24,13 +25,14 @@ public final class MultipleColumnsComparator implements RecordComparator {
         }).collect(toList());
     }
 
-    private RecordComparator comparatorForDomain(ColumnMetadata column) {
-        return switch (column.domain()) {
+    private RecordComparator comparatorForDomain(OrderedColumnMetadata column) {
+        final Domain domain = column.metadata().domain();
+        return switch (domain) {
             case DATE -> new DateColumnComparator(column.index());
             case DECIMAL -> new DecimalColumnComparator(column.index());
             case INTEGER -> new IntegerColumnComparator(column.index());
             case TEXT -> new TextColumnComparator(column.index());
-            default -> throw new UnsupportedOperationException("Sort on something else than a text column");
+            default -> throw new UnsupportedOperationException("Unsupported sort on " + domain + " column");
         };
     }
 

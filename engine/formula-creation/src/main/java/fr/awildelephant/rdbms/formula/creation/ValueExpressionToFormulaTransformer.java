@@ -29,11 +29,9 @@ import fr.awildelephant.rdbms.plan.arithmetic.SubstringExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
-
-import java.util.List;
 
 import static fr.awildelephant.rdbms.evaluator.operation.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
@@ -63,7 +61,6 @@ import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 import static fr.awildelephant.rdbms.schema.Domain.INTERVAL;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
-import static java.util.stream.Collectors.toList;
 
 public final class ValueExpressionToFormulaTransformer extends DefaultValueExpressionVisitor<Operation> {
 
@@ -86,11 +83,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     }
 
     public static Formula createFormula(ValueExpression expression, Schema firstInputSchema, Schema secondInputSchema) {
-        final List<ColumnMetadata> secondInputColumns = secondInputSchema.columnNames().stream()
-                .map(secondInputSchema::column)
-                .collect(toList());
-
-        final Schema joinedSchema = firstInputSchema.extend(secondInputColumns);
+        final Schema joinedSchema = firstInputSchema.extend(secondInputSchema.columnMetadataList());
 
         return createFormula(expression, joinedSchema);
     }
@@ -323,9 +316,9 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(Variable variable) {
-        final ColumnMetadata column = schema.column(variable.reference());
+        final OrderedColumnMetadata column = schema.column(variable.reference());
 
-        return valuesHolder.createReference(column.index(), column.domain());
+        return valuesHolder.createReference(column.index(), column.metadata().domain());
     }
 
     @Override

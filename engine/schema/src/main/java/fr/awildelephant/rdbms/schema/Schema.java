@@ -7,31 +7,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-
 public final class Schema {
 
-    public static final Schema EMPTY_SCHEMA = new Schema(emptyList());
+    public static final Schema EMPTY_SCHEMA = new Schema(List.of());
 
     private final List<ColumnReference> allColumns;
 
-    private final Map<String, Map<String, ColumnMetadata>> columnIndex;
+    private final Map<String, Map<String, OrderedColumnMetadata>> columnIndex;
 
-    public Schema(List<ColumnMetadata> columns) {
+    private Schema(List<ColumnMetadata> columns) {
         final int numberOfColumns = columns.size();
-        final List<ColumnMetadata> reindexedColumns = new ArrayList<>(numberOfColumns);
+        final List<OrderedColumnMetadata> reindexedColumns = new ArrayList<>(numberOfColumns);
 
         for (int i = 0; i < numberOfColumns; i++) {
             final ColumnMetadata column = columns.get(i);
-            reindexedColumns.add(new ColumnMetadata(i, column.name(), column.domain(), column.notNull(), column.system()));
+            reindexedColumns.add(new OrderedColumnMetadata(i, column));
         }
 
         columnIndex = new HashMap<>();
         allColumns = new ArrayList<>();
 
-        for (ColumnMetadata column : reindexedColumns) {
-            final ColumnReference columnReference = column.name();
+        for (OrderedColumnMetadata column : reindexedColumns) {
+            final ColumnReference columnReference = column.metadata().name();
             allColumns.add(columnReference);
             columnIndex.compute(columnReference.name(), (unused, tables) -> {
                 if (tables == null) {
@@ -45,16 +42,31 @@ public final class Schema {
         }
     }
 
-    public static Schema emptySchema() {
+    public static Schema empty() {
         return EMPTY_SCHEMA;
+    }
+
+    public static Schema of(ColumnMetadata column) {
+        return of(List.of(column));
+    }
+
+    public static Schema of(List<ColumnMetadata> columns) {
+        return new Schema(columns);
     }
 
     public List<ColumnReference> columnNames() {
         return allColumns;
     }
 
-    public ColumnMetadata column(String name) {
-        final Map<String, ColumnMetadata> tables = columnIndex.get(name);
+    public List<ColumnMetadata> columnMetadataList() {
+        return columnNames().stream()
+                .map(this::column)
+                .map(OrderedColumnMetadata::metadata)
+                .toList();
+    }
+
+    public OrderedColumnMetadata column(String name) {
+        final Map<String, OrderedColumnMetadata> tables = columnIndex.get(name);
 
         if (tables == null || tables.isEmpty()) {
             throw new ColumnNotFoundException(name);
@@ -67,14 +79,14 @@ public final class Schema {
         return tables.values().iterator().next();
     }
 
-    public ColumnMetadata column(String tableName, String columnName) {
-        final Map<String, ColumnMetadata> tables = columnIndex.get(columnName);
+    public OrderedColumnMetadata column(String tableName, String columnName) {
+        final Map<String, OrderedColumnMetadata> tables = columnIndex.get(columnName);
 
         if (tables == null || tables.isEmpty()) {
             throw new ColumnNotFoundException(tableName, columnName);
         }
 
-        final ColumnMetadata column = tables.get(tableName);
+        final OrderedColumnMetadata column = tables.get(tableName);
 
         if (column == null) {
             throw new ColumnNotFoundException(tableName, columnName);
@@ -83,10 +95,10 @@ public final class Schema {
         return column;
     }
 
-    public ColumnMetadata column(ColumnReference reference) {
+    public OrderedColumnMetadata column(ColumnReference reference) {
         return reference.table()
-                        .map(qualifier -> column(qualifier, reference.name()))
-                        .orElseGet(() -> column(reference.name()));
+                .map(qualifier -> column(qualifier, reference.name()))
+                .orElseGet(() -> column(reference.name()));
     }
 
     public boolean contains(ColumnReference columnReference) {
@@ -107,7 +119,7 @@ public final class Schema {
     }
 
     public ColumnReference normalize(ColumnReference reference) {
-        return column(reference).name();
+        return column(reference).metadata().name();
     }
 
     public int numberOfAttributes() {
@@ -117,19 +129,18 @@ public final class Schema {
     public Schema project(Iterable<ColumnReference> references) {
         final List<ColumnMetadata> projection = new ArrayList<>();
 
-        int i = 0;
         for (ColumnReference reference : references) {
             final ColumnMetadata column = reference.table()
-                                           .map(qualifier -> column(qualifier, reference.name()))
-                                           .orElseGet(() -> column(reference.name()));
+                    .map(qualifier -> column(qualifier, reference.name()))
+                    .orElseGet(() -> column(reference.name()))
+                    .metadata();
 
             if (column == null) {
                 throw new IllegalStateException(
                         "Column `" + reference + "` not found. Available columns " + this.allColumns);
             }
 
-            projection.add(new ColumnMetadata(i, column.name(), column.domain(), column.notNull(), column.system()));
-            i = i + 1;
+            projection.add(new ColumnMetadata(column.name(), column.domain(), column.notNull(), column.system()));
         }
 
         return new Schema(projection);
@@ -137,27 +148,28 @@ public final class Schema {
 
     public Schema alias(Function<ColumnReference, ColumnReference> alias) {
         final List<ColumnMetadata> columns = allColumns.stream()
-                                               .map(this::column)
-                                               .map(column -> new ColumnMetadata(column.index(),
-                                                                         alias.apply(column.name()),
-                                                                         column.domain(),
-                                                                         column.notNull(),
-                                                                         column.system()))
-                                               .collect(toList());
+                .map(this::column)
+                .map(OrderedColumnMetadata::metadata)
+                .map(column -> alias(alias, column))
+                .toList();
 
         return new Schema(columns);
     }
 
-    public Schema extend(List<ColumnMetadata> newColumns) {
-        final ArrayList<ColumnMetadata> allColumns = new ArrayList<>(this.allColumns.size() + newColumns.size());
+    private ColumnMetadata alias(Function<ColumnReference, ColumnReference> alias, ColumnMetadata column) {
+        return new ColumnMetadata(alias.apply(column.name()), column.domain(), column.notNull(), column.system());
+    }
 
-        for (ColumnReference columnReference : this.allColumns) {
-            allColumns.add(column(columnReference));
+    public Schema extend(List<ColumnMetadata> newColumns) {
+        final ArrayList<ColumnMetadata> combinedColumns = new ArrayList<>(allColumns.size() + newColumns.size());
+
+        for (ColumnReference columnReference : allColumns) {
+            combinedColumns.add(column(columnReference).metadata());
         }
 
-        allColumns.addAll(newColumns);
+        combinedColumns.addAll(newColumns);
 
-        return new Schema(allColumns);
+        return new Schema(combinedColumns);
     }
 
     @Override

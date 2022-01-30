@@ -22,11 +22,11 @@ public final class AsteriskExpander extends DefaultASTVisitor<Stream<AST>> {
     @Override
     public Stream<AST> visit(Asterisk asterisk) {
         return inputSchema.columnNames()
-                          .stream()
-                          .filter(columnReference -> !inputSchema.column(columnReference).system())
-                          .map(columnName -> columnName.table()
-                                  .<ColumnName>map(qualifier -> qualifiedColumnName(qualifier, columnName.name()))
-                                  .orElseGet(() -> unqualifiedColumnName(columnName.name())));
+                .stream()
+                .filter(columnReference -> !inputSchema.column(columnReference).metadata().system())
+                .map(columnName -> columnName.table()
+                        .<ColumnName>map(qualifier -> qualifiedColumnName(qualifier, columnName.name()))
+                        .orElseGet(() -> unqualifiedColumnName(columnName.name())));
     }
 
     @Override

@@ -30,7 +30,7 @@ final class TableCreator {
 
     static TableWithChecker tableFrom(CreateTable createTable) {
         final List<ColumnMetadata> columns = attributesOf(createTable);
-        final Schema schema = new Schema(columns);
+        final Schema schema = Schema.of(columns);
         final TableWithChecker table = tableWithChecker(schema);
 
         createConstraintsOn(createTable.columns(), table);
@@ -74,16 +74,12 @@ final class TableCreator {
 
         final Set<String> notNullColumns = notNullColumns(createTable.columns().notNullConstraints());
 
-        int i = 0;
         for (ColumnDefinition element : columnDefinitions) {
             final String columnName = element.columnName();
             final QualifiedColumnReference columnReference = new QualifiedColumnReference(tableName, columnName);
             final Domain columnType = domainOf(element.columnType());
             final boolean notNull = notNullColumns.contains(columnName);
-
-            columns.add(new ColumnMetadata(i, columnReference, columnType, notNull, false));
-
-            i = i + 1;
+            columns.add(new ColumnMetadata(columnReference, columnType, notNull, false));
         }
 
         return columns;

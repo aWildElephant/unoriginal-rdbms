@@ -21,10 +21,10 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
     private static final Rdbms.Value TRUE_VALUE_MESSAGE = Rdbms.Value.newBuilder().setBooleanValue(
             Rdbms.BooleanValue.newBuilder().setValue(true).build()).build();
     private static final Rdbms.Value NULL_VALUE_MESSAGE = Rdbms.Value.newBuilder()
-                                                                     .setNullValue(Rdbms.NullValue.newBuilder().build())
-                                                                     .build();
+            .setNullValue(Rdbms.NullValue.newBuilder().build())
+            .build();
     private static final Rdbms.UpdateResult DUMMY_UPDATE_RESULT = Rdbms.UpdateResult.newBuilder()
-                                                                                    .setNumberOfUpdatedRows(0).build();
+            .setNumberOfUpdatedRows(0).build();
 
     private final RDBMS rdbms;
 
@@ -58,8 +58,8 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
             final Rdbms.QueryResult.Column.Builder columnBuilder = Rdbms.QueryResult.Column.newBuilder();
 
             final String fullName = columnReference.table()
-                                                   .map(tableName -> tableName + '.' + columnReference.name())
-                                                   .orElseGet(columnReference::name);
+                    .map(tableName -> tableName + '.' + columnReference.name())
+                    .orElseGet(columnReference::name);
 
             columnBuilder.setName(fullName);
             columnBuilder.setType(getType(schema, columnReference));
@@ -75,7 +75,7 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
     }
 
     private Rdbms.QueryResult.Type getType(Schema schema, ColumnReference columnReference) {
-        return switch (schema.column(columnReference).domain()) {
+        return switch (schema.column(columnReference).metadata().domain()) {
             case BOOLEAN -> Rdbms.QueryResult.Type.BOOLEAN;
             case DECIMAL -> Rdbms.QueryResult.Type.DECIMAL;
             case INTEGER -> Rdbms.QueryResult.Type.INTEGER;

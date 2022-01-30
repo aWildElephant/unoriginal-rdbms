@@ -5,9 +5,9 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
+import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 
 public final class DependentJoinLop extends AbstractLop {
 
@@ -28,7 +28,7 @@ public final class DependentJoinLop extends AbstractLop {
     }
 
     private static Schema createOutputSchema(Schema input, Schema subquery) {
-        return input.extend(subquery.columnNames().stream().map(subquery::column).collect(Collectors.toList()));
+        return innerJoinOutputSchema(input, subquery);
     }
 
     public LogicalOperator left() {

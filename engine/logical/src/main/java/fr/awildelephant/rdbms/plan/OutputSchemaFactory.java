@@ -15,22 +15,13 @@ public final class OutputSchemaFactory {
     }
 
     public static Schema mapOutputSchema(Schema inputSchema, List<ValueExpression> expressions, List<ColumnReference> expressionsOutputNames) {
-        // TODO: can we use Schema#extend
-        final List<ColumnReference> inputColumns = inputSchema.columnNames();
-
-        final List<ColumnMetadata> outputColumns = new ArrayList<>(inputColumns.size() + expressions.size());
-
-        for (ColumnReference columnReference : inputColumns) {
-            outputColumns.add(inputSchema.column(columnReference));
-        }
-
-        int index = inputColumns.size();
+        final List<ColumnMetadata> expressionsColumns = new ArrayList<>(expressions.size());
 
         for (int i = 0; i < expressions.size(); i++) {
-            outputColumns.add(new ColumnMetadata(index++, expressionsOutputNames.get(i), expressions.get(i).domain(),
-                                                 false, false));
+            expressionsColumns.add(new ColumnMetadata(expressionsOutputNames.get(i), expressions.get(i).domain(),
+                    false, false));
         }
 
-        return new Schema(outputColumns);
+        return inputSchema.extend(expressionsColumns);
     }
 }

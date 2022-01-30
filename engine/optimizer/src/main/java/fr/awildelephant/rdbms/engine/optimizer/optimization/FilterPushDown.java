@@ -3,14 +3,34 @@ package fr.awildelephant.rdbms.engine.optimizer.optimization;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.data.value.NullValue;
 import fr.awildelephant.rdbms.evaluator.Formula;
-import fr.awildelephant.rdbms.plan.*;
+import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.BaseTableLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
+import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.SemiJoinLop;
+import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,8 +80,8 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final LogicalOperator transformedInput = new FilterPushDown(filtersOnInput).apply(aggregation.input());
 
         return createFilterAbove(filtersOnAggregates,
-                                 new AggregationLop(transformedInput, aggregation.breakdowns(),
-                                                    aggregation.aggregates()));
+                new AggregationLop(transformedInput, aggregation.breakdowns(),
+                        aggregation.aggregates()));
     }
 
     @Override
@@ -175,13 +195,13 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final LogicalOperator transformedJoin;
         if (joinCondition.isPresent()) {
             transformedJoin = new InnerJoinLop(transformedLeftInput,
-                                               transformedRightInput,
-                                               joinCondition.get(),
-                                               innerJoin.schema());
+                    transformedRightInput,
+                    joinCondition.get(),
+                    innerJoin.schema());
         } else {
             transformedJoin = new CartesianProductLop(transformedLeftInput,
-                                                      transformedRightInput,
-                                                      innerJoin.schema());
+                    transformedRightInput,
+                    innerJoin.schema());
         }
 
         return createFilterAbove(filtersAbove, transformedJoin);
@@ -253,14 +273,14 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             final LogicalOperator transformedJoin;
             if (transformToInnerJoin) {
                 transformedJoin = new InnerJoinLop(transformedLeftInput,
-                                                   transformedRightInput,
-                                                   joinCondition.get(),
-                                                   innerJoinOutputSchema(leftInputSchema, rightInputSchema));
+                        transformedRightInput,
+                        joinCondition.get(),
+                        innerJoinOutputSchema(leftInputSchema, rightInputSchema));
             } else {
                 transformedJoin = new LeftJoinLop(transformedLeftInput,
-                                                  transformedRightInput,
-                                                  joinCondition.get(),
-                                                  leftJoin.schema());
+                        transformedRightInput,
+                        joinCondition.get(),
+                        leftJoin.schema());
             }
 
             return createFilterAbove(filtersAbove, transformedJoin);
@@ -269,12 +289,12 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
 
             return collapseFilters(filtersAbove)
                     .<LogicalOperator>map(filter -> new InnerJoinLop(transformedLeftInput,
-                                                                     transformedRightInput,
-                                                                     filter,
-                                                                     outputSchema))
+                            transformedRightInput,
+                            filter,
+                            outputSchema))
                     .orElseGet(() -> new CartesianProductLop(transformedLeftInput,
-                                                             transformedRightInput,
-                                                             outputSchema));
+                            transformedRightInput,
+                            outputSchema));
         }
     }
 
@@ -286,7 +306,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final ValueExpression simplifiedExpression = new ExpressionSimplifier().apply(transformedExpression);
 
         if (isConstant(simplifiedExpression)) {
-            final Formula formula = createFormula(simplifiedExpression, Schema.emptySchema());
+            final Formula formula = createFormula(simplifiedExpression, Schema.empty());
             final DomainValue constantValue = formula.evaluate(noValues());
 
             return constantValue.isNull() || !constantValue.getBool();
@@ -316,9 +336,9 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         }
 
         return createFilterAbove(filtersOnMapColumns,
-                                 new MapLop(new FilterPushDown(filtersOnInput).apply(map.input()),
-                                            map.expressions(),
-                                            map.expressionsOutputNames()));
+                new MapLop(new FilterPushDown(filtersOnInput).apply(map.input()),
+                        map.expressions(),
+                        map.expressionsOutputNames()));
     }
 
     @Override

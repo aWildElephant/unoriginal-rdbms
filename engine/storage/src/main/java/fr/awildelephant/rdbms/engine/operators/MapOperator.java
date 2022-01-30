@@ -36,7 +36,7 @@ public final class MapOperator implements Operator<Table, Table> {
         for (int i = 0; i < operations.size(); i++) {
             final Formula operation = operations.get(i);
             final ColumnReference columnReference = mapColumnReferences.get(i);
-            final ColumnMetadata columnMetadata = outputSchema.column(columnReference);
+            final ColumnMetadata columnMetadata = outputSchema.column(columnReference).metadata();
 
             outputColumns.add(createColumnForOperation(operation, columnMetadata, inputTable));
         }

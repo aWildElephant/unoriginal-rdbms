@@ -75,11 +75,11 @@ public final class NeumannKemperSubqueryDecorrelator {
         final LogicalOperator t2WithAliasedOuterQueryVariables = new FreeVariableAliasing(magicSetAlias).apply(t2);
 
         final DependentJoinLop pushedDownDependentJoin = new DependentJoinLop(aliasedMagicSet,
-                                                                              t2WithAliasedOuterQueryVariables);
+                t2WithAliasedOuterQueryVariables);
 
         return new InnerJoinLop(t1,
-                                pushedDownDependentJoin,
-                                buildRewrittenJoinJoinSpecification(t1, aliasedMagicSet, predicate));
+                pushedDownDependentJoin,
+                buildRewrittenJoinJoinSpecification(t1, aliasedMagicSet, predicate));
     }
 
     public LogicalOperator decorrelate(DependentSemiJoinLop plan) {
@@ -92,10 +92,10 @@ public final class NeumannKemperSubqueryDecorrelator {
         }
 
         final LogicalOperator rewrittenJoin = rewriteDependentSemiJoin(t1,
-                                                                       t2,
-                                                                       plan.predicate(),
-                                                                       correlatedVariables,
-                                                                       plan.outputColumnName());
+                t2,
+                plan.predicate(),
+                correlatedVariables,
+                plan.outputColumnName());
 
         return new DependentJoinPushDown().apply(rewrittenJoin);
     }
@@ -114,12 +114,12 @@ public final class NeumannKemperSubqueryDecorrelator {
         final LogicalOperator t2WithAliasedOuterQueryVariables = new FreeVariableAliasing(magicSetAlias).apply(t2);
 
         final DependentJoinLop pushedDownDependentJoin = new DependentJoinLop(aliasedMagicSet,
-                                                                              t2WithAliasedOuterQueryVariables);
+                t2WithAliasedOuterQueryVariables);
 
         return new SemiJoinLop(t1,
-                               pushedDownDependentJoin,
-                               buildRewrittenJoinJoinSpecification(t1, aliasedMagicSet, predicate),
-                               outputColumnName);
+                pushedDownDependentJoin,
+                buildRewrittenJoinJoinSpecification(t1, aliasedMagicSet, predicate),
+                outputColumnName);
     }
 
     private AliasLop randomAliasing(LogicalOperator node) {
@@ -131,7 +131,7 @@ public final class NeumannKemperSubqueryDecorrelator {
 
             if (table.isPresent()) {
                 final String tableAlias = tableAliases.computeIfAbsent(table.get(),
-                                                                       unused -> UUID.randomUUID().toString());
+                        unused -> UUID.randomUUID().toString());
 
                 aliasing.put(column, new QualifiedColumnReference(tableAlias, column.name()));
             } else {
@@ -158,7 +158,7 @@ public final class NeumannKemperSubqueryDecorrelator {
         for (ColumnReference rightColumnName : rightSchema.columnNames()) {
             final ColumnReference unaliasedRightColumn = magicSetAlias.unalias(rightColumnName);
 
-            final ColumnMetadata leftColumn = leftSchema.column(unaliasedRightColumn);
+            final ColumnMetadata leftColumn = leftSchema.column(unaliasedRightColumn).metadata();
             final Domain domain = leftColumn.domain();
 
             expressions.add(equalExpression(variable(leftColumn.name(), domain), variable(rightColumnName, domain)));

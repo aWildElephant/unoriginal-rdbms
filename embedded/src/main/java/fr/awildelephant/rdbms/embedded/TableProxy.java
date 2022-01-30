@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.jdbc.abstraction.ResultProxy;
 import fr.awildelephant.rdbms.jdbc.abstraction.Value;
-import fr.awildelephant.rdbms.schema.ColumnMetadata;
+import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class TableProxy implements ResultProxy {
 
     @Override
     public int position(String columnName) {
-        final ColumnMetadata column = schema.column(columnName);
+        final OrderedColumnMetadata column = schema.column(columnName);
 
         if (column == null) {
             return -1;
@@ -53,12 +53,12 @@ public class TableProxy implements ResultProxy {
 
     @Override
     public String columnTypeName(int column) {
-        return schema.column(columnName(column)).domain().name();
+        return schema.column(columnName(column)).metadata().domain().name();
     }
 
     @Override
     public boolean isNullable(int column) {
-        return !schema.column(columnName(column)).notNull();
+        return !schema.column(columnName(column)).metadata().notNull();
     }
 
     @Override

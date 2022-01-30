@@ -187,15 +187,15 @@ public final class AggregationOperator implements Operator<Table, Table> {
         } else if (aggregate instanceof CountStarAggregate) {
             return new CountStarAggregator();
         } else if (aggregate instanceof MaxAggregate) {
-            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
 
             return new MaxAggregator(comparator(inputColumn));
         } else if (aggregate instanceof MinAggregate) {
-            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
 
             return new MinAggregator(comparator(inputColumn));
         } else if (aggregate instanceof SumAggregate) {
-            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow());
+            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
 
             if (inputColumn.domain() == INTEGER) {
                 return new IntegerSumAggregator();

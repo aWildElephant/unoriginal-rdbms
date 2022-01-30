@@ -1,6 +1,13 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.plan.aggregation.*;
+import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
@@ -12,7 +19,9 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
-import static fr.awildelephant.rdbms.schema.Domain.*;
+import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
+import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
+import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
 public final class AggregationLop extends AbstractLop {
 
@@ -28,37 +37,24 @@ public final class AggregationLop extends AbstractLop {
         this.aggregates = aggregates;
     }
 
-    private static Schema buildOutputSchema(LogicalOperator input,
-                                            List<ColumnReference> breakdowns,
+    private static Schema buildOutputSchema(LogicalOperator input, List<ColumnReference> breakdowns,
                                             List<Aggregate> aggregates) {
         final Schema inputSchema = input.schema();
 
         final List<ColumnMetadata> outputColumns = new ArrayList<>(breakdowns.size() + aggregates.size());
 
-        for (int i = 0; i < breakdowns.size(); i++) {
-            final ColumnReference breakdown = breakdowns.get(i);
-            final ColumnMetadata columnInInputTable = inputSchema.column(breakdown);
-            outputColumns.add(new ColumnMetadata(i,
-                                                 breakdown,
-                                                 columnInInputTable.domain(),
-                                                 false,
-                                                 false));
+        for (final ColumnReference breakdown : breakdowns) {
+            final Domain domain = inputSchema.column(breakdown).metadata().domain();
+            outputColumns.add(new ColumnMetadata(breakdown, domain, false, false));
         }
 
-        final int numberOfBreakdowns = breakdowns.size();
-
-        for (int i = 0; i < aggregates.size(); i++) {
-            final Aggregate aggregate = aggregates.get(i);
+        for (final Aggregate aggregate : aggregates) {
             final Domain outputType = outputType(inputSchema, aggregate);
-
-            outputColumns.add(new ColumnMetadata(numberOfBreakdowns + i,
-                                                 aggregate.outputColumn(),
-                                                 outputType,
-                                                 !aggregate.outputIsNullable(),
-                                                 false));
+            final boolean notNull = !aggregate.outputIsNullable();
+            outputColumns.add(new ColumnMetadata(aggregate.outputColumn(), outputType, notNull, false));
         }
 
-        return new Schema(outputColumns);
+        return Schema.of(outputColumns);
     }
 
     private static Domain outputType(Schema inputSchema, Aggregate aggregate) {
@@ -70,12 +66,12 @@ public final class AggregationLop extends AbstractLop {
             return INTEGER;
         } else if (aggregate instanceof AvgAggregate) {
             return DECIMAL;
-        } else if (aggregate instanceof MaxAggregate) {
-            return inputSchema.column(((MaxAggregate) aggregate).input()).domain();
-        } else if (aggregate instanceof MinAggregate) {
-            return inputSchema.column(((MinAggregate) aggregate).input()).domain();
-        } else if (aggregate instanceof SumAggregate) {
-            return inputSchema.column(((SumAggregate) aggregate).input()).domain();
+        } else if (aggregate instanceof MaxAggregate maxAggregate) {
+            return inputSchema.column(maxAggregate.input()).metadata().domain();
+        } else if (aggregate instanceof MinAggregate minAggregate) {
+            return inputSchema.column(minAggregate.input()).metadata().domain();
+        } else if (aggregate instanceof SumAggregate sumAggregate) {
+            return inputSchema.column(sumAggregate.input()).metadata().domain();
         }
 
         throw new UnsupportedOperationException();
