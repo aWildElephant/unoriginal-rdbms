@@ -3,8 +3,8 @@ package fr.awildelephant.rdbms.plan;
 public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
 
     @Override
-    public T visit(AggregationLop aggregationNode) {
-        return defaultVisit(aggregationNode);
+    public T visit(AggregationLop aggregation) {
+        return defaultVisit(aggregation);
     }
 
     @Override
@@ -18,13 +18,13 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
-    public T visit(CartesianProductLop cartesianProductNode) {
-        return defaultVisit(cartesianProductNode);
+    public T visit(CartesianProductLop cartesianProduct) {
+        return defaultVisit(cartesianProduct);
     }
 
     @Override
-    public T visit(DistinctLop distinctNode) {
-        return defaultVisit(distinctNode);
+    public T visit(DistinctLop distinct) {
+        return defaultVisit(distinct);
     }
 
     @Override
@@ -33,28 +33,28 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
-    public T visit(InnerJoinLop innerJoinLop) {
-        return defaultVisit(innerJoinLop);
+    public T visit(InnerJoinLop innerJoin) {
+        return defaultVisit(innerJoin);
     }
 
     @Override
-    public T visit(LeftJoinLop leftJoinLop) {
-        return defaultVisit(leftJoinLop);
+    public T visit(LeftJoinLop leftJoin) {
+        return defaultVisit(leftJoin);
     }
 
     @Override
-    public T visit(LimitLop limitLop) {
-        return defaultVisit(limitLop);
+    public T visit(LimitLop limit) {
+        return defaultVisit(limit);
     }
 
     @Override
-    public T visit(MapLop mapNode) {
-        return defaultVisit(mapNode);
+    public T visit(MapLop map) {
+        return defaultVisit(map);
     }
 
     @Override
-    public T visit(ProjectionLop projectionNode) {
-        return defaultVisit(projectionNode);
+    public T visit(ProjectionLop projection) {
+        return defaultVisit(projection);
     }
 
     @Override
@@ -73,8 +73,8 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
-    public T visit(SortLop sortLop) {
-        return defaultVisit(sortLop);
+    public T visit(SortLop sort) {
+        return defaultVisit(sort);
     }
 
     @Override

@@ -17,10 +17,10 @@ public class SimplifyExpressions extends DefaultLopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(MapLop mapNode) {
-        return new MapLop(apply(mapNode.input()),
-                          mapNode.expressions().stream().map(expressionSimplifier).collect(Collectors.toList()),
-                          mapNode.expressionsOutputNames());
+    public LogicalOperator visit(MapLop map) {
+        return new MapLop(apply(map.input()),
+                          map.expressions().stream().map(expressionSimplifier).collect(Collectors.toList()),
+                          map.expressionsOutputNames());
     }
 
     @Override

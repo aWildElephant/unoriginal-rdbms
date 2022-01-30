@@ -28,8 +28,8 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
     private final OuterQueryVariableExtractor outerQueryVariableExtractor = new OuterQueryVariableExtractor();
 
     @Override
-    public Stream<ColumnReference> visit(AggregationLop aggregationNode) {
-        return apply(aggregationNode.input());
+    public Stream<ColumnReference> visit(AggregationLop aggregation) {
+        return apply(aggregation.input());
     }
 
     @Override
@@ -43,13 +43,13 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
     }
 
     @Override
-    public Stream<ColumnReference> visit(CartesianProductLop cartesianProductNode) {
-        return Stream.concat(apply(cartesianProductNode.leftInput()), apply(cartesianProductNode.rightInput()));
+    public Stream<ColumnReference> visit(CartesianProductLop cartesianProduct) {
+        return Stream.concat(apply(cartesianProduct.left()), apply(cartesianProduct.right()));
     }
 
     @Override
-    public Stream<ColumnReference> visit(DistinctLop distinctNode) {
-        return apply(distinctNode.input());
+    public Stream<ColumnReference> visit(DistinctLop distinct) {
+        return apply(distinct.input());
     }
 
     @Override
@@ -58,32 +58,32 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
     }
 
     @Override
-    public Stream<ColumnReference> visit(InnerJoinLop innerJoinLop) {
-        return StreamHelper.concat(apply(innerJoinLop.left()),
-                                   apply(innerJoinLop.right()),
-                                   outerQueryVariableExtractor.apply(innerJoinLop.joinSpecification()));
+    public Stream<ColumnReference> visit(InnerJoinLop innerJoin) {
+        return StreamHelper.concat(apply(innerJoin.left()),
+                                   apply(innerJoin.right()),
+                                   outerQueryVariableExtractor.apply(innerJoin.joinSpecification()));
     }
 
     @Override
-    public Stream<ColumnReference> visit(LeftJoinLop leftJoinLop) {
-        return StreamHelper.concat(apply(leftJoinLop.left()),
-                                   apply(leftJoinLop.right()),
-                                   outerQueryVariableExtractor.apply(leftJoinLop.joinSpecification()));
+    public Stream<ColumnReference> visit(LeftJoinLop leftJoin) {
+        return StreamHelper.concat(apply(leftJoin.left()),
+                                   apply(leftJoin.right()),
+                                   outerQueryVariableExtractor.apply(leftJoin.joinSpecification()));
     }
 
     @Override
-    public Stream<ColumnReference> visit(LimitLop limitLop) {
-        return apply(limitLop.input());
+    public Stream<ColumnReference> visit(LimitLop limit) {
+        return apply(limit.input());
     }
 
     @Override
-    public Stream<ColumnReference> visit(MapLop mapNode) {
-        return apply(mapNode.input());
+    public Stream<ColumnReference> visit(MapLop map) {
+        return apply(map.input());
     }
 
     @Override
-    public Stream<ColumnReference> visit(ProjectionLop projectionNode) {
-        return apply(projectionNode.input());
+    public Stream<ColumnReference> visit(ProjectionLop projection) {
+        return apply(projection.input());
     }
 
     @Override
@@ -99,8 +99,8 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
     }
 
     @Override
-    public Stream<ColumnReference> visit(SortLop sortLop) {
-        return apply(sortLop.input());
+    public Stream<ColumnReference> visit(SortLop sort) {
+        return apply(sort.input());
     }
 
     @Override

@@ -30,16 +30,16 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(AggregationLop aggregationNode) {
+    public LogicalOperator visit(AggregationLop aggregation) {
         final List<ColumnReference> extendedProjection
-                = extendProjectionWithColumnsRequiredForAggregation(aggregationNode);
+                = extendProjectionWithColumnsRequiredForAggregation(aggregation);
 
         final LogicalOperator transformedInput = new ProjectionPushDown(
-                restrictProjectionToAvailableColumns(aggregationNode.input(), extendedProjection)
-        ).apply(aggregationNode.input());
+                restrictProjectionToAvailableColumns(aggregation.input(), extendedProjection)
+        ).apply(aggregation.input());
 
-        final LogicalOperator transformedNode = new AggregationLop(transformedInput, aggregationNode.breakdowns(),
-                                                                   aggregationNode.aggregates());
+        final LogicalOperator transformedNode = new AggregationLop(transformedInput, aggregation.breakdowns(),
+                                                                   aggregation.aggregates());
 
         return createProjectionIfNecessary(transformedNode);
     }
@@ -80,10 +80,10 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(CartesianProductLop cartesianProductNode) {
-        final LogicalOperator leftInput = cartesianProductNode.leftInput();
+    public LogicalOperator visit(CartesianProductLop cartesianProduct) {
+        final LogicalOperator leftInput = cartesianProduct.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = cartesianProductNode.rightInput();
+        final LogicalOperator rightInput = cartesianProduct.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final List<ColumnReference> leftInputProjection = new ArrayList<>();
@@ -106,8 +106,8 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(DistinctLop distinctNode) {
-        return distinctNode.transformInputs(this);
+    public LogicalOperator visit(DistinctLop distinct) {
+        return distinct.transformInputs(this);
     }
 
     @Override
@@ -128,16 +128,16 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(InnerJoinLop innerJoinLop) {
+    public LogicalOperator visit(InnerJoinLop innerJoin) {
         final List<ColumnReference> newProjection = merge(projection,
-                                                          innerJoinLop.schema(),
-                                                          innerJoinLop.joinSpecification()
+                                                          innerJoin.schema(),
+                                                          innerJoin.joinSpecification()
                                                                   .variables()
                                                                   .collect(toList()));
 
-        final LogicalOperator leftInput = innerJoinLop.left();
+        final LogicalOperator leftInput = innerJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = innerJoinLop.right();
+        final LogicalOperator rightInput = innerJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final List<ColumnReference> leftInputProjection = new ArrayList<>();
@@ -154,7 +154,7 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
         final LogicalOperator transformedRightInput = new ProjectionPushDown(rightInputProjection).apply(rightInput);
         final InnerJoinLop transformedJoin = new InnerJoinLop(transformedLeftInput,
                                                               transformedRightInput,
-                                                              innerJoinLop.joinSpecification(),
+                                                              innerJoin.joinSpecification(),
                                                               innerJoinOutputSchema(transformedLeftInput.schema(),
                                                                                     transformedRightInput.schema()));
 
@@ -166,16 +166,16 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(LeftJoinLop leftJoinLop) {
+    public LogicalOperator visit(LeftJoinLop leftJoin) {
         final List<ColumnReference> newProjection = merge(projection,
-                                                          leftJoinLop.schema(),
-                                                          leftJoinLop.joinSpecification()
+                                                          leftJoin.schema(),
+                                                          leftJoin.joinSpecification()
                                                                   .variables()
                                                                   .collect(toList()));
 
-        final LogicalOperator leftInput = leftJoinLop.left();
+        final LogicalOperator leftInput = leftJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = leftJoinLop.right();
+        final LogicalOperator rightInput = leftJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final List<ColumnReference> leftInputProjection = new ArrayList<>();
@@ -192,7 +192,7 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
         final LogicalOperator transformedRightInput = new ProjectionPushDown(rightInputProjection).apply(rightInput);
         final LeftJoinLop transformedJoin = new LeftJoinLop(transformedLeftInput,
                                                             transformedRightInput,
-                                                            leftJoinLop.joinSpecification(),
+                                                            leftJoin.joinSpecification(),
                                                             leftJoinOutputSchema(transformedLeftInput.schema(),
                                                                                  transformedRightInput.schema()));
 
@@ -204,21 +204,21 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(LimitLop limitLop) {
-        return limitLop.transformInputs(this);
+    public LogicalOperator visit(LimitLop limit) {
+        return limit.transformInputs(this);
     }
 
     @Override
-    public LogicalOperator visit(MapLop mapNode) {
-        final List<ColumnReference> projectionOnMapInput = restrictProjectionToAvailableColumns(mapNode.input(),
+    public LogicalOperator visit(MapLop map) {
+        final List<ColumnReference> projectionOnMapInput = restrictProjectionToAvailableColumns(map.input(),
                                                                                                 extendProjectionWithColumnsRequiredForMap(
-                                                                                                        mapNode));
+                                                                                                        map));
 
-        final LogicalOperator transformedInput = new ProjectionPushDown(projectionOnMapInput).apply(mapNode.input());
+        final LogicalOperator transformedInput = new ProjectionPushDown(projectionOnMapInput).apply(map.input());
 
         final LogicalOperator transformedMapNode = new MapLop(transformedInput,
-                                                              mapNode.expressions(),
-                                                              mapNode.expressionsOutputNames());
+                                                              map.expressions(),
+                                                              map.expressionsOutputNames());
 
         return createProjectionIfNecessary(transformedMapNode);
     }
@@ -233,9 +233,9 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(ProjectionLop projectionNode) {
+    public LogicalOperator visit(ProjectionLop projection) {
         // We ignore this projection, because it can only be broader than the projection we're using
-        return apply(projectionNode.input());
+        return apply(projection.input());
     }
 
     @Override
@@ -285,8 +285,8 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
     }
 
     @Override
-    public LogicalOperator visit(SortLop sortLop) {
-        return sortLop.transformInputs(this);
+    public LogicalOperator visit(SortLop sort) {
+        return sort.transformInputs(this);
     }
 
     @Override

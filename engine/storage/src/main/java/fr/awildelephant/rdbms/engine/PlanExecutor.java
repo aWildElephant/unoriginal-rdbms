@@ -74,8 +74,8 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(AggregationLop aggregationNode) {
-        final Table inputTable = apply(aggregationNode.input());
+    public Table visit(AggregationLop aggregation) {
+        final Table inputTable = apply(aggregation.input());
 
         final UUID operatorId = UUID.randomUUID();
 
@@ -83,9 +83,9 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
         LOGGER.info("{} - AggregateOperator - inputSize: {}", operatorId, inputSize);
 
-        final AggregationOperator operator = new AggregationOperator(aggregationNode.aggregates(),
-                                                                     aggregationNode.breakdowns(),
-                                                                     aggregationNode.schema());
+        final AggregationOperator operator = new AggregationOperator(aggregation.aggregates(),
+                                                                     aggregation.breakdowns(),
+                                                                     aggregation.schema());
 
         final Table outputTable = operator.compute(inputTable);
 
@@ -123,16 +123,16 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(CartesianProductLop cartesianProductNode) {
-        final Table leftInputTable = apply(cartesianProductNode.leftInput());
-        final Table rightInputTable = apply(cartesianProductNode.rightInput());
+    public Table visit(CartesianProductLop cartesianProduct) {
+        final Table leftInputTable = apply(cartesianProduct.left());
+        final Table rightInputTable = apply(cartesianProduct.right());
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - CartesianProductOperator - leftInputSize: {}, rightInputSize: {}", () -> operatorId,
                     leftInputTable::numberOfTuples, rightInputTable::numberOfTuples);
 
-        final CartesianProductOperator operator = new CartesianProductOperator(cartesianProductNode.schema());
+        final CartesianProductOperator operator = new CartesianProductOperator(cartesianProduct.schema());
 
         final Table outputTable = operator.compute(leftInputTable, rightInputTable);
 
@@ -143,8 +143,8 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(DistinctLop distinctNode) {
-        final Table inputTable = apply(distinctNode.input());
+    public Table visit(DistinctLop distinct) {
+        final Table inputTable = apply(distinct.input());
 
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - DistinctOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
@@ -174,9 +174,9 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(InnerJoinLop join) {
-        final Table leftInputTable = apply(join.left());
-        final Table rightInputTable = apply(join.right());
+    public Table visit(InnerJoinLop innerJoin) {
+        final Table leftInputTable = apply(innerJoin.left());
+        final Table rightInputTable = apply(innerJoin.right());
 
         final UUID operatorId = UUID.randomUUID();
 
@@ -187,13 +187,13 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
         final Schema leftInputSchema = leftInputTable.schema();
         final Schema rightInputSchema = rightInputTable.schema();
-        final Schema outputSchema = join.schema();
+        final Schema outputSchema = innerJoin.schema();
 
         final Table outputTable;
         if (rightInputSize > leftInputSize) {
             final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(rightInputSchema,
                                                                                         leftInputSchema,
-                                                                                        join.joinSpecification());
+                                                                                        innerJoin.joinSpecification());
 
             final JoinMatcher matcher = matcherCreator.apply(leftInputTable);
 
@@ -203,7 +203,7 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         } else {
             final Function<Table, JoinMatcher> matcherCreator = buildJoinMatcherCreator(leftInputSchema,
                                                                                         rightInputSchema,
-                                                                                        join.joinSpecification());
+                                                                                        innerJoin.joinSpecification());
 
             final JoinMatcher matcher = matcherCreator.apply(rightInputTable);
 
@@ -317,14 +317,14 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(LimitLop limitLop) {
-        final Table inputTable = apply(limitLop.input());
+    public Table visit(LimitLop limit) {
+        final Table inputTable = apply(limit.input());
 
         final UUID operatorId = UUID.randomUUID();
 
         LOGGER.info("{} - LimitOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
-        final LimitOperator operator = new LimitOperator(limitLop.limit());
+        final LimitOperator operator = new LimitOperator(limit.limit());
         final Table outputTable = operator.compute(inputTable);
 
         LOGGER.info("{} - LimitOperator - outputSize: {}", () -> operatorId, outputTable::numberOfTuples);
@@ -333,20 +333,20 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(MapLop mapNode) {
-        final Table inputTable = apply(mapNode.input());
+    public Table visit(MapLop map) {
+        final Table inputTable = apply(map.input());
 
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - MapOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
         final Schema inputSchema = inputTable.schema();
 
-        final List<Formula> formulas = mapNode.expressions()
+        final List<Formula> formulas = map.expressions()
                 .stream()
                 .map(expression -> createFormula(expression, inputSchema))
                 .collect(toList());
 
-        final MapOperator operator = new MapOperator(formulas, mapNode.schema());
+        final MapOperator operator = new MapOperator(formulas, map.schema());
 
         final Table outputTable = operator.compute(inputTable);
 
@@ -356,13 +356,13 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(ProjectionLop projectionNode) {
-        final Table inputTable = apply(projectionNode.input());
+    public Table visit(ProjectionLop projection) {
+        final Table inputTable = apply(projection.input());
 
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - ProjectOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
-        final ProjectionOperator operator = new ProjectionOperator(projectionNode.schema());
+        final ProjectionOperator operator = new ProjectionOperator(projection.schema());
 
         final Table outputTable = operator.compute(inputTable);
 
@@ -473,13 +473,13 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
     }
 
     @Override
-    public Table visit(SortLop sortNode) {
-        final Table inputTable = apply(sortNode.input());
+    public Table visit(SortLop sort) {
+        final Table inputTable = apply(sort.input());
 
         final UUID operatorId = UUID.randomUUID();
         LOGGER.info("{} - SortOperator - inputSize: {}", () -> operatorId, inputTable::numberOfTuples);
 
-        final SortOperator operator = new SortOperator(sortNode.schema(), sortNode.sortSpecificationList());
+        final SortOperator operator = new SortOperator(sort.schema(), sort.sortSpecificationList());
         final Table output = operator.compute(inputTable);
 
         LOGGER.info("{} - SortOperator - outputSize: {}", () -> operatorId, output::numberOfTuples);

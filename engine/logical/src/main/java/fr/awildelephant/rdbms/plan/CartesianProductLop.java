@@ -10,31 +10,31 @@ import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutpu
 
 public final class CartesianProductLop extends AbstractLop {
 
-    private final LogicalOperator leftInput;
-    private final LogicalOperator rightInput;
+    private final LogicalOperator left;
+    private final LogicalOperator right;
 
-    public CartesianProductLop(LogicalOperator leftInput, LogicalOperator rightInput) {
-        this(leftInput, rightInput, innerJoinOutputSchema(leftInput.schema(), rightInput.schema()));
+    public CartesianProductLop(LogicalOperator left, LogicalOperator right) {
+        this(left, right, innerJoinOutputSchema(left.schema(), right.schema()));
     }
 
-    public CartesianProductLop(LogicalOperator leftInput, LogicalOperator rightInput, Schema outputSchema) {
+    public CartesianProductLop(LogicalOperator left, LogicalOperator right, Schema outputSchema) {
         super(outputSchema);
 
-        this.leftInput = leftInput;
-        this.rightInput = rightInput;
+        this.left = left;
+        this.right = right;
     }
 
-    public LogicalOperator leftInput() {
-        return leftInput;
+    public LogicalOperator left() {
+        return left;
     }
 
-    public LogicalOperator rightInput() {
-        return rightInput;
+    public LogicalOperator right() {
+        return right;
     }
 
     @Override
     public LogicalOperator transformInputs(Function<LogicalOperator, LogicalOperator> transformer) {
-        return new CartesianProductLop(transformer.apply(leftInput), transformer.apply(rightInput), schema());
+        return new CartesianProductLop(transformer.apply(left), transformer.apply(right), schema());
     }
 
     @Override
@@ -44,7 +44,7 @@ public final class CartesianProductLop extends AbstractLop {
 
     @Override
     public int hashCode() {
-        return Objects.hash(leftInput, rightInput);
+        return Objects.hash(left, right);
     }
 
     @Override
@@ -53,15 +53,15 @@ public final class CartesianProductLop extends AbstractLop {
             return false;
         }
 
-        return Objects.equals(leftInput, other.leftInput)
-                && Objects.equals(rightInput, other.rightInput);
+        return Objects.equals(left, other.left)
+                && Objects.equals(right, other.right);
     }
 
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("left", leftInput)
-                .append("right", rightInput)
+                .append("left", left)
+                .append("right", right)
                 .toString();
     }
 }

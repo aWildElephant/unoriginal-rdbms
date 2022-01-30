@@ -5,6 +5,9 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
+import fr.awildelephant.rdbms.explain.ExplanationTableBuilder;
+import fr.awildelephant.rdbms.explain.ExplanationTreeBuilder;
+import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
@@ -25,7 +28,10 @@ public final class RDBMS {
         final Algebraizer algebraizer = buildAlgebraizerAndDependencies(storage);
         final Optimizer optimizer = new Optimizer();
         final WithInlinerFactory withInlinerFactory = new WithInlinerFactory();
-        final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory);
+        final ExplanationTableBuilder explanationTableBuilder = new ExplanationTableBuilder();
+        final ExplanationTreeBuilder explanationTreeBuilder = new ExplanationTreeBuilder();
+        final LogicalPlanTableBuilder logicalPlanTableBuilder = new LogicalPlanTableBuilder(explanationTreeBuilder, explanationTableBuilder);
+        final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory, logicalPlanTableBuilder);
         executor = new ConcurrentQueryExecutor(dispatcher);
     }
 

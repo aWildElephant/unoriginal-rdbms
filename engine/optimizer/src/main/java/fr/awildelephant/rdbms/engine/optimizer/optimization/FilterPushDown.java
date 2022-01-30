@@ -62,11 +62,11 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(AggregationLop aggregationNode) {
-        final List<ColumnReference> aggregatesColumns = aggregationNode.aggregates()
+    public LogicalOperator visit(AggregationLop aggregation) {
+        final List<ColumnReference> aggregatesColumns = aggregation.aggregates()
                 .stream()
                 .map(Aggregate::outputColumn)
-                .collect(toList());
+                .toList();
 
         final List<ValueExpression> filtersOnAggregates = new ArrayList<>();
         final List<ValueExpression> filtersOnInput = new ArrayList<>();
@@ -79,11 +79,11 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator transformedInput = new FilterPushDown(filtersOnInput).apply(aggregationNode.input());
+        final LogicalOperator transformedInput = new FilterPushDown(filtersOnInput).apply(aggregation.input());
 
         return createFilterAbove(filtersOnAggregates,
-                                 new AggregationLop(transformedInput, aggregationNode.breakdowns(),
-                                                    aggregationNode.aggregates()));
+                                 new AggregationLop(transformedInput, aggregation.breakdowns(),
+                                                    aggregation.aggregates()));
     }
 
     @Override
@@ -101,10 +101,10 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(DependentJoinLop dependentJoinLop) {
-        final LogicalOperator leftInput = dependentJoinLop.left();
+    public LogicalOperator visit(DependentJoinLop dependentJoin) {
+        final LogicalOperator leftInput = dependentJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = dependentJoinLop.right();
+        final LogicalOperator rightInput = dependentJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final Collection<ValueExpression> filtersOnLeft = new ArrayList<>();
@@ -112,7 +112,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final Collection<ValueExpression> filtersOnBoth = new ArrayList<>();
 
         for (ValueExpression filter : filters) {
-            final List<ColumnReference> requiredVariables = filter.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = filter.variables().toList();
 
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
@@ -162,7 +162,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         allFilters.addAll(expandFilters(innerJoin.joinSpecification()));
 
         for (ValueExpression expression : allFilters) {
-            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = expression.variables().toList();
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
@@ -222,7 +222,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         boolean transformToInnerJoin = false;
 
         for (ValueExpression expression : filters) {
-            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = expression.variables().toList();
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
@@ -248,7 +248,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> joinFilters = new ArrayList<>();
 
         for (ValueExpression expression : expandFilters(leftJoin.joinSpecification())) {
-            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = expression.variables().toList();
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
@@ -318,13 +318,13 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(LimitLop limitLop) {
-        return new LimitLop(apply(limitLop.input()), limitLop.limit());
+    public LogicalOperator visit(LimitLop limit) {
+        return new LimitLop(apply(limit.input()), limit.limit());
     }
 
     @Override
-    public LogicalOperator visit(MapLop mapNode) {
-        final Schema schema = mapNode.schema();
+    public LogicalOperator visit(MapLop map) {
+        final Schema schema = map.schema();
 
         final List<ValueExpression> filtersOnMapColumns = new ArrayList<>();
         final List<ValueExpression> filtersOnInput = new ArrayList<>();
@@ -338,25 +338,25 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         }
 
         return createFilterAbove(filtersOnMapColumns,
-                                 new MapLop(new FilterPushDown(filtersOnInput).apply(mapNode.input()),
-                                            mapNode.expressions(),
-                                            mapNode.expressionsOutputNames()));
+                                 new MapLop(new FilterPushDown(filtersOnInput).apply(map.input()),
+                                            map.expressions(),
+                                            map.expressionsOutputNames()));
     }
 
     @Override
-    public LogicalOperator visit(ProjectionLop projectionNode) {
-        return new ProjectionLop(apply(projectionNode.input()), projectionNode.outputColumns());
+    public LogicalOperator visit(ProjectionLop projection) {
+        return new ProjectionLop(apply(projection.input()), projection.outputColumns());
     }
 
     @Override
-    public LogicalOperator visit(DependentSemiJoinLop semiJoin) {
-        final ColumnReference outputColumnName = semiJoin.outputColumnName();
+    public LogicalOperator visit(DependentSemiJoinLop dependentSemiJoin) {
+        final ColumnReference outputColumnName = dependentSemiJoin.outputColumnName();
 
         final List<ValueExpression> regularFilters = new ArrayList<>();
         final List<ValueExpression> filtersReferencingSemiJoin = new ArrayList<>();
 
         for (ValueExpression expression : filters) {
-            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = expression.variables().toList();
 
             final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(outputColumnName::equals);
 
@@ -367,13 +367,13 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator transformedLeftInput = new FilterPushDown(regularFilters).apply(semiJoin.left());
+        final LogicalOperator transformedLeftInput = new FilterPushDown(regularFilters).apply(dependentSemiJoin.left());
 
         final DependentSemiJoinLop transformedJoin = new DependentSemiJoinLop(
                 transformedLeftInput,
-                new FilterPushDown().apply(semiJoin.right()),
-                semiJoin.predicate(),
-                semiJoin.outputColumnName());
+                new FilterPushDown().apply(dependentSemiJoin.right()),
+                dependentSemiJoin.predicate(),
+                dependentSemiJoin.outputColumnName());
 
         return createFilterAbove(filtersReferencingSemiJoin, transformedJoin);
     }
@@ -386,7 +386,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> filtersReferencingSemiJoin = new ArrayList<>();
 
         for (ValueExpression expression : filters) {
-            final List<ColumnReference> requiredVariables = expression.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = expression.variables().toList();
 
             final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(outputColumnName::equals);
 
@@ -440,11 +440,11 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final Collection<ValueExpression> rightFilters = new ArrayList<>();
         final Collection<ValueExpression> joinFilters = new ArrayList<>();
 
-        final Schema leftSchema = cartesianProduct.leftInput().schema();
-        final Schema rightSchema = cartesianProduct.rightInput().schema();
+        final Schema leftSchema = cartesianProduct.left().schema();
+        final Schema rightSchema = cartesianProduct.right().schema();
 
         for (ValueExpression filter : filters) {
-            final List<ColumnReference> requiredVariables = filter.variables().collect(toList());
+            final List<ColumnReference> requiredVariables = filter.variables().toList();
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightSchema::contains);
@@ -466,8 +466,8 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator leftInput = new FilterPushDown(leftFilters).apply(cartesianProduct.leftInput());
-        final LogicalOperator rightInput = new FilterPushDown(rightFilters).apply(cartesianProduct.rightInput());
+        final LogicalOperator leftInput = new FilterPushDown(leftFilters).apply(cartesianProduct.left());
+        final LogicalOperator rightInput = new FilterPushDown(rightFilters).apply(cartesianProduct.right());
 
         final Optional<ValueExpression> collapsedJoinFilter = collapseFilters(joinFilters);
 

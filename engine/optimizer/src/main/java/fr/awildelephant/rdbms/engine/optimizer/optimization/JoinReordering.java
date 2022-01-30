@@ -20,13 +20,13 @@ import static java.util.stream.Collectors.toList;
 public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
 
     @Override
-    public LogicalOperator visit(CartesianProductLop cartesianProductNode) {
-        return reorderMultiJoin(new JoinSplitter().apply(cartesianProductNode));
+    public LogicalOperator visit(CartesianProductLop cartesianProduct) {
+        return reorderMultiJoin(new JoinSplitter().apply(cartesianProduct));
     }
 
     @Override
-    public LogicalOperator visit(InnerJoinLop innerJoinLop) {
-        return reorderMultiJoin(new JoinSplitter().apply(innerJoinLop));
+    public LogicalOperator visit(InnerJoinLop innerJoin) {
+        return reorderMultiJoin(new JoinSplitter().apply(innerJoin));
     }
 
     private LogicalOperator reorderMultiJoin(MultiJoin multiJoin) {

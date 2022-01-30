@@ -18,5 +18,9 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-logical</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-storage</artifactId>
+        </dependency>
     </dependencies>
 </project>

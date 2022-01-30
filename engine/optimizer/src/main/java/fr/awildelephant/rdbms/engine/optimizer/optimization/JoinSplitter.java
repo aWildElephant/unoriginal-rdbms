@@ -14,9 +14,9 @@ import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilter
 public final class JoinSplitter extends DefaultLopVisitor<MultiJoin> {
 
     @Override
-    public MultiJoin visit(CartesianProductLop cartesianProductNode) {
-        final MultiJoin left = apply(cartesianProductNode.leftInput());
-        final MultiJoin right = apply(cartesianProductNode.rightInput());
+    public MultiJoin visit(CartesianProductLop cartesianProduct) {
+        final MultiJoin left = apply(cartesianProduct.left());
+        final MultiJoin right = apply(cartesianProduct.right());
 
         final ArrayList<LogicalOperator> operators = new ArrayList<>(left.operators());
         operators.addAll(right.operators());
@@ -27,15 +27,15 @@ public final class JoinSplitter extends DefaultLopVisitor<MultiJoin> {
     }
 
     @Override
-    public MultiJoin visit(InnerJoinLop innerJoinLop) {
-        final MultiJoin left = apply(innerJoinLop.left());
-        final MultiJoin right = apply(innerJoinLop.right());
+    public MultiJoin visit(InnerJoinLop innerJoin) {
+        final MultiJoin left = apply(innerJoin.left());
+        final MultiJoin right = apply(innerJoin.right());
 
         final ArrayList<LogicalOperator> operators = new ArrayList<>(left.operators());
         operators.addAll(right.operators());
         final List<ValueExpression> expressions = new ArrayList<>(left.expressions());
         expressions.addAll(right.expressions());
-        expressions.addAll(expandFilters(innerJoinLop.joinSpecification()));
+        expressions.addAll(expandFilters(innerJoin.joinSpecification()));
 
         return new MultiJoin(operators, expressions);
     }

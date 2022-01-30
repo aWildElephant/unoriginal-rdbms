@@ -8,37 +8,37 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
         return plan.accept(this);
     }
 
-    T visit(AggregationLop aggregationNode);
+    T visit(AggregationLop aggregation);
 
     T visit(AliasLop alias);
 
     T visit(BaseTableLop baseTable);
 
-    T visit(CartesianProductLop cartesianProductNode);
+    T visit(CartesianProductLop cartesianProduct);
 
-    T visit(DistinctLop distinctNode);
+    T visit(DependentJoinLop dependentJoin);
+
+    T visit(DependentSemiJoinLop dependentSemiJoin);
+
+    T visit(DistinctLop distinct);
 
     T visit(FilterLop filter);
 
-    T visit(InnerJoinLop innerJoinLop);
+    T visit(InnerJoinLop innerJoin);
 
-    T visit(LeftJoinLop leftJoinLop);
+    T visit(LeftJoinLop leftJoin);
 
-    T visit(LimitLop limitLop);
+    T visit(LimitLop limit);
 
-    T visit(MapLop mapNode);
+    T visit(MapLop map);
 
-    T visit(ProjectionLop projectionNode);
+    T visit(ProjectionLop projection);
 
     T visit(ScalarSubqueryLop scalarSubquery);
 
     T visit(SemiJoinLop semiJoin);
 
-    T visit(SortLop sortLop);
-
-    T visit(DependentJoinLop subqueryExecutionLop);
+    T visit(SortLop sort);
 
     T visit(TableConstructorLop tableConstructor);
-
-    T visit(DependentSemiJoinLop dependentSemiJoinLop);
 }

@@ -27,23 +27,23 @@ public final class LogicalOperatorOuterQueryReferenceReplacer extends DefaultLop
     }
 
     @Override
-    public LogicalOperator visit(InnerJoinLop innerJoinLop) {
-        return new InnerJoinLop(apply(innerJoinLop.left()),
-                                apply(innerJoinLop.right()),
-                                valueExpressionReplacer.apply(innerJoinLop.joinSpecification()),
-                                innerJoinLop.schema());
+    public LogicalOperator visit(InnerJoinLop innerJoin) {
+        return new InnerJoinLop(apply(innerJoin.left()),
+                                apply(innerJoin.right()),
+                                valueExpressionReplacer.apply(innerJoin.joinSpecification()),
+                                innerJoin.schema());
     }
 
     @Override
-    public LogicalOperator visit(MapLop mapNode) {
-        final List<ValueExpression> expressions = mapNode.expressions();
+    public LogicalOperator visit(MapLop map) {
+        final List<ValueExpression> expressions = map.expressions();
 
         final List<ValueExpression> transformedExpressions = new ArrayList<>(expressions.size());
         for (ValueExpression expression : expressions) {
             transformedExpressions.add(valueExpressionReplacer.apply(expression));
         }
 
-        return new MapLop(apply(mapNode.input()), transformedExpressions, mapNode.expressionsOutputNames());
+        return new MapLop(apply(map.input()), transformedExpressions, map.expressionsOutputNames());
     }
 
     @Override

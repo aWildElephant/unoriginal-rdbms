@@ -55,8 +55,8 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
      * If aggregations columns are aliased, set the alias as output name. Push the rest of the aliases down.
      */
     @Override
-    public LogicalOperator visit(AggregationLop node) {
-        final Set<ColumnReference> aggregatesOutputColumns = node.aggregates().stream()
+    public LogicalOperator visit(AggregationLop aggregation) {
+        final Set<ColumnReference> aggregatesOutputColumns = aggregation.aggregates().stream()
                 .map(Aggregate::outputColumn)
                 .collect(toSet());
 
@@ -73,18 +73,18 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
 
         final ExactMatchAlias inputAliaser = new ExactMatchAlias(inputAliasing);
 
-        final List<ColumnReference> aliasedBreakdowns = node.breakdowns().stream()
+        final List<ColumnReference> aliasedBreakdowns = aggregation.breakdowns().stream()
                 .map(inputAliaser::alias)
                 .collect(toList());
 
         final ExactMatchAlias aggregateOutputAliaser = new ExactMatchAlias(aggregatesAliasing);
         final AggregateAliaser aggregateAliaser = new AggregateAliaser(inputAliaser, aggregateOutputAliaser);
 
-        final List<Aggregate> aliasedAggregates = node.aggregates().stream()
+        final List<Aggregate> aliasedAggregates = aggregation.aggregates().stream()
                 .map(aggregateAliaser::alias)
                 .collect(toList());
 
-        final LogicalOperator transformedInput = new AliasSimplification(inputAliasing).apply(node.input());
+        final LogicalOperator transformedInput = new AliasSimplification(inputAliasing).apply(aggregation.input());
 
         return new AggregationLop(transformedInput, aliasedBreakdowns, aliasedAggregates);
     }
@@ -126,10 +126,10 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(CartesianProductLop node) {
-        final LogicalOperator leftInput = node.leftInput();
+    public LogicalOperator visit(CartesianProductLop cartesianProduct) {
+        final LogicalOperator leftInput = cartesianProduct.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = node.rightInput();
+        final LogicalOperator rightInput = cartesianProduct.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final Map<ColumnReference, ColumnReference> leftAliasing = new HashMap<>();
@@ -148,8 +148,8 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(DistinctLop node) {
-        return node.transformInputs(this);
+    public LogicalOperator visit(DistinctLop distinct) {
+        return distinct.transformInputs(this);
     }
 
     @Override
@@ -160,10 +160,10 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(InnerJoinLop node) {
-        final LogicalOperator leftInput = node.left();
+    public LogicalOperator visit(InnerJoinLop innerJoin) {
+        final LogicalOperator leftInput = innerJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = node.right();
+        final LogicalOperator rightInput = innerJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final Map<ColumnReference, ColumnReference> leftAliasing = new HashMap<>();
@@ -179,7 +179,7 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
 
         final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
 
-        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(node.joinSpecification());
+        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(innerJoin.joinSpecification());
 
         return new InnerJoinLop(new AliasSimplification(leftAliasing).apply(leftInput),
                                 new AliasSimplification(rightAliasing).apply(rightInput),
@@ -187,10 +187,10 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(LeftJoinLop node) {
-        final LogicalOperator leftInput = node.left();
+    public LogicalOperator visit(LeftJoinLop leftJoin) {
+        final LogicalOperator leftInput = leftJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = node.right();
+        final LogicalOperator rightInput = leftJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final Map<ColumnReference, ColumnReference> leftAliasing = new HashMap<>();
@@ -206,7 +206,7 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
 
         final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
 
-        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(node.joinSpecification());
+        final ValueExpression aliasedJoinSpecification = expressionAliaser.apply(leftJoin.joinSpecification());
 
         return new LeftJoinLop(new AliasSimplification(leftAliasing).apply(leftInput),
                                new AliasSimplification(rightAliasing).apply(rightInput),
@@ -214,13 +214,13 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(LimitLop node) {
-        return node.transformInputs(this);
+    public LogicalOperator visit(LimitLop limit) {
+        return limit.transformInputs(this);
     }
 
     @Override
-    public LogicalOperator visit(MapLop node) {
-        final HashSet<ColumnReference> unaliasedExpressionsOutputNames = new HashSet<>(node.expressionsOutputNames());
+    public LogicalOperator visit(MapLop map) {
+        final HashSet<ColumnReference> unaliasedExpressionsOutputNames = new HashSet<>(map.expressionsOutputNames());
         final Map<ColumnReference, ColumnReference> inputAliasing = new HashMap<>();
         final Map<ColumnReference, ColumnReference> expressionsAliasing = new HashMap<>();
         aliasing.forEach((original, alias) -> {
@@ -231,17 +231,17 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
             }
         });
 
-        final LogicalOperator transformedInput = new AliasSimplification(inputAliasing).apply(node.input());
+        final LogicalOperator transformedInput = new AliasSimplification(inputAliasing).apply(map.input());
 
         final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(inputAliasing));
 
-        final List<ValueExpression> aliasedExpressions = node.expressions().stream()
+        final List<ValueExpression> aliasedExpressions = map.expressions().stream()
                 .map(expressionAliaser)
                 .collect(toList());
 
         final ExactMatchAlias alias = new ExactMatchAlias(expressionsAliasing);
 
-        final List<ColumnReference> aliasedExpressionOutputNames = node.expressionsOutputNames().stream()
+        final List<ColumnReference> aliasedExpressionOutputNames = map.expressionsOutputNames().stream()
                 .map(alias::alias)
                 .collect(toList());
 
@@ -249,14 +249,14 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(ProjectionLop node) {
+    public LogicalOperator visit(ProjectionLop projection) {
         final ExactMatchAlias alias = new ExactMatchAlias(aliasing);
 
-        final List<ColumnReference> aliasedOutputColumns = node.outputColumns().stream()
+        final List<ColumnReference> aliasedOutputColumns = projection.outputColumns().stream()
                 .map(alias::alias)
                 .collect(toList());
 
-        return new ProjectionLop(apply(node.input()), aliasedOutputColumns);
+        return new ProjectionLop(apply(projection.input()), aliasedOutputColumns);
     }
 
     @Override
@@ -265,10 +265,10 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(DependentSemiJoinLop semiJoin) {
-        final LogicalOperator leftInput = semiJoin.left();
+    public LogicalOperator visit(DependentSemiJoinLop dependentSemiJoin) {
+        final LogicalOperator leftInput = dependentSemiJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = semiJoin.right();
+        final LogicalOperator rightInput = dependentSemiJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final Map<ColumnReference, ColumnReference> leftAliasing = new HashMap<>();
@@ -283,16 +283,16 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
         });
 
         final ValueExpression aliasedPredicate;
-        if (semiJoin.predicate() != null) {
+        if (dependentSemiJoin.predicate() != null) {
             final ExpressionAliaser expressionAliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
-            aliasedPredicate = expressionAliaser.apply(semiJoin.predicate());
+            aliasedPredicate = expressionAliaser.apply(dependentSemiJoin.predicate());
         } else {
             aliasedPredicate = null;
         }
 
-        ColumnReference aliasedSemiJoinOutputColumn = aliasing.get(semiJoin.outputColumnName());
+        ColumnReference aliasedSemiJoinOutputColumn = aliasing.get(dependentSemiJoin.outputColumnName());
         if (aliasedSemiJoinOutputColumn == null) {
-            aliasedSemiJoinOutputColumn = semiJoin.outputColumnName();
+            aliasedSemiJoinOutputColumn = dependentSemiJoin.outputColumnName();
         }
 
         final LogicalOperator transformedLeftInput = new AliasSimplification(leftAliasing).apply(leftInput);
@@ -339,9 +339,9 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
     }
 
     @Override
-    public LogicalOperator visit(SortLop node) {
+    public LogicalOperator visit(SortLop sort) {
         final ExactMatchAlias aliaser = new ExactMatchAlias(aliasing);
-        final List<SortSpecification> aliasedSortSpecificationList = node.sortSpecificationList().stream()
+        final List<SortSpecification> aliasedSortSpecificationList = sort.sortSpecificationList().stream()
                 .map(specification -> {
                     final ColumnReference aliasedColumn = aliaser.alias(specification.column());
                     if (specification.ascending()) {
@@ -352,14 +352,14 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
                 })
                 .collect(toList());
 
-        return new SortLop(apply(node.input()), aliasedSortSpecificationList);
+        return new SortLop(apply(sort.input()), aliasedSortSpecificationList);
     }
 
     @Override
-    public LogicalOperator visit(DependentJoinLop node) {
-        final LogicalOperator leftInput = node.left();
+    public LogicalOperator visit(DependentJoinLop dependentJoin) {
+        final LogicalOperator leftInput = dependentJoin.left();
         final Schema leftInputSchema = leftInput.schema();
-        final LogicalOperator rightInput = node.right();
+        final LogicalOperator rightInput = dependentJoin.right();
         final Schema rightInputSchema = rightInput.schema();
 
         final Map<ColumnReference, ColumnReference> leftAliasing = new HashMap<>();
@@ -374,9 +374,9 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
         });
 
         final ValueExpression aliasedPredicate;
-        if (node.predicate() != null) {
+        if (dependentJoin.predicate() != null) {
             final ExpressionAliaser aliaser = new ExpressionAliaser(new ExactMatchAlias(aliasing));
-            aliasedPredicate = aliaser.apply(node.predicate());
+            aliasedPredicate = aliaser.apply(dependentJoin.predicate());
         } else {
             aliasedPredicate = null;
         }

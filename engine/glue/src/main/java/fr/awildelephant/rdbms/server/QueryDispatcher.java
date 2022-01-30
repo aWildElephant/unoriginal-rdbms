@@ -4,16 +4,15 @@ import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.*;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.database.Storage;
-import fr.awildelephant.rdbms.engine.data.column.TextColumn;
-import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
-import fr.awildelephant.rdbms.explain.PlanJsonBuilder;
+import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
 import fr.awildelephant.rdbms.plan.AliasLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
-import fr.awildelephant.rdbms.schema.*;
+import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.with.WithInliner;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.server.Inserter.insertRows;
 import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 
@@ -33,15 +31,17 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     private final Algebraizer algebraizer;
     private final Optimizer optimizer;
     private final WithInliner<Table> withInliner;
+    private final LogicalPlanTableBuilder logicalPlanTableBuilder;
 
     QueryDispatcher(Storage storage,
                     Algebraizer algebraizer,
                     Optimizer optimizer,
-                    WithInlinerFactory withInlinerFactory) {
+                    WithInlinerFactory withInlinerFactory, LogicalPlanTableBuilder logicalPlanTableBuilder) {
         this.storage = storage;
         this.algebraizer = algebraizer;
         this.optimizer = optimizer;
         this.withInliner = withInlinerFactory.build(this);
+        this.logicalPlanTableBuilder = logicalPlanTableBuilder;
     }
 
     @Override
@@ -86,25 +86,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     @Override
     public Table visit(Explain explain) {
-        final LogicalOperator plan = optimizer.optimize(algebraizer.apply(explain.input()));
-        // TODO: if possible, instantiate once
-        final PlanJsonBuilder planJsonBuilder = new PlanJsonBuilder();
-        planJsonBuilder.apply(plan);
-
-        return explainTable(planJsonBuilder.toString());
-    }
-
-    private Table explainTable(String explanation) {
-        final Schema schema = new Schema(List.of(new ColumnMetadata(0,
-                new UnqualifiedColumnReference("plan"),
-                Domain.TEXT,
-                true,
-                false)));
-
-        final TextColumn column = new TextColumn(1);
-        column.add(textValue(explanation));
-
-        return new ColumnBasedTable(schema, List.of(column));
+        return logicalPlanTableBuilder.explain(optimizer.optimize(algebraizer.apply(explain.input())));
     }
 
     @Override

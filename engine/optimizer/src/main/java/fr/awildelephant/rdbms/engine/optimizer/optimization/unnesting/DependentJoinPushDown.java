@@ -112,8 +112,8 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
 
         @Override
         public LogicalOperator visit(CartesianProductLop cartesianProduct) {
-            final LogicalOperator left = cartesianProduct.leftInput();
-            final LogicalOperator right = cartesianProduct.rightInput();
+            final LogicalOperator left = cartesianProduct.left();
+            final LogicalOperator right = cartesianProduct.right();
 
             if (intersection(freeVariables(left), attributesD).isEmpty()) {
                 return new CartesianProductLop(left, apply(right));
