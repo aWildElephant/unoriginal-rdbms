@@ -1,4 +1,3 @@
-# TODO: cucumber.publish.quiet=true in cucumber.properties
 Feature: Explain
 
   Scenario: I explain a simple values query
