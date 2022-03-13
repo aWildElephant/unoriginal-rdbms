@@ -3,37 +3,25 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.engine.operators.values.RecordValues;
 import fr.awildelephant.rdbms.evaluator.Formula;
-import fr.awildelephant.rdbms.schema.Schema;
 
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import java.util.function.Predicate;
 
-public final class FilterOperator implements Operator<Table, Table> {
-
-    private final Formula filter;
-
-    public FilterOperator(Formula filter) {
-        this.filter = filter;
-    }
+public record FilterOperator(Formula filter) implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {
-        final Schema inputSchema = inputTable.schema();
-        final Table outputTable = simpleTable(inputSchema);
-
         final RecordValues values = new RecordValues();
-
-        for (Record record : inputTable) {
+        final Predicate<Record> predicate = record -> {
             values.setRecord(record);
 
             final DomainValue predicateResult = filter.evaluate(values);
 
-            if (!predicateResult.isNull() && predicateResult.getBool()) {
-                outputTable.add(record);
-            }
-        }
+            return !predicateResult.isNull() && predicateResult.getBool();
+        };
 
-        return outputTable;
+        return TableFactory.filter(inputTable, predicate);
     }
 }

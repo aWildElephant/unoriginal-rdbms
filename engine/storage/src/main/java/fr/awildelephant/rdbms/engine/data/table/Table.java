@@ -11,6 +11,7 @@ public interface Table extends Iterable<Record> {
 
     Schema schema();
 
+    // TODO: move add and addAll to another interface
     void add(Record newRecord);
 
     void addAll(Collection<Record> newRecords);
