@@ -51,6 +51,14 @@ public class FilteredTable implements Table {
         return wrappedTable.columns().stream().<Column>map(column -> new FilteredColumn(column, bitmap)).toList();
     }
 
+    public Table materialize() {
+        final Table outputTable = TableFactory.simpleTable(wrappedTable.schema(), bitmap.cardinality());
+        for (Record record : this) {
+            outputTable.add(record);
+        }
+        return outputTable;
+    }
+
     @Override
     public Iterator<Record> iterator() {
         return new FilteredMultipleColumnsIterator(wrappedTable.columns(), bitmap);

@@ -75,7 +75,7 @@ public final class TableFactory {
         return new TableWithChecker(simpleTable(schema));
     }
 
-    public static Table filter(Table inputTable, Predicate<Record> predicate) {
+    public static FilteredTable filter(Table inputTable, Predicate<Record> predicate) {
         return new FilteredTable(inputTable, predicateBitmap(inputTable, predicate));
     }
 

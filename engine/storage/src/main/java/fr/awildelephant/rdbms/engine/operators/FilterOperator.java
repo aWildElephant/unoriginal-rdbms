@@ -22,6 +22,6 @@ public record FilterOperator(Formula filter) implements Operator<Table, Table> {
             return !predicateResult.isNull() && predicateResult.getBool();
         };
 
-        return TableFactory.filter(inputTable, predicate);
+        return TableFactory.filter(inputTable, predicate).materialize();
     }
 }
