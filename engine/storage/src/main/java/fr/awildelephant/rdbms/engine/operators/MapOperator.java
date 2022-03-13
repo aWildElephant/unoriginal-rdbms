@@ -33,6 +33,7 @@ public final class MapOperator implements Operator<Table, Table> {
         final List<ColumnReference> outputColumnReferences = outputSchema.columnNames();
         final List<ColumnReference> mapColumnReferences = outputColumnReferences.subList(inputTable.schema().numberOfAttributes(), outputColumnReferences.size());
 
+        // TODO: we iterate several times on the input table, which doesn't help our FilteredTable issues
         for (int i = 0; i < operations.size(); i++) {
             final Formula operation = operations.get(i);
             final ColumnReference columnReference = mapColumnReferences.get(i);
