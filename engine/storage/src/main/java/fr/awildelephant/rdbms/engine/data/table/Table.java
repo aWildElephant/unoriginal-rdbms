@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.engine.data.table;
 
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.Collection;
@@ -19,8 +18,6 @@ public interface Table extends Iterable<Record> {
     int numberOfTuples();
 
     boolean isEmpty();
-
-    Tuple get(int rowIndex);
 
     List<Column> columns();
 }
