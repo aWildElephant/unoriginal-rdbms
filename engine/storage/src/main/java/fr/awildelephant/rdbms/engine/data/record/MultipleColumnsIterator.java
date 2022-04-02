@@ -8,6 +8,7 @@ import java.util.List;
 public final class MultipleColumnsIterator implements Iterator<Record> {
 
     private final MultipleColumnsIteratorRecord record;
+
     private int cursor;
 
     public MultipleColumnsIterator(List<Column> columns) {

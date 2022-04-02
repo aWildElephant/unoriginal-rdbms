@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class ExactMatchAlias implements Alias {
+public final class ExactMatchAlias implements ReversibleAlias {
 
     private final Map<ColumnReference, ColumnReference> aliasing;
 

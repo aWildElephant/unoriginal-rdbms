@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.alias.Alias;
+import fr.awildelephant.rdbms.plan.alias.ReversibleAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
 import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
@@ -11,9 +11,9 @@ import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
 
 public final class ExpressionUnaliaser extends DefaultValueExpressionVisitor<ValueExpression> {
 
-    private final Alias alias;
+    private final ReversibleAlias alias;
 
-    ExpressionUnaliaser(Alias alias) {
+    ExpressionUnaliaser(ReversibleAlias alias) {
         this.alias = alias;
     }
 

@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class TableAlias implements Alias {
+public final class TableAlias implements ReversibleAlias {
 
     private final String source;
     private final String alias;

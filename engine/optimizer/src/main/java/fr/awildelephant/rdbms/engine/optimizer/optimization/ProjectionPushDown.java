@@ -1,13 +1,31 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.*;
+import fr.awildelephant.rdbms.plan.AggregationLop;
+import fr.awildelephant.rdbms.plan.AliasLop;
+import fr.awildelephant.rdbms.plan.CartesianProductLop;
+import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
+import fr.awildelephant.rdbms.plan.DependentJoinLop;
+import fr.awildelephant.rdbms.plan.DistinctLop;
+import fr.awildelephant.rdbms.plan.FilterLop;
+import fr.awildelephant.rdbms.plan.InnerJoinLop;
+import fr.awildelephant.rdbms.plan.LeftJoinLop;
+import fr.awildelephant.rdbms.plan.LimitLop;
+import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.plan.ProjectionLop;
+import fr.awildelephant.rdbms.plan.SemiJoinLop;
+import fr.awildelephant.rdbms.plan.SortLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
-import fr.awildelephant.rdbms.plan.alias.Alias;
+import fr.awildelephant.rdbms.plan.alias.ReversibleAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.leftJoinOutputSchema;
@@ -55,7 +73,7 @@ public final class ProjectionPushDown extends DefaultLopVisitor<LogicalOperator>
 
     @Override
     public LogicalOperator visit(AliasLop aliasNode) {
-        final Alias alias = aliasNode.alias();
+        final ReversibleAlias alias = aliasNode.alias();
 
         final List<ColumnReference> unaliasedProjection = projection.stream().map(alias::unalias)
                 .collect(toList());

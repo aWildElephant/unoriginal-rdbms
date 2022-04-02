@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.SemiJoinLop;
 import fr.awildelephant.rdbms.plan.alias.Alias;
 import fr.awildelephant.rdbms.plan.alias.ExactMatchAlias;
+import fr.awildelephant.rdbms.plan.alias.ReversibleAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
@@ -153,7 +154,7 @@ public final class NeumannKemperSubqueryDecorrelator {
 
         final Schema leftSchema = left.schema();
         final Schema rightSchema = aliasedMagicSet.schema();
-        final Alias magicSetAlias = aliasedMagicSet.alias();
+        final ReversibleAlias magicSetAlias = aliasedMagicSet.alias();
 
         for (ColumnReference rightColumnName : rightSchema.columnNames()) {
             final ColumnReference unaliasedRightColumn = magicSetAlias.unalias(rightColumnName);

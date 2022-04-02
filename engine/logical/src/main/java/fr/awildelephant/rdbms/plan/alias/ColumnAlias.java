@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class ColumnAlias implements Alias {
+public final class ColumnAlias implements ReversibleAlias {
 
     private final Map<String, Map<String, String>> aliases;
 

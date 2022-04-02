@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.plan;
 
-import fr.awildelephant.rdbms.plan.alias.Alias;
+import fr.awildelephant.rdbms.plan.alias.ReversibleAlias;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -10,9 +10,9 @@ import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuil
 public final class AliasLop extends AbstractLop {
 
     private final LogicalOperator input;
-    private final Alias alias;
+    private final ReversibleAlias alias;
 
-    public AliasLop(LogicalOperator input, Alias alias) {
+    public AliasLop(LogicalOperator input, ReversibleAlias alias) {
         super(input.schema().alias(alias::alias));
 
         this.input = input;
@@ -23,7 +23,7 @@ public final class AliasLop extends AbstractLop {
         return input;
     }
 
-    public Alias alias() {
+    public ReversibleAlias alias() {
         return alias;
     }
 
