@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.engine.operators.values.RecordValues;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
@@ -12,8 +13,6 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.createColumn;
 
 public final class MapOperator implements Operator<Table, Table> {
 
@@ -27,35 +26,43 @@ public final class MapOperator implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {
-        final List<Column> outputColumns = new ArrayList<>(outputSchema.numberOfAttributes());
-        outputColumns.addAll(inputTable.columns());
+        final List<Column> mapColumns = computeMapOperations(inputTable);
 
-        final List<ColumnReference> outputColumnReferences = outputSchema.columnNames();
-        final List<ColumnReference> mapColumnReferences = outputColumnReferences.subList(inputTable.schema().numberOfAttributes(), outputColumnReferences.size());
+        final List<Column> inputColumns = inputTable.columns();
 
-        // TODO: we iterate several times on the input table, which doesn't help our FilteredTable issues
-        for (int i = 0; i < operations.size(); i++) {
-            final Formula operation = operations.get(i);
-            final ColumnReference columnReference = mapColumnReferences.get(i);
-            final ColumnMetadata columnMetadata = outputSchema.column(columnReference).metadata();
-
-            outputColumns.add(createColumnForOperation(operation, columnMetadata, inputTable));
-        }
+        final List<Column> outputColumns = new ArrayList<>(inputColumns.size() + mapColumns.size());
+        outputColumns.addAll(inputColumns);
+        outputColumns.addAll(mapColumns);
 
         return new ColumnBasedTable(outputSchema, outputColumns);
     }
 
-    private Column createColumnForOperation(Formula operation, ColumnMetadata outputColumn, Table inputTable) {
-        final Column column = createColumn(outputColumn, inputTable.numberOfTuples());
+    private List<Column> computeMapOperations(Table inputTable) {
+        final List<Column> mapColumns = buildMapOutputColumns(inputTable.numberOfTuples());
 
         final RecordValues values = new RecordValues();
-
         for (Record record : inputTable) {
             values.setRecord(record);
 
-            column.add(operation.evaluate(values));
+            for (int operationIndex = 0; operationIndex < operations.size(); operationIndex++) {
+                mapColumns.get(operationIndex).add(operations.get(operationIndex).evaluate(values));
+            }
         }
+        return mapColumns;
+    }
 
-        return column;
+    private List<Column> buildMapOutputColumns(int numberOfInputTuples) {
+        final int numberOfOutputColumns = outputSchema.numberOfAttributes();
+        final int numberOfOperations = operations.size();
+        final List<ColumnReference> mapColumnReferences = outputSchema.columnNames()
+                .subList(numberOfOutputColumns - numberOfOperations, numberOfOutputColumns);
+
+        final List<Column> mapColumns = new ArrayList<>(numberOfOperations);
+        for (ColumnReference mapColumnReference : mapColumnReferences) {
+            final ColumnMetadata column = outputSchema.column(mapColumnReference).metadata();
+
+            mapColumns.add(TableFactory.createColumn(column, numberOfInputTuples));
+        }
+        return mapColumns;
     }
 }
