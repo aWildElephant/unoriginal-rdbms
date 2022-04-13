@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.operators.aggregation;
+package fr.awildelephant.rdbms.engine.operators.accumulator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
@@ -7,21 +7,19 @@ import java.util.Set;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 
-public final class CountDistinctAggregator implements Aggregator {
+public final class CountDistinctAccumulator implements Accumulator {
 
     private final Set<DomainValue> distinctValues = new HashSet<>();
 
     @Override
-    public boolean accumulate(DomainValue value) {
+    public void accumulate(DomainValue value) {
         if (!value.isNull()) {
             distinctValues.add(value);
         }
-
-        return false;
     }
 
     @Override
-    public DomainValue aggregate() {
+    public DomainValue result() {
         return integerValue(distinctValues.size());
     }
 }

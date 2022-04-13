@@ -1,24 +1,22 @@
-package fr.awildelephant.rdbms.engine.operators.aggregation;
+package fr.awildelephant.rdbms.engine.operators.accumulator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 
-public final class CountAggregator implements Aggregator {
+public final class CountAccumulator implements Accumulator {
 
     private int count;
 
     @Override
-    public boolean accumulate(DomainValue value) {
+    public void accumulate(DomainValue value) {
         if (!value.isNull()) {
             count++;
         }
-
-        return false;
     }
 
     @Override
-    public DomainValue aggregate() {
+    public DomainValue result() {
         return integerValue(count);
     }
 }

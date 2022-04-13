@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.operators.aggregation;
+package fr.awildelephant.rdbms.engine.operators.accumulator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
@@ -7,12 +7,12 @@ import java.math.BigDecimal;
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 
-public final class DecimalSumAggregator implements Aggregator {
+public final class DecimalSumAccumulator implements Accumulator {
 
     private BigDecimal accumulator;
 
     @Override
-    public boolean accumulate(DomainValue value) {
+    public void accumulate(DomainValue value) {
         if (!value.isNull()) {
             if (accumulator != null) {
                 accumulator = accumulator.add(value.getBigDecimal());
@@ -20,12 +20,10 @@ public final class DecimalSumAggregator implements Aggregator {
                 accumulator = value.getBigDecimal();
             }
         }
-
-        return false;
     }
 
     @Override
-    public DomainValue aggregate() {
+    public DomainValue result() {
         return accumulator != null ? decimalValue(accumulator) : nullValue();
     }
 }

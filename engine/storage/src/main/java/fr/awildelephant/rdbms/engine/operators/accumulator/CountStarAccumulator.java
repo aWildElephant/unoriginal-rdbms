@@ -1,22 +1,20 @@
-package fr.awildelephant.rdbms.engine.operators.aggregation;
+package fr.awildelephant.rdbms.engine.operators.accumulator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 
-public final class CountStarAggregator implements Aggregator {
+public final class CountStarAccumulator implements Accumulator {
 
     private int accumulator;
 
     @Override
-    public boolean accumulate(DomainValue unused) {
+    public void accumulate(DomainValue unused) {
         accumulator++;
-
-        return false;
     }
 
     @Override
-    public DomainValue aggregate() {
+    public DomainValue result() {
         return integerValue(accumulator);
     }
 }

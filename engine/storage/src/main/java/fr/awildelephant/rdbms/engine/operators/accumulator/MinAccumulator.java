@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.engine.operators.aggregation;
+package fr.awildelephant.rdbms.engine.operators.accumulator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
@@ -6,27 +6,25 @@ import java.util.Comparator;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 
-public final class MinAggregator implements Aggregator {
+public final class MinAccumulator implements Accumulator {
 
     private final Comparator<DomainValue> comparator;
 
     private DomainValue min = nullValue();
 
-    public MinAggregator(Comparator<DomainValue> comparator) {
+    public MinAccumulator(Comparator<DomainValue> comparator) {
         this.comparator = comparator;
     }
 
     @Override
-    public boolean accumulate(DomainValue value) {
+    public void accumulate(DomainValue value) {
         if (min.isNull() || comparator.compare(value, min) < 0) {
             min = value;
         }
-
-        return false;
     }
 
     @Override
-    public DomainValue aggregate() {
+    public DomainValue result() {
         return min;
     }
 }
