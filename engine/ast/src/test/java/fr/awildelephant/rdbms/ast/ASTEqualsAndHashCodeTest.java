@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.value.CountStar;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.Placeholder;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,7 +39,7 @@ class ASTEqualsAndHashCodeTest {
     @ParameterizedTest(name = "{index} - {0}")
     @MethodSource("parameters")
     void all_implementations_of_AST_should_implement_equals_and_hashCode(String className, Class<? extends AST> implementationOfAST) {
-        EqualsVerifier.forClass(implementationOfAST).verify();
+        EqualsVerifier.forClass(implementationOfAST).suppress(Warning.BIGDECIMAL_EQUALITY).verify();
     }
 
 }

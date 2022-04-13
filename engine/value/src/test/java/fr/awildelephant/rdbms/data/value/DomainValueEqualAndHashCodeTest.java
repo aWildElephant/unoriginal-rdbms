@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.data.value;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -35,6 +36,6 @@ class DomainValueEqualAndHashCodeTest {
     @ParameterizedTest(name = "{index} - {0}")
     @MethodSource("parameters")
     void all_implementations_of_AST_should_implement_equals_and_hashCode(String className, Class<? extends DomainValue> implementationOfDomainValue) {
-        EqualsVerifier.forClass(implementationOfDomainValue).verify();
+        EqualsVerifier.forClass(implementationOfDomainValue).suppress(Warning.BIGDECIMAL_EQUALITY).verify();
     }
 }
