@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.engine.operators.join;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -22,14 +23,14 @@ public final class LeftJoinOutputCreator implements JoinOutputCreator {
     }
 
     @Override
-    public List<Record> join(Record leftPart, List<Record> rightParts) {
+    public List<Record> join(Record leftPart, Chunk<Record> rightParts) {
         if (rightParts == null || rightParts.isEmpty()) {
             return unmatched(leftPart);
         }
 
         final List<Record> output = new ArrayList<>(rightParts.size());
 
-        for (Record rightPart : rightParts) {
+        for (Record rightPart : rightParts.content()) {
             output.add(joinRecords(leftPart, rightPart));
         }
 

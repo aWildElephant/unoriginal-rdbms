@@ -1,12 +1,11 @@
 package fr.awildelephant.rdbms.engine.operators;
 
+import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.join.JoinOutputCreator;
 import fr.awildelephant.rdbms.schema.Schema;
-
-import java.util.List;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 
@@ -25,7 +24,7 @@ public final class JoinOperator {
     public Table compute(Table leftInput) {
         final Table outputTable = simpleTable(outputSchema);
         for (Record leftRecord : leftInput) {
-            final List<Record> matchingRightRecords = matcher.match(leftRecord);
+            final Chunk<Record> matchingRightRecords = matcher.match(leftRecord);
 
             outputTable.addAll(outputCreator.join(leftRecord, matchingRightRecords));
         }

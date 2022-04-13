@@ -1,12 +1,11 @@
 package fr.awildelephant.rdbms.engine.operators.join;
 
+import fr.awildelephant.rdbms.engine.data.chunk.BuildableChunk;
+import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.values.JoinValues;
 import fr.awildelephant.rdbms.evaluator.Formula;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class NestedLoopJoinMatcher implements JoinMatcher {
 
@@ -19,10 +18,10 @@ public final class NestedLoopJoinMatcher implements JoinMatcher {
     }
 
     @Override
-    public List<Record> match(Record leftRecord) {
+    public Chunk<Record> match(Record leftRecord) {
         final JoinValues values = new JoinValues(leftRecord);
 
-        final List<Record> matchingRightRecords = new ArrayList<>();
+        final BuildableChunk<Record> matchingRightRecords = new BuildableChunk<>();
         for (Record rightRecord : rightTable) {
             values.setRightRecord(rightRecord);
             if (joinSpecification.evaluate(values).getBool()) {

@@ -1,6 +1,8 @@
 package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
+import fr.awildelephant.rdbms.engine.data.chunk.ChunkFactory;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
@@ -58,16 +60,16 @@ public final class AggregationOperator implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {
-        final Map<Record, List<Record>> hash = hashInputTable(inputTable, breakdowns);
+        final Map<Record, ? extends Chunk<Record>> hash = hashInputTable(inputTable, breakdowns);
 
         final Supplier<List<AccumulatorWrapper>> accumulatorListSupplier = accumulatorListSupplier(inputTable.schema());
 
         final Table outputTable = simpleTable(outputSchema);
         final List<Column> outputColumns = outputTable.columns();
-        hash.forEach((group, rows) -> {
+        hash.forEach((group, chunk) -> {
             final List<AccumulatorWrapper> accumulatorList = accumulatorListSupplier.get();
 
-            rows.forEach(row -> accumulatorList.forEach(accumulator -> accumulator.accumulate(row)));
+            chunk.content().forEach(row -> accumulatorList.forEach(accumulator -> accumulator.accumulate(row)));
 
             // Add computed row to output table
             final int numberOfBreakdowns = group.size();
@@ -82,12 +84,12 @@ public final class AggregationOperator implements Operator<Table, Table> {
         return outputTable;
     }
 
-    private Map<Record, List<Record>> hashInputTable(Table inputTable, List<ColumnReference> breakdowns) {
+    private Map<Record, ? extends Chunk<Record>> hashInputTable(Table inputTable, List<ColumnReference> breakdowns) {
         if (breakdowns.isEmpty()) {
             if (inputTable.isEmpty()) {
-                return Map.of(Tuple.EMPTY_TUPLE, List.of(nullRecord(inputTable.schema().numberOfAttributes())));
+                return Map.of(Tuple.EMPTY_TUPLE, ChunkFactory.of(nullRecord(inputTable.schema().numberOfAttributes())));
             } else {
-                return Map.of(Tuple.EMPTY_TUPLE, toList(inputTable));
+                return Map.of(Tuple.EMPTY_TUPLE, ChunkFactory.of(inputTable, inputTable.numberOfTuples()));
             }
         }
 
@@ -102,15 +104,6 @@ public final class AggregationOperator implements Operator<Table, Table> {
             values[i] = nullValue();
         }
         return new Tuple(values);
-    }
-
-    // FIXME: stop building this list
-    private List<Record> toList(Table table) {
-        final List<Record> list = new ArrayList<>(table.numberOfTuples());
-        for (Record element : table) {
-            list.add(element.materialize());
-        }
-        return list;
     }
 
     public Supplier<List<AccumulatorWrapper>> accumulatorListSupplier(Schema inputSchema) {
