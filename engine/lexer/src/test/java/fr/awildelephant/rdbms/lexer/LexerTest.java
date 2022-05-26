@@ -44,80 +44,80 @@ class LexerTest {
     void it_should_tokenize_a_create_table_statement() {
         assertLexing("CREATE TABLE x (y INTEGER, z TEXT);",
 
-                     CREATE_TOKEN,
-                     TABLE_TOKEN,
-                     new IdentifierToken("x"),
-                     LEFT_PAREN_TOKEN,
-                     new IdentifierToken("y"),
-                     INTEGER_TOKEN,
-                     COMMA_TOKEN,
-                     new IdentifierToken("z"),
-                     TEXT_TOKEN,
-                     RIGHT_PAREN_TOKEN,
-                     SEMICOLON_TOKEN);
+                CREATE_TOKEN,
+                TABLE_TOKEN,
+                new IdentifierToken("x"),
+                LEFT_PAREN_TOKEN,
+                new IdentifierToken("y"),
+                INTEGER_TOKEN,
+                COMMA_TOKEN,
+                new IdentifierToken("z"),
+                TEXT_TOKEN,
+                RIGHT_PAREN_TOKEN,
+                SEMICOLON_TOKEN);
     }
 
     @Test
     void it_should_tokenize_an_insert_into_statement() {
         assertLexing("INSERT INTO x (y) VALUES (1);",
 
-                     INSERT_TOKEN,
-                     INTO_TOKEN,
-                     new IdentifierToken("x"),
-                     LEFT_PAREN_TOKEN,
-                     new IdentifierToken("y"),
-                     RIGHT_PAREN_TOKEN,
-                     VALUES_TOKEN,
-                     LEFT_PAREN_TOKEN,
-                     new IntegerLiteralToken(1),
-                     RIGHT_PAREN_TOKEN,
-                     SEMICOLON_TOKEN);
+                INSERT_TOKEN,
+                INTO_TOKEN,
+                new IdentifierToken("x"),
+                LEFT_PAREN_TOKEN,
+                new IdentifierToken("y"),
+                RIGHT_PAREN_TOKEN,
+                VALUES_TOKEN,
+                LEFT_PAREN_TOKEN,
+                new IntegerLiteralToken(1),
+                RIGHT_PAREN_TOKEN,
+                SEMICOLON_TOKEN);
     }
 
     @Test
     void it_should_tokenize_a_select_count_star() {
         assertLexing("SELECT COUNT(*) FROM test",
 
-                     SELECT_TOKEN,
-                     COUNT_TOKEN,
-                     LEFT_PAREN_TOKEN,
-                     ASTERISK_TOKEN,
-                     RIGHT_PAREN_TOKEN,
-                     FROM_TOKEN,
-                     new IdentifierToken("test"));
+                SELECT_TOKEN,
+                COUNT_TOKEN,
+                LEFT_PAREN_TOKEN,
+                ASTERISK_TOKEN,
+                RIGHT_PAREN_TOKEN,
+                FROM_TOKEN,
+                new IdentifierToken("test"));
     }
 
     @Test
     void it_should_tokenize_boolean_literals() {
         assertLexing("SELECT TRUE, FALSE",
 
-                     SELECT_TOKEN,
-                     TRUE_TOKEN,
-                     COMMA_TOKEN,
-                     FALSE_TOKEN);
+                SELECT_TOKEN,
+                TRUE_TOKEN,
+                COMMA_TOKEN,
+                FALSE_TOKEN);
     }
 
     @Test
     void it_should_tokenize_an_interval_literal() {
         assertLexing("INTERVAL '120' DAY (3)",
 
-                     INTERVAL_TOKEN,
-                     new TextLiteralToken("120"),
-                     DAY_TOKEN,
-                     LEFT_PAREN_TOKEN,
-                     new IntegerLiteralToken(3),
-                     RIGHT_PAREN_TOKEN);
+                INTERVAL_TOKEN,
+                new TextLiteralToken("120"),
+                DAY_TOKEN,
+                LEFT_PAREN_TOKEN,
+                new IntegerLiteralToken(3),
+                RIGHT_PAREN_TOKEN);
     }
 
     @Test
     void it_should_tokenize_an_identifier_chain() {
         assertLexing("one.two.three",
 
-                     new IdentifierToken("one"),
-                     PERIOD_TOKEN,
-                     new IdentifierToken("two"),
-                     PERIOD_TOKEN,
-                     new IdentifierToken("three"));
+                new IdentifierToken("one"),
+                PERIOD_TOKEN,
+                new IdentifierToken("two"),
+                PERIOD_TOKEN,
+                new IdentifierToken("three"));
     }
 
     @Test
@@ -136,29 +136,19 @@ class LexerTest {
         assertThat(lexer.lookupNextToken()).isEqualTo(ASTERISK_TOKEN);
     }
 
-    // TODO: rewrite using LexingTestHelper
     @Test
     void it_should_not_tokenize_less_than_and_equal_as_less_than_or_equal_to() {
-        final Lexer lexer = new Lexer(InputStreamWrapper.wrap("< ="));
-
-        assertThat(lexer.consumeNextToken()).isEqualTo(LESS_TOKEN);
-        assertThat(lexer.consumeNextToken()).isEqualTo(EQUAL_TOKEN);
+        assertLexing("< =", LESS_TOKEN, EQUAL_TOKEN);
     }
 
     @Test
     void it_should_properly_handle_accents_in_text_literals() {
-        final Lexer lexer = new Lexer(InputStreamWrapper.wrap("'àéïôù'"));
-
-        assertThat(lexer.consumeNextToken()).isEqualTo(new TextLiteralToken("àéïôù"));
+        assertLexing("'àéïôù'", new TextLiteralToken("àéïôù"));
     }
 
     @Test
     void it_should_throw_an_exception_for_an_invalid_identifier() {
-        final Lexer lexer = lexerFrom("SELECT * FROM 2befree");
-
-        lexer.consumeNextToken();
-        lexer.consumeNextToken();
-        lexer.consumeNextToken();
+        final Lexer lexer = lexerFrom("2befree");
 
         assertThrows(LexingException.class, lexer::lookupNextToken);
     }
