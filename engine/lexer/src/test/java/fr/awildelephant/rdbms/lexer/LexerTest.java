@@ -1,11 +1,13 @@
 package fr.awildelephant.rdbms.lexer;
 
+import fr.awildelephant.rdbms.lexer.exception.LexingException;
 import fr.awildelephant.rdbms.lexer.tokens.IdentifierToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
 import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.lexer.LexingTestHelper.assertLexing;
+import static fr.awildelephant.rdbms.lexer.LexingTestHelper.lexerFrom;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.COUNT_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.CREATE_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.DAY_TOKEN;
@@ -29,6 +31,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.PERIOD_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LexerTest {
 
@@ -133,6 +136,7 @@ class LexerTest {
         assertThat(lexer.lookupNextToken()).isEqualTo(ASTERISK_TOKEN);
     }
 
+    // TODO: rewrite using LexingTestHelper
     @Test
     void it_should_not_tokenize_less_than_and_equal_as_less_than_or_equal_to() {
         final Lexer lexer = new Lexer(InputStreamWrapper.wrap("< ="));
@@ -146,5 +150,16 @@ class LexerTest {
         final Lexer lexer = new Lexer(InputStreamWrapper.wrap("'àéïôù'"));
 
         assertThat(lexer.consumeNextToken()).isEqualTo(new TextLiteralToken("àéïôù"));
+    }
+
+    @Test
+    void it_should_throw_an_exception_for_an_invalid_identifier() {
+        final Lexer lexer = lexerFrom("SELECT * FROM 2befree");
+
+        lexer.consumeNextToken();
+        lexer.consumeNextToken();
+        lexer.consumeNextToken();
+
+        assertThrows(LexingException.class, lexer::lookupNextToken);
     }
 }

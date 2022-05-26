@@ -18,7 +18,7 @@ final class LexingTestHelper {
     }
 
     static ArrayList<Token> tryLexing(String input) {
-        final Lexer lexer = new Lexer(InputStreamWrapper.wrap(input));
+        final Lexer lexer = lexerFrom(input);
         final ArrayList<Token> actualTokens = new ArrayList<>();
 
         while (lexer.lookupNextToken().type() != TokenType.END_OF_FILE) {
@@ -26,5 +26,9 @@ final class LexingTestHelper {
         }
 
         return actualTokens;
+    }
+
+    static Lexer lexerFrom(String input) {
+        return new Lexer(InputStreamWrapper.wrap(input));
     }
 }

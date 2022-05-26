@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.lexer;
 
+import fr.awildelephant.rdbms.lexer.exception.LexingException;
 import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.IdentifierToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
@@ -33,6 +34,8 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SOLIDUS_TOKEN;
 import static java.lang.Integer.parseInt;
 
 public final class Lexer {
+
+    private static final int END_OF_INPUT = -1;
 
     private final InputStreamWrapper input;
     private final List<Token> readTokens;
@@ -147,7 +150,7 @@ public final class Lexer {
 
             input.next();
 
-            if (codePoint == -1) {
+            if (codePoint == END_OF_INPUT) {
                 throw new InputMismatchException();
             } else if (codePoint == '\'') {
                 if (input.get() == '\'') {
@@ -196,16 +199,22 @@ public final class Lexer {
                 valueBuilder.appendCodePoint(codePoint);
             } else if (codePoint >= '0' && codePoint <= '9') {
                 valueBuilder.appendCodePoint(codePoint);
-            } else {
+            } else if (isEndOfNumber(codePoint)) {
                 if (decimalSeparatorFound) {
                     return new DecimalLiteralToken(new BigDecimal(valueBuilder.toString()));
                 } else {
                     return new IntegerLiteralToken(parseInt(valueBuilder.toString()));
                 }
+            } else {
+                throw new LexingException();
             }
 
             input.next();
         }
+    }
+
+    private boolean isEndOfNumber(int codePoint) {
+        return codePoint == END_OF_INPUT || codePoint == ',' || codePoint == ';' || codePoint == '(' || codePoint == ')' || isBlank(codePoint);
     }
 
     private boolean isBlank(int codePoint) {
