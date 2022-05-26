@@ -1,16 +1,18 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
-import fr.awildelephant.rdbms.engine.data.column.Column;
+import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.record.MultipleColumnsIterator;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
-public record ColumnBasedTable(Schema schema, List<Column> columns) implements Table {
+public record ColumnBasedWriteableTable(Schema schema, List<WriteableColumn> columns) implements WriteableTable {
 
     @Override
     public void add(Record newRecord) {
@@ -27,7 +29,7 @@ public record ColumnBasedTable(Schema schema, List<Column> columns) implements T
 
         for (Record record : newRecords) {
             for (int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
-                final Column column = columns.get(columnIndex);
+                final WriteableColumn column = columns.get(columnIndex);
 
                 column.add(record.get(columnIndex));
             }
@@ -45,7 +47,37 @@ public record ColumnBasedTable(Schema schema, List<Column> columns) implements T
     }
 
     @Override
+    @NotNull
     public Iterator<Record> iterator() {
         return new MultipleColumnsIterator(columns);
+    }
+
+    public Schema schema() {
+        return schema;
+    }
+
+    public List<WriteableColumn> columns() {
+        return columns;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (ColumnBasedWriteableTable) obj;
+        return Objects.equals(this.schema, that.schema) &&
+                Objects.equals(this.columns, that.columns);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(schema, columns);
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnBasedWriteableTable[" +
+                "schema=" + schema + ", " +
+                "columns=" + columns + ']';
     }
 }

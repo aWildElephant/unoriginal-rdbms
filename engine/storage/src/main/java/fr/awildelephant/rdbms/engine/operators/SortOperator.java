@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableFactory;
+import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.engine.operators.sort.MultipleColumnsComparator;
 import fr.awildelephant.rdbms.plan.sort.SortSpecification;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -28,9 +29,8 @@ public final class SortOperator implements Operator<Table, Table> {
 
         sortedList.sort(comparator);
 
-        final Table outputTable = TableFactory.simpleTable(inputTable.schema(), sortedList.size());
+        final WriteableTable outputTable = TableFactory.simpleTable(inputTable.schema(), sortedList.size());
         outputTable.addAll(sortedList);
-
         return outputTable;
     }
 }

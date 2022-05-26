@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 
 import java.util.List;
 
-public interface ManagedTable extends Table {
+public interface ManagedTable extends WriteableTable {
 
     UniqueIndex createIndexOn(List<String> columnNames);
 

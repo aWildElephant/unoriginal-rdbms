@@ -1,8 +1,9 @@
 package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.engine.data.column.Column;
+import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
+import fr.awildelephant.rdbms.engine.data.table.NewColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.engine.operators.values.RecordValues;
@@ -26,19 +27,19 @@ public final class MapOperator implements Operator<Table, Table> {
 
     @Override
     public Table compute(Table inputTable) {
-        final List<Column> mapColumns = computeMapOperations(inputTable);
+        final List<WriteableColumn> mapColumns = computeMapOperations(inputTable);
 
-        final List<Column> inputColumns = inputTable.columns();
+        final List<? extends Column> inputColumns = inputTable.columns();
 
         final List<Column> outputColumns = new ArrayList<>(inputColumns.size() + mapColumns.size());
         outputColumns.addAll(inputColumns);
         outputColumns.addAll(mapColumns);
 
-        return new ColumnBasedTable(outputSchema, outputColumns);
+        return new NewColumnBasedTable(outputSchema, outputColumns);
     }
 
-    private List<Column> computeMapOperations(Table inputTable) {
-        final List<Column> mapColumns = buildMapOutputColumns(inputTable.numberOfTuples());
+    private List<WriteableColumn> computeMapOperations(Table inputTable) {
+        final List<WriteableColumn> mapColumns = buildMapOutputColumns(inputTable.numberOfTuples());
 
         final RecordValues values = new RecordValues();
         for (Record record : inputTable) {
@@ -51,13 +52,13 @@ public final class MapOperator implements Operator<Table, Table> {
         return mapColumns;
     }
 
-    private List<Column> buildMapOutputColumns(int numberOfInputTuples) {
+    private List<WriteableColumn> buildMapOutputColumns(int numberOfInputTuples) {
         final int numberOfOutputColumns = outputSchema.numberOfAttributes();
         final int numberOfOperations = operations.size();
         final List<ColumnReference> mapColumnReferences = outputSchema.columnNames()
                 .subList(numberOfOutputColumns - numberOfOperations, numberOfOutputColumns);
 
-        final List<Column> mapColumns = new ArrayList<>(numberOfOperations);
+        final List<WriteableColumn> mapColumns = new ArrayList<>(numberOfOperations);
         for (ColumnReference mapColumnReference : mapColumnReferences) {
             final ColumnMetadata column = outputSchema.column(mapColumnReference).metadata();
 

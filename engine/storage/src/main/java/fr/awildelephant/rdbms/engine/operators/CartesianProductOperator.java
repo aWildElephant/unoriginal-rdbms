@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
@@ -17,7 +18,8 @@ public final class CartesianProductOperator {
     }
 
     public Table compute(Table leftInput, Table rightInput) {
-        final Table outputTable = simpleTable(outputSchema, leftInput.numberOfTuples() * rightInput.numberOfTuples());
+        final int outputSize = leftInput.numberOfTuples() * rightInput.numberOfTuples();
+        final WriteableTable outputTable = simpleTable(outputSchema, outputSize);
 
         for (Record left : leftInput) {
             for (Record right : rightInput) {

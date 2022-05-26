@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 
-public abstract class ObjectColumn<T> implements Column {
+public abstract class ObjectColumn<T> implements WriteableColumn {
 
     protected final ArrayList<T> backingArray;
 

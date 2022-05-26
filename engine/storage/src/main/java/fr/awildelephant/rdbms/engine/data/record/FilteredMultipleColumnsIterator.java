@@ -14,7 +14,7 @@ public final class FilteredMultipleColumnsIterator implements Iterator<Record> {
 
     private int cursor;
 
-    public FilteredMultipleColumnsIterator(List<Column> columns, Bitmap bitmap) {
+    public FilteredMultipleColumnsIterator(List<? extends Column> columns, Bitmap bitmap) {
         this.record = new MultipleColumnsIteratorRecord(columns);
         this.bitmap = bitmap;
         this.cursor = -1;

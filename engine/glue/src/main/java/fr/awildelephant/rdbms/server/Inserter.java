@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
-import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
@@ -18,7 +18,7 @@ final class Inserter {
 
     }
 
-    static void insertRows(InsertInto insertInto, Table table) {
+    static void insertRows(InsertInto insertInto, WriteableTable table) {
         final Schema schema = table.schema();
 
         final Domain[] domains = new Domain[schema.numberOfAttributes()];

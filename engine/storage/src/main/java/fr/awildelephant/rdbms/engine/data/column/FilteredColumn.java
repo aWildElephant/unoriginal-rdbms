@@ -19,16 +19,6 @@ public class FilteredColumn implements Column {
     }
 
     @Override
-    public void add(DomainValue value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void ensureCapacity(int capacity) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public int size() {
         return bitmap.cardinality();
     }

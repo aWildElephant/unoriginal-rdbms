@@ -4,7 +4,6 @@ import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,16 +23,6 @@ public class AliasedTable implements Table {
     }
 
     @Override
-    public void add(Record newRecord) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addAll(Collection<Record> newRecords) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public int numberOfTuples() {
         return wrappedTable.numberOfTuples();
     }
@@ -44,7 +33,7 @@ public class AliasedTable implements Table {
     }
 
     @Override
-    public List<Column> columns() {
+    public List<? extends Column> columns() {
         return wrappedTable.columns();
     }
 

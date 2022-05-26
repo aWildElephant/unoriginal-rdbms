@@ -3,10 +3,11 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
 import fr.awildelephant.rdbms.engine.data.chunk.ChunkFactory;
-import fr.awildelephant.rdbms.engine.data.column.Column;
+import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.engine.operators.accumulator.Accumulator;
 import fr.awildelephant.rdbms.engine.operators.accumulator.AnyAccumulator;
 import fr.awildelephant.rdbms.engine.operators.accumulator.AvgAccumulator;
@@ -64,8 +65,8 @@ public final class AggregationOperator implements Operator<Table, Table> {
 
         final Supplier<List<AccumulatorWrapper>> accumulatorListSupplier = accumulatorListSupplier(inputTable.schema());
 
-        final Table outputTable = simpleTable(outputSchema);
-        final List<Column> outputColumns = outputTable.columns();
+        final WriteableTable outputTable = simpleTable(outputSchema);
+        final List<WriteableColumn> outputColumns = outputTable.columns();
         hash.forEach((group, chunk) -> {
             final List<AccumulatorWrapper> accumulatorList = accumulatorListSupplier.get();
 

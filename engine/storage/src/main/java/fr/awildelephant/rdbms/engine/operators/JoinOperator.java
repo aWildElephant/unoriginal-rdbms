@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.engine.operators;
 import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.engine.operators.join.JoinMatcher;
 import fr.awildelephant.rdbms.engine.operators.join.JoinOutputCreator;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -22,7 +23,7 @@ public final class JoinOperator {
     }
 
     public Table compute(Table leftInput) {
-        final Table outputTable = simpleTable(outputSchema);
+        final WriteableTable outputTable = simpleTable(outputSchema);
         for (Record leftRecord : leftInput) {
             final Chunk<Record> matchingRightRecords = matcher.match(leftRecord);
 

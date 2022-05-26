@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.engine.operators;
 
-import fr.awildelephant.rdbms.engine.data.column.Column;
-import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
+import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
+import fr.awildelephant.rdbms.engine.data.table.ColumnBasedWriteableTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.evaluator.Formula;
@@ -24,7 +24,7 @@ public class TableConstructorOperator implements Operator<Void, Table> {
     @Override
     public Table compute(Void unused) {
         final int numberOfRows = rowBasedMatrix.size();
-        final List<Column> columns = TableFactory.createColumns(schema, numberOfRows);
+        final List<WriteableColumn> columns = TableFactory.createColumns(schema, numberOfRows);
 
         for (List<Formula> row : rowBasedMatrix) {
             for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
@@ -34,6 +34,6 @@ public class TableConstructorOperator implements Operator<Void, Table> {
             }
         }
 
-        return new ColumnBasedTable(schema, columns);
+        return new ColumnBasedWriteableTable(schema, columns);
     }
 }

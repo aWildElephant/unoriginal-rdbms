@@ -7,7 +7,6 @@ import fr.awildelephant.rdbms.engine.data.record.FilteredMultipleColumnsIterator
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,16 +26,6 @@ public class FilteredTable implements Table {
     }
 
     @Override
-    public void add(Record newRecord) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addAll(Collection<Record> newRecords) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public int numberOfTuples() {
         return bitmap.cardinality();
     }
@@ -52,7 +41,7 @@ public class FilteredTable implements Table {
     }
 
     public Table materialize() {
-        final Table outputTable = TableFactory.simpleTable(wrappedTable.schema(), bitmap.cardinality());
+        final WriteableTable outputTable = TableFactory.simpleTable(wrappedTable.schema(), bitmap.cardinality());
         for (Record record : this) {
             outputTable.add(record);
         }

@@ -11,7 +11,7 @@ public final class MultipleColumnsIterator implements Iterator<Record> {
 
     private int cursor;
 
-    public MultipleColumnsIterator(List<Column> columns) {
+    public MultipleColumnsIterator(List<? extends Column> columns) {
         record = new MultipleColumnsIteratorRecord(columns);
         cursor = -1;
     }

@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 
 import java.util.Iterator;
 
@@ -16,7 +17,8 @@ public final class LimitOperator {
     }
 
     public Table compute(Table input) {
-        final Table outputTable = simpleTable(input.schema(), limit);
+        final int outputSize = Math.min(limit, input.numberOfTuples());
+        final WriteableTable outputTable = simpleTable(input.schema(), outputSize);
 
         final Iterator<Record> inputIterator = input.iterator();
 

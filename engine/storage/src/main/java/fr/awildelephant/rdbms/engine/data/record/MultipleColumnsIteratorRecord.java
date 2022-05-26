@@ -7,10 +7,10 @@ import java.util.List;
 
 public final class MultipleColumnsIteratorRecord implements Record {
 
-    private final List<Column> columns;
+    private final List<? extends Column> columns;
     private int position;
 
-    public MultipleColumnsIteratorRecord(List<Column> columns) {
+    public MultipleColumnsIteratorRecord(List<? extends Column> columns) {
         this.columns = columns;
     }
 

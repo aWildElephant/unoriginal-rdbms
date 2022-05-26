@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.engine.operators.semijoin;
 import fr.awildelephant.rdbms.engine.data.column.BooleanColumn;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
+import fr.awildelephant.rdbms.engine.data.table.NewColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -24,7 +24,7 @@ public final class SemiJoinOperator {
     }
 
     public Table compute(Table left) {
-        final List<Column> inputColumns = left.columns();
+        final List<? extends Column> inputColumns = left.columns();
 
         final List<Column> outputColumns = new ArrayList<>(inputColumns.size() + 1);
         outputColumns.addAll(inputColumns);
@@ -39,7 +39,7 @@ public final class SemiJoinOperator {
             }
         }
 
-        return new ColumnBasedTable(outputSchema, outputColumns);
+        return new NewColumnBasedTable(outputSchema, outputColumns);
     }
 
 }

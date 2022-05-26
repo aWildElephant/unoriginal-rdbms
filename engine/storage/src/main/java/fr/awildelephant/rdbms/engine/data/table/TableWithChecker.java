@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.engine.data.table;
 
 import fr.awildelephant.rdbms.engine.constraint.CompositeChecker;
 import fr.awildelephant.rdbms.engine.constraint.ConstraintChecker;
-import fr.awildelephant.rdbms.engine.data.column.Column;
+import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -16,11 +16,11 @@ import static java.util.stream.Collectors.toList;
 
 public class TableWithChecker implements ManagedTable {
 
-    private final Table protectedTable;
+    private final WriteableTable protectedTable;
     private final Collection<UniqueIndex> indexes;
     private final CompositeChecker checkers;
 
-    TableWithChecker(Table protectedTable) {
+    TableWithChecker(WriteableTable protectedTable) {
         this.protectedTable = protectedTable;
         this.checkers = new CompositeChecker();
         this.indexes = new LinkedList<>();
@@ -56,7 +56,7 @@ public class TableWithChecker implements ManagedTable {
     }
 
     @Override
-    public List<Column> columns() {
+    public List<WriteableColumn> columns() {
         return protectedTable.columns();
     }
 

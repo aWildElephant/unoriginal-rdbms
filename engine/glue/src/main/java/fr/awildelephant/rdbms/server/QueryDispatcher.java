@@ -1,9 +1,21 @@
 package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
-import fr.awildelephant.rdbms.ast.*;
+import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.CreateTable;
+import fr.awildelephant.rdbms.ast.CreateView;
+import fr.awildelephant.rdbms.ast.Distinct;
+import fr.awildelephant.rdbms.ast.DropTable;
+import fr.awildelephant.rdbms.ast.Explain;
+import fr.awildelephant.rdbms.ast.InsertInto;
+import fr.awildelephant.rdbms.ast.Limit;
+import fr.awildelephant.rdbms.ast.Select;
+import fr.awildelephant.rdbms.ast.TableName;
+import fr.awildelephant.rdbms.ast.Values;
+import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.database.Storage;
+import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
@@ -91,7 +103,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     @Override
     public Table visit(InsertInto insertInto) {
-        final Table table = storage.get(insertInto.targetTable().name());
+        final ManagedTable table = storage.get(insertInto.targetTable().name());
 
         insertRows(insertInto, table);
 

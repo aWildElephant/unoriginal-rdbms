@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -17,14 +18,14 @@ import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
 public final class ExplanationTableBuilder {
 
     public Table build(List<String> explanation) {
-        final Table table = explainTable();
+        final WriteableTable table = explainTable();
         explanation.stream()
                 .map(this::record)
                 .forEach(table::add);
         return table;
     }
 
-    private Table explainTable() {
+    private WriteableTable explainTable() {
         final ColumnMetadata column = new ColumnMetadata(new UnqualifiedColumnReference("explain"), Domain.TEXT, true, false);
         return simpleTable(Schema.of(column));
     }
