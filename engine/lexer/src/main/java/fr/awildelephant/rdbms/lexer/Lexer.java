@@ -137,7 +137,6 @@ public final class Lexer {
             case '9':
                 return matchIntegerOrDecimalLiteral(codePoint);
             default:
-                // TODO: check that first codePoint is allowed for an identifier
                 return matchKeywordOrIdentifier(codePoint);
         }
     }
