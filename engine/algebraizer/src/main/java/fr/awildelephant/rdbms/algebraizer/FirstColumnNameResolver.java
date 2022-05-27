@@ -1,13 +1,17 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.Values;
+import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 
 public final class FirstColumnNameResolver extends DefaultASTVisitor<String> {
 
-    private final ColumnNameResolver columnNameResolver = new ColumnNameResolver();
+    private final ColumnNameResolver columnNameResolver;
+
+    public FirstColumnNameResolver(ColumnNameResolver columnNameResolver) {
+        this.columnNameResolver = columnNameResolver;
+    }
 
     @Override
     public String visit(Select select) {

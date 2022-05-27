@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.algebraizer.formula;
 
+import fr.awildelephant.rdbms.algebraizer.ColumnNameResolver;
 import fr.awildelephant.rdbms.algebraizer.FirstColumnNameResolver;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Exists;
@@ -23,7 +24,8 @@ import static fr.awildelephant.rdbms.ast.value.ScalarSubquery.scalarSubquery;
 public final class SubqueryExtractor extends DefaultFormulaRewriter {
 
     private final InValuesRewriter inValuesRewriter = new InValuesRewriter();
-    private final FirstColumnNameResolver firstColumnNameResolver = new FirstColumnNameResolver();
+    private final ColumnNameResolver columnNameResolver = new ColumnNameResolver();
+    private final FirstColumnNameResolver firstColumnNameResolver = new FirstColumnNameResolver(columnNameResolver);
 
     private final List<SubqueryJoiner> subqueries = new ArrayList<>();
 
@@ -50,7 +52,7 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
 
         final Select aliasedRewrittenInValue = select(List.of(columnAlias(unqualifiedColumnName(columnName), inValuesColumnAlias)), rewrittenInValue, null, null, null, null);
 
-        final String semiJoinIdentifier = UUID.randomUUID().toString();
+        final String semiJoinIdentifier = columnNameResolver.visit(in);
 
         subqueries.add(semiJoinJoiner(aliasedRewrittenInValue, equal(in.input(), unqualifiedColumnName(inValuesColumnAlias)), semiJoinIdentifier));
 

@@ -147,30 +147,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             final Schema filterInputSchema = plan.schema();
 
             if (!joiners.isEmpty()) {
-                final Algebraizer outerQueryAwareAlgebraizer = withOuterQuerySchema(filterInputSchema);
-
-                for (SubqueryJoiner joiner : joiners) {
-                    final LogicalOperator rightInput = outerQueryAwareAlgebraizer.apply(joiner.subquery());
-
-                    if (joiner.type() == SEMI) {
-                        final UnqualifiedColumnReference outputColumn
-                                = new UnqualifiedColumnReference(joiner.identifier());
-                        if (joiner.predicate() != null) {
-                            final ValueExpression semiJoinPredicate
-                                    = createValueExpression(joiner.predicate(),
-                                    innerJoinOutputSchema(plan.schema(), rightInput.schema()),
-                                    outerQuerySchema);
-                            plan = new DependentSemiJoinLop(plan,
-                                    rightInput,
-                                    semiJoinPredicate,
-                                    outputColumn);
-                        } else {
-                            plan = new DependentSemiJoinLop(plan, rightInput, outputColumn);
-                        }
-                    } else {
-                        plan = new DependentJoinLop(plan, rightInput);
-                    }
-                }
+                plan = applySubqueryJoiners(plan, joiners);
             }
 
             plan = createFilter(plan, filter.mapsAboveAggregates().get(0));
@@ -202,6 +179,11 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             expressionSplitter.split(havingFilter, havingAndOutputColumns);
         } else {
             havingFilter = null;
+        }
+
+        final List<SubqueryJoiner> joiners = havingAndOutputColumns.subqueries();
+        if (!joiners.isEmpty()) {
+            plan = applySubqueryJoiners(plan, joiners);
         }
 
         final List<AST> mapsBelowAggregates = havingAndOutputColumns.mapsBelowAggregates();
@@ -256,6 +238,36 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             plan = new SortLop(plan, specifications);
         }
 
+        return plan;
+    }
+
+    private LogicalOperator applySubqueryJoiners(LogicalOperator plan, List<SubqueryJoiner> joiners) {
+        final Schema filterInputSchema = plan.schema();
+
+        final Algebraizer outerQueryAwareAlgebraizer = withOuterQuerySchema(filterInputSchema);
+
+        for (SubqueryJoiner joiner : joiners) {
+            final LogicalOperator rightInput = outerQueryAwareAlgebraizer.apply(joiner.subquery());
+
+            if (joiner.type() == SEMI) {
+                final UnqualifiedColumnReference outputColumn
+                        = new UnqualifiedColumnReference(joiner.identifier());
+                if (joiner.predicate() != null) {
+                    final ValueExpression semiJoinPredicate
+                            = createValueExpression(joiner.predicate(),
+                            innerJoinOutputSchema(filterInputSchema, rightInput.schema()),
+                            outerQuerySchema);
+                    plan = new DependentSemiJoinLop(plan,
+                            rightInput,
+                            semiJoinPredicate,
+                            outputColumn);
+                } else {
+                    plan = new DependentSemiJoinLop(plan, rightInput, outputColumn);
+                }
+            } else {
+                plan = new DependentJoinLop(plan, rightInput);
+            }
+        }
         return plan;
     }
 

@@ -20,7 +20,6 @@ Feature: In predicate
       | a      |
       | b      |
 
-  @todo
   Scenario: I execute a query with the in predicate in the output columns
 
     When I execute the query
@@ -40,4 +39,5 @@ Feature: In predicate
       | true    |
       | true    |
       | false   |
-      | unknown |
+      | false   |
+    # TODO: last row should be 'unknown'
