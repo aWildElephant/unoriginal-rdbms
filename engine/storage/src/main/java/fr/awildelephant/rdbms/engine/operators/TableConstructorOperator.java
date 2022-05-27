@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.operators;
 
 import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.table.ColumnBasedWriteableTable;
+import fr.awildelephant.rdbms.engine.data.table.NoColumnTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.evaluator.Formula;
@@ -24,16 +25,22 @@ public class TableConstructorOperator implements Operator<Void, Table> {
     @Override
     public Table compute(Void unused) {
         final int numberOfRows = rowBasedMatrix.size();
-        final List<WriteableColumn> columns = TableFactory.createColumns(schema, numberOfRows);
+        final int numberOfColumns = schema.numberOfAttributes();
 
-        for (List<Formula> row : rowBasedMatrix) {
-            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                final Formula cellFormula = row.get(columnIndex);
+        if (numberOfColumns > 0) {
+            final List<WriteableColumn> columns = TableFactory.createColumns(schema, numberOfRows);
 
-                columns.get(columnIndex).add(cellFormula.evaluate(noValues()));
+            for (List<Formula> row : rowBasedMatrix) {
+                for (int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
+                    final Formula cellFormula = row.get(columnIndex);
+
+                    columns.get(columnIndex).add(cellFormula.evaluate(noValues()));
+                }
             }
-        }
 
-        return new ColumnBasedWriteableTable(schema, columns);
+            return new ColumnBasedWriteableTable(schema, columns);
+        } else {
+            return new NoColumnTable(numberOfRows);
+        }
     }
 }

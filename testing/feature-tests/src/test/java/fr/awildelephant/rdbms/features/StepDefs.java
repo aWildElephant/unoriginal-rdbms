@@ -8,6 +8,7 @@ import io.cucumber.java8.En;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +45,7 @@ public class StepDefs implements En {
 
             for (List<String> row : content.rows(2).asLists()) {
                 final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name)
-                                                                                         .append(" VALUES (");
+                        .append(" VALUES (");
 
                 for (int i = 0; i < columnNames.size(); i++) {
                     final String columnType = columnTypes.get(i);
@@ -82,7 +83,14 @@ public class StepDefs implements En {
 
         When("I execute the query", testWrapper::execute);
 
-        Then("I expect the result set", this::assertResult);
+        Then("I expect the result set", (DataTable content) -> assertResult(content));
+
+        Then("I expect a result set with no column and {int} rows", (Integer numberOfRows) -> {
+            // Add two rows for where the name/type should have been
+            final List<List<String>> expectedData = IntStream.range(0, numberOfRows + 2).mapToObj(unused -> List.<String>of()).toList();
+
+            assertResult(expectedData);
+        });
 
         Then("^table (\\w+) should be$", (String name, DataTable content) -> {
             testWrapper.execute("SELECT * FROM " + name);
@@ -129,21 +137,23 @@ public class StepDefs implements En {
         assertEquals(expectedErrorMessage, actualErrorMessage, "Expected an error message");
     }
 
-    private void assertResult(DataTable table) throws Exception {
+    private void assertResult(DataTable expected) throws Exception {
+        assertResult(expected.asLists());
+    }
+
+    private void assertResult(List<List<String>> expected) throws Exception {
         testWrapper.forwardExceptionIfPresent();
 
         final ResultSet lastResult = testWrapper.getStatement().getResultSet();
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
-        final List<List<String>> expectedResult = table.asLists();
+        final List<String> expectedColumnNames = expected.get(0);
+        final List<String> expectedColumnTypes = expected.get(1);
+        final List<List<String>> rows = expected.subList(2, expected.size());
 
-        final List<String> expectedColumnNames = expectedResult.get(0);
-        final List<String> expectedColumnTypes = expectedResult.get(1);
-        final List<List<String>> rows = expectedResult.subList(2, expectedResult.size());
+        final ExpectedResult expectedResult = new ExpectedResult(expectedColumnNames, expectedColumnTypes, rows);
 
-        final ExpectedResult expected = new ExpectedResult(expectedColumnNames, expectedColumnTypes, rows);
-
-        assertThat(lastResult).isExpectedResult(expected);
+        assertThat(lastResult).isExpectedResult(expectedResult);
     }
 }

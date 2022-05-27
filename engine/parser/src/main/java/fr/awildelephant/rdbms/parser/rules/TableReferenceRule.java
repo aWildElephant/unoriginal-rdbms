@@ -19,6 +19,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OUTER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
@@ -26,6 +27,7 @@ import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextToken
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
+import static fr.awildelephant.rdbms.parser.rules.TableValueConstructorRule.deriveTableValueConstructorRule;
 
 final class TableReferenceRule {
 
@@ -71,6 +73,8 @@ final class TableReferenceRule {
             tablePrimary = deriveQueryExpression(lexer);
 
             consumeAndExpect(RIGHT_PAREN, lexer);
+        } else if (nextTokenIs(VALUES, lexer)) {
+            tablePrimary = deriveTableValueConstructorRule(lexer);
         } else {
             tablePrimary = deriveTableName(lexer);
         }

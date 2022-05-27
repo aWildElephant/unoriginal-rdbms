@@ -24,7 +24,12 @@ public final class TableConstructorLop extends AbstractLop {
     }
 
     private static Schema createSchema(List<List<ValueExpression>> matrix) {
+        if (matrix.isEmpty()) {
+            return Schema.EMPTY_SCHEMA;
+        }
+
         final ArrayList<ColumnMetadata> columns = new ArrayList<>();
+
         final List<ValueExpression> firstRow = matrix.get(0);
 
         final List<Domain> columnTypes = determineColumnTypes(matrix);
@@ -47,25 +52,46 @@ public final class TableConstructorLop extends AbstractLop {
             columnTypes.add(cell.domain());
         }
 
-        for (int rowIndex = 1; rowIndex < matrix.size(); rowIndex++) {
-            final List<ValueExpression> row = matrix.get(rowIndex);
+        final int numberOfRows = matrix.size();
+        final int numberOfColumns = checkColumnCountForEachRow(matrix);
 
-            for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
-                final Domain columnType = columnTypes.get(columnIndex);
+        if (numberOfColumns > 0) {
+            for (int rowIndex = 1; rowIndex < numberOfRows; rowIndex++) {
+                final List<ValueExpression> row = matrix.get(rowIndex);
 
-                final Domain cellType = row.get(columnIndex).domain();
+                for (int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
+                    final Domain columnType = columnTypes.get(columnIndex);
 
-                if (!cellType.canBeUsedAs(columnType)) {
-                    if (columnType.canBeUsedAs(cellType)) {
-                        columnTypes.set(columnIndex, cellType);
-                    } else {
-                        throw new IllegalStateException();
+                    final Domain cellType = row.get(columnIndex).domain();
+
+                    if (!cellType.canBeUsedAs(columnType)) {
+                        if (columnType.canBeUsedAs(cellType)) {
+                            columnTypes.set(columnIndex, cellType);
+                        } else {
+                            throw new IllegalStateException();
+                        }
                     }
                 }
             }
         }
 
         return columnTypes;
+    }
+
+    private static int checkColumnCountForEachRow(List<List<ValueExpression>> matrix) {
+        if (matrix.isEmpty()) {
+            throw new UnsupportedOperationException("Empty table constructor");
+        }
+
+        final int numberOfColumns = matrix.get(0).size();
+
+        for (int i = 1; i < matrix.size(); i++) {
+            if (matrix.get(i).size() != numberOfColumns) {
+                throw new UnsupportedOperationException("Column count does not match");
+            }
+        }
+
+        return numberOfColumns;
     }
 
     public List<List<ValueExpression>> matrix() {

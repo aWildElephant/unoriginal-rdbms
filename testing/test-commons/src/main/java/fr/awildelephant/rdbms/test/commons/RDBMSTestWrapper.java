@@ -1,6 +1,8 @@
 package fr.awildelephant.rdbms.test.commons;
 
 import fr.awildelephant.rdbms.embedded.Driver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8,6 +10,7 @@ import java.sql.Statement;
 
 public class RDBMSTestWrapper {
 
+    private static final Logger LOGGER = LogManager.getLogger(RDBMSTestWrapper.class);
     private static final String CONNECTION_STRING = "jdbc:rdbms:mem:%s";
 
     private final Connection connection;
@@ -31,6 +34,7 @@ public class RDBMSTestWrapper {
 
             lastStatement = statement;
         } catch (SQLException e) {
+            LOGGER.error("Silencing exception", e);
             lastException = e;
         }
     }

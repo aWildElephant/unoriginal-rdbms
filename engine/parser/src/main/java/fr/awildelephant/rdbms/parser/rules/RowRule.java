@@ -24,6 +24,10 @@ final class RowRule {
     static Row deriveRowRule(final Lexer lexer) {
         consumeAndExpect(LEFT_PAREN, lexer);
 
+        if (consumeIfNextTokenIs(RIGHT_PAREN, lexer)) {
+            return row(List.of());
+        }
+
         final List<AST> values = new LinkedList<>();
         values.add(deriveBooleanValueExpressionRule(lexer));
 
