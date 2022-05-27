@@ -75,7 +75,6 @@ final class QuerySpecificationRule {
             orderByClause = null;
         }
 
-        // TODO: the order by clause can probably have its own AST node
         AST output = select(outputColumns, fromClause, whereClause, groupByClause, havingClause, orderByClause);
 
         if (distinct) {
