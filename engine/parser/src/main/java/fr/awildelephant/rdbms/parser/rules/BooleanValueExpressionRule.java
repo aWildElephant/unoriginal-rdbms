@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.LexerSnapshot;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
+import fr.awildelephant.rdbms.parser.error.ParsingException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +145,7 @@ final class BooleanValueExpressionRule {
         final LexerSnapshot lexerSnapshot = lexer.save();
         try {
             return in(left, deriveInSubquery(lexer));
-        } catch (Exception e) { // TODO: create a custom exception e.g. ParseException
+        } catch (ParsingException e) {
             lexer.restore(lexerSnapshot);
 
             return in(left, deriveInPredicateValueList(lexer));
