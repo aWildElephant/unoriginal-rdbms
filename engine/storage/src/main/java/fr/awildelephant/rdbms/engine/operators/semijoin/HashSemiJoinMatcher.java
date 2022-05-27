@@ -4,9 +4,13 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
+import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
 public final class HashSemiJoinMatcher implements SemiJoinMatcher {
 
@@ -39,7 +43,7 @@ public final class HashSemiJoinMatcher implements SemiJoinMatcher {
     }
 
     @Override
-    public boolean match(Record leftRecord) {
-        return hash.contains(key(leftRecord, leftMapping));
+    public ThreeValuedLogic match(Record leftRecord) {
+        return hash.contains(key(leftRecord, leftMapping)) ? TRUE : FALSE;
     }
 }

@@ -6,12 +6,16 @@ import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.NewColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
+import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
+import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
+import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
 public final class SemiJoinOperator {
 
@@ -32,10 +36,13 @@ public final class SemiJoinOperator {
         outputColumns.add(resultColumn);
 
         for (Record record : left) {
-            if (matcher.match(record)) {
+            final ThreeValuedLogic result = matcher.match(record);
+            if (result == TRUE) {
                 resultColumn.add(trueValue());
-            } else {
+            } else if (result == FALSE) {
                 resultColumn.add(falseValue());
+            } else {
+                resultColumn.add(nullValue());
             }
         }
 

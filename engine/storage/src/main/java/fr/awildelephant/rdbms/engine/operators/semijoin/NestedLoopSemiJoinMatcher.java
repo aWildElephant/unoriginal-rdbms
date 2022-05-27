@@ -1,9 +1,15 @@
 package fr.awildelephant.rdbms.engine.operators.semijoin;
 
+import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.operators.values.JoinValues;
 import fr.awildelephant.rdbms.evaluator.Formula;
+import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
+
+import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
+import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
+import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.UNKNOWN;
 
 public final class NestedLoopSemiJoinMatcher implements SemiJoinMatcher {
 
@@ -16,16 +22,21 @@ public final class NestedLoopSemiJoinMatcher implements SemiJoinMatcher {
     }
 
     @Override
-    public boolean match(Record leftRecord) {
+    public ThreeValuedLogic match(Record leftRecord) {
         final JoinValues values = new JoinValues(leftRecord);
+
+        ThreeValuedLogic notFoundValue = FALSE;
 
         for (Record rightRecord : rightTable) {
             values.setRightRecord(rightRecord);
-            if (joinSpecification.evaluate(values).getBool()) {
-                return true;
+            final DomainValue result = joinSpecification.evaluate(values);
+            if (result.isNull()) {
+                notFoundValue = UNKNOWN;
+            } else if (result.getBool()) {
+                return TRUE;
             }
         }
 
-        return false;
+        return notFoundValue;
     }
 }

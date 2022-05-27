@@ -25,6 +25,7 @@ public enum Checker {
             if ("null".equalsIgnoreCase(expected) || "unknown".equalsIgnoreCase(expected)) {
                 assertTrue(actual.wasNull());
             } else {
+                assertFalse(actual.wasNull());
                 assertEquals(Boolean.valueOf(expected), actualBoolean);
             }
         }

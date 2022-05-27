@@ -1,17 +1,18 @@
 package fr.awildelephant.rdbms.engine.operators.semijoin;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 public final class ConstantMatcher implements SemiJoinMatcher {
 
-    private final boolean value;
+    private final ThreeValuedLogic value;
 
-    public ConstantMatcher(boolean value) {
+    public ConstantMatcher(ThreeValuedLogic value) {
         this.value = value;
     }
 
     @Override
-    public boolean match(Record leftRecord) {
+    public ThreeValuedLogic match(Record leftRecord) {
         return value;
     }
 }

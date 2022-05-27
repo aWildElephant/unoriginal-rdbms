@@ -39,5 +39,4 @@ Feature: In predicate
       | true    |
       | true    |
       | false   |
-      | false   |
-    # TODO: last row should be 'unknown'
+      | unknown |
