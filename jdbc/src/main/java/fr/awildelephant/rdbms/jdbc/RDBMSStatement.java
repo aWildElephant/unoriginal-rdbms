@@ -29,7 +29,7 @@ public class RDBMSStatement extends AbstractStatement {
 
         closeLastResultSet();
 
-        lastResult = new RDBMSResultSet( /* TODO */ table);
+        lastResult = new RDBMSResultSet(table);
 
         return true;
     }
