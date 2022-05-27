@@ -52,7 +52,7 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
 
         final Select aliasedRewrittenInValue = select(List.of(columnAlias(unqualifiedColumnName(columnName), inValuesColumnAlias)), rewrittenInValue, null, null, null, null);
 
-        final String semiJoinIdentifier = columnNameResolver.visit(in);
+        final String semiJoinIdentifier = columnNameResolver.apply(in);
 
         subqueries.add(semiJoinJoiner(aliasedRewrittenInValue, equal(in.input(), unqualifiedColumnName(inValuesColumnAlias)), semiJoinIdentifier));
 

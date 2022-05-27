@@ -33,10 +33,10 @@ Feature: I select a constant value from a table
       """
 
     Then I expect the result set
-      | fight |
-      | TEXT  |
-      | fight |
-      | fight |
+      | 'fight' |
+      | TEXT    |
+      | fight   |
+      | fight   |
 
   Scenario: I can add a dot after an integer value to make it a decimal
 
