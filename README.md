@@ -1,3 +1,4 @@
+
 # Column-based in-memory java relational database management system
 
 This project will not have any distinguishing feature. Its sole purpose is to allow me to implement or try to implement 
@@ -33,7 +34,9 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 ## Next steps
 
 - Fix TODOs
-- Implement a tool to display the plan of a query, implement the explain statement to retrieve the plan without debugging
+- Implement a tool to display the plan of a query, implement the explain statement to retrieve the plan without
+  debugging
+- Improve error message when a feature test fail
 - Improve evaluation of formulas: filter and map nodes are a lot slower than they should be
 - Improve loading speed of the TPC-H scale factor 1 dataset (currently around 2 minute)
 
