@@ -51,17 +51,17 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(And and) {
-        return visitBinaryOperation(and.left(), " and ", and.right());
+        return visitBinaryOperation(and.leftChild(), " and ", and.rightChild());
     }
 
     @Override
     public Void visit(Any any) {
-        return visitUnaryFunction("any", any.input());
+        return visitUnaryFunction("any", any.child());
     }
 
     @Override
     public Void visit(Avg avg) {
-        return visitUnaryFunction("avg", avg.input());
+        return visitUnaryFunction("avg", avg.child());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(BooleanLiteral booleanLiteral) {
-        stringBuilder.append(booleanLiteral.toString().toLowerCase());
+        stringBuilder.append(booleanLiteral.value().toString().toLowerCase());
 
         return null;
     }
@@ -101,7 +101,7 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
         if (count.distinct()) {
             stringBuilder.append("distinct ");
         }
-        apply(count.input());
+        apply(count.child());
         stringBuilder.append(')');
 
         return null;
@@ -116,13 +116,13 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Exists exists) {
-        return visitUnaryFunction("exists", exists.input());
+        return visitUnaryFunction("exists", exists.child());
     }
 
     @Override
     public Void visit(ExtractYear extractYear) {
         stringBuilder.append("extract(year from ");
-        apply(extractYear.input());
+        apply(extractYear.child());
         stringBuilder.append(')');
 
         return null;
@@ -144,22 +144,22 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Divide divide) {
-        return visitBinaryOperation(divide.left(), " / ", divide.right());
+        return visitBinaryOperation(divide.leftChild(), " / ", divide.rightChild());
     }
 
     @Override
     public Void visit(Equal equal) {
-        return visitBinaryOperation(equal.left(), " = ", equal.right());
+        return visitBinaryOperation(equal.leftChild(), " = ", equal.rightChild());
     }
 
     @Override
     public Void visit(Greater greater) {
-        return visitBinaryOperation(greater.left(), " > ", greater.right());
+        return visitBinaryOperation(greater.leftChild(), " > ", greater.rightChild());
     }
 
     @Override
     public Void visit(GreaterOrEqual greaterOrEqual) {
-        return visitBinaryOperation(greaterOrEqual.left(), " >= ", greaterOrEqual.right());
+        return visitBinaryOperation(greaterOrEqual.leftChild(), " >= ", greaterOrEqual.rightChild());
     }
 
     @Override
@@ -197,12 +197,12 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Less less) {
-        return visitBinaryOperation(less.left(), " < ", less.right());
+        return visitBinaryOperation(less.leftChild(), " < ", less.rightChild());
     }
 
     @Override
     public Void visit(LessOrEqual lessOrEqual) {
-        return visitBinaryOperation(lessOrEqual.left(), " <= ", lessOrEqual.right());
+        return visitBinaryOperation(lessOrEqual.leftChild(), " <= ", lessOrEqual.rightChild());
     }
 
     @Override
@@ -212,35 +212,35 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Max max) {
-        return visitUnaryFunction("max", max.input());
+        return visitUnaryFunction("max", max.child());
     }
 
     @Override
     public Void visit(Min min) {
-        return visitUnaryFunction("min", min.input());
+        return visitUnaryFunction("min", min.child());
     }
 
     @Override
     public Void visit(Minus minus) {
-        return visitBinaryOperation(minus.left(), " - ", minus.right());
+        return visitBinaryOperation(minus.leftChild(), " - ", minus.rightChild());
     }
 
     @Override
     public Void visit(Multiply multiply) {
-        return visitBinaryOperation(multiply.left(), " * ", multiply.right());
+        return visitBinaryOperation(multiply.leftChild(), " * ", multiply.rightChild());
     }
 
     @Override
     public Void visit(Not not) {
         stringBuilder.append("not ");
-        apply(not.input());
+        apply(not.child());
 
         return null;
     }
 
     @Override
     public Void visit(NotEqual notEqual) {
-        return visitBinaryOperation(notEqual.left(), " <> ", notEqual.right());
+        return visitBinaryOperation(notEqual.leftChild(), " <> ", notEqual.rightChild());
     }
 
     @Override
@@ -252,12 +252,12 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Or or) {
-        return visitBinaryOperation(or.left(), " or ", or.right());
+        return visitBinaryOperation(or.leftChild(), " or ", or.rightChild());
     }
 
     @Override
     public Void visit(Plus plus) {
-        return visitBinaryOperation(plus.left(), " + ", plus.right());
+        return visitBinaryOperation(plus.leftChild(), " + ", plus.rightChild());
     }
 
     @Override
@@ -284,7 +284,7 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
     @Override
     public Void visit(Sum sum) {
-        return visitUnaryFunction("sum", sum.input());
+        return visitUnaryFunction("sum", sum.child());
     }
 
     @Override

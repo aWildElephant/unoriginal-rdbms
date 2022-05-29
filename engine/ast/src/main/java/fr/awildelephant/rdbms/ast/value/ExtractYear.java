@@ -2,23 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
-import java.util.Objects;
+public final class ExtractYear extends UnaryNode<AST, AST> implements AST {
 
-public final class ExtractYear implements AST {
-
-    private final AST input;
-
-    private ExtractYear(AST input) {
-        this.input = input;
+    private ExtractYear(AST child) {
+        super(child);
     }
 
-    public static ExtractYear extractYear(AST value) {
-        return new ExtractYear(value);
-    }
-
-    public AST input() {
-        return input;
+    public static ExtractYear extractYear(AST child) {
+        return new ExtractYear(child);
     }
 
     @Override
@@ -27,16 +20,11 @@ public final class ExtractYear implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final ExtractYear other)) {
             return false;
         }
 
-        return Objects.equals(input, other.input);
+        return equalsUnaryNode(other);
     }
 }

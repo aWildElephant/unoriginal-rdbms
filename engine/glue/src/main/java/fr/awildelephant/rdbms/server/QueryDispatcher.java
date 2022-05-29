@@ -98,7 +98,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     @Override
     public Table visit(Explain explain) {
-        return logicalPlanTableBuilder.explain(optimizer.optimize(algebraizer.apply(explain.input())));
+        return logicalPlanTableBuilder.explain(optimizer.optimize(algebraizer.apply(explain.child())));
     }
 
     @Override

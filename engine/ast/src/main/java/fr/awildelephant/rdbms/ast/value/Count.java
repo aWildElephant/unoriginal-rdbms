@@ -2,29 +2,25 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
 import java.util.Objects;
 
-public final class Count implements AST {
+public final class Count extends UnaryNode<AST, AST> implements AST {
 
     private final boolean distinct;
-    private final AST input;
 
-    private Count(boolean distinct, AST input) {
+    private Count(boolean distinct, AST child) {
+        super(child);
         this.distinct = distinct;
-        this.input = input;
     }
 
-    public static Count count(boolean distinct, AST input) {
-        return new Count(distinct, input);
+    public static Count count(boolean distinct, AST child) {
+        return new Count(distinct, child);
     }
 
     public boolean distinct() {
         return distinct;
-    }
-
-    public AST input() {
-        return input;
     }
 
     @Override
@@ -34,7 +30,7 @@ public final class Count implements AST {
 
     @Override
     public int hashCode() {
-        return Objects.hash(distinct, input);
+        return Objects.hash(distinct, child());
     }
 
     @Override
@@ -43,7 +39,6 @@ public final class Count implements AST {
             return false;
         }
 
-        return distinct == other.distinct
-                && Objects.equals(input, other.input);
+        return equalsUnaryNode(other);
     }
 }

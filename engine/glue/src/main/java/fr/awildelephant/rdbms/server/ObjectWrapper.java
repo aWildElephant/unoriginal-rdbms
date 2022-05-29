@@ -2,12 +2,12 @@ package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
-import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.NullLiteral;
 import fr.awildelephant.rdbms.ast.value.TextLiteral;
+import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 
 import java.time.LocalDate;
@@ -24,16 +24,16 @@ public class ObjectWrapper extends DefaultASTVisitor<DomainValue> {
 
     @Override
     public DomainValue visit(BooleanLiteral booleanLiteral) {
-        return switch (booleanLiteral) {
+        return switch (booleanLiteral.value()) {
             case TRUE -> trueValue();
             case FALSE -> falseValue();
-            default -> nullValue();
+            case UNKNOWN -> nullValue();
         };
     }
 
     @Override
     public DomainValue visit(Cast cast) {
-        final String dateString = ((TextLiteral) cast.input()).value();
+        final String dateString = ((TextLiteral) cast.child()).value();
 
         return dateValue(LocalDate.parse(dateString));
     }

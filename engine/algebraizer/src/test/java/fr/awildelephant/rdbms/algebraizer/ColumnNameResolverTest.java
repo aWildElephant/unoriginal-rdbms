@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.ast.value.Sum;
 import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
-import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.trueLiteral;
 import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +23,6 @@ class ColumnNameResolverTest {
     void it_should_resolve_true() {
         final ColumnNameResolver resolver = new ColumnNameResolver();
 
-        assertThat(resolver.apply(TRUE)).isEqualTo("true");
+        assertThat(resolver.apply(trueLiteral())).isEqualTo("true");
     }
 }

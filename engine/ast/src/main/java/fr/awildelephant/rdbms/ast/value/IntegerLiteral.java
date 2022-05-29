@@ -2,8 +2,9 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
-public final class IntegerLiteral implements AST {
+public final class IntegerLiteral extends LeafNode<AST> implements AST {
 
     private final int value;
 

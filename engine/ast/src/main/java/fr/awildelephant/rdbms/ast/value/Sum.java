@@ -2,25 +2,18 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
-
-import java.util.Objects;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class Sum implements AST {
+public final class Sum extends UnaryNode<AST, AST> implements AST {
 
-    private final AST input;
-
-    private Sum(AST input) {
-        this.input = input;
+    private Sum(AST child) {
+        super(child);
     }
 
-    public static Sum sum(AST input) {
-        return new Sum(input);
-    }
-
-    public AST input() {
-        return input;
+    public static Sum sum(AST child) {
+        return new Sum(child);
     }
 
     @Override
@@ -29,23 +22,18 @@ public final class Sum implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final Sum other)) {
             return false;
         }
 
-        return Objects.equals(input, other.input);
+        return equalsUnaryNode(other);
     }
 
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append(input)
+                .append(child())
                 .toString();
     }
 }

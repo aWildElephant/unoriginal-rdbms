@@ -37,7 +37,7 @@ public final class SubqueryExtractor extends DefaultFormulaRewriter {
     public AST visit(Exists exists) {
         final String id = UUID.randomUUID().toString();
 
-        subqueries.add(semiJoinJoiner(exists.input(), id));
+        subqueries.add(semiJoinJoiner(exists.child(), id));
 
         return unqualifiedColumnName(id);
     }

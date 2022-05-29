@@ -90,7 +90,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Distinct distinct) {
-        return new DistinctLop(apply(distinct.input()));
+        return new DistinctLop(apply(distinct.child()));
     }
 
     @Override
@@ -121,12 +121,12 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(Limit limit) {
-        return new LimitLop(apply(limit.input()), limit.limit());
+        return new LimitLop(apply(limit.child()), limit.limit());
     }
 
     @Override
     public LogicalOperator visit(ScalarSubquery scalarSubquery) {
-        return new ScalarSubqueryLop(apply(scalarSubquery.input()));
+        return new ScalarSubqueryLop(apply(scalarSubquery.child()));
     }
 
     @Override
@@ -331,7 +331,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(TableAlias tableAlias) {
-        final LogicalOperator input = apply(tableAlias.input());
+        final LogicalOperator input = apply(tableAlias.child());
 
         final Optional<String> source = input.schema().columnNames().stream()
                 .map(ColumnReference::table)
@@ -344,7 +344,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     @Override
     public LogicalOperator visit(TableAliasWithColumns tableAliasWithColumns) {
-        final LogicalOperator input = apply(tableAliasWithColumns.input());
+        final LogicalOperator input = apply(tableAliasWithColumns.child());
 
         final ColumnAliasBuilder columnAliasBuilder = new ColumnAliasBuilder();
         final List<ColumnReference> columnReferences = input.schema().columnNames();

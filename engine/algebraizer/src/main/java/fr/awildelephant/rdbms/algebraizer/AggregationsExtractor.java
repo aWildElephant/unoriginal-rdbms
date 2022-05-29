@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.ast.value.Any;
 import fr.awildelephant.rdbms.ast.value.Avg;
 import fr.awildelephant.rdbms.ast.value.Count;
@@ -15,6 +14,7 @@ import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.value.Sum;
+import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,12 +67,12 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
 
     @Override
     public AST visit(Divide divide) {
-        return divide(apply(divide.left()), apply(divide.right()));
+        return divide(apply(divide.leftChild()), apply(divide.rightChild()));
     }
 
     @Override
     public AST visit(Greater greater) {
-        return greater(apply(greater.left()), apply(greater.right()));
+        return greater(apply(greater.leftChild()), apply(greater.rightChild()));
     }
 
     @Override
@@ -92,17 +92,17 @@ public final class AggregationsExtractor extends DefaultASTVisitor<AST> {
 
     @Override
     public AST visit(Minus minus) {
-        return minus(apply(minus.left()), apply(minus.right()));
+        return minus(apply(minus.leftChild()), apply(minus.rightChild()));
     }
 
     @Override
     public AST visit(Multiply multiply) {
-        return multiply(apply(multiply.left()), apply(multiply.right()));
+        return multiply(apply(multiply.leftChild()), apply(multiply.rightChild()));
     }
 
     @Override
     public AST visit(Plus plus) {
-        return plus(apply(plus.left()), apply(plus.right()));
+        return plus(apply(plus.leftChild()), apply(plus.rightChild()));
     }
 
     @Override

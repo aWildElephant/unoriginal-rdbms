@@ -14,8 +14,7 @@ public final class AliasExtractor {
 
     void extractAlias(AST column, AliasCollector collector) {
         if (column instanceof final ColumnAlias aliasedColumn) {
-
-            final AST unaliasedColumn = aliasedColumn.input();
+            final AST unaliasedColumn = aliasedColumn.child();
 
             final ColumnReference columnReference = columnReferenceTransformer.apply(unaliasedColumn);
 

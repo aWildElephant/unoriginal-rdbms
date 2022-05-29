@@ -15,6 +15,7 @@
 
     <modules>
         <module>multimap</module>
+        <module>tree</module>
     </modules>
 
     <properties>

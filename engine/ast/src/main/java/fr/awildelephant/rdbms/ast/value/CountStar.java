@@ -2,8 +2,9 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
-public final class CountStar implements AST {
+public final class CountStar extends LeafNode<AST> implements AST {
 
     private static final CountStar INSTANCE = new CountStar();
 

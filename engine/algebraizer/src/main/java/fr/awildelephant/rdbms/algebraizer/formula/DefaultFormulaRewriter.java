@@ -2,8 +2,20 @@ package fr.awildelephant.rdbms.algebraizer.formula;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Divide;
+import fr.awildelephant.rdbms.ast.value.Equal;
+import fr.awildelephant.rdbms.ast.value.Greater;
+import fr.awildelephant.rdbms.ast.value.Less;
+import fr.awildelephant.rdbms.ast.value.LessOrEqual;
+import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.Minus;
+import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
+import fr.awildelephant.rdbms.ast.value.NotEqual;
+import fr.awildelephant.rdbms.ast.value.Or;
+import fr.awildelephant.rdbms.ast.value.Plus;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
-import fr.awildelephant.rdbms.ast.value.*;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.value.And.and;
@@ -24,38 +36,38 @@ public abstract class DefaultFormulaRewriter extends DefaultASTVisitor<AST> {
 
     @Override
     public AST visit(And and) {
-        return and(apply(and.left()), apply(and.right()));
+        return and(apply(and.leftChild()), apply(and.rightChild()));
     }
 
     @Override
     public AST visit(Cast cast) {
-        return cast(apply(cast.input()), cast.targetType());
+        return cast(apply(cast.child()), cast.targetType());
     }
 
     @Override
     public AST visit(Divide divide) {
-        return divide(apply(divide.left()), apply(divide.right()));
+        return divide(apply(divide.leftChild()), apply(divide.rightChild()));
     }
 
     @Override
     public AST visit(Equal equal) {
-        return equal(apply(equal.left()), apply(equal.right()));
+        return equal(apply(equal.leftChild()), apply(equal.rightChild()));
     }
 
     @Override
     public AST visit(Greater greater) {
-        return greater(apply(greater.left()), apply(greater.right()));
+        return greater(apply(greater.leftChild()), apply(greater.rightChild()));
     }
 
 
     @Override
     public AST visit(Less less) {
-        return less(apply(less.left()), apply(less.right()));
+        return less(apply(less.leftChild()), apply(less.rightChild()));
     }
 
     @Override
     public AST visit(LessOrEqual lessOrEqual) {
-        return lessOrEqual(apply(lessOrEqual.left()), apply(lessOrEqual.right()));
+        return lessOrEqual(apply(lessOrEqual.leftChild()), apply(lessOrEqual.rightChild()));
     }
 
     @Override
@@ -65,31 +77,31 @@ public abstract class DefaultFormulaRewriter extends DefaultASTVisitor<AST> {
 
     @Override
     public AST visit(Multiply multiply) {
-        return multiply(apply(multiply.left()), apply(multiply.right()));
+        return multiply(apply(multiply.leftChild()), apply(multiply.rightChild()));
     }
 
     @Override
     public AST visit(Not not) {
-        return not(apply(not.input()));
+        return not(apply(not.child()));
     }
 
     @Override
     public AST visit(NotEqual notEqual) {
-        return notEqual(apply(notEqual.left()), apply(notEqual.right()));
+        return notEqual(apply(notEqual.leftChild()), apply(notEqual.rightChild()));
     }
 
     @Override
     public AST visit(Or or) {
-        return or(apply(or.left()), apply(or.right()));
+        return or(apply(or.leftChild()), apply(or.rightChild()));
     }
 
     @Override
     public AST visit(Plus plus) {
-        return plus(apply(plus.left()), apply(plus.right()));
+        return plus(apply(plus.leftChild()), apply(plus.rightChild()));
     }
 
     @Override
     public AST visit(Minus minus) {
-        return minus(apply(minus.left()), apply(minus.right()));
+        return minus(apply(minus.leftChild()), apply(minus.rightChild()));
     }
 }

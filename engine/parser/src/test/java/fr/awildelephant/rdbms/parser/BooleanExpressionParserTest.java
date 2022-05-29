@@ -15,8 +15,8 @@ import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumn
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Between.between;
-import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
-import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.falseLiteral;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.trueLiteral;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
@@ -36,17 +36,17 @@ class BooleanExpressionParserTest {
 
     @Test
     void it_should_parse_an_and_expression() {
-        assertParsing("VALUES (TRUE AND TRUE)", rows(row(and(TRUE, TRUE))));
+        assertParsing("VALUES (TRUE AND TRUE)", rows(row(and(trueLiteral(), trueLiteral()))));
     }
 
     @Test
     void it_should_parse_an_or_expression() {
-        assertParsing("VALUES (FALSE OR TRUE)", rows(row(or(FALSE, TRUE))));
+        assertParsing("VALUES (FALSE OR TRUE)", rows(row(or(falseLiteral(), trueLiteral()))));
     }
 
     @Test
     void it_should_parse_a_not_expression() {
-        assertParsing("VALUES (NOT TRUE)", rows(row(not(TRUE))));
+        assertParsing("VALUES (NOT TRUE)", rows(row(not(trueLiteral()))));
     }
 
     @Test

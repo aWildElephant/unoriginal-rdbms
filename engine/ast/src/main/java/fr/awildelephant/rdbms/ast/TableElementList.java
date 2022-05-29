@@ -4,23 +4,79 @@ import fr.awildelephant.rdbms.ast.constraints.ForeignKeyConstraint;
 import fr.awildelephant.rdbms.ast.constraints.NotNullConstraint;
 import fr.awildelephant.rdbms.ast.constraints.UniqueConstraint;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.NAryNode;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static fr.awildelephant.rdbms.ast.ColumnDefinition.column;
 
-public record TableElementList(List<ColumnDefinition> columns, List<NotNullConstraint> notNullConstraints, List<UniqueConstraint> uniqueConstraints, List<ForeignKeyConstraint> foreignKeyConstraints) implements AST {
+public final class TableElementList extends NAryNode<AST, ColumnDefinition> implements AST {
 
-    public static TableElementList.Builder tableElementList() {
-        return new TableElementList.Builder();
+    private final List<NotNullConstraint> notNullConstraints;
+    private final List<UniqueConstraint> uniqueConstraints;
+    private final List<ForeignKeyConstraint> foreignKeyConstraints;
+
+    public TableElementList(List<ColumnDefinition> columns, List<NotNullConstraint> notNullConstraints, List<UniqueConstraint> uniqueConstraints, List<ForeignKeyConstraint> foreignKeyConstraints) {
+        super(columns);
+        this.notNullConstraints = notNullConstraints;
+        this.uniqueConstraints = uniqueConstraints;
+        this.foreignKeyConstraints = foreignKeyConstraints;
+    }
+
+    public static Builder tableElementList() {
+        return new Builder();
     }
 
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
+
+    public List<ColumnDefinition> columns() {
+        return children();
+    }
+
+    public List<NotNullConstraint> notNullConstraints() {
+        return notNullConstraints;
+    }
+
+    public List<UniqueConstraint> uniqueConstraints() {
+        return uniqueConstraints;
+    }
+
+    public List<ForeignKeyConstraint> foreignKeyConstraints() {
+        return foreignKeyConstraints;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TableElementList other)) {
+            return false;
+        }
+
+        return Objects.equals(this.notNullConstraints, other.notNullConstraints)
+                && Objects.equals(this.uniqueConstraints, other.uniqueConstraints)
+                && Objects.equals(this.foreignKeyConstraints, other.foreignKeyConstraints)
+                && equalsNAry(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(children(), notNullConstraints, uniqueConstraints, foreignKeyConstraints);
+    }
+
+    @Override
+    public String toString() {
+        return "TableElementList[" +
+                "columns=" + children() + ", " +
+                "notNullConstraints=" + notNullConstraints + ", " +
+                "uniqueConstraints=" + uniqueConstraints + ", " +
+                "foreignKeyConstraints=" + foreignKeyConstraints + ']';
+    }
+
 
     public static final class Builder {
 

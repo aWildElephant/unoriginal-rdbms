@@ -2,25 +2,18 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
-
-import java.util.Objects;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class Min implements AST {
+public final class Min extends UnaryNode<AST, AST> implements AST {
 
-    private final AST input;
-
-    private Min(AST input) {
-        this.input = input;
+    private Min(AST child) {
+        super(child);
     }
 
-    public static AST min(AST input) {
-        return new Min(input);
-    }
-
-    public AST input() {
-        return input;
+    public static AST min(AST child) {
+        return new Min(child);
     }
 
     @Override
@@ -31,13 +24,8 @@ public final class Min implements AST {
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append(input)
+                .append(child())
                 .toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
     }
 
     @Override
@@ -46,6 +34,6 @@ public final class Min implements AST {
             return false;
         }
 
-        return Objects.equals(input, other.input);
+        return equalsUnaryNode(other);
     }
 }

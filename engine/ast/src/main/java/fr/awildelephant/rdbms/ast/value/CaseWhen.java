@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.ast.value;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 public final class CaseWhen implements AST {
@@ -31,6 +33,11 @@ public final class CaseWhen implements AST {
 
     public AST elseExpression() {
         return elseExpression;
+    }
+
+    @Override
+    public Collection<AST> children() {
+        return List.of(condition, thenExpression, elseExpression);
     }
 
     @Override

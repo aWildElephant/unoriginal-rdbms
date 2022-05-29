@@ -1,7 +1,73 @@
 package fr.awildelephant.rdbms.ast.visitor;
 
-import fr.awildelephant.rdbms.ast.*;
-import fr.awildelephant.rdbms.ast.value.*;
+import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.Asterisk;
+import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.ColumnAlias;
+import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.CreateTable;
+import fr.awildelephant.rdbms.ast.CreateView;
+import fr.awildelephant.rdbms.ast.Distinct;
+import fr.awildelephant.rdbms.ast.DropTable;
+import fr.awildelephant.rdbms.ast.Exists;
+import fr.awildelephant.rdbms.ast.Explain;
+import fr.awildelephant.rdbms.ast.GroupingSetsList;
+import fr.awildelephant.rdbms.ast.InValueList;
+import fr.awildelephant.rdbms.ast.InnerJoin;
+import fr.awildelephant.rdbms.ast.InsertInto;
+import fr.awildelephant.rdbms.ast.LeftJoin;
+import fr.awildelephant.rdbms.ast.Limit;
+import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.Row;
+import fr.awildelephant.rdbms.ast.Select;
+import fr.awildelephant.rdbms.ast.SemiJoin;
+import fr.awildelephant.rdbms.ast.SortSpecification;
+import fr.awildelephant.rdbms.ast.SortSpecificationList;
+import fr.awildelephant.rdbms.ast.Substring;
+import fr.awildelephant.rdbms.ast.TableAlias;
+import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
+import fr.awildelephant.rdbms.ast.TableElementList;
+import fr.awildelephant.rdbms.ast.TableName;
+import fr.awildelephant.rdbms.ast.TableReferenceList;
+import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
+import fr.awildelephant.rdbms.ast.Values;
+import fr.awildelephant.rdbms.ast.With;
+import fr.awildelephant.rdbms.ast.WithElement;
+import fr.awildelephant.rdbms.ast.WithList;
+import fr.awildelephant.rdbms.ast.value.And;
+import fr.awildelephant.rdbms.ast.value.Any;
+import fr.awildelephant.rdbms.ast.value.Avg;
+import fr.awildelephant.rdbms.ast.value.Between;
+import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
+import fr.awildelephant.rdbms.ast.value.CaseWhen;
+import fr.awildelephant.rdbms.ast.value.Count;
+import fr.awildelephant.rdbms.ast.value.CountStar;
+import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
+import fr.awildelephant.rdbms.ast.value.Divide;
+import fr.awildelephant.rdbms.ast.value.Equal;
+import fr.awildelephant.rdbms.ast.value.ExtractYear;
+import fr.awildelephant.rdbms.ast.value.Greater;
+import fr.awildelephant.rdbms.ast.value.GreaterOrEqual;
+import fr.awildelephant.rdbms.ast.value.In;
+import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
+import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
+import fr.awildelephant.rdbms.ast.value.IsNull;
+import fr.awildelephant.rdbms.ast.value.Less;
+import fr.awildelephant.rdbms.ast.value.LessOrEqual;
+import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.Max;
+import fr.awildelephant.rdbms.ast.value.Min;
+import fr.awildelephant.rdbms.ast.value.Minus;
+import fr.awildelephant.rdbms.ast.value.Multiply;
+import fr.awildelephant.rdbms.ast.value.Not;
+import fr.awildelephant.rdbms.ast.value.NotEqual;
+import fr.awildelephant.rdbms.ast.value.NullLiteral;
+import fr.awildelephant.rdbms.ast.value.Or;
+import fr.awildelephant.rdbms.ast.value.Placeholder;
+import fr.awildelephant.rdbms.ast.value.Plus;
+import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
+import fr.awildelephant.rdbms.ast.value.Sum;
+import fr.awildelephant.rdbms.ast.value.TextLiteral;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -66,12 +132,12 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(And and) {
-        return and(function.apply(and.left()), function.apply(and.right()));
+        return and(function.apply(and.leftChild()), function.apply(and.rightChild()));
     }
 
     @Override
     public AST visit(Any any) {
-        return any(function.apply(any.input()));
+        return any(function.apply(any.child()));
     }
 
     @Override
@@ -81,7 +147,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Avg avg) {
-        return avg(function.apply(avg.input()));
+        return avg(function.apply(avg.child()));
     }
 
     @Override
@@ -105,12 +171,12 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Cast cast) {
-        return cast(function.apply(cast.input()), cast.targetType());
+        return cast(function.apply(cast.child()), cast.targetType());
     }
 
     @Override
     public AST visit(ColumnAlias columnAlias) {
-        return columnAlias(function.apply(columnAlias.input()), columnAlias.alias());
+        return columnAlias(function.apply(columnAlias.child()), columnAlias.alias());
     }
 
     @Override
@@ -120,7 +186,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Count count) {
-        return count(count.distinct(), function.apply(count.input()));
+        return count(count.distinct(), function.apply(count.child()));
     }
 
     @Override
@@ -145,12 +211,12 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Distinct distinct) {
-        return distinct(function.apply(distinct.input()));
+        return distinct(function.apply(distinct.child()));
     }
 
     @Override
     public AST visit(Divide divide) {
-        return divide(function.apply(divide.left()), function.apply(divide.right()));
+        return divide(function.apply(divide.leftChild()), function.apply(divide.rightChild()));
     }
 
     @Override
@@ -160,32 +226,32 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Equal equal) {
-        return equal(function.apply(equal.left()), function.apply(equal.right()));
+        return equal(function.apply(equal.leftChild()), function.apply(equal.rightChild()));
     }
 
     @Override
     public AST visit(Exists exists) {
-        return exists(function.apply(exists.input()));
+        return exists(function.apply(exists.child()));
     }
 
     @Override
     public AST visit(Explain explain) {
-        return explain(function.apply(explain.input()));
+        return explain(function.apply(explain.child()));
     }
 
     @Override
     public AST visit(ExtractYear extractYear) {
-        return extractYear(function.apply(extractYear.input()));
+        return extractYear(function.apply(extractYear.child()));
     }
 
     @Override
     public AST visit(Greater greater) {
-        return greater(function.apply(greater.left()), function.apply(greater.right()));
+        return greater(function.apply(greater.leftChild()), function.apply(greater.rightChild()));
     }
 
     @Override
     public AST visit(GreaterOrEqual greaterOrEqual) {
-        return greaterOrEqual(function.apply(greaterOrEqual.left()), function.apply(greaterOrEqual.right()));
+        return greaterOrEqual(function.apply(greaterOrEqual.leftChild()), function.apply(greaterOrEqual.rightChild()));
     }
 
     @Override
@@ -234,12 +300,12 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Less less) {
-        return less(function.apply(less.left()), function.apply(less.right()));
+        return less(function.apply(less.leftChild()), function.apply(less.rightChild()));
     }
 
     @Override
     public AST visit(LessOrEqual lessOrEqual) {
-        return lessOrEqual(function.apply(lessOrEqual.left()), function.apply(lessOrEqual.right()));
+        return lessOrEqual(function.apply(lessOrEqual.leftChild()), function.apply(lessOrEqual.rightChild()));
     }
 
     @Override
@@ -249,37 +315,37 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Limit limit) {
-        return limit(function.apply(limit.input()), limit.limit());
+        return limit(function.apply(limit.child()), limit.limit());
     }
 
     @Override
     public AST visit(Max max) {
-        return max(function.apply(max.input()));
+        return max(function.apply(max.child()));
     }
 
     @Override
     public AST visit(Min min) {
-        return min(function.apply(min.input()));
+        return min(function.apply(min.child()));
     }
 
     @Override
     public AST visit(Minus minus) {
-        return minus(function.apply(minus.left()), function.apply(minus.right()));
+        return minus(function.apply(minus.leftChild()), function.apply(minus.rightChild()));
     }
 
     @Override
     public AST visit(Multiply multiply) {
-        return multiply(function.apply(multiply.left()), function.apply(multiply.right()));
+        return multiply(function.apply(multiply.leftChild()), function.apply(multiply.rightChild()));
     }
 
     @Override
     public AST visit(Not not) {
-        return not(function.apply(not.input()));
+        return not(function.apply(not.child()));
     }
 
     @Override
     public AST visit(NotEqual notEqual) {
-        return notEqual(function.apply(notEqual.left()), function.apply(notEqual.right()));
+        return notEqual(function.apply(notEqual.leftChild()), function.apply(notEqual.rightChild()));
     }
 
     @Override
@@ -289,7 +355,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Or or) {
-        return or(function.apply(or.left()), function.apply(or.left()));
+        return or(function.apply(or.leftChild()), function.apply(or.leftChild()));
     }
 
     @Override
@@ -299,7 +365,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Plus plus) {
-        return plus(function.apply(plus.left()), function.apply(plus.right()));
+        return plus(function.apply(plus.leftChild()), function.apply(plus.rightChild()));
     }
 
     @Override
@@ -314,12 +380,12 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(ScalarSubquery scalarSubquery) {
-        return scalarSubquery(function.apply(scalarSubquery.input()));
+        return scalarSubquery(function.apply(scalarSubquery.child()));
     }
 
     @Override
     public AST visit(Sum sum) {
-        return sum(function.apply(sum.input()));
+        return sum(function.apply(sum.child()));
     }
 
     @Override
@@ -358,12 +424,12 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(TableAlias tableAlias) {
-        return tableAlias(function.apply(tableAlias.input()), tableAlias.alias());
+        return tableAlias(function.apply(tableAlias.child()), tableAlias.alias());
     }
 
     @Override
     public AST visit(TableAliasWithColumns tableAliasWithColumns) {
-        return tableAliasWithColumns(function.apply(tableAliasWithColumns.input()),
+        return tableAliasWithColumns(function.apply(tableAliasWithColumns.child()),
                 tableAliasWithColumns.tableAlias(),
                 tableAliasWithColumns.columnAliases());
     }

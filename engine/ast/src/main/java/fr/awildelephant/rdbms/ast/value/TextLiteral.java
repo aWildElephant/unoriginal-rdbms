@@ -2,12 +2,13 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.Objects;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class TextLiteral implements AST {
+public final class TextLiteral extends LeafNode<AST> implements AST {
 
     private final String value;
 

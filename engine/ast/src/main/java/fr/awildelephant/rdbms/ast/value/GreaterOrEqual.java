@@ -2,29 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
-import java.util.Objects;
+public final class GreaterOrEqual extends BinaryNode<AST, AST, AST> implements AST {
 
-public final class GreaterOrEqual implements AST {
-
-    private final AST left;
-    private final AST right;
-
-    private GreaterOrEqual(AST left, AST right) {
-        this.left = left;
-        this.right = right;
+    private GreaterOrEqual(AST leftChild, AST rightChild) {
+        super(leftChild, rightChild);
     }
 
-    public static GreaterOrEqual greaterOrEqual(AST left, AST right) {
-        return new GreaterOrEqual(left, right);
-    }
-
-    public AST left() {
-        return left;
-    }
-
-    public AST right() {
-        return right;
+    public static GreaterOrEqual greaterOrEqual(AST leftChild, AST rightChild) {
+        return new GreaterOrEqual(leftChild, rightChild);
     }
 
     @Override
@@ -33,17 +20,11 @@ public final class GreaterOrEqual implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(left, right);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final GreaterOrEqual other)) {
             return false;
         }
 
-        return Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+        return equalsBinaryNode(other);
     }
 }

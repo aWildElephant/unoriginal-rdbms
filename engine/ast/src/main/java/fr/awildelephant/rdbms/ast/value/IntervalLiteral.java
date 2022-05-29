@@ -2,10 +2,11 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.Objects;
 
-public final class IntervalLiteral implements AST {
+public final class IntervalLiteral extends LeafNode<AST> implements AST {
 
     private final String intervalString;
     private final IntervalGranularity granularity;

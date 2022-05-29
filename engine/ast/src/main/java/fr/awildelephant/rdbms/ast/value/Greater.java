@@ -2,29 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
-import java.util.Objects;
+public final class Greater extends BinaryNode<AST, AST, AST> implements AST {
 
-public final class Greater implements AST {
-
-    private final AST left;
-    private final AST right;
-
-    private Greater(AST left, AST right) {
-        this.left = left;
-        this.right = right;
+    private Greater(AST leftChild, AST rightChild) {
+        super(leftChild, rightChild);
     }
 
-    public static Greater greater(AST left, AST right) {
-        return new Greater(left, right);
-    }
-
-    public AST left() {
-        return left;
-    }
-
-    public AST right() {
-        return right;
+    public static Greater greater(AST leftChild, AST rightChild) {
+        return new Greater(leftChild, rightChild);
     }
 
     @Override
@@ -34,12 +21,7 @@ public final class Greater implements AST {
 
     @Override
     public String toString() {
-        return left + " > " + right;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(left, right);
+        return leftChild() + " > " + rightChild();
     }
 
     @Override
@@ -48,7 +30,6 @@ public final class Greater implements AST {
             return false;
         }
 
-        return Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+        return equalsBinaryNode(other);
     }
 }

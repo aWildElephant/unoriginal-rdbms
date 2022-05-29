@@ -2,19 +2,14 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
-
-import java.util.Objects;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class Like implements AST {
-
-    private final AST input;
-    private final AST pattern;
+public final class Like extends BinaryNode<AST, AST, AST> implements AST {
 
     private Like(AST input, AST pattern) {
-        this.input = input;
-        this.pattern = pattern;
+        super(input, pattern);
     }
 
     public static Like like(AST input, AST pattern) {
@@ -22,11 +17,11 @@ public final class Like implements AST {
     }
 
     public AST input() {
-        return input;
+        return firstChild();
     }
 
     public AST pattern() {
-        return pattern;
+        return secondChild();
     }
 
     @Override
@@ -37,14 +32,9 @@ public final class Like implements AST {
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("input", input)
-                .append("pattern", pattern)
+                .append("input", firstChild())
+                .append("pattern", secondChild())
                 .toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(input, pattern);
     }
 
     @Override
@@ -53,7 +43,6 @@ public final class Like implements AST {
             return false;
         }
 
-        return Objects.equals(input, other.input)
-                && Objects.equals(pattern, other.pattern);
+        return equalsBinaryNode(other);
     }
 }

@@ -2,17 +2,12 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
-import java.util.Objects;
-
-public final class In implements AST {
-
-    private final AST input;
-    private final AST value;
+public final class In extends BinaryNode<AST, AST, AST> implements AST {
 
     private In(AST input, AST value) {
-        this.input = input;
-        this.value = value;
+        super(input, value);
     }
 
     public static In in(AST input, AST value) {
@@ -20,11 +15,11 @@ public final class In implements AST {
     }
 
     public AST input() {
-        return input;
+        return firstChild();
     }
 
     public AST value() {
-        return value;
+        return secondChild();
     }
 
     @Override
@@ -33,17 +28,11 @@ public final class In implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(input, value);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final In other)) {
             return false;
         }
 
-        return Objects.equals(input, other.input)
-                && Objects.equals(value, other.value);
+        return equalsBinaryNode(other);
     }
 }

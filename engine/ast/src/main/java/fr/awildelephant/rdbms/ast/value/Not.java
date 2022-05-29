@@ -2,23 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
-import java.util.Objects;
+public final class Not extends UnaryNode<AST, AST> implements AST {
 
-public final class Not implements AST {
-
-    private final AST input;
-
-    private Not(AST input) {
-        this.input = input;
+    private Not(AST child) {
+        super(child);
     }
 
     public static AST not(AST input) {
         return new Not(input);
-    }
-
-    public AST input() {
-        return input;
     }
 
     @Override
@@ -27,16 +20,11 @@ public final class Not implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final Not other)) {
             return false;
         }
 
-        return Objects.equals(input, other.input);
+        return equalsUnaryNode(other);
     }
 }

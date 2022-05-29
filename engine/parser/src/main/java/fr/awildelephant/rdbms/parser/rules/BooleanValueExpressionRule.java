@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.value.BooleanLiteral;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.LexerSnapshot;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
@@ -14,6 +13,9 @@ import static fr.awildelephant.rdbms.ast.Exists.exists;
 import static fr.awildelephant.rdbms.ast.InValueList.inValueList;
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Between.between;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.falseLiteral;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.trueLiteral;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.unknownLiteral;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.Greater.greater;
 import static fr.awildelephant.rdbms.ast.value.GreaterOrEqual.greaterOrEqual;
@@ -213,15 +215,15 @@ final class BooleanValueExpressionRule {
             case TRUE:
                 lexer.consumeNextToken();
 
-                return BooleanLiteral.TRUE;
+                return trueLiteral();
             case FALSE:
                 lexer.consumeNextToken();
 
-                return BooleanLiteral.FALSE;
+                return falseLiteral();
             case UNKNOWN:
                 lexer.consumeNextToken();
 
-                return BooleanLiteral.UNKNOWN;
+                return unknownLiteral();
             default:
                 return deriveValueExpression(lexer);
         }

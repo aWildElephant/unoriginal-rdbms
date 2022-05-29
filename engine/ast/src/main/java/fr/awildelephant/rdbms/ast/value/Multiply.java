@@ -2,31 +2,18 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
-
-import java.util.Objects;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class Multiply implements AST {
+public final class Multiply extends BinaryNode<AST, AST, AST> implements AST {
 
-    private final AST left;
-    private final AST right;
-
-    private Multiply(AST left, AST right) {
-        this.left = left;
-        this.right = right;
+    private Multiply(AST leftChild, AST rightChild) {
+        super(leftChild, rightChild);
     }
 
-    public static Multiply multiply(final AST left, final AST right) {
-        return new Multiply(left, right);
-    }
-
-    public AST left() {
-        return left;
-    }
-
-    public AST right() {
-        return right;
+    public static Multiply multiply(final AST leftChild, final AST rightChild) {
+        return new Multiply(leftChild, rightChild);
     }
 
     @Override
@@ -37,14 +24,9 @@ public final class Multiply implements AST {
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("left", left)
-                .append("right", right)
+                .append("left", leftChild())
+                .append("right", rightChild())
                 .toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(left, right);
     }
 
     @Override
@@ -53,7 +35,6 @@ public final class Multiply implements AST {
             return false;
         }
 
-        return Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+        return equalsBinaryNode(other);
     }
 }

@@ -104,8 +104,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(And and) {
-        final ValueExpression left = apply(and.left());
-        final ValueExpression right = apply(and.right());
+        final ValueExpression left = apply(and.leftChild());
+        final ValueExpression right = apply(and.rightChild());
 
         return andExpression(left, right);
     }
@@ -121,10 +121,10 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(BooleanLiteral booleanLiteral) {
-        final DomainValue value = switch (booleanLiteral) {
+        final DomainValue value = switch (booleanLiteral.value()) {
             case TRUE -> trueValue();
             case FALSE -> falseValue();
-            default -> nullValue();
+            case UNKNOWN -> nullValue();
         };
 
         return constantExpression(value, BOOLEAN);
@@ -163,7 +163,7 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
             throw new UnsupportedOperationException("Unsupported cast to type " + cast.targetType());
         }
 
-        final ValueExpression input = apply(cast.input());
+        final ValueExpression input = apply(cast.child());
 
         final Domain inputDomain = input.domain();
 
@@ -181,8 +181,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Divide divide) {
-        final ValueExpression left = apply(divide.left());
-        final ValueExpression right = apply(divide.right());
+        final ValueExpression left = apply(divide.leftChild());
+        final ValueExpression right = apply(divide.rightChild());
 
         if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
             return divideExpression(left, right);
@@ -193,31 +193,31 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Equal equal) {
-        final ValueExpression left = apply(equal.left());
-        final ValueExpression right = apply(equal.right());
+        final ValueExpression left = apply(equal.leftChild());
+        final ValueExpression right = apply(equal.rightChild());
 
         return equalExpression(left, right);
     }
 
     @Override
     public ValueExpression visit(ExtractYear extractYear) {
-        final ValueExpression input = apply(extractYear.input());
+        final ValueExpression input = apply(extractYear.child());
 
         return extractYearExpression(input);
     }
 
     @Override
     public ValueExpression visit(Greater greater) {
-        final ValueExpression left = apply(greater.left());
-        final ValueExpression right = apply(greater.right());
+        final ValueExpression left = apply(greater.leftChild());
+        final ValueExpression right = apply(greater.rightChild());
 
         return greaterExpression(left, right);
     }
 
     @Override
     public ValueExpression visit(GreaterOrEqual greaterOrEqual) {
-        final ValueExpression left = apply(greaterOrEqual.left());
-        final ValueExpression right = apply(greaterOrEqual.right());
+        final ValueExpression left = apply(greaterOrEqual.leftChild());
+        final ValueExpression right = apply(greaterOrEqual.rightChild());
 
         return greaterOrEqualExpression(left, right);
     }
@@ -257,16 +257,16 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Less less) {
-        final ValueExpression left = apply(less.left());
-        final ValueExpression right = apply(less.right());
+        final ValueExpression left = apply(less.leftChild());
+        final ValueExpression right = apply(less.rightChild());
 
         return lessExpression(left, right);
     }
 
     @Override
     public ValueExpression visit(LessOrEqual lessOrEqual) {
-        final ValueExpression left = apply(lessOrEqual.left());
-        final ValueExpression right = apply(lessOrEqual.right());
+        final ValueExpression left = apply(lessOrEqual.leftChild());
+        final ValueExpression right = apply(lessOrEqual.rightChild());
 
         return lessOrEqualExpression(left, right);
     }
@@ -290,8 +290,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Minus minus) {
-        final ValueExpression left = apply(minus.left());
-        final ValueExpression right = apply(minus.right());
+        final ValueExpression left = apply(minus.leftChild());
+        final ValueExpression right = apply(minus.rightChild());
 
         if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
             return subtractExpression(left, right, INTEGER);
@@ -310,8 +310,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Multiply multiply) {
-        final ValueExpression left = apply(multiply.left());
-        final ValueExpression right = apply(multiply.right());
+        final ValueExpression left = apply(multiply.leftChild());
+        final ValueExpression right = apply(multiply.rightChild());
 
         if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
             return multiplyExpression(left, right, INTEGER);
@@ -326,12 +326,12 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Not not) {
-        return notExpression(apply(not.input()));
+        return notExpression(apply(not.child()));
     }
 
     @Override
     public ValueExpression visit(NotEqual notEqual) {
-        return notEqualExpression(apply(notEqual.left()), apply(notEqual.right()));
+        return notEqualExpression(apply(notEqual.leftChild()), apply(notEqual.rightChild()));
     }
 
     @Override
@@ -341,8 +341,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Or or) {
-        final ValueExpression left = apply(or.left());
-        final ValueExpression right = apply(or.right());
+        final ValueExpression left = apply(or.leftChild());
+        final ValueExpression right = apply(or.rightChild());
 
         return orExpression(left, right);
     }
@@ -354,8 +354,8 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Plus plus) {
-        final ValueExpression left = apply(plus.left());
-        final ValueExpression right = apply(plus.right());
+        final ValueExpression left = apply(plus.leftChild());
+        final ValueExpression right = apply(plus.rightChild());
 
         if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
             return addExpression(left, right, INTEGER);

@@ -2,31 +2,18 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
-
-import java.util.Objects;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class And implements AST {
+public final class And extends BinaryNode<AST, AST, AST> implements AST {
 
-    private final AST left;
-    private final AST right;
-
-    private And(AST left, AST right) {
-        this.left = left;
-        this.right = right;
+    private And(AST leftChild, AST rightChild) {
+        super(leftChild, rightChild);
     }
 
-    public static And and(AST left, AST right) {
-        return new And(left, right);
-    }
-
-    public AST left() {
-        return left;
-    }
-
-    public AST right() {
-        return right;
+    public static And and(AST leftChild, AST rightChild) {
+        return new And(leftChild, rightChild);
     }
 
     @Override
@@ -37,23 +24,17 @@ public final class And implements AST {
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("left", left)
-                .append("right", right)
+                .append("leftChild", leftChild())
+                .append("rightChild", rightChild())
                 .toString();
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(left, right);
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof final And other)) {
+        if (!(obj instanceof And other)) {
             return false;
         }
 
-        return Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+        return equalsBinaryNode(other);
     }
 }

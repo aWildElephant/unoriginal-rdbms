@@ -2,23 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
-import java.util.Objects;
+public final class ScalarSubquery extends UnaryNode<AST, AST> implements AST {
 
-public final class ScalarSubquery implements AST {
-
-    private final AST input;
-
-    private ScalarSubquery(AST input) {
-        this.input = input;
+    private ScalarSubquery(AST child) {
+        super(child);
     }
 
-    public static ScalarSubquery scalarSubquery(AST input) {
-        return new ScalarSubquery(input);
-    }
-
-    public AST input() {
-        return input;
+    public static ScalarSubquery scalarSubquery(AST child) {
+        return new ScalarSubquery(child);
     }
 
     @Override
@@ -27,16 +20,11 @@ public final class ScalarSubquery implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final ScalarSubquery other)) {
             return false;
         }
 
-        return Objects.equals(input, other.input);
+        return equalsUnaryNode(other);
     }
 }

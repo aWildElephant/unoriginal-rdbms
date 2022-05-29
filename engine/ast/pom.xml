@@ -15,7 +15,15 @@
     <dependencies>
         <dependency>
             <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-logic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-tostring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-tree</artifactId>
         </dependency>
 
         <dependency>

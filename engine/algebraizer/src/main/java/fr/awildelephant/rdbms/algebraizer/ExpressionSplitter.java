@@ -3,8 +3,20 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.algebraizer.formula.SubqueryExtractor;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
-import fr.awildelephant.rdbms.ast.value.*;
-import fr.awildelephant.rdbms.plan.aggregation.*;
+import fr.awildelephant.rdbms.ast.value.Any;
+import fr.awildelephant.rdbms.ast.value.Avg;
+import fr.awildelephant.rdbms.ast.value.Count;
+import fr.awildelephant.rdbms.ast.value.CountStar;
+import fr.awildelephant.rdbms.ast.value.Max;
+import fr.awildelephant.rdbms.ast.value.Min;
+import fr.awildelephant.rdbms.ast.value.Sum;
+import fr.awildelephant.rdbms.plan.aggregation.AnyAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MaxAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.MinAggregate;
+import fr.awildelephant.rdbms.plan.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import static fr.awildelephant.rdbms.algebraizer.AggregationsExtractor.aggregationsExtractor;
@@ -31,7 +43,7 @@ public final class ExpressionSplitter {
             final ColumnReference outputName = columnReferenceTransformer.apply(aggregate);
 
             if (aggregate instanceof final Any anyAggregate) {
-                final AST anyInput = anyAggregate.input();
+                final AST anyInput = anyAggregate.child();
 
                 if (!(anyInput instanceof ColumnName)) {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(anyInput));
@@ -39,7 +51,7 @@ public final class ExpressionSplitter {
 
                 collector.addAggregate(new AnyAggregate(columnReferenceTransformer.apply(anyInput), outputName));
             } else if (aggregate instanceof final Count countAggregate) {
-                final AST countInput = countAggregate.input();
+                final AST countInput = countAggregate.child();
 
                 if (!(countInput instanceof ColumnName)) {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(countInput));
@@ -51,7 +63,7 @@ public final class ExpressionSplitter {
             } else if (aggregate instanceof CountStar) {
                 collector.addAggregate(new CountStarAggregate(outputName));
             } else if (aggregate instanceof Avg) {
-                final AST avgInput = ((Avg) aggregate).input();
+                final AST avgInput = ((Avg) aggregate).child();
 
                 if (!(avgInput instanceof ColumnName)) {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(avgInput));
@@ -59,7 +71,7 @@ public final class ExpressionSplitter {
 
                 collector.addAggregate(new AvgAggregate(columnReferenceTransformer.apply(avgInput), outputName));
             } else if (aggregate instanceof Max) {
-                final AST maxInput = ((Max) aggregate).input();
+                final AST maxInput = ((Max) aggregate).child();
 
                 if (!(maxInput instanceof ColumnName)) {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(maxInput));
@@ -67,7 +79,7 @@ public final class ExpressionSplitter {
 
                 collector.addAggregate(new MaxAggregate(columnReferenceTransformer.apply(maxInput), outputName));
             } else if (aggregate instanceof Min) {
-                final AST minInput = ((Min) aggregate).input();
+                final AST minInput = ((Min) aggregate).child();
 
                 if (!(minInput instanceof ColumnName)) {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(minInput));
@@ -75,7 +87,7 @@ public final class ExpressionSplitter {
 
                 collector.addAggregate(new MinAggregate(columnReferenceTransformer.apply(minInput), outputName));
             } else if (aggregate instanceof Sum) {
-                final AST sumInput = ((Sum) aggregate).input();
+                final AST sumInput = ((Sum) aggregate).child();
 
                 if (!(sumInput instanceof ColumnName)) {
                     collector.addMapBelowAggregates(subqueryExtractor.apply(sumInput));

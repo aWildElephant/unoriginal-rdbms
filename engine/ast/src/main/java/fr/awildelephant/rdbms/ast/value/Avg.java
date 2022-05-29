@@ -2,23 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
-import java.util.Objects;
+public final class Avg extends UnaryNode<AST, AST> implements AST {
 
-public final class Avg implements AST {
-
-    private final AST input;
-
-    private Avg(AST input) {
-        this.input = input;
+    private Avg(AST child) {
+        super(child);
     }
 
-    public static Avg avg(AST input) {
-        return new Avg(input);
-    }
-
-    public AST input() {
-        return input;
+    public static Avg avg(AST child) {
+        return new Avg(child);
     }
 
     @Override
@@ -27,16 +20,11 @@ public final class Avg implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final Avg other)) {
             return false;
         }
 
-        return Objects.equals(input, other.input);
+        return equalsUnaryNode(other);
     }
 }

@@ -2,29 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
-import java.util.Objects;
+public final class Or extends BinaryNode<AST, AST, AST> implements AST {
 
-public final class Or implements AST {
-
-    private final AST left;
-    private final AST right;
-
-    private Or(AST left, AST right) {
-        this.left = left;
-        this.right = right;
+    private Or(AST leftChild, AST rightChild) {
+        super(leftChild, rightChild);
     }
 
-    public static Or or(AST left, AST right) {
-        return new Or(left, right);
-    }
-
-    public AST left() {
-        return left;
-    }
-
-    public AST right() {
-        return right;
+    public static Or or(AST leftChild, AST rightChild) {
+        return new Or(leftChild, rightChild);
     }
 
     @Override
@@ -33,17 +20,11 @@ public final class Or implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(left, right);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final Or other)) {
             return false;
         }
 
-        return Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+        return equalsBinaryNode(other);
     }
 }

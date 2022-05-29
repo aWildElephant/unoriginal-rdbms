@@ -2,25 +2,22 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
-
-import java.util.Objects;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class IsNull implements AST {
+public final class IsNull extends UnaryNode<AST, AST> implements AST {
 
-    private final AST input;
-
-    public IsNull(AST input) {
-        this.input = input;
+    public IsNull(AST child) {
+        super(child);
     }
 
-    public static IsNull isNull(AST input) {
-        return new IsNull(input);
+    public static IsNull isNull(AST child) {
+        return new IsNull(child);
     }
 
     public AST input() {
-        return input;
+        return child();
     }
 
     @Override
@@ -29,8 +26,10 @@ public final class IsNull implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
+    public String toString() {
+        return toStringBuilder(this)
+                .append(child())
+                .toString();
     }
 
     @Override
@@ -39,13 +38,6 @@ public final class IsNull implements AST {
             return false;
         }
 
-        return Objects.equals(input, other.input);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append(input)
-                .toString();
+        return equalsUnaryNode(other);
     }
 }

@@ -21,8 +21,8 @@ import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
-import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.FALSE;
-import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.TRUE;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.falseLiteral;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.trueLiteral;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
@@ -82,7 +82,7 @@ class SelectParserTest {
     void it_should_parse_boolean_constants_in_the_output_columns() {
         assertParsing("SELECT true, false FROM test",
 
-                select(List.of(TRUE, FALSE), tableName("test"), null, null, null, null));
+                select(List.of(trueLiteral(), falseLiteral()), tableName("test"), null, null, null, null));
     }
 
     @Test

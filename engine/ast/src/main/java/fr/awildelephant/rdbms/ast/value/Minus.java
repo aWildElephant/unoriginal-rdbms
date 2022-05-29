@@ -2,29 +2,16 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
-import java.util.Objects;
+public final class Minus extends BinaryNode<AST, AST, AST> implements AST {
 
-public final class Minus implements AST {
-
-    private final AST left;
-    private final AST right;
-
-    private Minus(AST left, AST right) {
-        this.left = left;
-        this.right = right;
+    private Minus(AST leftChild, AST rightChild) {
+        super(leftChild, rightChild);
     }
 
-    public static Minus minus(AST left, AST right) {
-        return new Minus(left, right);
-    }
-
-    public AST left() {
-        return left;
-    }
-
-    public AST right() {
-        return right;
+    public static Minus minus(AST leftChild, AST rightChild) {
+        return new Minus(leftChild, rightChild);
     }
 
     @Override
@@ -33,17 +20,11 @@ public final class Minus implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(left, right);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final Minus other)) {
             return false;
         }
 
-        return Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+        return equalsBinaryNode(other);
     }
 }

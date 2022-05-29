@@ -1,8 +1,9 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
-public final class Asterisk implements AST {
+public final class Asterisk extends LeafNode<AST> implements AST {
 
     private static final Asterisk ASTERISK = new Asterisk();
 

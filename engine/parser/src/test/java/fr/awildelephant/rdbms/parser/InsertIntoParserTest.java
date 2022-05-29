@@ -10,7 +10,9 @@ import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
-import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.*;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.falseLiteral;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.trueLiteral;
+import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.unknownLiteral;
 import static fr.awildelephant.rdbms.ast.value.DecimalLiteral.decimalLiteral;
 import static fr.awildelephant.rdbms.ast.value.IntegerLiteral.integerLiteral;
 import static fr.awildelephant.rdbms.ast.value.NullLiteral.nullLiteral;
@@ -73,6 +75,6 @@ class InsertIntoParserTest {
     void it_should_parse_an_insert_into_statement_with_boolean_literals() {
         assertParsing("INSERT INTO test VALUES (true, false, unknown)",
 
-                insertInto(tableName("test"), rows(row(TRUE, FALSE, UNKNOWN))));
+                insertInto(tableName("test"), rows(row(trueLiteral(), falseLiteral(), unknownLiteral()))));
     }
 }
