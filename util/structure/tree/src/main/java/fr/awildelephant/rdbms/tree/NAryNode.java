@@ -2,6 +2,8 @@ package fr.awildelephant.rdbms.tree;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 public abstract class NAryNode<T extends Tree<T>, C extends T> implements Tree<T> {
 
@@ -14,6 +16,11 @@ public abstract class NAryNode<T extends Tree<T>, C extends T> implements Tree<T
     @Override
     public List<C> children() {
         return children;
+    }
+
+    @Override
+    public <U> U reduce(Function<T, U> reduce, BinaryOperator<U> accumulator) {
+        return children.stream().map(reduce).reduce(accumulator).orElse(null);
     }
 
     @Override

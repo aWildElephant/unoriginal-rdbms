@@ -4,7 +4,6 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.UnaryNode;
 
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -35,11 +34,6 @@ public final class ExtractYearExpression extends UnaryNode<ValueExpression, Valu
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
         return new ExtractYearExpression(transformer.apply(child()));
-    }
-
-    @Override
-    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return function.apply(child());
     }
 
     @Override

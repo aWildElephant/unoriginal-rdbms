@@ -2,21 +2,12 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.TernaryNode;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
-public final class Between implements AST {
-
-    private final AST value;
-    private final AST lowerBound;
-    private final AST upperBound;
+public final class Between extends TernaryNode<AST, AST, AST, AST> implements AST {
 
     private Between(AST value, AST lowerBound, AST upperBound) {
-        this.value = value;
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
+        super(value, lowerBound, upperBound);
     }
 
     public static Between between(AST value, AST lowerBound, AST upperBound) {
@@ -24,20 +15,15 @@ public final class Between implements AST {
     }
 
     public AST value() {
-        return value;
+        return firstChild();
     }
 
     public AST lowerBound() {
-        return lowerBound;
+        return secondChild();
     }
 
     public AST upperBound() {
-        return upperBound;
-    }
-
-    @Override
-    public Collection<AST> children() {
-        return List.of(value, lowerBound, upperBound);
+        return thirdChild();
     }
 
     @Override
@@ -46,18 +32,11 @@ public final class Between implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(value, lowerBound, upperBound);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final Between other)) {
             return false;
         }
 
-        return Objects.equals(value, other.value)
-                && Objects.equals(lowerBound, other.lowerBound)
-                && Objects.equals(upperBound, other.upperBound);
+        return equalsTernary(other);
     }
 }

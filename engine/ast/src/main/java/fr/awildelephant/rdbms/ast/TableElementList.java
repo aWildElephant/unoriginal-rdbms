@@ -52,6 +52,20 @@ public final class TableElementList extends NAryNode<AST, ColumnDefinition> impl
     }
 
     @Override
+    public String toString() {
+        return "TableElementList[" +
+                "columns=" + children() + ", " +
+                "notNullConstraints=" + notNullConstraints + ", " +
+                "uniqueConstraints=" + uniqueConstraints + ", " +
+                "foreignKeyConstraints=" + foreignKeyConstraints + ']';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(children(), notNullConstraints, uniqueConstraints, foreignKeyConstraints);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof TableElementList other)) {
             return false;
@@ -61,20 +75,6 @@ public final class TableElementList extends NAryNode<AST, ColumnDefinition> impl
                 && Objects.equals(this.uniqueConstraints, other.uniqueConstraints)
                 && Objects.equals(this.foreignKeyConstraints, other.foreignKeyConstraints)
                 && equalsNAry(other);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(children(), notNullConstraints, uniqueConstraints, foreignKeyConstraints);
-    }
-
-    @Override
-    public String toString() {
-        return "TableElementList[" +
-                "columns=" + children() + ", " +
-                "notNullConstraints=" + notNullConstraints + ", " +
-                "uniqueConstraints=" + uniqueConstraints + ", " +
-                "foreignKeyConstraints=" + foreignKeyConstraints + ']';
     }
 
 

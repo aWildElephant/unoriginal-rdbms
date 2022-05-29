@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.tree;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 public abstract class TernaryNode<T extends Tree<T>, C1 extends T, C2 extends T, C3 extends T> implements Tree<T> {
 
@@ -31,6 +33,14 @@ public abstract class TernaryNode<T extends Tree<T>, C1 extends T, C2 extends T,
     @Override
     public Collection<? extends T> children() {
         return List.of(firstChild, secondChild, thirdChild);
+    }
+
+    @Override
+    public <U> U reduce(Function<T, U> reduce, BinaryOperator<U> accumulator) {
+        final U first = reduce.apply(firstChild);
+        final U second = reduce.apply(secondChild);
+        final U third = reduce.apply(thirdChild);
+        return accumulator.apply(accumulator.apply(first, second), third);
     }
 
     @Override

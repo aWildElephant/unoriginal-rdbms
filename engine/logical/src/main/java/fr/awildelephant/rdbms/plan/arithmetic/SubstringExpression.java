@@ -4,7 +4,6 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.TernaryNode;
 
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -50,12 +49,6 @@ public final class SubstringExpression extends TernaryNode<ValueExpression, Valu
         return new SubstringExpression(transformer.apply(firstChild()),
                 transformer.apply(secondChild()),
                 transformer.apply(thirdChild()));
-    }
-
-    @Override
-    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return accumulator.apply(function.apply(firstChild()),
-                accumulator.apply(function.apply(secondChild()), function.apply(thirdChild())));
     }
 
     @Override

@@ -31,10 +31,10 @@ class ValueExpressionEqualsAndHashCodeTest {
                 .filter(TO_TEST::contains);
     }
 
-    @DisplayName("All implementations of ValueExpression should implement equals and hashCode")
+    @DisplayName("Test equals and hashCode for some implementations of ValueExpression")
     @ParameterizedTest(name = "{index} - {0}")
     @MethodSource("parameters")
-    void all_implementations_of_ValueExpression_should_implement_equals_and_hashCode(String className, Class<? extends ValueExpression> implementationOfExpression) {
+    void it_should_implement_equals_and_hashCode(String className, Class<? extends ValueExpression> implementationOfExpression) {
         EqualsVerifier.forClass(implementationOfExpression).verify();
 
     }

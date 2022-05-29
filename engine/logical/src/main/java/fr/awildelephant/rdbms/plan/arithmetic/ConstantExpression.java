@@ -6,7 +6,6 @@ import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.Objects;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -43,11 +42,6 @@ public final class ConstantExpression extends LeafNode<ValueExpression> implemen
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
         return this;
-    }
-
-    @Override
-    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return null;
     }
 
     @Override

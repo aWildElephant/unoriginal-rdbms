@@ -3,7 +3,6 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -41,11 +40,6 @@ public final class LikeExpression extends BinaryExpression {
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
         return new LikeExpression(transformer.apply(firstChild()), transformer.apply(secondChild()));
-    }
-
-    @Override
-    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return accumulator.apply(function.apply(firstChild()), function.apply(secondChild()));
     }
 
     @Override

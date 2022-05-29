@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
@@ -24,6 +26,11 @@ public record Select(List<? extends AST> outputColumns, AST fromClause, AST wher
         children.add(havingClause);
         children.add(orderByClause);
         return children;
+    }
+
+    @Override
+    public <U> U reduce(Function<AST, U> reduce, BinaryOperator<U> accumulator) {
+        return children().stream().map(reduce).reduce(accumulator).orElse(null);
     }
 
     @Override

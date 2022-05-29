@@ -5,7 +5,6 @@ import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.TernaryNode;
 
 import java.util.Objects;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -54,12 +53,6 @@ public final class CaseWhenExpression extends TernaryNode<ValueExpression, Value
                 transformer.apply(secondChild()),
                 transformer.apply(thirdChild()),
                 outputDomain);
-    }
-
-    @Override
-    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return accumulator.apply(function.apply(firstChild()),
-                accumulator.apply(function.apply(secondChild()), function.apply(thirdChild())));
     }
 
     @Override

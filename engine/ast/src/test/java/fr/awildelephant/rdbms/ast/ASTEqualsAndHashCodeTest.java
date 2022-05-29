@@ -1,6 +1,5 @@
 package fr.awildelephant.rdbms.ast;
 
-import fr.awildelephant.rdbms.ast.value.Between;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
@@ -29,14 +28,12 @@ class ASTEqualsAndHashCodeTest {
 
     private static Stream<Class<? extends AST>> implementationsOfAST() {
         final Set<Class<? extends AST>> toTest = Set.of(
-                Between.class,
                 ColumnDefinition.class,
                 DecimalLiteral.class,
                 IntegerLiteral.class,
                 IntervalLiteral.class,
                 QualifiedColumnName.class,
                 Select.class,
-                Substring.class,
                 TableName.class,
                 TableReferenceList.class,
                 TextLiteral.class,
@@ -50,13 +47,11 @@ class ASTEqualsAndHashCodeTest {
                 .filter(toTest::contains);
     }
 
-    @DisplayName("All implementations of AST should implement equals and hashCode")
+    @DisplayName("Test equals and hashCode for some implementations of AST")
     @ParameterizedTest(name = "{index} - {0}")
     @MethodSource("parameters")
-    void all_implementations_of_AST_should_implement_equals_and_hashCode(String className, Class<? extends AST> implementationOfAST) {
+    void it_should_implement_equals_and_hashCode(String className, Class<? extends AST> implementationOfAST) {
         EqualsVerifier.forClass(implementationOfAST)
-                .withRedefinedSuperclass()
-                .withResetCaches()
                 .suppress(Warning.BIGDECIMAL_EQUALITY)
                 .verify();
     }
