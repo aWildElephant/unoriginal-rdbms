@@ -1,6 +1,13 @@
 package fr.awildelephant.rdbms.util.multimap;
 
-import java.util.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class Multimap<K, V> implements Map<K, List<V>> {
 
@@ -75,7 +82,7 @@ public final class Multimap<K, V> implements Map<K, List<V>> {
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends List<V>> map) {
+    public void putAll(@NotNull Map<? extends K, ? extends List<V>> map) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -85,16 +92,19 @@ public final class Multimap<K, V> implements Map<K, List<V>> {
     }
 
     @Override
+    @NotNull
     public Set<K> keySet() {
         return delegate.keySet();
     }
 
     @Override
+    @NotNull
     public Collection<List<V>> values() {
         return delegate.values();
     }
 
     @Override
+    @NotNull
     public Set<Entry<K, List<V>>> entrySet() {
         return delegate.entrySet();
     }

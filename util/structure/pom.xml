@@ -4,23 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>rdbms</artifactId>
+        <artifactId>rdbms-util</artifactId>
         <groupId>fr.awildelephant</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>rdbms-util</artifactId>
+    <artifactId>rdbms-structure</artifactId>
+    <name>${util.structure.fancyName}</name>
     <packaging>pom</packaging>
-    <name>${util.fancyName}</name>
-
-    <properties>
-        <util.fancyName>${project.fancyName} :: Util</util.fancyName>
-    </properties>
 
     <modules>
-        <module>logic</module>
-        <module>tostring</module>
-        <module>printer</module>
-        <module>structure</module>
+        <module>multimap</module>
     </modules>
+
+    <properties>
+        <maven.compiler.source>18</maven.compiler.source>
+        <maven.compiler.target>18</maven.compiler.target>
+        <util.structure.fancyName>${util.fancyName} :: Structure</util.structure.fancyName>
+    </properties>
 </project>
