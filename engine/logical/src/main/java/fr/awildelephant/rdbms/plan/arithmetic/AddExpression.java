@@ -26,7 +26,7 @@ public final class AddExpression extends BinaryExpression {
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new AddExpression(transformer.apply(left), transformer.apply(right), domain);
+        return new AddExpression(transformer.apply(leftChild()), transformer.apply(rightChild()), domain);
     }
 
     @Override
@@ -35,8 +35,17 @@ public final class AddExpression extends BinaryExpression {
     }
 
     @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("leftChild", leftChild())
+                .append("rightChild", rightChild())
+                .append("domain", domain)
+                .toString();
+    }
+
+    @Override
     public int hashCode() {
-        return Objects.hash(domain, left, right);
+        return Objects.hash(domain, leftChild(), rightChild());
     }
 
     @Override
@@ -45,17 +54,6 @@ public final class AddExpression extends BinaryExpression {
             return false;
         }
 
-        return domain == other.domain
-                && Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append("left", left)
-                .append("right", right)
-                .append("domain", domain)
-                .toString();
+        return domain == other.domain && equalsBinaryNode(other);
     }
 }

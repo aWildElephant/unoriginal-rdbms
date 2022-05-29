@@ -7,12 +7,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.reflections.Reflections;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 class ValueExpressionEqualsAndHashCodeTest {
+
+    private static final Set<Class<?>> TO_TEST = Set.of(ConstantExpression.class, OuterQueryVariable.class, Variable.class);
 
     private static Collection<Object[]> parameters() {
         return implementationsOfExpression()
@@ -25,7 +28,7 @@ class ValueExpressionEqualsAndHashCodeTest {
                 .getSubTypesOf(ValueExpression.class)
                 .stream()
                 .sorted(comparing(Class::getSimpleName))
-                .filter(type -> !BinaryExpression.class.equals(type));
+                .filter(TO_TEST::contains);
     }
 
     @DisplayName("All implementations of ValueExpression should implement equals and hashCode")

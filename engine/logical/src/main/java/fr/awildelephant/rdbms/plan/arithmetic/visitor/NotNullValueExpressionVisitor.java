@@ -63,7 +63,7 @@ public class NotNullValueExpressionVisitor implements ValueExpressionVisitor<Boo
 
     @Override
     public Boolean visit(CastExpression cast) {
-        return apply(cast.input());
+        return apply(cast.child());
     }
 
     @Override
@@ -83,7 +83,7 @@ public class NotNullValueExpressionVisitor implements ValueExpressionVisitor<Boo
 
     @Override
     public Boolean visit(ExtractYearExpression extractYear) {
-        return apply(extractYear.input());
+        return apply(extractYear.child());
     }
 
     @Override
@@ -128,7 +128,7 @@ public class NotNullValueExpressionVisitor implements ValueExpressionVisitor<Boo
 
     @Override
     public Boolean visit(NotExpression not) {
-        return apply(not.input());
+        return apply(not.child());
     }
 
     @Override

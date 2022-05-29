@@ -1,4 +1,8 @@
-package fr.awildelephant.rdbms.plan.arithmetic;
+package fr.awildelephant.rdbms.plan.filter;
+
+import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
 import java.util.List;
 import java.util.stream.Collectors;

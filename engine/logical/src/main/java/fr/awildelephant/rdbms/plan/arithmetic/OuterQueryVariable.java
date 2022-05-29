@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.Objects;
 import java.util.function.BinaryOperator;
@@ -10,7 +11,7 @@ import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class OuterQueryVariable implements ValueExpression {
+public final class OuterQueryVariable extends LeafNode<ValueExpression> implements ValueExpression {
 
     private final ColumnReference reference;
     private final Domain domain;

@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.TernaryNode;
 
 import java.util.Objects;
 import java.util.function.BinaryOperator;
@@ -10,17 +11,13 @@ import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class CaseWhenExpression implements ValueExpression {
+public final class CaseWhenExpression extends TernaryNode<ValueExpression, ValueExpression, ValueExpression, ValueExpression>
+        implements ValueExpression {
 
-    private final ValueExpression condition;
-    private final ValueExpression thenExpression;
-    private final ValueExpression elseExpression;
     private final Domain outputDomain;
 
     private CaseWhenExpression(ValueExpression condition, ValueExpression thenExpression, ValueExpression elseExpression, Domain outputDomain) {
-        this.condition = condition;
-        this.thenExpression = thenExpression;
-        this.elseExpression = elseExpression;
+        super(condition, thenExpression, elseExpression);
         this.outputDomain = outputDomain;
     }
 
@@ -29,15 +26,15 @@ public final class CaseWhenExpression implements ValueExpression {
     }
 
     public ValueExpression condition() {
-        return condition;
+        return firstChild();
     }
 
     public ValueExpression thenExpression() {
-        return thenExpression;
+        return secondChild();
     }
 
     public ValueExpression elseExpression() {
-        return elseExpression;
+        return thirdChild();
     }
 
     @Override
@@ -47,22 +44,22 @@ public final class CaseWhenExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return Stream.concat(condition.variables(),
-                             Stream.concat(thenExpression.variables(), elseExpression.variables()));
+        return Stream.concat(firstChild().variables(),
+                Stream.concat(secondChild().variables(), thirdChild().variables()));
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new CaseWhenExpression(transformer.apply(condition),
-                                      transformer.apply(thenExpression),
-                                      transformer.apply(elseExpression),
-                                      outputDomain);
+        return new CaseWhenExpression(transformer.apply(firstChild()),
+                transformer.apply(secondChild()),
+                transformer.apply(thirdChild()),
+                outputDomain);
     }
 
     @Override
     public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return accumulator.apply(function.apply(condition),
-                                 accumulator.apply(function.apply(thenExpression), function.apply(elseExpression)));
+        return accumulator.apply(function.apply(firstChild()),
+                accumulator.apply(function.apply(secondChild()), function.apply(thirdChild())));
     }
 
     @Override
@@ -71,8 +68,18 @@ public final class CaseWhenExpression implements ValueExpression {
     }
 
     @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("if", firstChild())
+                .append("then", secondChild())
+                .append("else", thirdChild())
+                .append("domain", outputDomain)
+                .toString();
+    }
+
+    @Override
     public int hashCode() {
-        return Objects.hash(outputDomain, condition, thenExpression, elseExpression);
+        return Objects.hash(outputDomain, firstChild(), secondChild(), thirdChild());
     }
 
     @Override
@@ -82,18 +89,6 @@ public final class CaseWhenExpression implements ValueExpression {
         }
 
         return outputDomain == other.outputDomain
-                && Objects.equals(condition, other.condition)
-                && Objects.equals(thenExpression, other.thenExpression)
-                && Objects.equals(elseExpression, other.elseExpression);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append("if", condition)
-                .append("then", thenExpression)
-                .append("else", elseExpression)
-                .append("domain", outputDomain)
-                .toString();
+                && equalsTernary(other);
     }
 }

@@ -2,8 +2,8 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
-import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -11,20 +11,15 @@ import java.util.stream.Stream;
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
-public final class NotExpression implements ValueExpression {
+public final class NotExpression extends UnaryNode<ValueExpression, ValueExpression>
+        implements ValueExpression {
 
-    private final ValueExpression input;
-
-    private NotExpression(ValueExpression input) {
-        this.input = input;
+    private NotExpression(ValueExpression child) {
+        super(child);
     }
 
-    public static NotExpression notExpression(ValueExpression input) {
-        return new NotExpression(input);
-    }
-
-    public ValueExpression input() {
-        return input;
+    public static NotExpression notExpression(ValueExpression child) {
+        return new NotExpression(child);
     }
 
     @Override
@@ -34,17 +29,17 @@ public final class NotExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return input.variables();
+        return child().variables();
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new NotExpression(transformer.apply(input));
+        return new NotExpression(transformer.apply(child()));
     }
 
     @Override
     public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return function.apply(input);
+        return function.apply(child());
     }
 
     @Override
@@ -53,8 +48,10 @@ public final class NotExpression implements ValueExpression {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
+    public String toString() {
+        return toStringBuilder(this)
+                .append(child())
+                .toString();
     }
 
     @Override
@@ -63,13 +60,6 @@ public final class NotExpression implements ValueExpression {
             return false;
         }
 
-        return Objects.equals(input, other.input);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append(input)
-                .toString();
+        return equalsUnaryNode(other);
     }
 }

@@ -9,7 +9,7 @@ import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
 
 public final class JoinSplitter extends DefaultLopVisitor<MultiJoin> {
 

@@ -2,8 +2,8 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.TernaryNode;
 
-import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -11,16 +11,11 @@ import java.util.stream.Stream;
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
-public final class BetweenExpression implements ValueExpression {
-
-    private final ValueExpression value;
-    private final ValueExpression lowerBound;
-    private final ValueExpression upperBound;
+public final class BetweenExpression extends TernaryNode<ValueExpression, ValueExpression, ValueExpression, ValueExpression>
+        implements ValueExpression {
 
     private BetweenExpression(ValueExpression value, ValueExpression lowerBound, ValueExpression upperBound) {
-        this.value = value;
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
+        super(value, lowerBound, upperBound);
     }
 
     public static BetweenExpression betweenExpression(ValueExpression value, ValueExpression lowerBound, ValueExpression upperBound) {
@@ -28,15 +23,15 @@ public final class BetweenExpression implements ValueExpression {
     }
 
     public ValueExpression value() {
-        return value;
+        return firstChild();
     }
 
     public ValueExpression lowerBound() {
-        return lowerBound;
+        return secondChild();
     }
 
     public ValueExpression upperBound() {
-        return upperBound;
+        return thirdChild();
     }
 
     @Override
@@ -46,20 +41,20 @@ public final class BetweenExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return Stream.concat(value.variables(), Stream.concat(lowerBound.variables(), upperBound.variables()));
+        return Stream.concat(firstChild().variables(), Stream.concat(secondChild().variables(), thirdChild().variables()));
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new BetweenExpression(transformer.apply(value),
-                                     transformer.apply(lowerBound),
-                                     transformer.apply(upperBound));
+        return new BetweenExpression(transformer.apply(firstChild()),
+                transformer.apply(secondChild()),
+                transformer.apply(thirdChild()));
     }
 
     @Override
     public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return accumulator.apply(function.apply(value),
-                                 accumulator.apply(function.apply(lowerBound), function.apply(upperBound)));
+        return accumulator.apply(function.apply(firstChild()),
+                accumulator.apply(function.apply(secondChild()), function.apply(thirdChild())));
     }
 
     @Override
@@ -68,8 +63,12 @@ public final class BetweenExpression implements ValueExpression {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(value, lowerBound, upperBound);
+    public String toString() {
+        return toStringBuilder(this)
+                .append("value", firstChild())
+                .append("lowerBound", secondChild())
+                .append("upperBound", thirdChild())
+                .toString();
     }
 
     @Override
@@ -78,17 +77,6 @@ public final class BetweenExpression implements ValueExpression {
             return false;
         }
 
-        return Objects.equals(value, other.value)
-                && Objects.equals(lowerBound, other.lowerBound)
-                && Objects.equals(upperBound, other.upperBound);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append("value", value)
-                .append("lowerBound", lowerBound)
-                .append("upperBound", upperBound)
-                .toString();
+        return equalsTernary(other);
     }
 }

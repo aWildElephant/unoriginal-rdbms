@@ -23,8 +23,8 @@ import java.util.Set;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
 import static java.util.stream.Collectors.toSet;
 
 public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperator> {

@@ -25,7 +25,7 @@ public final class SubtractExpression extends BinaryExpression {
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new SubtractExpression(transformer.apply(left), transformer.apply(right), domain);
+        return new SubtractExpression(transformer.apply(leftChild()), transformer.apply(rightChild()), domain);
     }
 
     @Override
@@ -35,7 +35,7 @@ public final class SubtractExpression extends BinaryExpression {
 
     @Override
     public int hashCode() {
-        return Objects.hash(domain, left, right);
+        return Objects.hash(domain, leftChild(), rightChild());
     }
 
     @Override
@@ -44,8 +44,6 @@ public final class SubtractExpression extends BinaryExpression {
             return false;
         }
 
-        return domain == other.domain
-                && Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+        return domain == other.domain && equalsBinaryNode(other);
     }
 }

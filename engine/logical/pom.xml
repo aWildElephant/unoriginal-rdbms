@@ -27,6 +27,10 @@
         </dependency>
         <dependency>
             <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-tree</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-value</artifactId>
         </dependency>
 

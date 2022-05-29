@@ -54,7 +54,7 @@ public final class ConstantEvaluator implements ValueExpressionVisitor<Boolean> 
 
     @Override
     public Boolean visit(CastExpression cast) {
-        return apply(cast.input());
+        return apply(cast.child());
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class ConstantEvaluator implements ValueExpressionVisitor<Boolean> 
 
     @Override
     public Boolean visit(ExtractYearExpression extractYear) {
-        return apply(extractYear.input());
+        return apply(extractYear.child());
     }
 
     @Override
@@ -74,7 +74,7 @@ public final class ConstantEvaluator implements ValueExpressionVisitor<Boolean> 
 
     @Override
     public Boolean visit(IsNullExpression isNull) {
-        return apply(isNull.input());
+        return apply(isNull.child());
     }
 
     @Override
@@ -84,7 +84,7 @@ public final class ConstantEvaluator implements ValueExpressionVisitor<Boolean> 
 
     @Override
     public Boolean visit(NotExpression not) {
-        return apply(not.input());
+        return apply(not.child());
     }
 
     @Override

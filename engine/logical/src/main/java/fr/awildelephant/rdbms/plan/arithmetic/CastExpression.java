@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
 import java.util.Objects;
 import java.util.function.BinaryOperator;
@@ -10,22 +11,17 @@ import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class CastExpression implements ValueExpression {
+public final class CastExpression extends UnaryNode<ValueExpression, ValueExpression> implements ValueExpression {
 
-    private final ValueExpression input;
     private final Domain domain;
 
-    private CastExpression(ValueExpression input, Domain domain) {
-        this.input = input;
+    private CastExpression(ValueExpression child, Domain domain) {
+        super(child);
         this.domain = domain;
     }
 
-    public static CastExpression castExpression(ValueExpression input, Domain domain) {
-        return new CastExpression(input, domain);
-    }
-
-    public ValueExpression input() {
-        return input;
+    public static CastExpression castExpression(ValueExpression child, Domain domain) {
+        return new CastExpression(child, domain);
     }
 
     @Override
@@ -35,17 +31,17 @@ public final class CastExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return input.variables();
+        return child().variables();
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new CastExpression(transformer.apply(input), domain);
+        return new CastExpression(transformer.apply(child()), domain);
     }
 
     @Override
     public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return function.apply(input);
+        return function.apply(child());
     }
 
     @Override
@@ -55,7 +51,7 @@ public final class CastExpression implements ValueExpression {
 
     @Override
     public int hashCode() {
-        return Objects.hash(domain, input);
+        return Objects.hash(domain, child());
     }
 
     @Override
@@ -65,13 +61,13 @@ public final class CastExpression implements ValueExpression {
         }
 
         return domain == other.domain
-                && Objects.equals(input, other.input);
+                && equalsUnaryNode(other);
     }
 
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("input", input)
+                .append("child", child())
                 .append("castTo", domain)
                 .toString();
     }

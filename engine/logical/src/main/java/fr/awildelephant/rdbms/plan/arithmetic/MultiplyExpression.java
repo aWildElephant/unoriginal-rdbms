@@ -27,7 +27,7 @@ public final class MultiplyExpression extends BinaryExpression {
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new MultiplyExpression(transformer.apply(left), transformer.apply(right), domain);
+        return new MultiplyExpression(transformer.apply(leftChild()), transformer.apply(rightChild()), domain);
     }
 
     @Override
@@ -37,7 +37,7 @@ public final class MultiplyExpression extends BinaryExpression {
 
     @Override
     public int hashCode() {
-        return Objects.hash(domain, left, right);
+        return Objects.hash(domain, leftChild(), rightChild());
     }
 
     @Override
@@ -47,15 +47,14 @@ public final class MultiplyExpression extends BinaryExpression {
         }
 
         return domain == other.domain
-                && Objects.equals(left, other.left)
-                && Objects.equals(right, other.right);
+                && equalsBinaryNode(other);
     }
 
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("left", left)
-                .append("right", right)
+                .append("left", leftChild())
+                .append("right", rightChild())
                 .append("domain", domain)
                 .toString();
 

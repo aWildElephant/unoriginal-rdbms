@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
+import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FilterExpanderTest {

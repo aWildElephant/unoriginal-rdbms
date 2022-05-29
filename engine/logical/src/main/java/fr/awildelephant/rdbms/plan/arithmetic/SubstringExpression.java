@@ -2,8 +2,8 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.TernaryNode;
 
-import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -11,16 +11,11 @@ import java.util.stream.Stream;
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
-public final class SubstringExpression implements ValueExpression {
-
-    private final ValueExpression input;
-    private final ValueExpression start;
-    private final ValueExpression length;
+public final class SubstringExpression extends TernaryNode<ValueExpression, ValueExpression, ValueExpression, ValueExpression>
+        implements ValueExpression {
 
     private SubstringExpression(ValueExpression input, ValueExpression start, ValueExpression length) {
-        this.input = input;
-        this.start = start;
-        this.length = length;
+        super(input, start, length);
     }
 
     public static SubstringExpression substringExpression(ValueExpression input, ValueExpression start, ValueExpression length) {
@@ -28,15 +23,15 @@ public final class SubstringExpression implements ValueExpression {
     }
 
     public ValueExpression input() {
-        return input;
+        return firstChild();
     }
 
     public ValueExpression start() {
-        return start;
+        return secondChild();
     }
 
     public ValueExpression length() {
-        return length;
+        return thirdChild();
     }
 
     @Override
@@ -46,21 +41,21 @@ public final class SubstringExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return Stream.concat(input.variables(),
-                             Stream.concat(start.variables(), length.variables()));
+        return Stream.concat(firstChild().variables(),
+                Stream.concat(secondChild().variables(), thirdChild().variables()));
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new SubstringExpression(transformer.apply(input),
-                                       transformer.apply(start),
-                                       transformer.apply(length));
+        return new SubstringExpression(transformer.apply(firstChild()),
+                transformer.apply(secondChild()),
+                transformer.apply(thirdChild()));
     }
 
     @Override
     public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return accumulator.apply(function.apply(input),
-                                 accumulator.apply(function.apply(start), function.apply(length)));
+        return accumulator.apply(function.apply(firstChild()),
+                accumulator.apply(function.apply(secondChild()), function.apply(thirdChild())));
     }
 
     @Override
@@ -69,8 +64,12 @@ public final class SubstringExpression implements ValueExpression {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(input, start, length);
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", firstChild())
+                .append("start", secondChild())
+                .append("length", thirdChild())
+                .toString();
     }
 
     @Override
@@ -79,17 +78,6 @@ public final class SubstringExpression implements ValueExpression {
             return false;
         }
 
-        return Objects.equals(input, other.input)
-                && Objects.equals(start, other.start)
-                && Objects.equals(length, other.length);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append("input", input)
-                .append("start", start)
-                .append("length", length)
-                .toString();
+        return equalsTernary(other);
     }
 }

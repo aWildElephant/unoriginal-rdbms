@@ -3,7 +3,6 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
-import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -11,14 +10,10 @@ import java.util.stream.Stream;
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
-public final class LikeExpression implements ValueExpression {
-
-    private final ValueExpression input;
-    private final ValueExpression pattern;
+public final class LikeExpression extends BinaryExpression {
 
     private LikeExpression(ValueExpression input, ValueExpression pattern) {
-        this.input = input;
-        this.pattern = pattern;
+        super(input, pattern);
     }
 
     public static LikeExpression likeExpression(ValueExpression input, ValueExpression pattern) {
@@ -26,11 +21,11 @@ public final class LikeExpression implements ValueExpression {
     }
 
     public ValueExpression input() {
-        return input;
+        return firstChild();
     }
 
     public ValueExpression pattern() {
-        return pattern;
+        return secondChild();
     }
 
     @Override
@@ -40,17 +35,25 @@ public final class LikeExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return Stream.concat(input.variables(), pattern.variables());
+        return Stream.concat(firstChild().variables(), secondChild().variables());
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new LikeExpression(transformer.apply(input), transformer.apply(pattern));
+        return new LikeExpression(transformer.apply(firstChild()), transformer.apply(secondChild()));
     }
 
     @Override
     public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return accumulator.apply(function.apply(input), function.apply(pattern));
+        return accumulator.apply(function.apply(firstChild()), function.apply(secondChild()));
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", firstChild())
+                .append("pattern", secondChild())
+                .toString();
     }
 
     @Override
@@ -59,25 +62,11 @@ public final class LikeExpression implements ValueExpression {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(input, pattern);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final LikeExpression other)) {
             return false;
         }
 
-        return Objects.equals(input, other.input)
-                && Objects.equals(pattern, other.pattern);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append("input", input)
-                .append("pattern", pattern)
-                .toString();
+        return equalsBinaryNode(other);
     }
 }

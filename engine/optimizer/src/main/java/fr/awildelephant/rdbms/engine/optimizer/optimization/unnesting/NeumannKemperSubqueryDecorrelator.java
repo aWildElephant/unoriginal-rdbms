@@ -36,8 +36,8 @@ import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
 import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
+import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
 
 /**
  * Decorrelate subqueries using the method described in "Unnesting Arbitrary Queries" by Thomas Neumann and Alfons Kemper.

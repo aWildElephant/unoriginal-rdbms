@@ -133,11 +133,11 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(CastExpression cast) {
-        if (cast.domain() != DATE || cast.input().domain() != TEXT) {
+        if (cast.domain() != DATE || cast.child().domain() != TEXT) {
             throw new IllegalStateException();
         }
 
-        return dateCastOperation(apply(cast.input()));
+        return dateCastOperation(apply(cast.child()));
     }
 
     @Override
@@ -171,7 +171,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(ExtractYearExpression extractYear) {
-        final Operation input = apply(extractYear.input());
+        final Operation input = apply(extractYear.child());
 
         final Domain inputDomain = input.domain();
         if (!inputDomain.canBeUsedAs(DATE)) {
@@ -217,7 +217,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(IsNullExpression isNull) {
-        return isNullPredicate(apply(isNull.input()));
+        return isNullPredicate(apply(isNull.child()));
     }
 
     @Override
@@ -262,7 +262,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(NotExpression not) {
-        return notOperation(apply(not.input()));
+        return notOperation(apply(not.child()));
     }
 
     @Override

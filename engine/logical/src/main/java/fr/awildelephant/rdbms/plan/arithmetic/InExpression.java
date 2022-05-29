@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
@@ -70,8 +71,24 @@ public final class InExpression implements ValueExpression {
     }
 
     @Override
+    public Collection<? extends ValueExpression> children() {
+        final List<ValueExpression> children = new ArrayList<>();
+        children.add(input);
+        children.addAll(values);
+        return children;
+    }
+
+    @Override
     public <T> T accept(ValueExpressionVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(this)
+                .append("input", input)
+                .append("values", values)
+                .toString();
     }
 
     @Override
@@ -87,13 +104,5 @@ public final class InExpression implements ValueExpression {
 
         return Objects.equals(input, other.input)
                 && Objects.equals(values, other.values);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append("input", input)
-                .append("values", values)
-                .toString();
     }
 }

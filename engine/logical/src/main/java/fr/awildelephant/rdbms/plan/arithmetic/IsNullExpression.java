@@ -2,28 +2,23 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.UnaryNode;
 
-import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class IsNullExpression implements ValueExpression {
+public final class IsNullExpression extends UnaryNode<ValueExpression, ValueExpression>
+        implements ValueExpression {
 
-    private final ValueExpression input;
-
-    public IsNullExpression(ValueExpression input) {
-        this.input = input;
+    public IsNullExpression(ValueExpression child) {
+        super(child);
     }
 
-    public static IsNullExpression isNullExpression(ValueExpression input) {
-        return new IsNullExpression(input);
-    }
-
-    public ValueExpression input() {
-        return input;
+    public static IsNullExpression isNullExpression(ValueExpression child) {
+        return new IsNullExpression(child);
     }
 
     @Override
@@ -33,17 +28,17 @@ public final class IsNullExpression implements ValueExpression {
 
     @Override
     public Stream<ColumnReference> variables() {
-        return input.variables();
+        return child().variables();
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return isNullExpression(transformer.apply(input));
+        return isNullExpression(transformer.apply(child()));
     }
 
     @Override
     public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        return function.apply(input);
+        return function.apply(child());
     }
 
     @Override
@@ -52,8 +47,10 @@ public final class IsNullExpression implements ValueExpression {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(input);
+    public String toString() {
+        return toStringBuilder(this)
+                .append(child())
+                .toString();
     }
 
     @Override
@@ -62,13 +59,6 @@ public final class IsNullExpression implements ValueExpression {
             return false;
         }
 
-        return Objects.equals(input, other.input);
-    }
-
-    @Override
-    public String toString() {
-        return toStringBuilder(this)
-                .append(input)
-                .toString();
+        return equalsUnaryNode(other);
     }
 }

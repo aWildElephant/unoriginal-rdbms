@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpression.orExpression;
+import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
 
 public final class OrExpressionFactorizer extends DefaultValueExpressionVisitor<ValueExpression> {
 

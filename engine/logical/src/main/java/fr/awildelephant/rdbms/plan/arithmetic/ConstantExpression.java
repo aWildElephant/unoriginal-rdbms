@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.plan.arithmetic;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.Objects;
 import java.util.function.BinaryOperator;
@@ -11,7 +12,7 @@ import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class ConstantExpression implements ValueExpression {
+public final class ConstantExpression extends LeafNode<ValueExpression> implements ValueExpression {
 
     private final DomainValue value;
     private final Domain domain;
@@ -65,8 +66,7 @@ public final class ConstantExpression implements ValueExpression {
             return false;
         }
 
-        return domain == other.domain
-                && Objects.equals(value, other.value);
+        return domain == other.domain && Objects.equals(value, other.value);
     }
 
     @Override

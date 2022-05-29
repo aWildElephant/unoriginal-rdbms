@@ -60,7 +60,7 @@ import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;

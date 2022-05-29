@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
 import static java.util.stream.Collectors.toList;
 
 public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {

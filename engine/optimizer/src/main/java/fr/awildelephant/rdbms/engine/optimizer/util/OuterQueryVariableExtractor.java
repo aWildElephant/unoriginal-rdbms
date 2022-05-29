@@ -51,7 +51,7 @@ final class OuterQueryVariableExtractor implements ValueExpressionVisitor<Stream
 
     @Override
     public Stream<ColumnReference> visit(CastExpression cast) {
-        return apply(cast.input());
+        return apply(cast.child());
     }
 
     @Override
@@ -61,7 +61,7 @@ final class OuterQueryVariableExtractor implements ValueExpressionVisitor<Stream
 
     @Override
     public Stream<ColumnReference> visit(ExtractYearExpression extractYear) {
-        return apply(extractYear.input());
+        return apply(extractYear.child());
     }
 
     @Override
@@ -76,12 +76,12 @@ final class OuterQueryVariableExtractor implements ValueExpressionVisitor<Stream
 
     @Override
     public Stream<ColumnReference> visit(IsNullExpression isNull) {
-        return apply(isNull.input());
+        return apply(isNull.child());
     }
 
     @Override
     public Stream<ColumnReference> visit(NotExpression not) {
-        return apply(not.input());
+        return apply(not.child());
     }
 
     @Override

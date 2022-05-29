@@ -1,4 +1,6 @@
-package fr.awildelephant.rdbms.plan.arithmetic;
+package fr.awildelephant.rdbms.plan.filter;
+
+import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 
 import java.util.Iterator;
 import java.util.Optional;

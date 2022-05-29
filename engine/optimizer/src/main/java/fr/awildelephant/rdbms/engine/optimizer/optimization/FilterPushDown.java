@@ -39,9 +39,9 @@ import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvalu
 import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.plan.JoinOutputSchemaFactory.innerJoinOutputSchema;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.plan.arithmetic.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.plan.arithmetic.OrExpressionFactorizer.factorizeOrExpression;
+import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
 import static java.util.stream.Collectors.toList;
 
 /**
