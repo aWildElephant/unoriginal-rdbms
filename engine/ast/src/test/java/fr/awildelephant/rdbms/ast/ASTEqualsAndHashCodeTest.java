@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.ast;
 
 import fr.awildelephant.rdbms.ast.value.Between;
-import fr.awildelephant.rdbms.ast.value.CaseWhen;
 import fr.awildelephant.rdbms.ast.value.DecimalLiteral;
 import fr.awildelephant.rdbms.ast.value.IntegerLiteral;
 import fr.awildelephant.rdbms.ast.value.IntervalLiteral;
@@ -29,10 +28,20 @@ class ASTEqualsAndHashCodeTest {
     }
 
     private static Stream<Class<? extends AST>> implementationsOfAST() {
-        final Set<Class<? extends AST>> toTest = Set.of(Between.class, CaseWhen.class, ColumnDefinition.class,
-                DecimalLiteral.class, InnerJoin.class, IntegerLiteral.class, IntervalLiteral.class,
-                QualifiedColumnName.class, Select.class, SemiJoin.class, Substring.class, TableName.class,
-                TableReferenceList.class, TextLiteral.class, UnqualifiedColumnName.class);
+        final Set<Class<? extends AST>> toTest = Set.of(
+                Between.class,
+                ColumnDefinition.class,
+                DecimalLiteral.class,
+                IntegerLiteral.class,
+                IntervalLiteral.class,
+                QualifiedColumnName.class,
+                Select.class,
+                Substring.class,
+                TableName.class,
+                TableReferenceList.class,
+                TextLiteral.class,
+                UnqualifiedColumnName.class
+        );
 
         return new Reflections("fr.awildelephant.rdbms.ast")
                 .getSubTypesOf(AST.class)

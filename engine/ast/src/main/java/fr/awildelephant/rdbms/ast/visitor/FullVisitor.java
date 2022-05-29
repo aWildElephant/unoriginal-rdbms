@@ -268,7 +268,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
     public AST visit(InnerJoin innerJoin) {
         return innerJoin(function.apply(innerJoin.left()),
                 function.apply(innerJoin.right()),
-                function.apply(innerJoin.joinSpecification()));
+                function.apply(innerJoin.specification()));
     }
 
     @Override
@@ -295,7 +295,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
     public AST visit(LeftJoin leftJoin) {
         return leftJoin(function.apply(leftJoin.left()),
                 function.apply(leftJoin.right()),
-                function.apply(leftJoin.joinSpecification()));
+                function.apply(leftJoin.specification()));
     }
 
     @Override

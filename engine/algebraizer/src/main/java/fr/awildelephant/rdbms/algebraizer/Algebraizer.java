@@ -102,7 +102,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         return new InnerJoinLop(leftInput,
                 rightInput,
-                createValueExpression(innerJoin.joinSpecification(), outputSchema, outerQuerySchema),
+                createValueExpression(innerJoin.specification(), outputSchema, outerQuerySchema),
                 outputSchema);
     }
 
@@ -115,7 +115,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
         return new LeftJoinLop(leftInput,
                 rightInput,
-                createValueExpression(leftJoin.joinSpecification(), outputSchema, outerQuerySchema),
+                createValueExpression(leftJoin.specification(), outputSchema, outerQuerySchema),
                 outputSchema);
     }
 

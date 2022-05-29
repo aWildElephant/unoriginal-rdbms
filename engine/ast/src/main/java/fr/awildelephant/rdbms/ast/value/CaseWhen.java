@@ -2,21 +2,12 @@ package fr.awildelephant.rdbms.ast.value;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.visitor.ASTVisitor;
+import fr.awildelephant.rdbms.tree.TernaryNode;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
-public final class CaseWhen implements AST {
-
-    private final AST condition;
-    private final AST thenExpression;
-    private final AST elseExpression;
+public final class CaseWhen extends TernaryNode<AST, AST, AST, AST> implements AST {
 
     private CaseWhen(AST condition, AST thenExpression, AST elseExpression) {
-        this.condition = condition;
-        this.thenExpression = thenExpression;
-        this.elseExpression = elseExpression;
+        super(condition, thenExpression, elseExpression);
     }
 
     public static CaseWhen caseWhen(AST condition, AST thenExpression, AST elseExpression) {
@@ -24,20 +15,15 @@ public final class CaseWhen implements AST {
     }
 
     public AST condition() {
-        return condition;
+        return firstChild();
     }
 
     public AST thenExpression() {
-        return thenExpression;
+        return secondChild();
     }
 
     public AST elseExpression() {
-        return elseExpression;
-    }
-
-    @Override
-    public Collection<AST> children() {
-        return List.of(condition, thenExpression, elseExpression);
+        return thirdChild();
     }
 
     @Override
@@ -46,18 +32,11 @@ public final class CaseWhen implements AST {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(condition, thenExpression, elseExpression);
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof final CaseWhen other)) {
             return false;
         }
 
-        return Objects.equals(condition, other.condition)
-                && Objects.equals(thenExpression, other.thenExpression)
-                && Objects.equals(elseExpression, other.elseExpression);
+        return equalsTernary(other);
     }
 }
