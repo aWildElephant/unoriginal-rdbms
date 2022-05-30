@@ -1,9 +1,6 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.tree.BinaryNode;
-
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
@@ -20,11 +17,6 @@ public abstract class BinaryExpression extends BinaryNode<ValueExpression, Value
 
     public ValueExpression right() {
         return rightChild();
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.concat(leftChild().variables(), rightChild().variables());
     }
 
     @Override

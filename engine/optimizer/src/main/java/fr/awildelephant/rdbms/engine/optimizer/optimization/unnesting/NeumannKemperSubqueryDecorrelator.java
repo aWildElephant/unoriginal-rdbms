@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.plan.alias.ExactMatchAlias;
 import fr.awildelephant.rdbms.plan.alias.ReversibleAlias;
 import fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
@@ -46,6 +47,12 @@ import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters
  */
 public final class NeumannKemperSubqueryDecorrelator {
 
+    private final VariableCollector variableCollector;
+
+    public NeumannKemperSubqueryDecorrelator(VariableCollector variableCollector) {
+        this.variableCollector = variableCollector;
+    }
+
     public LogicalOperator decorrelate(DependentJoinLop plan) {
         final LogicalOperator t1 = plan.left();
         final LogicalOperator t2 = plan.right();
@@ -61,7 +68,7 @@ public final class NeumannKemperSubqueryDecorrelator {
 
         final LogicalOperator rewrittenJoin = rewriteDependentInnerJoin(t1, t2, plan.predicate(), correlatedVariables);
 
-        return new DependentJoinPushDown().apply(rewrittenJoin);
+        return new DependentJoinPushDown(variableCollector).apply(rewrittenJoin);
     }
 
     private LogicalOperator rewriteDependentInnerJoin(LogicalOperator t1,
@@ -98,7 +105,7 @@ public final class NeumannKemperSubqueryDecorrelator {
                 correlatedVariables,
                 plan.outputColumnName());
 
-        return new DependentJoinPushDown().apply(rewrittenJoin);
+        return new DependentJoinPushDown(variableCollector).apply(rewrittenJoin);
     }
 
     private LogicalOperator rewriteDependentSemiJoin(LogicalOperator t1,

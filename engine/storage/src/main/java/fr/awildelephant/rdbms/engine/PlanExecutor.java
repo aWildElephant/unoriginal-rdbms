@@ -46,11 +46,13 @@ import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.Variable;
+import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.plan.arithmetic.visitor.NotNullValueExpressionVisitor;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,7 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
 
     private static final Logger LOGGER = LogManager.getLogger("Executor");
 
+    private final VariableCollector variableCollector = new VariableCollector();
     private final Map<String, ManagedTable> tables;
 
     public PlanExecutor(Map<String, ManagedTable> tables) {
@@ -301,8 +304,8 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         for (ValueExpression expression : joinSpecification) {
             final EqualExpression equalExpression = (EqualExpression) expression;
 
-            final ColumnReference equalLeftMember = equalExpression.left().variables().findAny().orElseThrow();
-            final ColumnReference equalRightMember = equalExpression.right().variables().findAny().orElseThrow();
+            final ColumnReference equalLeftMember = variable(equalExpression.left());
+            final ColumnReference equalRightMember = variable(equalExpression.right());
 
             if (leftInputSchema.contains(equalLeftMember)) {
                 leftJoinColumns.add(equalLeftMember);
@@ -322,6 +325,15 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         }
 
         return new HashJoinMatcher(rightTable, leftMapping, rightMapping);
+    }
+
+    @NotNull
+    private ColumnReference variable(ValueExpression valueExpression) {
+        final List<ColumnReference> variables = variableCollector.apply(valueExpression);
+        if (variables.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        return variables.get(0);
     }
 
     private JoinMatcher createNestedLoopJoinMatcher(Table rightTable, Formula joinSpecification) {
@@ -463,8 +475,8 @@ public final class PlanExecutor extends DefaultLopVisitor<Table> {
         for (ValueExpression expression : expressions) {
             final EqualExpression equalExpression = (EqualExpression) expression;
 
-            final ColumnReference equalLeftMember = equalExpression.left().variables().findAny().orElseThrow();
-            final ColumnReference equalRightMember = equalExpression.right().variables().findAny().orElseThrow();
+            final ColumnReference equalLeftMember = variable(equalExpression.left());
+            final ColumnReference equalRightMember = variable(equalExpression.right());
 
             if (leftInputSchema.contains(equalLeftMember)) {
                 leftJoinColumns.add(equalLeftMember);

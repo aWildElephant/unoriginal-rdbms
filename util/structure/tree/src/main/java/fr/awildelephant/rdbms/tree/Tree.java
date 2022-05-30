@@ -1,12 +1,14 @@
 package fr.awildelephant.rdbms.tree;
 
 import java.util.Collection;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public interface Tree<T extends Tree<T>> {
 
     Collection<? extends T> children();
 
-    <U> U reduce(Function<T, U> reduce, BinaryOperator<U> accumulator);
+    default void depthFirst(Consumer<Tree<T>> consumer) {
+        children().forEach(child -> child.depthFirst(consumer));
+        consumer.accept(this);
+    }
 }

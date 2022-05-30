@@ -1,13 +1,11 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
@@ -32,11 +30,6 @@ public final class ConstantExpression extends LeafNode<ValueExpression> implemen
     @Override
     public Domain domain() {
         return domain;
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.of();
     }
 
     @Override

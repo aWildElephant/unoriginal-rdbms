@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.plan.FilterLop;
 import fr.awildelephant.rdbms.plan.InnerJoinLop;
 import fr.awildelephant.rdbms.plan.LogicalOperator;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -18,6 +19,12 @@ import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters
 import static java.util.stream.Collectors.toList;
 
 public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
+
+    private final VariableCollector variableCollector;
+
+    public JoinReordering(VariableCollector variableCollector) {
+        this.variableCollector = variableCollector;
+    }
 
     @Override
     public LogicalOperator visit(CartesianProductLop cartesianProduct) {
@@ -104,12 +111,12 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
         final Schema schema = operator.schema();
 
         return filters.stream()
-                .filter(filter -> filter.variables().anyMatch(schema::contains))
+                .filter(filter -> variables(filter).stream().anyMatch(schema::contains))
                 .findAny();
     }
 
     private List<LogicalOperator> inputsToHaveAllColumns(List<LogicalOperator> inputs, ValueExpression filter) {
-        final List<ColumnReference> columns = filter.variables().collect(toList());
+        final List<ColumnReference> columns = variables(filter);
 
         return inputs.stream()
                 .filter(input -> providesAnyColumn(columns, input.schema()))
@@ -144,5 +151,9 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
     @Override
     public LogicalOperator defaultVisit(LogicalOperator operator) {
         return operator.transformInputs(this);
+    }
+
+    private List<ColumnReference> variables(ValueExpression valueExpression) {
+        return variableCollector.apply(valueExpression);
     }
 }

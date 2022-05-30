@@ -1,10 +1,8 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
@@ -30,11 +28,6 @@ public final class LikeExpression extends BinaryExpression {
     @Override
     public Domain domain() {
         return BOOLEAN;
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.concat(firstChild().variables(), secondChild().variables());
     }
 
     @Override

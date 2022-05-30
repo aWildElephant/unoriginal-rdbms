@@ -22,6 +22,7 @@ import fr.awildelephant.rdbms.plan.TableConstructorLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -49,13 +50,15 @@ import static java.util.stream.Collectors.toList;
  */
 public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
 
+    private final VariableCollector variableCollector;
     private final Collection<ValueExpression> filters;
 
-    public FilterPushDown() {
-        this(Collections.emptyList());
+    public FilterPushDown(VariableCollector variableCollector) {
+        this(variableCollector, Collections.emptyList());
     }
 
-    private FilterPushDown(Collection<ValueExpression> filters) {
+    private FilterPushDown(VariableCollector variableCollector, Collection<ValueExpression> filters) {
+        this.variableCollector = variableCollector;
         this.filters = filters;
     }
 
@@ -70,14 +73,14 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> filtersOnInput = new ArrayList<>();
 
         for (ValueExpression filter : filters) {
-            if (filter.variables().anyMatch(aggregatesColumns::contains)) {
+            if (variables(filter).stream().anyMatch(aggregatesColumns::contains)) {
                 filtersOnAggregates.add(filter);
             } else {
                 filtersOnInput.add(filter);
             }
         }
 
-        final LogicalOperator transformedInput = new FilterPushDown(filtersOnInput).apply(aggregation.input());
+        final LogicalOperator transformedInput = new FilterPushDown(variableCollector, filtersOnInput).apply(aggregation.input());
 
         return createFilterAbove(filtersOnAggregates,
                 new AggregationLop(transformedInput, aggregation.breakdowns(),
@@ -90,7 +93,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
 
         final List<ValueExpression> unaliasedFilters = filters.stream().map(unaliaser).collect(toList());
 
-        return new AliasLop(new FilterPushDown(unaliasedFilters).apply(alias.input()), alias.alias());
+        return new AliasLop(new FilterPushDown(variableCollector, unaliasedFilters).apply(alias.input()), alias.alias());
     }
 
     @Override
@@ -110,7 +113,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final Collection<ValueExpression> filtersOnBoth = new ArrayList<>();
 
         for (ValueExpression filter : filters) {
-            final List<ColumnReference> requiredVariables = filter.variables().toList();
+            final List<ColumnReference> requiredVariables = variables(filter);
 
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
@@ -130,8 +133,8 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
 
         final Optional<ValueExpression> predicate = collapseFilters(filtersOnBoth);
 
-        final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeft).apply(leftInput);
-        final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRight).apply(rightInput);
+        final LogicalOperator transformedLeftInput = new FilterPushDown(variableCollector, filtersOnLeft).apply(leftInput);
+        final LogicalOperator transformedRightInput = new FilterPushDown(variableCollector, filtersOnRight).apply(rightInput);
 
         return predicate
                 .map(expression -> new DependentJoinLop(transformedLeftInput, transformedRightInput, expression))
@@ -143,7 +146,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> allFilters = expandFilters(factorizeOrExpression(filter.filter()));
         allFilters.addAll(filters);
 
-        return new FilterPushDown(allFilters).apply(filter.input());
+        return new FilterPushDown(variableCollector, allFilters).apply(filter.input());
     }
 
     @Override
@@ -160,7 +163,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         allFilters.addAll(expandFilters(innerJoin.joinSpecification()));
 
         for (ValueExpression expression : allFilters) {
-            final List<ColumnReference> requiredVariables = expression.variables().toList();
+            final List<ColumnReference> requiredVariables = variables(expression);
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
@@ -182,8 +185,8 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeftInput).apply(innerJoin.left());
-        final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRightInput).apply(innerJoin.right());
+        final LogicalOperator transformedLeftInput = new FilterPushDown(variableCollector, filtersOnLeftInput).apply(innerJoin.left());
+        final LogicalOperator transformedRightInput = new FilterPushDown(variableCollector, filtersOnRightInput).apply(innerJoin.right());
 
         // Out of desperation, we pick non-equal predicates to use in the join condition
         if (joinConditionFilters.isEmpty() && !filtersAbove.isEmpty()) {
@@ -208,6 +211,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
     }
 
     // TODO: reminder to go back and improve this code
+
     @Override
     public LogicalOperator visit(LeftJoinLop leftJoin) {
         final Schema leftInputSchema = leftJoin.left().schema();
@@ -220,7 +224,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         boolean transformToInnerJoin = false;
 
         for (ValueExpression expression : filters) {
-            final List<ColumnReference> requiredVariables = expression.variables().toList();
+            final List<ColumnReference> requiredVariables = variables(expression);
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
@@ -246,7 +250,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> joinFilters = new ArrayList<>();
 
         for (ValueExpression expression : expandFilters(leftJoin.joinSpecification())) {
-            final List<ColumnReference> requiredVariables = expression.variables().toList();
+            final List<ColumnReference> requiredVariables = variables(expression);
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftInputSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightInputSchema::contains);
@@ -264,8 +268,8 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator transformedLeftInput = new FilterPushDown(filtersOnLeftInput).apply(leftJoin.left());
-        final LogicalOperator transformedRightInput = new FilterPushDown(filtersOnRightInput).apply(leftJoin.right());
+        final LogicalOperator transformedLeftInput = new FilterPushDown(variableCollector, filtersOnLeftInput).apply(leftJoin.left());
+        final LogicalOperator transformedRightInput = new FilterPushDown(variableCollector, filtersOnRightInput).apply(leftJoin.right());
 
         final Optional<ValueExpression> joinCondition = collapseFilters(joinFilters);
 
@@ -297,7 +301,6 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
                             outputSchema));
         }
     }
-
     private boolean shouldTransformLeftJoinToInnerJoin(ValueExpression expression, Schema rightInputSchema) {
         final Map<ColumnReference, NullValue> nullValues = rightInputSchema.columnNames().stream()
                 .collect(Collectors.toMap(Function.identity(), unused -> nullValue()));
@@ -328,7 +331,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> filtersOnInput = new ArrayList<>();
 
         for (ValueExpression filter : filters) {
-            if (filter.variables().anyMatch(schema::contains)) {
+            if (variables(filter).stream().anyMatch(schema::contains)) {
                 filtersOnMapColumns.add(filter);
             } else {
                 filtersOnInput.add(filter);
@@ -336,7 +339,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         }
 
         return createFilterAbove(filtersOnMapColumns,
-                new MapLop(new FilterPushDown(filtersOnInput).apply(map.input()),
+                new MapLop(new FilterPushDown(variableCollector, filtersOnInput).apply(map.input()),
                         map.expressions(),
                         map.expressionsOutputNames()));
     }
@@ -354,7 +357,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> filtersReferencingSemiJoin = new ArrayList<>();
 
         for (ValueExpression expression : filters) {
-            final List<ColumnReference> requiredVariables = expression.variables().toList();
+            final List<ColumnReference> requiredVariables = variables(expression);
 
             final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(outputColumnName::equals);
 
@@ -365,11 +368,11 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator transformedLeftInput = new FilterPushDown(regularFilters).apply(dependentSemiJoin.left());
+        final LogicalOperator transformedLeftInput = new FilterPushDown(variableCollector, regularFilters).apply(dependentSemiJoin.left());
 
         final DependentSemiJoinLop transformedJoin = new DependentSemiJoinLop(
                 transformedLeftInput,
-                new FilterPushDown().apply(dependentSemiJoin.right()),
+                new FilterPushDown(variableCollector).apply(dependentSemiJoin.right()),
                 dependentSemiJoin.predicate(),
                 dependentSemiJoin.outputColumnName());
 
@@ -384,7 +387,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final List<ValueExpression> filtersReferencingSemiJoin = new ArrayList<>();
 
         for (ValueExpression expression : filters) {
-            final List<ColumnReference> requiredVariables = expression.variables().toList();
+            final List<ColumnReference> requiredVariables = variables(expression);
 
             final boolean referencesSemiJoin = requiredVariables.stream().anyMatch(outputColumnName::equals);
 
@@ -395,11 +398,11 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator transformedLeftInput = new FilterPushDown(regularFilters).apply(semiJoin.left());
+        final LogicalOperator transformedLeftInput = new FilterPushDown(variableCollector, regularFilters).apply(semiJoin.left());
 
         final SemiJoinLop transformedJoin = new SemiJoinLop(
                 transformedLeftInput,
-                new FilterPushDown().apply(semiJoin.right()),
+                new FilterPushDown(variableCollector).apply(semiJoin.right()),
                 semiJoin.predicate(),
                 semiJoin.outputColumnName());
 
@@ -432,7 +435,7 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
         final Schema rightSchema = cartesianProduct.right().schema();
 
         for (ValueExpression filter : filters) {
-            final List<ColumnReference> requiredVariables = filter.variables().toList();
+            final List<ColumnReference> requiredVariables = variables(filter);
 
             final boolean requiresLeftInput = requiredVariables.stream().anyMatch(leftSchema::contains);
             final boolean requiresRightInput = requiredVariables.stream().anyMatch(rightSchema::contains);
@@ -454,8 +457,8 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
             }
         }
 
-        final LogicalOperator leftInput = new FilterPushDown(leftFilters).apply(cartesianProduct.left());
-        final LogicalOperator rightInput = new FilterPushDown(rightFilters).apply(cartesianProduct.right());
+        final LogicalOperator leftInput = new FilterPushDown(variableCollector, leftFilters).apply(cartesianProduct.left());
+        final LogicalOperator rightInput = new FilterPushDown(variableCollector, rightFilters).apply(cartesianProduct.right());
 
         final Optional<ValueExpression> collapsedJoinFilter = collapseFilters(joinFilters);
 
@@ -476,5 +479,9 @@ public final class FilterPushDown extends DefaultLopVisitor<LogicalOperator> {
     @Override
     public LogicalOperator defaultVisit(LogicalOperator operator) {
         return operator.transformInputs(this);
+    }
+
+    private List<ColumnReference> variables(ValueExpression valueExpression) {
+        return variableCollector.apply(valueExpression);
     }
 }

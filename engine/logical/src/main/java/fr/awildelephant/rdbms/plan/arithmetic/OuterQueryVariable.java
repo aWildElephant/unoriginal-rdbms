@@ -6,7 +6,6 @@ import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
@@ -31,11 +30,6 @@ public final class OuterQueryVariable extends LeafNode<ValueExpression> implemen
     @Override
     public Domain domain() {
         return domain;
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.of(reference);
     }
 
     @Override

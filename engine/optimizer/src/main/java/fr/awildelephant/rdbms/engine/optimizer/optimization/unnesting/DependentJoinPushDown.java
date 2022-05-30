@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.plan.ProjectionLop;
 import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
 import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
@@ -28,6 +30,12 @@ import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
 import static java.util.stream.Collectors.toSet;
 
 public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperator> {
+
+    private final VariableCollector variableCollector;
+
+    public DependentJoinPushDown(VariableCollector variableCollector) {
+        this.variableCollector = variableCollector;
+    }
 
     @Override
     public LogicalOperator visit(DependentJoinLop dependentJoin) {
@@ -47,7 +55,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
         return operator.transformInputs(this);
     }
 
-    public static final class DependentJoinPushDownRules extends DefaultLopVisitor<LogicalOperator> {
+    public final class DependentJoinPushDownRules extends DefaultLopVisitor<LogicalOperator> {
 
         // d must be a set (no duplicate). This is ensured by the dependent join rewriting before the push down
         private final LogicalOperator d;
@@ -78,7 +86,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
             final List<ValueExpression> filtersAbove = new ArrayList<>();
             final List<ValueExpression> filtersBelow = new ArrayList<>();
             for (ValueExpression filter : expandedFilters) {
-                if (filter.variables().anyMatch(aggregateOutputs::contains)) {
+                if (variables(filter).anyMatch(aggregateOutputs::contains)) {
                     filtersAbove.add(filter);
                 } else {
                     filtersBelow.add(filter);
@@ -90,8 +98,8 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
                     .apply(aggregation.input());
 
             final AggregationLop transformedNode = new AggregationLop(transformedInput,
-                                                                      newBreakdowns,
-                                                                      aggregation.aggregates());
+                    newBreakdowns,
+                    aggregation.aggregates());
 
             return createFilterAbove(transformedNode, filtersAbove);
         }
@@ -151,7 +159,7 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
             final List<ValueExpression> filtersAbove = new ArrayList<>();
             final List<ValueExpression> filtersBelow = new ArrayList<>();
             for (ValueExpression filter : expandedFilters) {
-                if (filter.variables().anyMatch(expressionOutputs::contains)) {
+                if (variables(filter).anyMatch(expressionOutputs::contains)) {
                     filtersAbove.add(filter);
                 } else {
                     filtersBelow.add(filter);
@@ -163,8 +171,8 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
                     .apply(map.input());
 
             final MapLop transformedNode = new MapLop(transformedInput,
-                                                      map.expressions(),
-                                                      map.expressionsOutputNames());
+                    map.expressions(),
+                    map.expressionsOutputNames());
 
             return createFilterAbove(transformedNode, filtersAbove);
         }
@@ -211,6 +219,10 @@ public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperat
             } else {
                 return new CartesianProductLop(d, right);
             }
+        }
+
+        private Stream<ColumnReference> variables(ValueExpression valueExpression) {
+            return variableCollector.apply(valueExpression).stream();
         }
     }
 }

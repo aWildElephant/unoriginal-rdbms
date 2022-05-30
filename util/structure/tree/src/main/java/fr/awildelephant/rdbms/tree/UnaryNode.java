@@ -2,8 +2,7 @@ package fr.awildelephant.rdbms.tree;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public abstract class UnaryNode<T extends Tree<T>, C extends T> implements Tree<T> {
 
@@ -23,8 +22,9 @@ public abstract class UnaryNode<T extends Tree<T>, C extends T> implements Tree<
     }
 
     @Override
-    public <U> U reduce(Function<T, U> reduce, BinaryOperator<U> accumulator) {
-        return reduce.apply(child);
+    public void depthFirst(Consumer<Tree<T>> consumer) {
+        child.depthFirst(consumer);
+        consumer.accept(this);
     }
 
     @Override

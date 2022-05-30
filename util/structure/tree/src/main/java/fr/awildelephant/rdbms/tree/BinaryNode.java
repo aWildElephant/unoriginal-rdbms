@@ -3,8 +3,7 @@ package fr.awildelephant.rdbms.tree;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public abstract class BinaryNode<T extends Tree<T>, L extends T, R extends T> implements Tree<T> {
 
@@ -38,8 +37,10 @@ public abstract class BinaryNode<T extends Tree<T>, L extends T, R extends T> im
     }
 
     @Override
-    public <U> U reduce(Function<T, U> reduce, BinaryOperator<U> accumulator) {
-        return accumulator.apply(reduce.apply(leftChild), reduce.apply(rightChild));
+    public void depthFirst(Consumer<Tree<T>> consumer) {
+        leftChild.depthFirst(consumer);
+        rightChild.depthFirst(consumer);
+        consumer.accept(this);
     }
 
     @Override

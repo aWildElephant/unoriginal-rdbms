@@ -1,12 +1,10 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.UnaryNode;
 
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
@@ -26,11 +24,6 @@ public final class CastExpression extends UnaryNode<ValueExpression, ValueExpres
     @Override
     public Domain domain() {
         return domain;
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return child().variables();
     }
 
     @Override

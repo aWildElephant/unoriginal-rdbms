@@ -1,11 +1,9 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.TernaryNode;
 
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
@@ -36,12 +34,6 @@ public final class SubstringExpression extends TernaryNode<ValueExpression, Valu
     @Override
     public Domain domain() {
         return TEXT;
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.concat(firstChild().variables(),
-                Stream.concat(secondChild().variables(), thirdChild().variables()));
     }
 
     @Override

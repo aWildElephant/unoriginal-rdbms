@@ -1,12 +1,10 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.tree.TernaryNode;
 
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
@@ -39,12 +37,6 @@ public final class CaseWhenExpression extends TernaryNode<ValueExpression, Value
     @Override
     public Domain domain() {
         return outputDomain;
-    }
-
-    @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.concat(firstChild().variables(),
-                Stream.concat(secondChild().variables(), thirdChild().variables()));
     }
 
     @Override

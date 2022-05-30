@@ -1,16 +1,12 @@
 package fr.awildelephant.rdbms.plan.arithmetic;
 
-import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
@@ -43,11 +39,6 @@ public final class InExpression implements ValueExpression {
     }
 
     @Override
-    public Stream<ColumnReference> variables() {
-        return Stream.concat(input.variables(), values.stream().flatMap(ValueExpression::variables));
-    }
-
-    @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
         final Collection<ValueExpression> transformedValues = new ArrayList<>(values.size());
         for (ValueExpression value : values) {
@@ -55,19 +46,6 @@ public final class InExpression implements ValueExpression {
         }
 
         return new InExpression(transformer.apply(input), transformedValues);
-    }
-
-    @Override
-    public <T> T reduce(Function<ValueExpression, T> function, BinaryOperator<T> accumulator) {
-        final T inputResult = function.apply(input);
-
-        final Optional<T> valuesResult = values.stream().map(function).reduce(accumulator);
-
-        if (valuesResult.isPresent()) {
-            return accumulator.apply(inputResult, valuesResult.get());
-        }
-
-        return inputResult;
     }
 
     @Override
