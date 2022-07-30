@@ -7,7 +7,9 @@ import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.reflections.Reflections;
 
@@ -16,14 +18,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 
 class ASTEqualsAndHashCodeTest {
 
-    private static Collection<Object[]> parameters() {
+    private static Collection<Arguments> parameters() {
         return implementationsOfAST()
-                .map(type -> new Object[]{type.getSimpleName(), type})
-                .collect(toList());
+                .map(type -> Arguments.of(Named.named(type.getSimpleName(), type)))
+                .toList();
     }
 
     private static Stream<Class<? extends AST>> implementationsOfAST() {
@@ -50,7 +51,7 @@ class ASTEqualsAndHashCodeTest {
     @DisplayName("Test equals and hashCode for some implementations of AST")
     @ParameterizedTest(name = "{index} - {0}")
     @MethodSource("parameters")
-    void it_should_implement_equals_and_hashCode(String className, Class<? extends AST> implementationOfAST) {
+    void it_should_implement_equals_and_hashCode(Class<? extends AST> implementationOfAST) {
         EqualsVerifier.forClass(implementationOfAST)
                 .suppress(Warning.BIGDECIMAL_EQUALITY)
                 .verify();
