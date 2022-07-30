@@ -40,6 +40,7 @@ import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
 
@@ -316,11 +317,15 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
         stringBuilder.append('(');
         apply(input);
         stringBuilder.append(')');
+
         return null;
     }
 
     @Override
     public Void defaultVisit(AST node) {
-        throw new IllegalStateException();
+        stringBuilder.append("n-");
+        stringBuilder.append(UUID.randomUUID());
+
+        return null;
     }
 }
