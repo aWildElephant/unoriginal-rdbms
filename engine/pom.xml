@@ -32,6 +32,7 @@
         <module>storage</module>
         <module>value</module>
         <module>optimizer</module>
+        <module>plan</module>
     </modules>
 
     <dependencyManagement>
@@ -79,6 +80,11 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-optimizer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-plan</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

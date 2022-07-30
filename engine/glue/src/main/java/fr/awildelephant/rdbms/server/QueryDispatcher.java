@@ -18,11 +18,14 @@ import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
+import fr.awildelephant.rdbms.execution.AliasLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.ProjectionLop;
+import fr.awildelephant.rdbms.execution.alias.ColumnAliasBuilder;
+import fr.awildelephant.rdbms.execution.executor.SequentialPlanExecutor;
+import fr.awildelephant.rdbms.execution.plan.Plan;
+import fr.awildelephant.rdbms.execution.plan.PlanFactory;
 import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.with.WithInliner;
@@ -146,7 +149,11 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         final LogicalOperator optimizedPlan = optimizer.optimize(rawPlan);
 
         final List<ColumnReference> queryOutputColumns = rawPlan.schema().columnNames();
-        return storage.execute(new ProjectionLop(optimizedPlan, queryOutputColumns));
+        final ProjectionLop fixedOptimizedPlan = new ProjectionLop(optimizedPlan, queryOutputColumns);
+
+        final Plan physicalPlan = PlanFactory.build(fixedOptimizedPlan);
+
+        return new SequentialPlanExecutor().apply(storage, physicalPlan);
     }
 
     @Override

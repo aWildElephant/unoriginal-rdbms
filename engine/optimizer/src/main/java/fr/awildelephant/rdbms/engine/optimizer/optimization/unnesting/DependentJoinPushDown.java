@@ -1,18 +1,18 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
-import fr.awildelephant.rdbms.plan.AggregationLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.MapLop;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.plan.aggregation.Aggregate;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
+import fr.awildelephant.rdbms.execution.AggregationLop;
+import fr.awildelephant.rdbms.execution.CartesianProductLop;
+import fr.awildelephant.rdbms.execution.DefaultLopVisitor;
+import fr.awildelephant.rdbms.execution.DependentJoinLop;
+import fr.awildelephant.rdbms.execution.FilterLop;
+import fr.awildelephant.rdbms.execution.InnerJoinLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.MapLop;
+import fr.awildelephant.rdbms.execution.ProjectionLop;
+import fr.awildelephant.rdbms.execution.ScalarSubqueryLop;
+import fr.awildelephant.rdbms.execution.aggregation.Aggregate;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ import java.util.stream.Stream;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
-import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.execution.filter.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.execution.filter.FilterExpander.expandFilters;
 import static java.util.stream.Collectors.toSet;
 
 public final class DependentJoinPushDown extends DefaultLopVisitor<LogicalOperator> {

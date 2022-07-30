@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.algebraizer.formula;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.plan.join.JoinType;
+import fr.awildelephant.rdbms.execution.join.JoinType;
 
-import static fr.awildelephant.rdbms.plan.join.JoinType.INNER;
-import static fr.awildelephant.rdbms.plan.join.JoinType.SEMI;
+import static fr.awildelephant.rdbms.execution.join.JoinType.INNER;
+import static fr.awildelephant.rdbms.execution.join.JoinType.SEMI;
 
 public final class SubqueryJoiner {
 

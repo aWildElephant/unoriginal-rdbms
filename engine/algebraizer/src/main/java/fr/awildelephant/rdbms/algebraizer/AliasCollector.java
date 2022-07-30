@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.plan.alias.ColumnAlias;
-import fr.awildelephant.rdbms.plan.alias.ColumnAliasBuilder;
+import fr.awildelephant.rdbms.execution.alias.ColumnAlias;
+import fr.awildelephant.rdbms.execution.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;

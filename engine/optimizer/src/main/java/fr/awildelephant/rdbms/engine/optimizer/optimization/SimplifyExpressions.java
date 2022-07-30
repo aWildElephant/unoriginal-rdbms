@@ -1,9 +1,9 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.MapLop;
+import fr.awildelephant.rdbms.execution.DefaultLopVisitor;
+import fr.awildelephant.rdbms.execution.FilterLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.MapLop;
 
 import java.util.stream.Collectors;
 

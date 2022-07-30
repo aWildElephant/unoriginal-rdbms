@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.optimizer.util;
 
-import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.HashSet;

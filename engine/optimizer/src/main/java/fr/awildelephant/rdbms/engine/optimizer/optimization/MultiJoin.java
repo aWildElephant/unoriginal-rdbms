@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
 
 import java.util.List;
 

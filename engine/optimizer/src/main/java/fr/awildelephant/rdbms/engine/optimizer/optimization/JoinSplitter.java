@@ -1,15 +1,15 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.execution.CartesianProductLop;
+import fr.awildelephant.rdbms.execution.DefaultLopVisitor;
+import fr.awildelephant.rdbms.execution.InnerJoinLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.plan.filter.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.execution.filter.FilterExpander.expandFilters;
 
 public final class JoinSplitter extends DefaultLopVisitor<MultiJoin> {
 

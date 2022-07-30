@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
-import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
-import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.DefaultValueExpressionVisitor;
+import fr.awildelephant.rdbms.execution.arithmetic.OuterQueryVariable;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
 
-import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
+import static fr.awildelephant.rdbms.execution.arithmetic.Variable.variable;
 
 public final class OuterQueryVariableReplacer extends DefaultValueExpressionVisitor<ValueExpression> {
 

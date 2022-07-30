@@ -1,21 +1,21 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
 import fr.awildelephant.rdbms.engine.optimizer.FreeVariableAliasing;
-import fr.awildelephant.rdbms.plan.AliasLop;
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
-import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
-import fr.awildelephant.rdbms.plan.DistinctLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.ProjectionLop;
-import fr.awildelephant.rdbms.plan.SemiJoinLop;
-import fr.awildelephant.rdbms.plan.alias.Alias;
-import fr.awildelephant.rdbms.plan.alias.ExactMatchAlias;
-import fr.awildelephant.rdbms.plan.alias.ReversibleAlias;
-import fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
+import fr.awildelephant.rdbms.execution.AliasLop;
+import fr.awildelephant.rdbms.execution.CartesianProductLop;
+import fr.awildelephant.rdbms.execution.DependentJoinLop;
+import fr.awildelephant.rdbms.execution.DependentSemiJoinLop;
+import fr.awildelephant.rdbms.execution.DistinctLop;
+import fr.awildelephant.rdbms.execution.InnerJoinLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.ProjectionLop;
+import fr.awildelephant.rdbms.execution.SemiJoinLop;
+import fr.awildelephant.rdbms.execution.alias.Alias;
+import fr.awildelephant.rdbms.execution.alias.ExactMatchAlias;
+import fr.awildelephant.rdbms.execution.alias.ReversibleAlias;
+import fr.awildelephant.rdbms.execution.arithmetic.ExpressionHelper;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
@@ -35,10 +35,10 @@ import java.util.UUID;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
-import static fr.awildelephant.rdbms.plan.arithmetic.AndExpression.andExpression;
-import static fr.awildelephant.rdbms.plan.arithmetic.EqualExpression.equalExpression;
-import static fr.awildelephant.rdbms.plan.arithmetic.Variable.variable;
-import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.execution.arithmetic.AndExpression.andExpression;
+import static fr.awildelephant.rdbms.execution.arithmetic.EqualExpression.equalExpression;
+import static fr.awildelephant.rdbms.execution.arithmetic.Variable.variable;
+import static fr.awildelephant.rdbms.execution.filter.FilterCollapser.collapseFilters;
 
 /**
  * Decorrelate subqueries using the method described in "Unnesting Arbitrary Queries" by Thomas Neumann and Alfons Kemper.

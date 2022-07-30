@@ -2,32 +2,31 @@ package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.execution.arithmetic.AddExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.AndExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.BinaryExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.ConstantExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.DefaultValueExpressionVisitor;
+import fr.awildelephant.rdbms.execution.arithmetic.DivideExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.EqualExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.GreaterExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.GreaterOrEqualExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.LessExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.LessOrEqualExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.MultiplyExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.NotEqualExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.OrExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.SubtractExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer;
-import fr.awildelephant.rdbms.plan.arithmetic.AddExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.AndExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.BinaryExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
-import fr.awildelephant.rdbms.plan.arithmetic.DivideExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.EqualExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.GreaterExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.GreaterOrEqualExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.LessExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.LessOrEqualExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.MultiplyExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.NotEqualExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.OrExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.SubtractExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
-import static fr.awildelephant.rdbms.plan.arithmetic.ConstantExpression.constantExpression;
+import static fr.awildelephant.rdbms.execution.arithmetic.ConstantExpression.constantExpression;
 
 /**
  * Simplifies an expression.
- *
  * TODO: we can simplify some more (x * 0, x + 0, x * 1, etc..)
  */
 public final class ExpressionSimplifier extends DefaultValueExpressionVisitor<ValueExpression> {

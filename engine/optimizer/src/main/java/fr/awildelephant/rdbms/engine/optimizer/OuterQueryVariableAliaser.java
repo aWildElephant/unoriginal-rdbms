@@ -1,11 +1,11 @@
 package fr.awildelephant.rdbms.engine.optimizer;
 
-import fr.awildelephant.rdbms.plan.alias.Alias;
-import fr.awildelephant.rdbms.plan.arithmetic.DefaultValueExpressionVisitor;
-import fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.execution.alias.Alias;
+import fr.awildelephant.rdbms.execution.arithmetic.DefaultValueExpressionVisitor;
+import fr.awildelephant.rdbms.execution.arithmetic.OuterQueryVariable;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
 
-import static fr.awildelephant.rdbms.plan.arithmetic.OuterQueryVariable.outerQueryVariable;
+import static fr.awildelephant.rdbms.execution.arithmetic.OuterQueryVariable.outerQueryVariable;
 
 public final class OuterQueryVariableAliaser extends DefaultValueExpressionVisitor<ValueExpression> {
 

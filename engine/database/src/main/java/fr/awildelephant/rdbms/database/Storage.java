@@ -1,10 +1,9 @@
 package fr.awildelephant.rdbms.database;
 
-import fr.awildelephant.rdbms.engine.PlanExecutor;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.plan.BaseTableLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
+import fr.awildelephant.rdbms.execution.BaseTableLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
 import fr.awildelephant.rdbms.schema.TableNotFoundException;
 
 import java.util.HashMap;
@@ -55,10 +54,6 @@ public final class Storage {
         }
 
         throw new TableNotFoundException(name);
-    }
-
-    public Table execute(final LogicalOperator logicalPlan) {
-        return new PlanExecutor(tables).apply(logicalPlan);
     }
 
     private void checkTableFound(Table table, String tableName) {

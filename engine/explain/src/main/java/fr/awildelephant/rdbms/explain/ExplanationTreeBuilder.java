@@ -1,7 +1,24 @@
 package fr.awildelephant.rdbms.explain;
 
+import fr.awildelephant.rdbms.execution.AggregationLop;
+import fr.awildelephant.rdbms.execution.AliasLop;
+import fr.awildelephant.rdbms.execution.BaseTableLop;
+import fr.awildelephant.rdbms.execution.CartesianProductLop;
+import fr.awildelephant.rdbms.execution.DependentJoinLop;
+import fr.awildelephant.rdbms.execution.DependentSemiJoinLop;
+import fr.awildelephant.rdbms.execution.DistinctLop;
+import fr.awildelephant.rdbms.execution.FilterLop;
+import fr.awildelephant.rdbms.execution.InnerJoinLop;
+import fr.awildelephant.rdbms.execution.LeftJoinLop;
+import fr.awildelephant.rdbms.execution.LimitLop;
+import fr.awildelephant.rdbms.execution.LopVisitor;
+import fr.awildelephant.rdbms.execution.MapLop;
+import fr.awildelephant.rdbms.execution.ProjectionLop;
+import fr.awildelephant.rdbms.execution.ScalarSubqueryLop;
+import fr.awildelephant.rdbms.execution.SemiJoinLop;
+import fr.awildelephant.rdbms.execution.SortLop;
+import fr.awildelephant.rdbms.execution.TableConstructorLop;
 import fr.awildelephant.rdbms.explain.tree.Tree;
-import fr.awildelephant.rdbms.plan.*;
 
 import static fr.awildelephant.rdbms.explain.tree.Tree.leaf;
 import static fr.awildelephant.rdbms.explain.tree.Tree.node;

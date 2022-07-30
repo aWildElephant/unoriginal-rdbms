@@ -1,12 +1,12 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.plan.CartesianProductLop;
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
-import fr.awildelephant.rdbms.plan.FilterLop;
-import fr.awildelephant.rdbms.plan.InnerJoinLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
+import fr.awildelephant.rdbms.execution.CartesianProductLop;
+import fr.awildelephant.rdbms.execution.DefaultLopVisitor;
+import fr.awildelephant.rdbms.execution.FilterLop;
+import fr.awildelephant.rdbms.execution.InnerJoinLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static fr.awildelephant.rdbms.plan.arithmetic.ExpressionHelper.alwaysTrue;
-import static fr.awildelephant.rdbms.plan.filter.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.execution.arithmetic.ExpressionHelper.alwaysTrue;
+import static fr.awildelephant.rdbms.execution.filter.FilterCollapser.collapseFilters;
 import static java.util.stream.Collectors.toList;
 
 public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {

@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.explain;
 
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
 import fr.awildelephant.rdbms.explain.tree.Tree;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
 
 import java.util.ArrayList;
 import java.util.List;

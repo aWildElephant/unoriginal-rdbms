@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
-import fr.awildelephant.rdbms.plan.DefaultLopVisitor;
-import fr.awildelephant.rdbms.plan.DependentJoinLop;
-import fr.awildelephant.rdbms.plan.DependentSemiJoinLop;
-import fr.awildelephant.rdbms.plan.LogicalOperator;
-import fr.awildelephant.rdbms.plan.arithmetic.function.VariableCollector;
+import fr.awildelephant.rdbms.execution.DefaultLopVisitor;
+import fr.awildelephant.rdbms.execution.DependentJoinLop;
+import fr.awildelephant.rdbms.execution.DependentSemiJoinLop;
+import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
 
 public final class SubqueryUnnesting extends DefaultLopVisitor<LogicalOperator> {
 
