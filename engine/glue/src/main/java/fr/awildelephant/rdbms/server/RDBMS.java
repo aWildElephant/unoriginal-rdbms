@@ -1,10 +1,15 @@
 package fr.awildelephant.rdbms.server;
 
-import fr.awildelephant.rdbms.algebraizer.*;
+import fr.awildelephant.rdbms.algebraizer.Algebraizer;
+import fr.awildelephant.rdbms.algebraizer.AliasExtractor;
+import fr.awildelephant.rdbms.algebraizer.ColumnNameResolver;
+import fr.awildelephant.rdbms.algebraizer.ColumnReferenceTransformer;
+import fr.awildelephant.rdbms.algebraizer.ExpressionSplitter;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
+import fr.awildelephant.rdbms.execution.plan.PlanFactory;
 import fr.awildelephant.rdbms.explain.ExplanationTableBuilder;
 import fr.awildelephant.rdbms.explain.ExplanationTreeBuilder;
 import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
@@ -31,7 +36,8 @@ public final class RDBMS {
         final ExplanationTableBuilder explanationTableBuilder = new ExplanationTableBuilder();
         final ExplanationTreeBuilder explanationTreeBuilder = new ExplanationTreeBuilder();
         final LogicalPlanTableBuilder logicalPlanTableBuilder = new LogicalPlanTableBuilder(explanationTreeBuilder, explanationTableBuilder);
-        final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory, logicalPlanTableBuilder);
+        final PlanFactory planFactory = new PlanFactory();
+        final QueryDispatcher dispatcher = new QueryDispatcher(storage, algebraizer, optimizer, withInlinerFactory, logicalPlanTableBuilder, planFactory);
         executor = new ConcurrentQueryExecutor(dispatcher);
     }
 

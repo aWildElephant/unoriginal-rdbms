@@ -1,26 +1,22 @@
 package fr.awildelephant.rdbms.execution.plan;
 
-import java.util.Set;
+import java.util.List;
 
 public final class Plan {
 
-    private final Set<PlanStep> steps;
-    private final String target;
+    private final List<PlanStep> steps;
+    private final String targetKey;
 
-    public Plan(Set<PlanStep> steps, String target) {
+    public Plan(List<PlanStep> steps, String targetKey) {
         this.steps = steps;
-        this.target = target;
+        this.targetKey = targetKey;
     }
 
-    public PlanStep step(String id) {
-        return steps.stream().filter(step -> step.key().equals(id)).findAny().get();
-    }
-
-    public Set<PlanStep> steps() {
+    public List<PlanStep> steps() {
         return steps;
     }
 
-    public String target() {
-        return target;
+    public String targetKey() {
+        return targetKey;
     }
 }

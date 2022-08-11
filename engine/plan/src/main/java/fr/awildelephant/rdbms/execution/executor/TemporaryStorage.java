@@ -21,7 +21,7 @@ public class TemporaryStorage {
         return Optional.ofNullable(temporaryComponent.get(key)).orElseGet(() -> permanentStorage.get(key));
     }
 
-    public void allocate(String key, Table table) {
+    public void storeTemporaryResult(String key, Table table) {
         if (permanentStorage.exists(key)) {
             throw new IllegalArgumentException(); // TODO: proper exception
         }
@@ -29,7 +29,7 @@ public class TemporaryStorage {
         temporaryComponent.put(key, table);
     }
 
-    public boolean contains(String key) {
-        return permanentStorage.exists(key) || temporaryComponent.containsKey(key);
+    public void freeTemporaryResult(String key) {
+        temporaryComponent.remove(key);
     }
 }

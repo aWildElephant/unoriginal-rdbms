@@ -41,22 +41,23 @@ import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
     private final Storage storage;
     private final Algebraizer algebraizer;
     private final Optimizer optimizer;
     private final WithInliner<Table> withInliner;
     private final LogicalPlanTableBuilder logicalPlanTableBuilder;
+    private final PlanFactory planFactory;
 
     QueryDispatcher(Storage storage,
                     Algebraizer algebraizer,
                     Optimizer optimizer,
-                    WithInlinerFactory withInlinerFactory, LogicalPlanTableBuilder logicalPlanTableBuilder) {
+                    WithInlinerFactory withInlinerFactory, LogicalPlanTableBuilder logicalPlanTableBuilder, PlanFactory planFactory) {
         this.storage = storage;
         this.algebraizer = algebraizer;
         this.optimizer = optimizer;
         this.withInliner = withInlinerFactory.build(this);
         this.logicalPlanTableBuilder = logicalPlanTableBuilder;
+        this.planFactory = planFactory;
     }
 
     @Override
@@ -151,7 +152,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
         final List<ColumnReference> queryOutputColumns = rawPlan.schema().columnNames();
         final ProjectionLop fixedOptimizedPlan = new ProjectionLop(optimizedPlan, queryOutputColumns);
 
-        final Plan physicalPlan = PlanFactory.build(fixedOptimizedPlan);
+        final Plan physicalPlan = planFactory.apply(fixedOptimizedPlan);
 
         return new SequentialPlanExecutor().apply(storage, physicalPlan);
     }
