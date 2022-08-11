@@ -19,6 +19,7 @@ import fr.awildelephant.rdbms.execution.SortLop;
 import fr.awildelephant.rdbms.execution.TableConstructorLop;
 import fr.awildelephant.rdbms.execution.operator.AggregationOperator;
 import fr.awildelephant.rdbms.execution.operator.AliasOperator;
+import fr.awildelephant.rdbms.execution.operator.BaseTableOperator;
 import fr.awildelephant.rdbms.execution.operator.CartesianProductOperator;
 import fr.awildelephant.rdbms.execution.operator.FilterOperator;
 import fr.awildelephant.rdbms.execution.operator.InnerJoinOperator;
@@ -81,7 +82,7 @@ public class BasicPlanGenerator extends DefaultLopVisitor<String> implements Bui
     public String visit(BaseTableLop baseTable) {
         final String key = generateKey();
 
-        steps.add(new PlanStep(key, Set.of(), (storage) -> storage.get(baseTable.name())));
+        steps.add(new PlanStep(key, Set.of(), new BaseTableOperator(baseTable.name())));
 
         return key;
     }

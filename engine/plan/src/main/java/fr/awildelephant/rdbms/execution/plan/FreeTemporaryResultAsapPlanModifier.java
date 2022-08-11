@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class FreeTemporaryResultAsapPlanModifier implements PlanModifier {
@@ -35,9 +34,10 @@ public class FreeTemporaryResultAsapPlanModifier implements PlanModifier {
                     .collect(Collectors.toUnmodifiableSet());
 
             if (!canBeFreed.isEmpty()) {
+                final String key = "free-after-" + step.key();
                 /* FIXME: other nodes might use the result we're freeing.
                           Not having them in the dependencies of this step might be an issue if we change the executor. */
-                resultingSteps.add(new PlanStep(UUID.randomUUID().toString(), Set.of(step.key()), new FreeTemporaryResultOperator(canBeFreed)));
+                resultingSteps.add(new PlanStep(key, Set.of(step.key()), new FreeTemporaryResultOperator(canBeFreed)));
             }
             resultingSteps.add(step);
         }
