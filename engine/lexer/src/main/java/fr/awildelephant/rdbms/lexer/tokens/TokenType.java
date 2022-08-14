@@ -81,6 +81,7 @@ public enum TokenType {
     TEXT_LITERAL,
     THEN,
     TRUE,
+    TRUNCATE,
     UNIQUE,
     UNKNOWN,
     VALUES,

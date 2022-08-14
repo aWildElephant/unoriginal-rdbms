@@ -59,6 +59,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TEXT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.THEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TRUE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TRUNCATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNIQUE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.UNKNOWN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
@@ -717,6 +718,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return TRUE;
+        }
+    },
+    TRUNCATE_TOKEN {
+        @Override
+        public String text() {
+            return "truncate";
+        }
+
+        @Override
+        public TokenType type() {
+            return TRUNCATE;
         }
     },
     UNIQUE_TOKEN {

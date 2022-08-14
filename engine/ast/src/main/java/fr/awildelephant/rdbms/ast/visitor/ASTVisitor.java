@@ -29,6 +29,7 @@ import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.TableReferenceList;
+import fr.awildelephant.rdbms.ast.Truncate;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.With;
@@ -198,6 +199,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(TableReferenceList tableReferenceList);
 
     T visit(TextLiteral textLiteral);
+
+    T visit(Truncate truncate);
 
     T visit(UnqualifiedColumnName unqualifiedColumnReference);
 

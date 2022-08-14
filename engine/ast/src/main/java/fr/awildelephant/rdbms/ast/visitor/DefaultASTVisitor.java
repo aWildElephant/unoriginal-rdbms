@@ -29,6 +29,7 @@ import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.TableReferenceList;
+import fr.awildelephant.rdbms.ast.Truncate;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.With;
@@ -384,6 +385,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(TextLiteral textLiteral) {
         return defaultVisit(textLiteral);
+    }
+
+    @Override
+    public T visit(Truncate truncate) {
+        return defaultVisit(truncate);
     }
 
     @Override

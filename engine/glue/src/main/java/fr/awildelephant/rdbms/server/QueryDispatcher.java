@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
+import fr.awildelephant.rdbms.ast.Truncate;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
@@ -131,6 +132,11 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     @Override
     public Table visit(TableName tableName) {
         return executeReadQuery(tableName);
+    }
+
+    @Override
+    public Table visit(Truncate truncate) {
+        throw new UnsupportedOperationException("TRUNCATE statement not yet implemented");
     }
 
     @Override

@@ -17,7 +17,7 @@ final class InsertStatementRule {
 
     }
 
-    static AST deriveInsertStatementRule(final Lexer lexer) {
+    static AST deriveInsertStatement(final Lexer lexer) {
         consumeAndExpect(INSERT, lexer);
         consumeAndExpect(INTO, lexer);
 

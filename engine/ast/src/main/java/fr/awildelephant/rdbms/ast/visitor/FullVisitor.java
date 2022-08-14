@@ -29,6 +29,7 @@ import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.TableReferenceList;
+import fr.awildelephant.rdbms.ast.Truncate;
 import fr.awildelephant.rdbms.ast.UnqualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.With;
@@ -91,6 +92,7 @@ import static fr.awildelephant.rdbms.ast.Substring.substring;
 import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.ast.TableAliasWithColumns.tableAliasWithColumns;
 import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
+import static fr.awildelephant.rdbms.ast.Truncate.truncate;
 import static fr.awildelephant.rdbms.ast.Values.rows;
 import static fr.awildelephant.rdbms.ast.With.with;
 import static fr.awildelephant.rdbms.ast.WithElement.withElement;
@@ -449,6 +451,11 @@ public final class FullVisitor implements ASTVisitor<AST> {
         return tableReferenceList(function.apply(tableReferenceList.first()),
                 function.apply(tableReferenceList.second()),
                 tableReferenceList.others().stream().map(function).collect(Collectors.toList()));
+    }
+
+    @Override
+    public AST visit(Truncate truncate) {
+        return truncate(visit(truncate.tableName()));
     }
 
     @Override
