@@ -273,7 +273,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(InsertInto insertInto) {
-        return insertInto(visit(insertInto.targetTable()), visit(insertInto.rows()));
+        return insertInto(visit(insertInto.targetTable()), apply(insertInto.source()));
     }
 
     @Override

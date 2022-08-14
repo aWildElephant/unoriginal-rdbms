@@ -106,7 +106,7 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     @Override
     public Table visit(InsertInto insertInto) {
         final String tableName = insertInto.targetTable().name();
-        final Table content = apply(insertInto.rows());
+        final Table content = apply(insertInto.source());
 
         new Inserter(storage).insert(tableName, content);
 

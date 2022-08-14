@@ -21,6 +21,7 @@ final class Inserter {
         destination.addAll(source);
     }
 
+    // TODO: more thorough check of compatibility, we should be able to cast source columns to their destination counterpart
     private static void checkCompatibility(Schema source, Schema destination) {
         checkColumnCount(source.numberOfAttributes(), destination.numberOfAttributes());
     }

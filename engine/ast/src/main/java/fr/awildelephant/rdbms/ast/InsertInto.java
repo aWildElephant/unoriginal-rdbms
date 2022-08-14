@@ -5,14 +5,14 @@ import fr.awildelephant.rdbms.tree.BinaryNode;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
 
-public final class InsertInto extends BinaryNode<AST, TableName, Values> implements AST {
+public final class InsertInto extends BinaryNode<AST, TableName, AST> implements AST {
 
-    public InsertInto(TableName targetTable, Values rows) {
-        super(targetTable, rows);
+    private InsertInto(TableName targetTable, AST source) {
+        super(targetTable, source);
     }
 
-    public static InsertInto insertInto(TableName targetTable, Values rows) {
-        return new InsertInto(targetTable, rows);
+    public static InsertInto insertInto(TableName targetTable, AST source) {
+        return new InsertInto(targetTable, source);
     }
 
     @Override
@@ -24,7 +24,7 @@ public final class InsertInto extends BinaryNode<AST, TableName, Values> impleme
     public String toString() {
         return toStringBuilder(this)
                 .append("target", targetTable())
-                .append("content", rows())
+                .append("source", source())
                 .toString();
     }
 
@@ -32,7 +32,7 @@ public final class InsertInto extends BinaryNode<AST, TableName, Values> impleme
         return firstChild();
     }
 
-    public Values rows() {
+    public AST source() {
         return secondChild();
     }
 

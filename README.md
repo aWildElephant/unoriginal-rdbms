@@ -34,7 +34,6 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 ## Next steps
 
 - Fix TODOs
-- Implement INSERT INTO SELECT
 - Implement UPDATE
 - Implement DELETE
 - Implement TRUNCATE
