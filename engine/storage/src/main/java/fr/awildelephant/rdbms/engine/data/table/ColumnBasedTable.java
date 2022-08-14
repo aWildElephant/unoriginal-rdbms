@@ -8,9 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
-public record NewColumnBasedTable(Schema schema, List<Column> columns) implements Table {
+public record ColumnBasedTable(Schema schema, List<Column> columns) implements Table {
 
     @Override
     public int numberOfTuples() {
@@ -36,20 +35,6 @@ public record NewColumnBasedTable(Schema schema, List<Column> columns) implement
     @Override
     public List<Column> columns() {
         return columns;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (NewColumnBasedTable) obj;
-        return Objects.equals(this.schema, that.schema) &&
-                Objects.equals(this.columns, that.columns);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(schema, columns);
     }
 
     @Override

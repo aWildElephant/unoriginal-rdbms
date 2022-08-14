@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.execution.operator;
 import fr.awildelephant.rdbms.engine.data.column.BooleanColumn;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.NewColumnBasedTable;
+import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.execution.arithmetic.EqualExpression;
@@ -76,7 +76,7 @@ public class SemiJoinOperator implements Operator {
             }
         }
 
-        return new NewColumnBasedTable(outputSchema, outputColumns);
+        return new ColumnBasedTable(outputSchema, outputColumns);
     }
 
     private SemiJoinMatcher createSemiJoinMatcher(Schema leftInputSchema,

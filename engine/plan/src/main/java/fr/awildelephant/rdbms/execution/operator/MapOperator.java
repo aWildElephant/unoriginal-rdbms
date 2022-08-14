@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.execution.operator;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.NewColumnBasedTable;
+import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.evaluator.Formula;
@@ -50,7 +50,7 @@ public class MapOperator implements Operator {
         outputColumns.addAll(inputColumns);
         outputColumns.addAll(mapColumns);
 
-        return new NewColumnBasedTable(outputSchema, outputColumns);
+        return new ColumnBasedTable(outputSchema, outputColumns);
     }
 
     private List<WriteableColumn> computeMapOperations(Table inputTable, List<Formula> operations) {

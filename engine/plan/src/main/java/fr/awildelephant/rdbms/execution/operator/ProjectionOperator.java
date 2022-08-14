@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.execution.operator;
 
 import fr.awildelephant.rdbms.engine.data.column.Column;
-import fr.awildelephant.rdbms.engine.data.table.NewColumnBasedTable;
+import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.engine.data.table.NoColumnTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
@@ -38,6 +38,6 @@ public class ProjectionOperator implements Operator {
             outputColumns.add(inputColumns.get(inputSchema.column(columnReference).index()));
         }
 
-        return new NewColumnBasedTable(outputSchema, outputColumns);
+        return new ColumnBasedTable(outputSchema, outputColumns);
     }
 }

@@ -10,9 +10,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
-// TODO: why have this + NewColumnBasedTable ?
+/**
+ * A writeable column-based table.
+ */
 public record ColumnBasedWriteableTable(Schema schema, List<WriteableColumn> columns) implements WriteableTable {
 
     @Override
@@ -66,20 +67,6 @@ public record ColumnBasedWriteableTable(Schema schema, List<WriteableColumn> col
 
     public List<WriteableColumn> columns() {
         return columns;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ColumnBasedWriteableTable) obj;
-        return Objects.equals(this.schema, that.schema) &&
-                Objects.equals(this.columns, that.columns);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(schema, columns);
     }
 
     @Override
