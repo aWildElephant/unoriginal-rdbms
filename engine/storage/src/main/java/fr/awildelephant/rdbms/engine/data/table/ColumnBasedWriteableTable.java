@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+// TODO: why have this + NewColumnBasedTable ?
 public record ColumnBasedWriteableTable(Schema schema, List<WriteableColumn> columns) implements WriteableTable {
 
     @Override
@@ -21,11 +22,18 @@ public record ColumnBasedWriteableTable(Schema schema, List<WriteableColumn> col
 
     @Override
     public void addAll(Collection<Record> newRecords) {
+        addAll(newRecords.size(), newRecords);
+    }
+
+    @Override
+    public void addAll(Table source) {
+        addAll(source.numberOfTuples(), source);
+    }
+
+    private void addAll(int numberOfNewRecords, Iterable<Record> newRecords) {
         final int numberOfColumns = schema.numberOfAttributes();
 
-        final int numberOfNewRows = newRecords.size();
-
-        columns.forEach(column -> column.ensureCapacity(column.size() + numberOfNewRows));
+        columns.forEach(column -> column.ensureCapacity(column.size() + numberOfNewRecords));
 
         for (Record record : newRecords) {
             for (int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {

@@ -35,6 +35,11 @@ public final class NoColumnTable implements WriteableTable {
     }
 
     @Override
+    public void addAll(Table source) {
+        size += source.numberOfTuples();
+    }
+
+    @Override
     public int numberOfTuples() {
         return size;
     }

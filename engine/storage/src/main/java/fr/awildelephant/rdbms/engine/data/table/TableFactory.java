@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.engine.data.column.DateColumn;
 import fr.awildelephant.rdbms.engine.data.column.DecimalColumn;
 import fr.awildelephant.rdbms.engine.data.column.IntegerColumn;
 import fr.awildelephant.rdbms.engine.data.column.NonNullableIntegerColumn;
+import fr.awildelephant.rdbms.engine.data.column.NullColumn;
 import fr.awildelephant.rdbms.engine.data.column.TextColumn;
 import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
@@ -64,6 +65,8 @@ public final class TableFactory {
                 } else {
                     return new NonNullableIntegerColumn(initialCapacity);
                 }
+            case NULL:
+                return new NullColumn();
             case TEXT:
                 return new TextColumn(initialCapacity);
             default:

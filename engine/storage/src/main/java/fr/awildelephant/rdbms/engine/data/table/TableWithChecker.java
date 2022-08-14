@@ -42,7 +42,12 @@ public class TableWithChecker implements ManagedTable {
 
     @Override
     public void addAll(Collection<Record> newRecords) {
-        throw new UnsupportedOperationException();
+        newRecords.forEach(this::add);
+    }
+
+    @Override
+    public void addAll(Table source) {
+        source.forEach(this::add);
     }
 
     @Override

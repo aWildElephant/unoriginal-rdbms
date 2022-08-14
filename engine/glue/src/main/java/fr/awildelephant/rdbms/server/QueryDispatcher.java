@@ -15,8 +15,8 @@ import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.database.Storage;
-import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.engine.data.table.UpdateResultTable;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.execution.AliasLop;
 import fr.awildelephant.rdbms.execution.LogicalOperator;
@@ -35,7 +35,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-import static fr.awildelephant.rdbms.server.Inserter.insertRows;
 import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
@@ -48,10 +47,9 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     private final LogicalPlanTableBuilder logicalPlanTableBuilder;
     private final PlanFactory planFactory;
 
-    QueryDispatcher(Storage storage,
-                    Algebraizer algebraizer,
-                    Optimizer optimizer,
-                    WithInlinerFactory withInlinerFactory, LogicalPlanTableBuilder logicalPlanTableBuilder, PlanFactory planFactory) {
+    QueryDispatcher(Storage storage, Algebraizer algebraizer, Optimizer optimizer,
+                    WithInlinerFactory withInlinerFactory, LogicalPlanTableBuilder logicalPlanTableBuilder,
+                    PlanFactory planFactory) {
         this.storage = storage;
         this.algebraizer = algebraizer;
         this.optimizer = optimizer;
@@ -107,11 +105,12 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
     @Override
     public Table visit(InsertInto insertInto) {
-        final ManagedTable table = storage.get(insertInto.targetTable().name());
+        final String tableName = insertInto.targetTable().name();
+        final Table content = apply(insertInto.rows());
 
-        insertRows(insertInto, table);
+        new Inserter(storage).insert(tableName, content);
 
-        return null;
+        return new UpdateResultTable(content.numberOfTuples());
     }
 
     @Override

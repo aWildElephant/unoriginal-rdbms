@@ -12,6 +12,8 @@ public interface WriteableTable extends Table {
 
     void addAll(Collection<Record> newRecords);
 
+    void addAll(Table source);
+
     @Override
     List<WriteableColumn> columns();
 }
