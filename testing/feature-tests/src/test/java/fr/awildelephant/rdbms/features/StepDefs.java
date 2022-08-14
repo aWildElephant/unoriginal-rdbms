@@ -43,39 +43,53 @@ public class StepDefs implements En {
 
             testWrapper.execute(createTableBuilder.toString());
 
-            for (List<String> row : content.rows(2).asLists()) {
-                final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name)
-                        .append(" VALUES (");
+            final List<List<String>> values = content.rows(2).asLists();
 
-                for (int i = 0; i < columnNames.size(); i++) {
-                    final String columnType = columnTypes.get(i);
+            if (!values.isEmpty()) {
+                final StringBuilder insertIntoBuilder = new StringBuilder("INSERT INTO ").append(name).append(" VALUES");
 
-                    final String value = row.get(i);
-
-                    if (value.equalsIgnoreCase("null")) {
-                        insertIntoBuilder.append(value);
+                boolean first = true;
+                for (List<String> row : values) {
+                    if (!first) {
+                        insertIntoBuilder.append(',');
                     } else {
-                        if (columnType.equalsIgnoreCase("DATE")) {
-                            insertIntoBuilder.append("date ");
+                        first = false;
+                    }
+
+                    insertIntoBuilder.append(" (");
+
+                    for (int i = 0; i < columnNames.size(); i++) {
+                        final String columnType = columnTypes.get(i);
+
+                        final String value = row.get(i);
+
+                        if (value.equalsIgnoreCase("null")) {
+                            insertIntoBuilder.append(value);
+                        } else {
+                            if (columnType.equalsIgnoreCase("DATE")) {
+                                insertIntoBuilder.append("date ");
+                            }
+
+                            if (columnType.equalsIgnoreCase("TEXT") || columnType.equalsIgnoreCase("DATE")) {
+                                insertIntoBuilder.append('\'');
+                            }
+
+                            insertIntoBuilder.append(value);
+
+                            if (columnType.equalsIgnoreCase("TEXT") || columnType.equalsIgnoreCase("DATE")) {
+                                insertIntoBuilder.append('\'');
+                            }
                         }
 
-                        if (columnType.equalsIgnoreCase("TEXT") || columnType.equalsIgnoreCase("DATE")) {
-                            insertIntoBuilder.append('\'');
-                        }
-
-                        insertIntoBuilder.append(value);
-
-                        if (columnType.equalsIgnoreCase("TEXT") || columnType.equalsIgnoreCase("DATE")) {
-                            insertIntoBuilder.append('\'');
+                        if (i < columnNames.size() - 1) {
+                            insertIntoBuilder.append(", ");
                         }
                     }
 
-                    if (i < columnNames.size() - 1) {
-                        insertIntoBuilder.append(", ");
-                    }
+                    insertIntoBuilder.append(")");
                 }
 
-                insertIntoBuilder.append(");");
+                insertIntoBuilder.append(';');
 
                 testWrapper.execute(insertIntoBuilder.toString());
             }
