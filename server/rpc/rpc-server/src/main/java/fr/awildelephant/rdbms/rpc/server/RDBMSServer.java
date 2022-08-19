@@ -11,7 +11,7 @@ import fr.awildelephant.rdbms.rpc.generated.RDBMSGrpc;
 import fr.awildelephant.rdbms.rpc.generated.Rdbms;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.server.RDBMS;
+import fr.awildelephant.rdbms.server.Glue;
 import io.grpc.stub.StreamObserver;
 
 public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
@@ -26,15 +26,15 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
     private static final Rdbms.UpdateResult DUMMY_UPDATE_RESULT = Rdbms.UpdateResult.newBuilder()
             .setNumberOfUpdatedRows(0).build();
 
-    private final RDBMS rdbms;
+    private final Glue glue;
 
-    RDBMSServer(RDBMS rdbms) {
-        this.rdbms = rdbms;
+    RDBMSServer(Glue glue) {
+        this.glue = glue;
     }
 
     @Override
     public void execute(Rdbms.Query request, StreamObserver<Rdbms.Result> observer) {
-        final Table resultTable = rdbms.execute(request.getQuery());
+        final Table resultTable = glue.execute(request.getQuery());
 
         final Rdbms.Result.Builder resultBuilder = Rdbms.Result.newBuilder();
 

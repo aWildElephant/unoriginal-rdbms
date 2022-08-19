@@ -58,5 +58,10 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.activej</groupId>
+            <artifactId>activej-inject</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.rpc.server;
 
-import fr.awildelephant.rdbms.server.RDBMS;
+import fr.awildelephant.rdbms.server.Glue;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -10,7 +10,7 @@ public class RPCServer {
 
     private final Server server;
 
-    public RPCServer(RDBMS instance, int port) {
+    public RPCServer(Glue instance, int port) {
         server = ServerBuilder.forPort(port).addService(new RDBMSServer(instance)).build();
     }
 
