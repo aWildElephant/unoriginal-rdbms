@@ -41,6 +41,11 @@ public class ValueProxy implements Value {
     }
 
     @Override
+    public long getLong() {
+        return value.getLong();
+    }
+
+    @Override
     public String getString() {
         return value.getString();
     }

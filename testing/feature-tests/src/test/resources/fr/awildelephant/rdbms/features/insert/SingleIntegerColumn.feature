@@ -53,3 +53,5 @@ Feature: Insert into a single integer column
       | a       |
       | INTEGER |
       | -1      |
+
+    # TODO: test inserting value bigger than integer's max value

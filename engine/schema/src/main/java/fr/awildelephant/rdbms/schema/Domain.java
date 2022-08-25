@@ -22,13 +22,19 @@ public enum Domain {
     INTEGER {
         @Override
         public boolean canBeUsedAs(Domain domain) {
-            return domain == INTEGER || domain == DECIMAL;
+            return domain == INTEGER || domain == LONG || domain == DECIMAL;
         }
     },
     INTERVAL {
         @Override
         public boolean canBeUsedAs(Domain domain) {
             return domain == INTERVAL;
+        }
+    },
+    LONG {
+        @Override
+        public boolean canBeUsedAs(Domain domain) {
+            return domain == LONG || domain == DECIMAL;
         }
     },
     NULL {

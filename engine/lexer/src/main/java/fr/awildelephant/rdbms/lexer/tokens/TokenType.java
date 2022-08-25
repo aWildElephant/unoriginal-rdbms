@@ -8,6 +8,7 @@ public enum TokenType {
     ASTERISK,
     AVG,
     BETWEEN,
+    BIGINT,
     BOOLEAN,
     BY,
     CASE,

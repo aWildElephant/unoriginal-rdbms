@@ -96,6 +96,7 @@ final class TableCreator {
     private static Domain domainOf(ColumnType columnType) {
         return switch (columnType) {
             case BOOLEAN -> Domain.BOOLEAN;
+            case BIGINT -> Domain.LONG;
             case DATE -> Domain.DATE;
             case DECIMAL -> Domain.DECIMAL;
             case INTEGER -> Domain.INTEGER;

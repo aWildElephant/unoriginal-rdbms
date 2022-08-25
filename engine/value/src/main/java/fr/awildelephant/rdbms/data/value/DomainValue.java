@@ -12,6 +12,8 @@ public interface DomainValue {
 
     int getInt();
 
+    long getLong();
+
     BigDecimal getBigDecimal();
 
     LocalDate getLocalDate();

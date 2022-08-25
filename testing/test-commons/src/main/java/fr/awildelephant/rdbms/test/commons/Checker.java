@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,6 +79,19 @@ public enum Checker {
                 assertTrue(actual.wasNull(), messageSupplier);
             } else {
                 assertEquals(parseInt(expected), actualInt, messageSupplier);
+            }
+        }
+    },
+    BIGINT {
+        @Override
+        public void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws SQLException {
+            final long actualLong = actual.getLong(columnPosition);
+            final Supplier<String> messageSupplier = Checker.errorMessage(rowPosition, columnPosition);
+
+            if ("null".equalsIgnoreCase(expected)) {
+                assertTrue(actual.wasNull(), messageSupplier);
+            } else {
+                assertEquals(parseLong(expected), actualLong, messageSupplier);
             }
         }
     },

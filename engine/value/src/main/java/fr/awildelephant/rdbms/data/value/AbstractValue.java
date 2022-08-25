@@ -22,6 +22,11 @@ public abstract class AbstractValue implements DomainValue {
     }
 
     @Override
+    public long getLong() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public BigDecimal getBigDecimal() {
         throw new UnsupportedOperationException();
     }

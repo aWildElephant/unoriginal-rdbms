@@ -25,6 +25,11 @@ public final class IntegerValue extends AbstractValue {
     }
 
     @Override
+    public long getLong() {
+        return value;
+    }
+
+    @Override
     public int hashCode() {
         return value;
     }

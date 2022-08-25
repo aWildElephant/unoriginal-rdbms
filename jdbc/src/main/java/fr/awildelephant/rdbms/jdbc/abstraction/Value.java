@@ -15,5 +15,7 @@ public interface Value {
 
     int getInt();
 
+    long getLong();
+
     String getString();
 }

@@ -57,6 +57,10 @@ message IntegerValue {
     int32 value = 1;
 }
 
+message LongValue {
+    int64 value = 1;
+}
+
 message TextValue {
     string value = 1;
 }
@@ -72,5 +76,6 @@ message Value {
         IntegerValue integerValue = 2;
         NullValue nullValue = 3;
         TextValue textValue = 4;
+        LongValue longValue = 5;
     }
 }

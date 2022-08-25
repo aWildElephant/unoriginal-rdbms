@@ -89,6 +89,23 @@ public class RDBMSResultSet extends AbstractResultSet {
     }
 
     @Override
+    public long getLong(int columnIndex) throws SQLException {
+        final Value value = field(columnIndex);
+
+        if (value.isNull()) {
+            wasNull = true;
+            return 0;
+        }
+
+        return value.getLong();
+    }
+
+    @Override
+    public long getLong(String columnLabel) throws SQLException {
+        return getLong(table.position(columnLabel) - 1);
+    }
+
+    @Override
     public String getString(int columnIndex) throws SQLException {
         final Value value = field(columnIndex);
 

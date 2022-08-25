@@ -8,10 +8,17 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import java.util.HashSet;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
 import static fr.awildelephant.rdbms.parser.rules.ColumnConstraintDefinitionsRule.deriveColumnConstraintDefinitions;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.*;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 
 final class TableElementRule {
 
@@ -69,6 +76,8 @@ final class TableElementRule {
         switch (columnTypeToken.type()) {
             case BOOLEAN:
                 return ColumnType.BOOLEAN;
+            case BIGINT:
+                return ColumnType.BIGINT;
             case DATE:
                 return ColumnType.DATE;
             case DECIMAL:
