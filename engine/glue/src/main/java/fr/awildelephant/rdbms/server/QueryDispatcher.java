@@ -31,8 +31,6 @@ import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.with.WithInliner;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -40,7 +38,6 @@ import static fr.awildelephant.rdbms.server.TableCreator.tableFrom;
 
 public class QueryDispatcher extends DefaultASTVisitor<Table> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final Storage storage;
     private final Algebraizer algebraizer;
     private final Optimizer optimizer;
@@ -150,7 +147,6 @@ public class QueryDispatcher extends DefaultASTVisitor<Table> {
     }
 
     private Table executeReadQuery(AST ast) {
-        LOGGER.debug("Executing {}", ast);
         final LogicalOperator rawPlan = algebraizer.apply(ast);
         final LogicalOperator optimizedPlan = optimizer.optimize(rawPlan);
 
