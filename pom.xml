@@ -23,9 +23,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <cucumber.version>7.0.0</cucumber.version>
-        <java.version>18</java.version>
+        <java.version>19</java.version>
         <junit.version>5.8.2</junit.version>
         <log4j.version>2.17.1</log4j.version>
+        <equalsverifier.version>3.14.1</equalsverifier.version>
     </properties>
 
     <name>${project.fancyName}</name>
@@ -123,7 +124,7 @@
             <dependency>
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>
-                <version>3.10</version>
+                <version>${equalsverifier.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
