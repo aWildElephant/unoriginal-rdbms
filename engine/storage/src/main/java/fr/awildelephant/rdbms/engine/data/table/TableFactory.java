@@ -55,30 +55,36 @@ public final class TableFactory {
         final Domain columnType = columnMetadata.domain();
         final boolean nullable = !columnMetadata.notNull();
         switch (columnType) {
-            case BOOLEAN:
+            case BOOLEAN -> {
                 return new BooleanColumn(initialCapacity);
-            case DATE:
+            }
+            case DATE -> {
                 return new DateColumn(initialCapacity);
-            case DECIMAL:
+            }
+            case DECIMAL -> {
                 return new DecimalColumn(initialCapacity);
-            case INTEGER:
+            }
+            case INTEGER -> {
                 if (nullable) {
                     return new IntegerColumn(initialCapacity);
                 } else {
                     return new NonNullableIntegerColumn(initialCapacity);
                 }
-            case LONG:
+            }
+            case LONG -> {
                 if (nullable) {
                     return new LongColumn(initialCapacity);
                 } else {
                     return new NonNullableLongColumn(initialCapacity);
                 }
-            case NULL:
+            }
+            case NULL -> {
                 return new NullColumn();
-            case TEXT:
+            }
+            case TEXT -> {
                 return new TextColumn(initialCapacity);
-            default:
-                throw new UnsupportedOperationException();
+            }
+            default -> throw new UnsupportedOperationException();
         }
     }
 
