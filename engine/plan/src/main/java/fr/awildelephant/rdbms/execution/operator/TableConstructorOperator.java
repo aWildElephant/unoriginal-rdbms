@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
+import fr.awildelephant.rdbms.engine.data.column.AppendOnlyColumn;
 import fr.awildelephant.rdbms.engine.data.table.ColumnBasedWriteableTable;
 import fr.awildelephant.rdbms.engine.data.table.NoColumnTable;
 import fr.awildelephant.rdbms.engine.data.table.Table;
@@ -39,7 +39,7 @@ public class TableConstructorOperator implements Operator {
         final int numberOfColumns = outputSchema.numberOfAttributes();
 
         if (numberOfColumns > 0) {
-            final List<WriteableColumn> columns = TableFactory.createColumns(outputSchema, numberOfRows);
+            final List<AppendOnlyColumn> columns = TableFactory.createColumns(outputSchema, numberOfRows);
 
             for (List<Formula> row : formulas) {
                 for (int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {

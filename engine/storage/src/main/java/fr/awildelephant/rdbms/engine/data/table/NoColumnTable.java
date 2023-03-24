@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
-import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
+import fr.awildelephant.rdbms.engine.data.column.AppendOnlyColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ public final class NoColumnTable implements WriteableTable {
     }
 
     @Override
-    public List<WriteableColumn> columns() {
+    public List<AppendOnlyColumn> columns() {
         return List.of();
     }
 

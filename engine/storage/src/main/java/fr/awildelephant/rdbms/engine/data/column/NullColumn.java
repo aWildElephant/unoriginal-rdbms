@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.data.value.DomainValue;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 
-public class NullColumn implements WriteableColumn {
+public class NullColumn implements AppendOnlyColumn {
 
     private int size = 0;
 

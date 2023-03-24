@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 
-public final class NonNullableIntegerColumn implements WriteableColumn {
+public final class NonNullableIntegerColumn implements AppendOnlyColumn {
 
     private int[] backingArray;
     private int size;

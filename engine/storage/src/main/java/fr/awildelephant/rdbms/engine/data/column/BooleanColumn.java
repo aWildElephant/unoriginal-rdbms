@@ -9,7 +9,7 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 
 // TODO: we could store 4 nullable boolean values in a byte, 8 non-nullable boolean values
-public final class BooleanColumn implements WriteableColumn {
+public final class BooleanColumn implements AppendOnlyColumn {
 
     private byte[] backingArray;
     private int size;

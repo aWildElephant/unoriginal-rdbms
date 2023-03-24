@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import static fr.awildelephant.rdbms.data.value.LongValue.longValue;
 
-public class NonNullableLongColumn implements WriteableColumn {
+public class NonNullableLongColumn implements AppendOnlyColumn {
 
     private long[] backingArray;
     private int size;

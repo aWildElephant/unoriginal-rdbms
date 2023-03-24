@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.engine.data.table;
 
 import fr.awildelephant.rdbms.engine.bitmap.BitSetBackedBitmap;
 import fr.awildelephant.rdbms.engine.bitmap.Bitmap;
+import fr.awildelephant.rdbms.engine.data.column.AppendOnlyColumn;
 import fr.awildelephant.rdbms.engine.data.column.BooleanColumn;
 import fr.awildelephant.rdbms.engine.data.column.DateColumn;
 import fr.awildelephant.rdbms.engine.data.column.DecimalColumn;
@@ -11,7 +12,6 @@ import fr.awildelephant.rdbms.engine.data.column.NonNullableIntegerColumn;
 import fr.awildelephant.rdbms.engine.data.column.NonNullableLongColumn;
 import fr.awildelephant.rdbms.engine.data.column.NullColumn;
 import fr.awildelephant.rdbms.engine.data.column.TextColumn;
-import fr.awildelephant.rdbms.engine.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
@@ -33,25 +33,25 @@ public final class TableFactory {
     }
 
     public static WriteableTable simpleTable(Schema schema, int initialCapacity) {
-        final List<WriteableColumn> columns = createColumns(schema, initialCapacity);
+        final List<AppendOnlyColumn> columns = createColumns(schema, initialCapacity);
 
         return new ColumnBasedWriteableTable(schema, columns);
     }
 
-    public static List<WriteableColumn> createColumns(Schema schema, int initialCapacity) {
-        final List<WriteableColumn> columns = new ArrayList<>(schema.numberOfAttributes());
+    public static List<AppendOnlyColumn> createColumns(Schema schema, int initialCapacity) {
+        final List<AppendOnlyColumn> columns = new ArrayList<>(schema.numberOfAttributes());
 
         for (ColumnReference columnName : schema.columnNames()) {
             final ColumnMetadata columnMetadata = schema.column(columnName).metadata();
 
-            final WriteableColumn column = createColumn(columnMetadata, initialCapacity);
+            final AppendOnlyColumn column = createColumn(columnMetadata, initialCapacity);
 
             columns.add(column);
         }
         return columns;
     }
 
-    public static WriteableColumn createColumn(ColumnMetadata columnMetadata, int initialCapacity) {
+    public static AppendOnlyColumn createColumn(ColumnMetadata columnMetadata, int initialCapacity) {
         final Domain columnType = columnMetadata.domain();
         final boolean nullable = !columnMetadata.notNull();
         switch (columnType) {
