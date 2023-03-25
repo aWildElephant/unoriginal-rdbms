@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.util.structure.list.primitive.LongArrayList;
 
 import static fr.awildelephant.rdbms.data.value.LongValue.longValue;
 
-public class NonNullableLongColumn implements AppendOnlyColumn {
+public class NonNullableLongColumn implements AppendableColumn {
 
     private final LongArrayList list;
 

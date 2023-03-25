@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.column.AppendOnlyColumn;
+import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.engine.data.column.Column;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
@@ -42,7 +42,7 @@ public class MapOperator implements Operator {
                 .map(expression -> createFormula(expression, inputTable.schema()))
                 .collect(toList());
 
-        final List<AppendOnlyColumn> mapColumns = computeMapOperations(inputTable, operations);
+        final List<AppendableColumn> mapColumns = computeMapOperations(inputTable, operations);
 
         final List<? extends Column> inputColumns = inputTable.columns();
 
@@ -53,8 +53,8 @@ public class MapOperator implements Operator {
         return new ColumnBasedTable(outputSchema, outputColumns);
     }
 
-    private List<AppendOnlyColumn> computeMapOperations(Table inputTable, List<Formula> operations) {
-        final List<AppendOnlyColumn> mapColumns = buildMapOutputColumns(inputTable.numberOfTuples(), operations);
+    private List<AppendableColumn> computeMapOperations(Table inputTable, List<Formula> operations) {
+        final List<AppendableColumn> mapColumns = buildMapOutputColumns(inputTable.numberOfTuples(), operations);
 
         final RecordValues values = new RecordValues();
         for (Record record : inputTable) {
@@ -67,13 +67,13 @@ public class MapOperator implements Operator {
         return mapColumns;
     }
 
-    private List<AppendOnlyColumn> buildMapOutputColumns(int numberOfInputTuples, List<Formula> operations) {
+    private List<AppendableColumn> buildMapOutputColumns(int numberOfInputTuples, List<Formula> operations) {
         final int numberOfOutputColumns = outputSchema.numberOfAttributes();
         final int numberOfOperations = operations.size();
         final List<ColumnReference> mapColumnReferences = outputSchema.columnNames()
                 .subList(numberOfOutputColumns - numberOfOperations, numberOfOutputColumns);
 
-        final List<AppendOnlyColumn> mapColumns = new ArrayList<>(numberOfOperations);
+        final List<AppendableColumn> mapColumns = new ArrayList<>(numberOfOperations);
         for (ColumnReference mapColumnReference : mapColumnReferences) {
             final ColumnMetadata column = outputSchema.column(mapColumnReference).metadata();
 

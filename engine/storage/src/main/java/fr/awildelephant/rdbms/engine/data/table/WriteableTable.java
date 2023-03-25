@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
-import fr.awildelephant.rdbms.engine.data.column.AppendOnlyColumn;
+import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 
 import java.util.Collection;
@@ -16,5 +16,5 @@ public interface WriteableTable extends Table {
     void addAll(Table source);
 
     @Override
-    List<AppendOnlyColumn> columns();
+    List<AppendableColumn> columns();
 }

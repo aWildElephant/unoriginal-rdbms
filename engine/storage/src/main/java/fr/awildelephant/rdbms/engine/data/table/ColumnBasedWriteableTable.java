@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.engine.data.table;
 
-import fr.awildelephant.rdbms.engine.data.column.AppendOnlyColumn;
+import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.engine.data.record.MultipleColumnsIterator;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * A writeable column-based table.
  */
-public record ColumnBasedWriteableTable(Schema schema, List<AppendOnlyColumn> columns) implements WriteableTable {
+public record ColumnBasedWriteableTable(Schema schema, List<AppendableColumn> columns) implements WriteableTable {
 
     @Override
     public void add(Record newRecord) {
@@ -38,7 +38,7 @@ public record ColumnBasedWriteableTable(Schema schema, List<AppendOnlyColumn> co
 
         for (Record record : newRecords) {
             for (int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
-                final AppendOnlyColumn column = columns.get(columnIndex);
+                final AppendableColumn column = columns.get(columnIndex);
 
                 column.add(record.get(columnIndex));
             }
@@ -65,7 +65,7 @@ public record ColumnBasedWriteableTable(Schema schema, List<AppendOnlyColumn> co
         return schema;
     }
 
-    public List<AppendOnlyColumn> columns() {
+    public List<AppendableColumn> columns() {
         return columns;
     }
 

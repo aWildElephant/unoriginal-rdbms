@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.engine.data.table;
 
 import fr.awildelephant.rdbms.engine.bitmap.BitSetBackedBitmap;
 import fr.awildelephant.rdbms.engine.bitmap.Bitmap;
-import fr.awildelephant.rdbms.engine.data.column.AppendOnlyColumn;
+import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.engine.data.column.BooleanColumn;
 import fr.awildelephant.rdbms.engine.data.column.DateColumn;
 import fr.awildelephant.rdbms.engine.data.column.DecimalColumn;
@@ -33,25 +33,25 @@ public final class TableFactory {
     }
 
     public static WriteableTable simpleTable(Schema schema, int initialCapacity) {
-        final List<AppendOnlyColumn> columns = createColumns(schema, initialCapacity);
+        final List<AppendableColumn> columns = createColumns(schema, initialCapacity);
 
         return new ColumnBasedWriteableTable(schema, columns);
     }
 
-    public static List<AppendOnlyColumn> createColumns(Schema schema, int initialCapacity) {
-        final List<AppendOnlyColumn> columns = new ArrayList<>(schema.numberOfAttributes());
+    public static List<AppendableColumn> createColumns(Schema schema, int initialCapacity) {
+        final List<AppendableColumn> columns = new ArrayList<>(schema.numberOfAttributes());
 
         for (ColumnReference columnName : schema.columnNames()) {
             final ColumnMetadata columnMetadata = schema.column(columnName).metadata();
 
-            final AppendOnlyColumn column = createColumn(columnMetadata, initialCapacity);
+            final AppendableColumn column = createColumn(columnMetadata, initialCapacity);
 
             columns.add(column);
         }
         return columns;
     }
 
-    public static AppendOnlyColumn createColumn(ColumnMetadata columnMetadata, int initialCapacity) {
+    public static AppendableColumn createColumn(ColumnMetadata columnMetadata, int initialCapacity) {
         final Domain columnType = columnMetadata.domain();
         final boolean nullable = !columnMetadata.notNull();
         switch (columnType) {

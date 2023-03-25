@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.util.structure.list.primitive.IntArrayList;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 
-public final class NonNullableIntegerColumn implements AppendOnlyColumn {
+public final class NonNullableIntegerColumn implements AppendableColumn {
 
     private final IntArrayList list;
 
