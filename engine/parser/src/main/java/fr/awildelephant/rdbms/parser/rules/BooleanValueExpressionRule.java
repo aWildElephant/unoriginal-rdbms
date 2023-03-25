@@ -84,47 +84,45 @@ final class BooleanValueExpressionRule {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
-            case BETWEEN:
+            case BETWEEN -> {
                 lexer.consumeNextToken();
-
                 final AST lowerBound = deriveValueExpression(lexer);
-
                 consumeAndExpect(AND, lexer);
-
                 final AST upperBound = deriveValueExpression(lexer);
-
                 return between(left, lowerBound, upperBound);
-            case EQUAL:
+            }
+            case EQUAL -> {
                 lexer.consumeNextToken();
-
                 return equal(left, deriveValueExpression(lexer));
-            case GREATER:
+            }
+            case GREATER -> {
                 lexer.consumeNextToken();
-
                 return greater(left, deriveValueExpression(lexer));
-            case GREATER_OR_EQUAL:
+            }
+            case GREATER_OR_EQUAL -> {
                 lexer.consumeNextToken();
-
                 return greaterOrEqual(left, deriveValueExpression(lexer));
-            case IN:
+            }
+            case IN -> {
                 return deriveInPredicate(left, lexer);
-            case IS:
+            }
+            case IS -> {
                 return deriveIsPredicate(left, lexer);
-            case LESS:
+            }
+            case LESS -> {
                 lexer.consumeNextToken();
-
                 return less(left, deriveValueExpression(lexer));
-            case LESS_OR_EQUAL:
+            }
+            case LESS_OR_EQUAL -> {
                 lexer.consumeNextToken();
-
                 return lessOrEqual(left, deriveValueExpression(lexer));
-            case LIKE:
+            }
+            case LIKE -> {
                 lexer.consumeNextToken();
-
                 return like(left, deriveValueExpression(lexer));
-            case NOT:
+            }
+            case NOT -> {
                 lexer.consumeNextToken();
-
                 if (nextTokenIs(IN, lexer)) {
                     return not(deriveInPredicate(left, lexer));
                 } else {
@@ -132,12 +130,14 @@ final class BooleanValueExpressionRule {
 
                     return not(like(left, deriveValueExpression(lexer)));
                 }
-            case NOT_EQUAL:
+            }
+            case NOT_EQUAL -> {
                 lexer.consumeNextToken();
-
                 return notEqual(left, deriveValueExpression(lexer));
-            default:
+            }
+            default -> {
                 return left;
+            }
         }
     }
 
@@ -194,38 +194,34 @@ final class BooleanValueExpressionRule {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
-            case LEFT_PAREN:
+            case LEFT_PAREN -> {
                 lexer.consumeNextToken();
-
                 final AST parenthesizedValueExpression = deriveBooleanValueExpressionRule(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return parenthesizedValueExpression;
-            case EXISTS:
+            }
+            case EXISTS -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final AST input = deriveQueryExpression(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return exists(input);
-            case TRUE:
+            }
+            case TRUE -> {
                 lexer.consumeNextToken();
-
                 return trueLiteral();
-            case FALSE:
+            }
+            case FALSE -> {
                 lexer.consumeNextToken();
-
                 return falseLiteral();
-            case UNKNOWN:
+            }
+            case UNKNOWN -> {
                 lexer.consumeNextToken();
-
                 return unknownLiteral();
-            default:
+            }
+            default -> {
                 return deriveValueExpression(lexer);
+            }
         }
     }
 }

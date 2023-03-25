@@ -68,31 +68,23 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
-            case SUBSTRING:
+            case SUBSTRING -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final AST input = deriveValueExpression(lexer);
-
                 consumeAndExpect(FROM, lexer);
-
                 final AST start = deriveValueExpression(lexer);
-
                 consumeAndExpect(FOR, lexer);
-
                 final AST length = deriveValueExpression(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return substring(input, start, length);
-            case TEXT_LITERAL:
+            }
+            case TEXT_LITERAL -> {
                 return deriveTextLiteral(lexer);
-            case MINUS:
+            }
+            case MINUS -> {
                 lexer.consumeNextToken();
-
                 final Token numericValueToNegate = lexer.consumeNextToken();
-
                 switch (numericValueToNegate.type()) {
                     case INTEGER_LITERAL -> {
                         final IntegerLiteralToken integerValue = (IntegerLiteralToken) numericValueToNegate;
@@ -104,8 +96,10 @@ final class ValueExpressionRule {
                     }
                     default -> throw unexpectedToken(numericValueToNegate);
                 }
-            default:
+            }
+            default -> {
                 return deriveNumericValueExpression(lexer);
+            }
         }
     }
 
@@ -113,16 +107,17 @@ final class ValueExpressionRule {
         final AST left = deriveTerm(lexer);
 
         switch (lexer.lookupNextToken().type()) {
-            case PLUS:
+            case PLUS -> {
                 lexer.consumeNextToken();
-
                 return plus(left, deriveNumericValueExpression(lexer));
-            case MINUS:
+            }
+            case MINUS -> {
                 lexer.consumeNextToken();
-
                 return minus(left, deriveNumericValueExpression(lexer));
-            default:
+            }
+            default -> {
                 return left;
+            }
         }
     }
 
@@ -131,16 +126,17 @@ final class ValueExpressionRule {
 
         final TokenType nextType = lexer.lookupNextToken().type();
         switch (nextType) {
-            case ASTERISK:
+            case ASTERISK -> {
                 lexer.consumeNextToken();
-
                 return multiply(left, deriveTerm(lexer));
-            case SOLIDUS:
+            }
+            case SOLIDUS -> {
                 lexer.consumeNextToken();
-
                 return divide(left, deriveTerm(lexer));
-            default:
+            }
+            default -> {
                 return left;
+            }
         }
     }
 
@@ -148,33 +144,26 @@ final class ValueExpressionRule {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
-            case CASE:
+            case CASE -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(WHEN, lexer);
-
                 final AST condition = deriveBooleanValueExpressionRule(lexer);
-
                 consumeAndExpect(THEN, lexer);
-
                 final AST thenExpression = deriveValueExpression(lexer);
-
                 consumeAndExpect(ELSE, lexer);
-
                 final AST elseExpression = deriveValueExpression(lexer);
-
                 consumeAndExpect(END, lexer);
-
                 return caseWhen(condition, thenExpression, elseExpression);
-            case LEFT_PAREN:
+            }
+            case LEFT_PAREN -> {
                 return deriveParenthesizedValueExpression(lexer);
-            case DATE:
+            }
+            case DATE -> {
                 return deriveDateValueExpression(lexer);
-            case INTERVAL:
+            }
+            case INTERVAL -> {
                 lexer.consumeNextToken();
-
                 final String intervalString = ((TextLiteralToken) consumeAndExpect(TEXT_LITERAL, lexer)).content();
-
                 final Token yetAnotherToken = lexer.consumeNextToken();
                 final IntervalGranularity granularity = switch (yetAnotherToken.type()) {
                     case DAY -> DAY_GRANULARITY;
@@ -182,104 +171,89 @@ final class ValueExpressionRule {
                     case YEAR -> YEAR_GRANULARITY;
                     default -> throw unexpectedToken(yetAnotherToken);
                 };
-
                 Integer precision = null;
-
                 if (consumeIfNextTokenIs(LEFT_PAREN, lexer)) {
                     precision = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
 
                     consumeAndExpect(RIGHT_PAREN, lexer);
                 }
-
                 return intervalLiteral(intervalString, granularity, precision);
-            case DECIMAL_LITERAL:
+            }
+            case DECIMAL_LITERAL -> {
                 return deriveDecimalLiteral(lexer);
-            case EXTRACT:
+            }
+            case EXTRACT -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(LEFT_PAREN, lexer);
                 consumeAndExpect(YEAR, lexer);
                 consumeAndExpect(FROM, lexer);
                 final AST date = deriveValueExpression(lexer);
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return extractYear(date);
-            case INTEGER_LITERAL:
+            }
+            case INTEGER_LITERAL -> {
                 return deriveIntegerLiteral(lexer);
-            case NULL:
+            }
+            case NULL -> {
                 lexer.consumeNextToken();
-
                 return nullLiteral();
-            case AVG:
+            }
+            case AVG -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final AST avgInput = deriveValueExpression(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return avg(avgInput);
-            case COUNT:
+            }
+            case COUNT -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 if (consumeIfNextTokenIs(ASTERISK, lexer)) {
                     consumeAndExpect(RIGHT_PAREN, lexer);
 
                     return countStar();
                 }
-
                 final boolean distinct = consumeIfNextTokenIs(DISTINCT, lexer);
-
                 final AST input = deriveBooleanValueExpressionRule(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return count(distinct, input);
-            case MAX:
+            }
+            case MAX -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final AST maxInput = deriveValueExpression(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return max(maxInput);
-            case MIN:
+            }
+            case MIN -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final AST minInput = deriveValueExpression(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return min(minInput);
-            case SUM:
+            }
+            case SUM -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final AST sumInput = deriveValueExpression(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return sum(sumInput);
-            case ANY:
+            }
+            case ANY -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
-
                 final AST anyInput = deriveValueExpression(lexer);
-
                 consumeAndExpect(RIGHT_PAREN, lexer);
-
                 return any(anyInput);
-            case IDENTIFIER:
+            }
+            case IDENTIFIER -> {
                 return deriveColumnReference(lexer);
-            case QUESTION_MARK:
+            }
+            case QUESTION_MARK -> {
                 lexer.consumeNextToken();
-
                 return placeholder();
-            default:
-                throw unexpectedToken(nextToken);
+            }
+            default -> throw unexpectedToken(nextToken);
         }
     }
 

@@ -74,25 +74,29 @@ final class TableElementRule {
 
     private static ColumnType columnType(final Token columnTypeToken, final Lexer lexer) {
         switch (columnTypeToken.type()) {
-            case BOOLEAN:
+            case BOOLEAN -> {
                 return ColumnType.BOOLEAN;
-            case BIGINT:
+            }
+            case BIGINT -> {
                 return ColumnType.BIGINT;
-            case DATE:
+            }
+            case DATE -> {
                 return ColumnType.DATE;
-            case DECIMAL:
+            }
+            case DECIMAL -> {
                 return ColumnType.DECIMAL;
-            case INTEGER:
+            }
+            case INTEGER -> {
                 return ColumnType.INTEGER;
-            case TEXT:
+            }
+            case TEXT -> {
                 return ColumnType.TEXT;
-            case CHAR:
-            case VARCHAR:
+            }
+            case CHAR, VARCHAR -> {
                 ignoreLengthInformation(lexer);
-
                 return ColumnType.TEXT;
-            default:
-                throw unexpectedToken(columnTypeToken);
+            }
+            default -> throw unexpectedToken(columnTypeToken);
         }
     }
 

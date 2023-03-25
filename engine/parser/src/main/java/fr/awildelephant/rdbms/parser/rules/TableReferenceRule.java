@@ -37,33 +37,26 @@ final class TableReferenceRule {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
-            case INNER:
+            case INNER -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(JOIN, lexer);
-
                 final AST innerJoinRightInput = deriveTableReferenceRule(lexer);
-
                 consumeAndExpect(ON, lexer);
-
                 final AST innerJoinSpecification = deriveBooleanValueExpressionRule(lexer);
-
                 return innerJoin(leftInput, innerJoinRightInput, innerJoinSpecification);
-            case LEFT:
+            }
+            case LEFT -> {
                 lexer.consumeNextToken();
-
                 consumeAndExpect(OUTER, lexer);
                 consumeAndExpect(JOIN, lexer);
-
                 final AST leftJoinRightInput = deriveTableReferenceRule(lexer);
-
                 consumeAndExpect(ON, lexer);
-
                 final AST leftJoinSpecification = deriveBooleanValueExpressionRule(lexer);
-
                 return leftJoin(leftInput, leftJoinRightInput, leftJoinSpecification);
-            default:
+            }
+            default -> {
                 return leftInput;
+            }
         }
     }
 
