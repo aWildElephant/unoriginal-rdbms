@@ -3,11 +3,11 @@ Feature: Sum
   Background: a table with some data
 
     Given the table test
-      | a       | b       |
-      | INTEGER | INTEGER |
-      | 1       | 1       |
-      | 2       | 4       |
-      | 3       | 8       |
+      | a       | b       | c      | d       |
+      | INTEGER | INTEGER | BIGINT | DECIMAL |
+      | 1       | 1       | 1      | 1       |
+      | 2       | 4       | 1      | 1       |
+      | 3       | 8       | 1      | 1       |
 
   Scenario: I sum the column
 
@@ -16,10 +16,9 @@ Feature: Sum
       SELECT SUM(a) FROM test
       """
 
-    # TODO: make it an integer when the input is an integer and it doesn't overflow
     Then I expect the result set
       | sum(a)  |
-      | DECIMAL |
+      | INTEGER |
       | 6       |
 
   Scenario: I sum a map on several columns
@@ -31,5 +30,29 @@ Feature: Sum
 
     Then I expect the result set
       | sum(a * b) |
-      | DECIMAL    |
+      | INTEGER    |
       | 33         |
+
+  Scenario: I sum a bigint column
+
+    When I execute the query
+      """
+      SELECT SUM(c) FROM test
+      """
+
+    Then I expect the result set
+      | sum(c) |
+      | BIGINT |
+      | 3      |
+
+  Scenario: I sum a decimal column
+
+    When I execute the query
+      """
+      SELECT sum (d) FROM test
+      """
+
+    Then I expect the result set
+      | sum(d)  |
+      | DECIMAL |
+      | 3       |

@@ -25,6 +25,7 @@ import fr.awildelephant.rdbms.execution.operator.accumulator.CountDistinctAccumu
 import fr.awildelephant.rdbms.execution.operator.accumulator.CountStarAccumulator;
 import fr.awildelephant.rdbms.execution.operator.accumulator.DecimalSumAccumulator;
 import fr.awildelephant.rdbms.execution.operator.accumulator.IntegerSumAccumulator;
+import fr.awildelephant.rdbms.execution.operator.accumulator.LongSumAccumulator;
 import fr.awildelephant.rdbms.execution.operator.accumulator.MaxAccumulator;
 import fr.awildelephant.rdbms.execution.operator.accumulator.MinAccumulator;
 import fr.awildelephant.rdbms.execution.operator.accumulator.wrapper.AccumulatorWithInputWrapper;
@@ -44,7 +45,6 @@ import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
-import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
 public class AggregationOperator implements Operator {
 
@@ -168,11 +168,12 @@ public class AggregationOperator implements Operator {
         } else if (aggregate instanceof SumAggregate) {
             final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
 
-            if (inputColumn.domain() == INTEGER) {
-                return new IntegerSumAccumulator();
-            } else {
-                return new DecimalSumAccumulator();
-            }
+            return switch (inputColumn.domain()) {
+                case INTEGER -> new IntegerSumAccumulator();
+                case LONG -> new LongSumAccumulator();
+                case DECIMAL -> new DecimalSumAccumulator();
+                default -> throw new IllegalStateException();
+            };
         } else {
             throw new IllegalStateException();
         }
