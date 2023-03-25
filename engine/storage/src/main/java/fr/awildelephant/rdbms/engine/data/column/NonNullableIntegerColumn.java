@@ -1,46 +1,35 @@
 package fr.awildelephant.rdbms.engine.data.column;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-
-import java.util.Arrays;
+import fr.awildelephant.rdbms.util.structure.list.primitive.IntArrayList;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 
 public final class NonNullableIntegerColumn implements AppendOnlyColumn {
 
-    private int[] backingArray;
-    private int size;
+    private final IntArrayList list;
 
     public NonNullableIntegerColumn(int initialCapacity) {
-        backingArray = new int[initialCapacity];
-        size = 0;
+        list = new IntArrayList(initialCapacity);
     }
 
     @Override
     public DomainValue get(int index) {
-        return integerValue(backingArray[index]);
+        return integerValue(list.get(index));
     }
 
     @Override
     public void add(DomainValue value) {
-        if (size == backingArray.length) {
-            backingArray = Arrays.copyOf(backingArray, size + 1);
-        }
-
-        backingArray[size] = value.getInt();
-
-        size++;
+        list.add(value.getInt());
     }
 
     @Override
     public void ensureCapacity(int capacity) {
-        if (capacity > backingArray.length) {
-            backingArray = Arrays.copyOf(backingArray, capacity + 100000); // TODO: LOL
-        }
+        list.ensureCapacity(capacity);
     }
 
     @Override
     public int size() {
-        return size;
+        return list.size();
     }
 }

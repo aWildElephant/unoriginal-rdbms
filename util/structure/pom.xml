@@ -16,6 +16,7 @@
     <modules>
         <module>multimap</module>
         <module>tree</module>
+        <module>primitive-list</module>
     </modules>
 
     <properties>
