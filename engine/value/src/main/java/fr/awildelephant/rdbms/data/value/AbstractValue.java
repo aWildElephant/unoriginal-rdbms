@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 
+// TODO: replace by default functions in DomainValue
 public abstract class AbstractValue implements DomainValue {
 
     @Override
