@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.data.value;
 
 import java.util.Objects;
 
-public final class TextValue extends AbstractValue {
+public final class TextValue implements DomainValue {
 
     private final String value;
 

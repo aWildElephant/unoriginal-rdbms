@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.data.value;
 import java.time.Period;
 import java.util.Objects;
 
-public final class IntervalValue extends AbstractValue {
+public final class IntervalValue implements DomainValue {
 
     private final Period period;
 

@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.data.value;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public final class DecimalValue extends AbstractValue {
+public final class DecimalValue implements DomainValue {
 
     private final BigDecimal value;
 

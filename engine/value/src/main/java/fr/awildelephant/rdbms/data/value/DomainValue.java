@@ -6,19 +6,35 @@ import java.time.Period;
 
 public interface DomainValue {
 
-    boolean isNull();
+    default boolean isNull() {
+        return false;
+    }
 
-    boolean getBool();
+    default boolean getBool() {
+        throw new UnsupportedOperationException();
+    }
 
-    int getInt();
+    default int getInt() {
+        throw new UnsupportedOperationException();
+    }
 
-    long getLong();
+    default long getLong() {
+        throw new UnsupportedOperationException();
+    }
 
-    BigDecimal getBigDecimal();
+    default BigDecimal getBigDecimal() {
+        throw new UnsupportedOperationException();
+    }
 
-    LocalDate getLocalDate();
+    default LocalDate getLocalDate() {
+        throw new UnsupportedOperationException();
+    }
 
-    Period getPeriod();
+    default Period getPeriod() {
+        throw new UnsupportedOperationException();
+    }
 
-    String getString();
+    default String getString() {
+        throw new UnsupportedOperationException();
+    }
 }

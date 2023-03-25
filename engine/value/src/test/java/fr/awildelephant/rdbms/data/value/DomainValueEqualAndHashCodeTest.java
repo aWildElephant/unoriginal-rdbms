@@ -23,7 +23,7 @@ class DomainValueEqualAndHashCodeTest {
     }
 
     private static Stream<Class<? extends DomainValue>> implementationsOfDomainValue() {
-        final Set<Class<? extends DomainValue>> exceptions = Set.of(AbstractValue.class, FalseValue.class, TrueValue.class, NullValue.class);
+        final Set<Class<? extends DomainValue>> exceptions = Set.of(FalseValue.class, TrueValue.class, NullValue.class);
 
         return new Reflections("fr.awildelephant.rdbms.data.value")
                 .getSubTypesOf(DomainValue.class)

@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.data.value;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public final class DateValue extends AbstractValue {
+public final class DateValue implements DomainValue {
 
     private final LocalDate value;
 

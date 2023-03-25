@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.data.value;
 
 import java.math.BigDecimal;
 
-public final class LongValue extends AbstractValue {
+public final class LongValue implements DomainValue {
 
     private final long value;
 

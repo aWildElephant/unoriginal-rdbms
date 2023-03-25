@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.data.value;
 
-public final class NullValue extends AbstractValue {
+public final class NullValue implements DomainValue {
 
     private static final NullValue NULL_VALUE = new NullValue();
 

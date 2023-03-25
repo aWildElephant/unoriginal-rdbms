@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.data.value;
 
-public class FalseValue extends AbstractValue {
+public class FalseValue implements DomainValue {
 
     private static final FalseValue FALSE = new FalseValue();
 
