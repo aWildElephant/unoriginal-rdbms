@@ -2,13 +2,7 @@ package fr.awildelephant.rdbms.data.value;
 
 import java.math.BigDecimal;
 
-public final class LongValue implements DomainValue {
-
-    private final long value;
-
-    private LongValue(long value) {
-        this.value = value;
-    }
+public record LongValue(long value) implements DomainValue {
 
     public static LongValue longValue(long value) {
         return new LongValue(value);
@@ -22,20 +16,6 @@ public final class LongValue implements DomainValue {
     @Override
     public BigDecimal getBigDecimal() {
         return BigDecimal.valueOf(value);
-    }
-
-    @Override
-    public int hashCode() {
-        return (int) value;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final LongValue other)) {
-            return false;
-        }
-
-        return value == other.value;
     }
 
     @Override

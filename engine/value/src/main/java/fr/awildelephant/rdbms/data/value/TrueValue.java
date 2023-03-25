@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.data.value;
 
-public class TrueValue implements DomainValue {
+public final class TrueValue implements DomainValue {
 
     private static final TrueValue TRUE_VALUE = new TrueValue();
 

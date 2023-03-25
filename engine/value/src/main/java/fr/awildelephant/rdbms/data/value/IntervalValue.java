@@ -1,15 +1,8 @@
 package fr.awildelephant.rdbms.data.value;
 
 import java.time.Period;
-import java.util.Objects;
 
-public final class IntervalValue implements DomainValue {
-
-    private final Period period;
-
-    private IntervalValue(Period period) {
-        this.period = period;
-    }
+public record IntervalValue(Period period) implements DomainValue {
 
     public static IntervalValue intervalValue(Period period) {
         return new IntervalValue(period);
@@ -18,20 +11,6 @@ public final class IntervalValue implements DomainValue {
     @Override
     public Period getPeriod() {
         return period;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(period);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final IntervalValue other)) {
-            return false;
-        }
-
-        return Objects.equals(period, other.period);
     }
 
     @Override

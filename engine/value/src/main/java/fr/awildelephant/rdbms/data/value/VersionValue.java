@@ -1,14 +1,6 @@
 package fr.awildelephant.rdbms.data.value;
 
-import java.util.Objects;
-
-public final class VersionValue implements DomainValue {
-
-    private final long value;
-
-    private VersionValue(long value) {
-        this.value = value;
-    }
+public record VersionValue(long value) implements DomainValue {
 
     public static VersionValue versionValue(long value) {
         return new VersionValue(value);
@@ -17,20 +9,6 @@ public final class VersionValue implements DomainValue {
     @Override
     public long getLong() {
         return value;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(value);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final VersionValue other)) {
-            return false;
-        }
-
-        return Objects.equals(value, other.value);
     }
 
     @Override
