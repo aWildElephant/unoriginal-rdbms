@@ -71,7 +71,7 @@ public class RDBMSResultSet extends AbstractResultSet {
 
     // TODO: implement getDate methods with Calendar as second parameter?
     // TODO: NullPointerException if the ResultSet is closed
-    @Override // TODO: write an unit test to see that we return 0 if the nullValue is NULL
+    @Override
     public int getInt(int columnIndex) throws SQLException {
         final Value value = field(columnIndex);
 

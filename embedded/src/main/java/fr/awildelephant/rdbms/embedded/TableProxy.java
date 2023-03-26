@@ -17,7 +17,7 @@ public class TableProxy implements ResultProxy {
 
     private final ValueProxy valueProxy = new ValueProxy();
 
-    TableProxy(Table table) {
+    public TableProxy(Table table) {
         final List<Record> rows = new ArrayList<>(table.numberOfTuples());
 
         for (Record record : table) {
