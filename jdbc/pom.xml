@@ -23,10 +23,5 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>fr.awildelephant</groupId>
-            <artifactId>rdbms-embedded</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
