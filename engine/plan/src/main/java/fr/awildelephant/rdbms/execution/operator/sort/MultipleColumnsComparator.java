@@ -31,6 +31,7 @@ public final class MultipleColumnsComparator implements RecordComparator {
             case DATE -> new DateColumnComparator(column.index());
             case DECIMAL -> new DecimalColumnComparator(column.index());
             case INTEGER -> new IntegerColumnComparator(column.index());
+            case LONG -> new LongColumnComparator(column.index());
             case TEXT -> new TextColumnComparator(column.index());
             default -> throw new UnsupportedOperationException("Unsupported sort on " + domain + " column");
         };

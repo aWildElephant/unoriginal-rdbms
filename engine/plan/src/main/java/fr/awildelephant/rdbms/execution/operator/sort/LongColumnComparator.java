@@ -2,16 +2,16 @@ package fr.awildelephant.rdbms.execution.operator.sort;
 
 import fr.awildelephant.rdbms.engine.data.record.Record;
 
-public class IntegerColumnComparator implements RecordComparator {
+public final class LongColumnComparator implements RecordComparator {
 
     private final int index;
 
-    public IntegerColumnComparator(int index) {
+    public LongColumnComparator(int index) {
         this.index = index;
     }
 
     @Override
     public int compare(Record record, Record reference) {
-        return Integer.compare(record.get(index).getInt(), reference.get(index).getInt());
+        return Long.compare(record.get(index).getLong(), reference.get(index).getLong());
     }
 }
