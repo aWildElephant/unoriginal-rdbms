@@ -34,6 +34,7 @@ import fr.awildelephant.rdbms.execution.operator.accumulator.wrapper.Accumulator
 import fr.awildelephant.rdbms.execution.operator.hashing.HashingHelper;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
+import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.ArrayList;
@@ -180,12 +181,14 @@ public class AggregationOperator implements Operator {
     }
 
     private Comparator<DomainValue> comparator(ColumnMetadata column) {
-        return switch (column.domain()) {
+        final Domain domain = column.domain();
+        return switch (domain) {
+            case LONG -> Comparator.comparing(DomainValue::getLong);
             case DATE -> Comparator.comparing(DomainValue::getLocalDate);
             case DECIMAL -> Comparator.comparing(DomainValue::getBigDecimal);
             case INTEGER -> Comparator.comparingInt(DomainValue::getInt);
             case TEXT -> Comparator.comparing(DomainValue::getString);
-            default -> throw new UnsupportedOperationException(); // TODO
+            default -> throw new UnsupportedOperationException("Ordering on " + domain + " is not implemented");
         };
     }
 }

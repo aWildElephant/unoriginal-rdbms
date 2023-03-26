@@ -113,3 +113,23 @@ Feature: Order by
       | 2       |
       | 3       |
 
+  Scenario: I order by a bigint column
+
+    Given the table test
+      | a      |
+      | BIGINT |
+      | 3      |
+      | 1      |
+      | 2      |
+
+    When I execute the query
+      """
+      SELECT a FROM test ORDER BY a DESC
+      """
+
+    Then I expect the result set
+      | a      |
+      | BIGINT |
+      | 3      |
+      | 2      |
+      | 1      |
