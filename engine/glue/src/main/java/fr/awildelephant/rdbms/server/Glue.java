@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.algebraizer.AliasExtractor;
 import fr.awildelephant.rdbms.algebraizer.ColumnNameResolver;
 import fr.awildelephant.rdbms.algebraizer.ColumnReferenceTransformer;
 import fr.awildelephant.rdbms.algebraizer.ExpressionSplitter;
+import fr.awildelephant.rdbms.database.MVCC;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
@@ -33,6 +34,11 @@ public final class Glue {
     }
 
     public static class DatabaseModule extends AbstractModule {
+
+        @Provides
+        MVCC mvcc() {
+            return new MVCC();
+        }
 
         @Provides
         Storage storage() {
@@ -115,8 +121,13 @@ public final class Glue {
         }
 
         @Provides
-        QueryExecutor concurrentQueryExecutor(QueryDispatcher queryDispatcher) {
-            return new QueryExecutor(queryDispatcher);
+        TransactionManager transactionManager() {
+            return new TransactionManager();
+        }
+
+        @Provides
+        QueryExecutor concurrentQueryExecutor(QueryDispatcher queryDispatcher, MVCC mvcc, TransactionManager transactionManager) {
+            return new QueryExecutor(queryDispatcher, mvcc, transactionManager);
         }
     }
 }
