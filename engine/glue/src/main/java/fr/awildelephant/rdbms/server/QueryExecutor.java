@@ -31,7 +31,6 @@ public final class QueryExecutor {
         return new Parser(new Lexer(wrap(query))).parse();
     }
 
-    // TODO: retry if update fails to commit. In order to do that do we have to separate execute and executeUpdate?
     public Table execute(String query) {
         LOGGER.trace("Executing \"{}\"", query);
         final long start = currentTimeMillis();
@@ -40,13 +39,18 @@ public final class QueryExecutor {
 
         final TransactionId transactionId = transactionManager.generate();
 
-        final TemporaryVersion version = new TemporaryVersion(mvcc.currentVersion(), transactionId);
+        TemporaryVersion version;
+        boolean retry;
+        Table result;
+        do {
+            version = new TemporaryVersion(mvcc.currentVersion(), transactionId);
 
-        final Table result = dispatcher.apply(ast);
+            final QueryContext context = new QueryContext();
+            context.temporaryVersion(version);
 
-        if (!mvcc.commit(version)) {
-            throw new UnsupportedOperationException("Query retry is not supported");
-        }
+            result = dispatcher.dispatch(ast, context);
+            retry = context.isUpdate() && !mvcc.commit(version);
+        } while (retry);
 
         return result;
     }

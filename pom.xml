@@ -41,6 +41,7 @@
                 <version>3.9.0</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
