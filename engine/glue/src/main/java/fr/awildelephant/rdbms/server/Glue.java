@@ -116,8 +116,8 @@ public final class Glue {
         }
 
         @Provides
-        QueryDispatcherOld queryDispatcher(Storage storage, Algebraizer algebraizer, Optimizer optimizer, WithInlinerFactory withInlinerFactory, LogicalPlanTableBuilder logicalPlanTableBuilder, PlanFactory planFactory) {
-            return new QueryDispatcherOld(storage, algebraizer, optimizer, withInlinerFactory, logicalPlanTableBuilder, planFactory);
+        QueryDispatcher queryDispatcher(Storage storage) {
+            return new QueryDispatcher(storage);
         }
 
         @Provides
