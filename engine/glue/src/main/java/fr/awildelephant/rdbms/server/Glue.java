@@ -116,8 +116,8 @@ public final class Glue {
         }
 
         @Provides
-        QueryDispatcher queryDispatcher(Storage storage) {
-            return new QueryDispatcher(storage);
+        QueryDispatcher queryDispatcher(Algebraizer algebraizer, Storage storage) {
+            return new QueryDispatcher(algebraizer, storage);
         }
 
         @Provides

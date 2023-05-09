@@ -2,7 +2,6 @@ package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.ast.CreateView;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.Explain;
 import fr.awildelephant.rdbms.ast.Limit;
@@ -15,16 +14,13 @@ import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
-import fr.awildelephant.rdbms.execution.AliasLop;
 import fr.awildelephant.rdbms.execution.LogicalOperator;
 import fr.awildelephant.rdbms.execution.ProjectionLop;
-import fr.awildelephant.rdbms.execution.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.execution.executor.SequentialPlanExecutor;
 import fr.awildelephant.rdbms.execution.plan.Plan;
 import fr.awildelephant.rdbms.execution.plan.PlanFactory;
 import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.with.WithInliner;
 import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
 
@@ -48,28 +44,6 @@ public class QueryDispatcherOld extends DefaultASTVisitor<Table> {
         this.withInliner = withInlinerFactory.build(this);
         this.logicalPlanTableBuilder = logicalPlanTableBuilder;
         this.planFactory = planFactory;
-    }
-
-    @Override
-    public Table visit(CreateView createView) {
-        final LogicalOperator query = algebraizer.apply(createView.query());
-
-        final List<String> columnNames = createView.columnNames();
-        final Schema querySchema = query.schema();
-        if (querySchema.numberOfAttributes() != columnNames.size()) {
-            throw new IllegalStateException();
-        }
-
-        final ColumnAliasBuilder columnAliasBuilder = new ColumnAliasBuilder();
-
-        final List<ColumnReference> queryOutputColumns = querySchema.columnNames();
-        for (int i = 0; i < queryOutputColumns.size(); i++) {
-            columnAliasBuilder.add(queryOutputColumns.get(i), columnNames.get(i));
-        }
-
-        storage.createView(createView.name(), new AliasLop(query, columnAliasBuilder.build().orElseThrow()));
-
-        return null;
     }
 
     @Override
