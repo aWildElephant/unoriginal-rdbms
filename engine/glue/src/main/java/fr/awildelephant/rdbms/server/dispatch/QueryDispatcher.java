@@ -60,9 +60,9 @@ public final class QueryDispatcher {
         } else if (ast instanceof Truncate) {
             throw new UnsupportedOperationException("TRUNCATE statement not yet implemented");
         } else if (ast instanceof final With with) {
-            return withExecutor.execute(with, context);
+            return withExecutor.execute(with, context.temporaryVersion().databaseVersion());
         } else if (isGenericReadQuery(ast)) {
-            return readQueryExecutor.execute(ast, context);
+            return readQueryExecutor.execute(ast, context.temporaryVersion().databaseVersion());
         } else {
             throw new UnsupportedOperationException("Cannot dispatch AST node " + ast.getClass().getSimpleName());
         }

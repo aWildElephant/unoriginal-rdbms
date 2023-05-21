@@ -1,23 +1,16 @@
 package fr.awildelephant.rdbms.database.version;
 
-import org.jetbrains.annotations.NotNull;
-
-public record PermanentVersion(long value) implements Version, Comparable<PermanentVersion> {
-
-    public static PermanentVersion BEGINNING_OF_TIMES = new PermanentVersion(Long.MIN_VALUE);
-    public static PermanentVersion END_OF_TIMES = new PermanentVersion(Long.MAX_VALUE);
+public record PermanentVersion(long value) implements Version {
 
     public PermanentVersion next() {
         return new PermanentVersion(value + 1);
     }
 
-    @Override
-    public PermanentVersion permanentVersion() {
-        return this;
-    }
+    public boolean isAfter(Version version) {
+        if (version instanceof final PermanentVersion other) {
+            return value > other.value;
+        }
 
-    @Override
-    public int compareTo(@NotNull PermanentVersion other) {
-        return Long.compare(value, other.value);
+        return false;
     }
 }

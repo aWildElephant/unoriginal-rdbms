@@ -1,6 +1,8 @@
 package fr.awildelephant.rdbms.execution.executor;
 
 import fr.awildelephant.rdbms.database.Storage;
+import fr.awildelephant.rdbms.database.StorageSnapshot;
+import fr.awildelephant.rdbms.database.version.Version;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.execution.plan.Plan;
 import fr.awildelephant.rdbms.execution.plan.PlanStep;
@@ -11,9 +13,17 @@ public final class SequentialPlanExecutor implements PlanExecutor {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private final Storage storage;
+    private final Version version;
+
+    public SequentialPlanExecutor(Storage storage, Version version) {
+        this.storage = storage;
+        this.version = version;
+    }
+
     @Override
-    public Table apply(Storage storage, Plan plan) {
-        final TemporaryStorage temporaryStorage = new TemporaryStorage(storage);
+    public Table apply(Plan plan) {
+        final TemporaryStorage temporaryStorage = new TemporaryStorage(new StorageSnapshot(storage, version));
         for (PlanStep step : plan.steps()) {
             execute(step, temporaryStorage);
         }

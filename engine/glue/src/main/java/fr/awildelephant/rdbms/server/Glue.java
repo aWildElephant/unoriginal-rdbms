@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.server;
 
-import fr.awildelephant.rdbms.algebraizer.Algebraizer;
+import fr.awildelephant.rdbms.algebraizer.AlgebraizerFactory;
 import fr.awildelephant.rdbms.algebraizer.AliasExtractor;
 import fr.awildelephant.rdbms.algebraizer.ColumnNameResolver;
 import fr.awildelephant.rdbms.algebraizer.ColumnReferenceTransformer;
@@ -76,8 +76,8 @@ public final class Glue {
         }
 
         @Provides
-        Algebraizer algebraizer(Storage storage, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
-            return new Algebraizer(storage, columnNameResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
+        AlgebraizerFactory algebraizerFactory(Storage storage, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
+            return new AlgebraizerFactory(storage, aliasExtractor, expressionSplitter, columnNameResolver, columnReferenceTransformer);
         }
     }
 
@@ -123,8 +123,8 @@ public final class Glue {
         }
 
         @Provides
-        CreateViewExecutor createViewExecutor(Algebraizer algebraizer, Storage storage) {
-            return new CreateViewExecutor(algebraizer, storage);
+        CreateViewExecutor createViewExecutor(AlgebraizerFactory algebraizerFactory, Storage storage) {
+            return new CreateViewExecutor(algebraizerFactory, storage);
         }
 
         @Provides
@@ -133,8 +133,8 @@ public final class Glue {
         }
 
         @Provides
-        ExplainExecutor explainExecutor(Algebraizer algebraizer, LogicalPlanTableBuilder logicalPlanTableBuilder, Optimizer optimizer) {
-            return new ExplainExecutor(algebraizer, logicalPlanTableBuilder, optimizer);
+        ExplainExecutor explainExecutor(AlgebraizerFactory algebraizerFactory, LogicalPlanTableBuilder logicalPlanTableBuilder, Optimizer optimizer) {
+            return new ExplainExecutor(algebraizerFactory, logicalPlanTableBuilder, optimizer);
         }
 
         @Provides
@@ -143,8 +143,8 @@ public final class Glue {
         }
 
         @Provides
-        ReadQueryExecutor readQueryExecutor(Algebraizer algebraizer, Optimizer optimizer, PlanFactory planFactory, Storage storage) {
-            return new ReadQueryExecutor(algebraizer, optimizer, planFactory, storage);
+        ReadQueryExecutor readQueryExecutor(AlgebraizerFactory algebraizerFactory, Optimizer optimizer, PlanFactory planFactory, Storage storage) {
+            return new ReadQueryExecutor(algebraizerFactory, optimizer, planFactory, storage);
         }
 
         @Provides

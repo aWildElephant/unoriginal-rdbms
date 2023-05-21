@@ -19,7 +19,7 @@ import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
-import fr.awildelephant.rdbms.database.Storage;
+import fr.awildelephant.rdbms.database.StorageSnapshot;
 import fr.awildelephant.rdbms.execution.AggregationLop;
 import fr.awildelephant.rdbms.execution.AliasLop;
 import fr.awildelephant.rdbms.execution.CartesianProductLop;
@@ -62,20 +62,19 @@ import static java.util.stream.Collectors.toList;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
-    private final Storage storage;
+    private final StorageSnapshot storage;
     private final Schema outerQuerySchema;
-
     private final AliasExtractor aliasExtractor;
     private final ExpressionSplitter expressionSplitter;
     private final ColumnNameResolver columnNameResolver;
     private final ColumnReferenceTransformer columnReferenceTransformer;
 
-    public Algebraizer(Storage storage, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
-        this(storage, EMPTY_SCHEMA, columnNameResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
+    public Algebraizer(StorageSnapshot storageSnapshot, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
+        this(storageSnapshot, EMPTY_SCHEMA, columnNameResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
     }
 
-    public Algebraizer(Storage storage, Schema outerQuerySchema, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
-        this.storage = storage;
+    private Algebraizer(StorageSnapshot storageSnapshot, Schema outerQuerySchema, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
+        this.storage = storageSnapshot;
         this.outerQuerySchema = outerQuerySchema;
         this.columnNameResolver = columnNameResolver;
         this.columnReferenceTransformer = columnReferenceTransformer;

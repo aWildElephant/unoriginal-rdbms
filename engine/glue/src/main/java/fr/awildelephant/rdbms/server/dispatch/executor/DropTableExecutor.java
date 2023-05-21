@@ -15,6 +15,6 @@ public final class DropTableExecutor {
     public void execute(DropTable dropTable, QueryContext context) {
         context.setUpdate();
 
-        storage.drop(dropTable.tableName().name());
+        storage.drop(dropTable.tableName().name(), context.temporaryVersion());
     }
 }

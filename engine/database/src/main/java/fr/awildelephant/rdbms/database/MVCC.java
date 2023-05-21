@@ -7,16 +7,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class MVCC {
 
-    private final AtomicReference<PermanentVersion> currentVersion = new AtomicReference<>(PermanentVersion.BEGINNING_OF_TIMES);
+    private final AtomicReference<PermanentVersion> currentVersion = new AtomicReference<>(new PermanentVersion(Long.MIN_VALUE));
 
     public PermanentVersion currentVersion() {
         return currentVersion.get();
     }
 
     public boolean commit(TemporaryVersion temporaryVersion) {
-        final PermanentVersion newVersion = temporaryVersion.databaseVersion().next();
+        final PermanentVersion databaseVersion = temporaryVersion.databaseVersion();
+        final PermanentVersion newVersion = databaseVersion.next();
 
-        final boolean committed = currentVersion.compareAndSet(temporaryVersion.databaseVersion(), newVersion);
+        final boolean committed = currentVersion.compareAndSet(databaseVersion, newVersion);
         if (committed) {
             temporaryVersion.commit(newVersion);
         } else {

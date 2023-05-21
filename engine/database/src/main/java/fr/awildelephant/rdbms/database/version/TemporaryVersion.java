@@ -7,7 +7,7 @@ public class TemporaryVersion implements Version {
     private final PermanentVersion databaseVersion;
     private final TransactionId transactionId;
 
-    private PermanentVersion permanentVersion = PermanentVersion.END_OF_TIMES;
+    private Version permanentVersion = EndOfTimesVersion.getInstance();
     private boolean rolledBack;
 
     public TemporaryVersion(PermanentVersion databaseVersion, TransactionId transactionId) {
@@ -15,16 +15,16 @@ public class TemporaryVersion implements Version {
         this.transactionId = transactionId;
     }
 
+    @Override
+    public boolean isAfter(Version version) {
+        return permanentVersion.isAfter(version);
+    }
+
     public PermanentVersion databaseVersion() {
         return databaseVersion;
     }
 
-    @Override
-    public PermanentVersion permanentVersion() {
-        return permanentVersion;
-    }
-
-    public void commit(PermanentVersion permanentVersion) {
+    public void commit(Version permanentVersion) {
         this.permanentVersion = permanentVersion;
     }
 

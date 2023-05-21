@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.server.dispatch.executor;
 
-import fr.awildelephant.rdbms.algebraizer.Algebraizer;
+import fr.awildelephant.rdbms.algebraizer.AlgebraizerFactory;
 import fr.awildelephant.rdbms.ast.CreateView;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.execution.AliasLop;
@@ -14,18 +14,18 @@ import java.util.List;
 
 public final class CreateViewExecutor {
 
-    private final Algebraizer algebraizer;
+    private final AlgebraizerFactory algebraizerFactory;
     private final Storage storage;
 
-    public CreateViewExecutor(Algebraizer algebraizer, Storage storage) {
-        this.algebraizer = algebraizer;
+    public CreateViewExecutor(AlgebraizerFactory algebraizerFactory, Storage storage) {
+        this.algebraizerFactory = algebraizerFactory;
         this.storage = storage;
     }
 
     public void execute(CreateView createView, QueryContext context) {
         context.setUpdate();
 
-        final LogicalOperator query = algebraizer.apply(createView.query());
+        final LogicalOperator query = algebraizerFactory.build(context.temporaryVersion().databaseVersion()).apply(createView.query());
 
         final List<String> columnNames = createView.columnNames();
         final Schema querySchema = query.schema();
@@ -40,6 +40,8 @@ public final class CreateViewExecutor {
             columnAliasBuilder.add(queryOutputColumns.get(i), columnNames.get(i));
         }
 
-        storage.createView(createView.name(), new AliasLop(query, columnAliasBuilder.build().orElseThrow()));
+        final AliasLop viewOperator = new AliasLop(query, columnAliasBuilder.build().orElseThrow());
+
+        storage.createView(createView.name(), viewOperator, context.temporaryVersion());
     }
 }
