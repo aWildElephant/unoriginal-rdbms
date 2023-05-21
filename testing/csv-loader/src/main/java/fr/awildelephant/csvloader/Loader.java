@@ -17,10 +17,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 public class Loader {
@@ -45,24 +41,13 @@ public class Loader {
 
             final Iterator<CSVRecord> records = parser.iterator();
 
-            final ExecutorService executor = Executors.newFixedThreadPool(8);
-
             while (records.hasNext()) {
                 final List<CSVRecord> insertRecords = nextBlock(records);
 
-                executor.submit((Callable<Void>) () -> {
-                    try (final Statement statement = connection.createStatement()) {
-                        statement.execute(createInsertQuery(tableName, insertRecords, types));
-                        logger.log(insertRecords.size());
-                    }
-
-                    return null;
-                });
-            }
-
-            executor.shutdown();
-            if (!executor.awaitTermination(3, TimeUnit.MINUTES)) {
-                throw new IllegalStateException("Timeout while waiting insertion queries to complete");
+                try (final Statement statement = connection.createStatement()) {
+                    statement.execute(createInsertQuery(tableName, insertRecords, types));
+                    logger.log(insertRecords.size());
+                }
             }
         }
     }
