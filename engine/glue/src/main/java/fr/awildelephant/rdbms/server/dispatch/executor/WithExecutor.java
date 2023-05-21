@@ -1,27 +1,28 @@
-package fr.awildelephant.rdbms.server.with;
+package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.ast.WithElement;
 import fr.awildelephant.rdbms.ast.WithList;
+import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.server.QueryContext;
+import fr.awildelephant.rdbms.server.with.WithQueryReplacer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
-public final class WithInliner<T> implements Function<With, T> {
+public final class WithExecutor {
 
-    private final Function<AST, T> resultHandler;
+    private final ReadQueryExecutor readQueryExecutor;
 
-    public WithInliner(Function<AST, T> resultHandler) {
-        this.resultHandler = resultHandler;
+    public WithExecutor(ReadQueryExecutor readQueryExecutor) {
+        this.readQueryExecutor = readQueryExecutor;
     }
 
-    @Override
-    public T apply(With with) {
+    public Table execute(With with, QueryContext context) {
         final WithQueryReplacer replacer = new WithQueryReplacer(buildElementsMap(with.withList()));
 
-        return replacer.andThen(resultHandler).apply(with.query());
+        return readQueryExecutor.execute(replacer.apply(with.query()), context);
     }
 
     private static Map<String, AST> buildElementsMap(WithList withList) {

@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.server;
+package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.ColumnType;

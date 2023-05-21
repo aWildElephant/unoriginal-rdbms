@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.schema.TableNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: version storage
 public final class Storage {
 
     private final Map<String, ManagedTable> tables = new HashMap<>();

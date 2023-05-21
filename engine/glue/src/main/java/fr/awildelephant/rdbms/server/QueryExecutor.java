@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.database.version.TemporaryVersion;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
+import fr.awildelephant.rdbms.server.dispatch.QueryDispatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

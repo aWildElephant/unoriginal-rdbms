@@ -13,7 +13,14 @@ import fr.awildelephant.rdbms.execution.plan.PlanFactory;
 import fr.awildelephant.rdbms.explain.ExplanationTableBuilder;
 import fr.awildelephant.rdbms.explain.ExplanationTreeBuilder;
 import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
-import fr.awildelephant.rdbms.server.with.WithInlinerFactory;
+import fr.awildelephant.rdbms.server.dispatch.QueryDispatcher;
+import fr.awildelephant.rdbms.server.dispatch.executor.CreateTableExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.CreateViewExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.DropTableExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.ExplainExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.InsertIntoExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.ReadQueryExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.WithExecutor;
 import io.activej.inject.Injector;
 import io.activej.inject.annotation.Provides;
 import io.activej.inject.module.AbstractModule;
@@ -111,13 +118,43 @@ public final class Glue {
     public static class GlueModule extends AbstractModule {
 
         @Provides
-        WithInlinerFactory withInlinerFactory() {
-            return new WithInlinerFactory();
+        CreateTableExecutor createTableExecutor(Storage storage) {
+            return new CreateTableExecutor(storage);
         }
 
         @Provides
-        QueryDispatcher queryDispatcher(Algebraizer algebraizer, Storage storage) {
-            return new QueryDispatcher(algebraizer, storage);
+        CreateViewExecutor createViewExecutor(Algebraizer algebraizer, Storage storage) {
+            return new CreateViewExecutor(algebraizer, storage);
+        }
+
+        @Provides
+        DropTableExecutor dropTableExecutor(Storage storage) {
+            return new DropTableExecutor(storage);
+        }
+
+        @Provides
+        ExplainExecutor explainExecutor(Algebraizer algebraizer, LogicalPlanTableBuilder logicalPlanTableBuilder, Optimizer optimizer) {
+            return new ExplainExecutor(algebraizer, logicalPlanTableBuilder, optimizer);
+        }
+
+        @Provides
+        InsertIntoExecutor insertIntoExecutor(ReadQueryExecutor readQueryExecutor, Storage storage) {
+            return new InsertIntoExecutor(readQueryExecutor, storage);
+        }
+
+        @Provides
+        ReadQueryExecutor readQueryExecutor(Algebraizer algebraizer, Optimizer optimizer, PlanFactory planFactory, Storage storage) {
+            return new ReadQueryExecutor(algebraizer, optimizer, planFactory, storage);
+        }
+
+        @Provides
+        WithExecutor withExecutor(ReadQueryExecutor readQueryExecutor) {
+            return new WithExecutor(readQueryExecutor);
+        }
+
+        @Provides
+        QueryDispatcher queryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor, DropTableExecutor dropTableExecutor, ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor, ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor) {
+            return new QueryDispatcher(createTableExecutor, createViewExecutor, dropTableExecutor, explainExecutor, insertIntoExecutor, readQueryExecutor, withExecutor);
         }
 
         @Provides

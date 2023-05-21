@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.server;
+package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
