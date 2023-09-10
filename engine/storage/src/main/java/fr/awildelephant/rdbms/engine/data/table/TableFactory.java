@@ -52,7 +52,6 @@ public final class TableFactory {
         return columns;
     }
 
-    // TODO: use return switch
     public static AppendableColumn createColumn(ColumnMetadata columnMetadata, int initialCapacity) {
         final Domain columnType = columnMetadata.domain();
         final boolean nullable = !columnMetadata.notNull();
