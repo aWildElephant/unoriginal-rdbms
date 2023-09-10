@@ -21,6 +21,10 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-logical</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-version</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

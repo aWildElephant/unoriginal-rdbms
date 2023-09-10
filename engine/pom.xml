@@ -33,6 +33,7 @@
         <module>value</module>
         <module>optimizer</module>
         <module>plan</module>
+        <module>version</module>
     </modules>
 
     <dependencyManagement>
@@ -125,6 +126,11 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-value</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-version</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
