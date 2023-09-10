@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.data.value.VersionValue;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.schema.ReservedKeywords;
 import fr.awildelephant.rdbms.server.QueryContext;
+import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.storage.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
@@ -23,9 +24,12 @@ public final class TruncateExecutor {
     }
 
     public Table execute(Truncate truncate, QueryContext context) {
+        context.setUpdate(); // TODO: add parent class for executors that do updates
+
         final PermanentVersion readVersion = context.temporaryVersion().databaseVersion();
         final ManagedTable table = storage.get(truncate.tableName().name(), readVersion);
 
+        final AppendableColumn fromVersionColumn = table.columns().get(table.schema().indexOf(ReservedKeywords.FROM_VERSION_COLUMN));
         // FIXME: cast dégueulasse
         final WriteableColumn toVersionColumn = (WriteableColumn) table.columns().get(table.schema().indexOf(ReservedKeywords.TO_VERSION_COLUMN));
 
@@ -35,9 +39,10 @@ public final class TruncateExecutor {
 
         int modifiedCount = 0;
         for (int i = 0; i < toVersionColumnSize; i++) {
-            final Version currentVersion = toVersionColumn.get(i).getVersion();
+            final Version fromVersion = fromVersionColumn.get(i).getVersion();
+            final Version toVersion = toVersionColumn.get(i).getVersion();
 
-            if (!currentVersion.isAfter(readVersion)) {
+            if (!fromVersion.isAfter(readVersion) && toVersion.isAfter(readVersion)) {
                 toVersionColumn.set(i, endVersion);
                 modifiedCount++;
             }

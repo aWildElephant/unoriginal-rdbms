@@ -53,7 +53,7 @@ public final class Storage {
         final VersionedObject<ManagedTable> table = tables.get(name);
 
         if (table != null && table.isValidAt(version)) {
-            return new BaseTableLop(name, table.object().schema().removeSystemColumns());
+            return new BaseTableLop(name, table.object().schema().removeSystemColumns(), version);
         }
 
         final VersionedObject<LogicalOperator> view = views.get(name);

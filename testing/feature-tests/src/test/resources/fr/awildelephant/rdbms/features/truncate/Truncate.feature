@@ -10,7 +10,7 @@ Feature: Truncate
       | 3       |
 
   @todo
-  Scenario: I insert a single row in the table
+  Scenario: I truncate a table
 
     When I execute the query
       """

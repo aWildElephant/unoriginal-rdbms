@@ -82,7 +82,7 @@ public class BasicPlanGenerator extends DefaultLopVisitor<String> implements Bui
     public String visit(BaseTableLop baseTable) {
         final String key = generateKey();
 
-        steps.add(new PlanStep(key, Set.of(), new BaseTableOperator(baseTable.name())));
+        steps.add(new PlanStep(key, Set.of(), new BaseTableOperator(baseTable.name(), baseTable.version())));
 
         return key;
     }
