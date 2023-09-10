@@ -1,18 +1,20 @@
 package fr.awildelephant.rdbms.data.value;
 
-public record VersionValue(long value) implements DomainValue {
+import fr.awildelephant.rdbms.version.Version;
 
-    public static VersionValue versionValue(long value) {
-        return new VersionValue(value);
+public record VersionValue(Version version) implements DomainValue {
+
+    public static VersionValue versionValue(Version version) {
+        return new VersionValue(version);
     }
 
     @Override
-    public long getLong() {
-        return value;
+    public Version getVersion() {
+        return version;
     }
 
     @Override
     public String toString() {
-        return "VersionValue[" + value + ']';
+        return "VersionValue[" + version + ']';
     }
 }

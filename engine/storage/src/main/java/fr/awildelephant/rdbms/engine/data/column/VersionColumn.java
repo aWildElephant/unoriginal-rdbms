@@ -1,41 +1,28 @@
 package fr.awildelephant.rdbms.engine.data.column;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.data.value.VersionValue;
-import fr.awildelephant.rdbms.util.structure.list.primitive.LongArrayList;
+import fr.awildelephant.rdbms.version.Version;
 
 import static fr.awildelephant.rdbms.data.value.VersionValue.versionValue;
 
-public final class VersionColumn implements WriteableColumn {
-
-    private final LongArrayList list;
+public final class VersionColumn extends ObjectColumn<Version> implements WriteableColumn {
 
     public VersionColumn(int initialCapacity) {
-        this.list = new LongArrayList(initialCapacity);
-    }
-
-    @Override
-    public void add(DomainValue value) {
-        list.add(value.getLong());
-    }
-
-    @Override
-    public void ensureCapacity(int capacity) {
-        list.ensureCapacity(capacity);
-    }
-
-    @Override
-    public VersionValue get(int index) {
-        return versionValue(list.get(index));
-    }
-
-    @Override
-    public int size() {
-        return list.size();
+        super(initialCapacity);
     }
 
     @Override
     public void set(int index, DomainValue value) {
-        list.set(index, value.getLong());
+        backingArray.set(index, extract(value));
+    }
+
+    @Override
+    protected DomainValue transform(Version value) {
+        return versionValue(value);
+    }
+
+    @Override
+    protected Version extract(DomainValue value) {
+        return value.getVersion();
     }
 }

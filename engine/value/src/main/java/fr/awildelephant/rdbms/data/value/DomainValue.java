@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.data.value;
 
+import fr.awildelephant.rdbms.version.Version;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
@@ -35,6 +37,10 @@ public interface DomainValue {
     }
 
     default String getString() {
+        throw new UnsupportedOperationException();
+    }
+
+    default Version getVersion() {
         throw new UnsupportedOperationException();
     }
 }
