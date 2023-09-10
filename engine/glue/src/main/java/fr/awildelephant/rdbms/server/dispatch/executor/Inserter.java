@@ -1,10 +1,18 @@
 package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.database.Storage;
+import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.server.ReservedKeywords;
+import fr.awildelephant.rdbms.version.EndOfTimesVersion;
+import fr.awildelephant.rdbms.version.TemporaryVersion;
 import fr.awildelephant.rdbms.version.Version;
+
+import java.util.List;
+
+import static fr.awildelephant.rdbms.data.value.VersionValue.versionValue;
 
 final class Inserter {
 
@@ -14,17 +22,44 @@ final class Inserter {
         this.storage = storage;
     }
 
-    void insert(String tableName, Table source, Version version) {
-        final WriteableTable destination = storage.get(tableName, version);
+    void insert(String tableName, Table source, TemporaryVersion version) {
+        final WriteableTable destination = storage.get(tableName, version.databaseVersion());
+        final Schema destinationSchema = destination.schema();
+        checkCompatibility(source.schema(), destinationSchema);
 
-        checkCompatibility(source.schema(), destination.schema());
+        final int insertedCount = source.numberOfTuples();
 
         destination.addAll(source);
+
+        fillTemporalColumns(version, destination, insertedCount);
+    }
+
+    private static void fillTemporalColumns(TemporaryVersion version, WriteableTable destination, int insertedCount) {
+        final Schema destinationSchema = destination.schema();
+        final int fromColumnIndex = destinationSchema.column(ReservedKeywords.FROM_VERSION_COLUMN).index();
+        final int toColumnIndex = destinationSchema.column(ReservedKeywords.TO_VERSION_COLUMN).index();
+
+        final List<AppendableColumn> destinationColumns = destination.columns();
+        final AppendableColumn fromColumn = destinationColumns.get(fromColumnIndex);
+        final AppendableColumn toColumn = destinationColumns.get(toColumnIndex);
+
+        final int newNumberOfTuples = destination.numberOfTuples() + insertedCount;
+        fromColumn.ensureCapacity(newNumberOfTuples);
+        for (int i = 0; i < insertedCount; i++) {
+            fromColumn.add(versionValue(version));
+        }
+
+        final Version endOfTimes = EndOfTimesVersion.getInstance();
+        toColumn.ensureCapacity(newNumberOfTuples);
+        for (int i = 0; i < insertedCount; i++) {
+            toColumn.add(versionValue(endOfTimes));
+        }
     }
 
     // TODO: more thorough check of compatibility, we should be able to cast source columns to their destination counterpart
     private static void checkCompatibility(Schema source, Schema destination) {
-        checkColumnCount(source.numberOfAttributes(), destination.numberOfAttributes());
+        // FIXME: dégueulasse
+        checkColumnCount(source.numberOfAttributes(), destination.numberOfAttributes() - 2);
     }
 
     private static void checkColumnCount(int actual, int expected) {

@@ -6,7 +6,7 @@ public final class ReservedKeywords {
 
     }
 
-    static final String FROM_VERSION_COLUMN = "<from>";
-    static final String TO_VERSION_COLUMN = "<to>";
+    public static final String FROM_VERSION_COLUMN = "<from>";
+    public static final String TO_VERSION_COLUMN = "<to>";
     static final String SYSTEM_TABLE = "<mvcc>";
 }

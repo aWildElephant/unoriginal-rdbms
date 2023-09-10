@@ -32,12 +32,11 @@ public record ColumnBasedWriteableTable(Schema schema, List<AppendableColumn> co
     }
 
     private void addAll(int numberOfNewRecords, Iterable<Record> newRecords) {
-        final int numberOfColumns = schema.numberOfAttributes();
-
         columns.forEach(column -> column.ensureCapacity(column.size() + numberOfNewRecords));
 
         for (Record record : newRecords) {
-            for (int columnIndex = 0; columnIndex < numberOfColumns; columnIndex++) {
+            final int recordSize = record.size();
+            for (int columnIndex = 0; columnIndex < recordSize; columnIndex++) {
                 final AppendableColumn column = columns.get(columnIndex);
 
                 column.add(record.get(columnIndex));

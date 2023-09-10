@@ -48,6 +48,12 @@ public enum Domain {
         public boolean canBeUsedAs(Domain domain) {
             return domain == TEXT;
         }
+    },
+    VERSION {
+        @Override
+        public boolean canBeUsedAs(Domain domain) {
+            return domain == VERSION;
+        }
     };
 
     public abstract boolean canBeUsedAs(Domain domain);

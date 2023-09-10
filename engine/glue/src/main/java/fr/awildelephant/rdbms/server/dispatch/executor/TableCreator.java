@@ -14,6 +14,7 @@ import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.server.ReservedKeywords;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -70,10 +71,9 @@ final class TableCreator {
         final String tableName = createTable.tableName().name();
         final TableElementList elements = createTable.columns();
         final List<ColumnDefinition> columnDefinitions = elements.columns();
-        final ArrayList<ColumnMetadata> columns = new ArrayList<>(columnDefinitions.size());
-
         final Set<String> notNullColumns = notNullColumns(createTable.columns().notNullConstraints());
 
+        final List<ColumnMetadata> columns = new ArrayList<>(columnDefinitions.size());
         for (ColumnDefinition element : columnDefinitions) {
             final String columnName = element.columnName();
             final QualifiedColumnReference columnReference = new QualifiedColumnReference(tableName, columnName);
@@ -81,6 +81,9 @@ final class TableCreator {
             final boolean notNull = notNullColumns.contains(columnName);
             columns.add(new ColumnMetadata(columnReference, columnType, notNull, false));
         }
+
+        columns.add(new ColumnMetadata(new QualifiedColumnReference(tableName, ReservedKeywords.FROM_VERSION_COLUMN), Domain.VERSION, true, true));
+        columns.add(new ColumnMetadata(new QualifiedColumnReference(tableName, ReservedKeywords.TO_VERSION_COLUMN), Domain.VERSION, true, true));
 
         return columns;
     }

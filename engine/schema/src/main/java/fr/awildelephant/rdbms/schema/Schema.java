@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public final class Schema {
 
@@ -59,10 +61,13 @@ public final class Schema {
     }
 
     public List<ColumnMetadata> columnMetadataList() {
+        return columnMetadataStream().toList();
+    }
+
+    private Stream<ColumnMetadata> columnMetadataStream() {
         return columnNames().stream()
                 .map(this::column)
-                .map(OrderedColumnMetadata::metadata)
-                .toList();
+                .map(OrderedColumnMetadata::metadata);
     }
 
     public OrderedColumnMetadata column(String name) {
@@ -185,5 +190,12 @@ public final class Schema {
 
         return Objects.equals(allColumns, other.allColumns)
                 && Objects.equals(columnIndex, other.columnIndex);
+    }
+
+    public Schema removeSystemColumns() {
+        return project(columnMetadataStream()
+                .filter(Predicate.not(ColumnMetadata::system))
+                .map(ColumnMetadata::name)
+                .toList());
     }
 }

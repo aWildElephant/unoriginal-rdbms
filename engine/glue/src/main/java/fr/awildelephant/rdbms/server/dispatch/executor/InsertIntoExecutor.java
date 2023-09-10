@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.data.table.UpdateResultTable;
 import fr.awildelephant.rdbms.server.QueryContext;
-import fr.awildelephant.rdbms.version.PermanentVersion;
+import fr.awildelephant.rdbms.version.TemporaryVersion;
 
 public final class InsertIntoExecutor {
 
@@ -22,10 +22,10 @@ public final class InsertIntoExecutor {
         context.setUpdate();
 
         final String tableName = insertInto.targetTable().name();
-        final PermanentVersion readVersion = context.temporaryVersion().databaseVersion();
-        final Table content = readQueryExecutor.execute(insertInto.source(), readVersion);
+        final TemporaryVersion temporaryVersion = context.temporaryVersion();
+        final Table content = readQueryExecutor.execute(insertInto.source(), temporaryVersion.databaseVersion());
 
-        new Inserter(storage).insert(tableName, content, readVersion);
+        new Inserter(storage).insert(tableName, content, temporaryVersion);
 
         return new UpdateResultTable(content.numberOfTuples());
     }

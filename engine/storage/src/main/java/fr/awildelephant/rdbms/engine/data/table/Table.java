@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 
 import java.util.List;
 
+// TODO: implement getting column by ColumnReference
 public interface Table extends Iterable<Record> {
 
     Schema schema();

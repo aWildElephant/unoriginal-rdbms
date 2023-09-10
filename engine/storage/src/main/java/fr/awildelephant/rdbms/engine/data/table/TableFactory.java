@@ -12,6 +12,7 @@ import fr.awildelephant.rdbms.engine.data.column.NonNullableIntegerColumn;
 import fr.awildelephant.rdbms.engine.data.column.NonNullableLongColumn;
 import fr.awildelephant.rdbms.engine.data.column.NullColumn;
 import fr.awildelephant.rdbms.engine.data.column.TextColumn;
+import fr.awildelephant.rdbms.engine.data.column.VersionColumn;
 import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
@@ -51,6 +52,7 @@ public final class TableFactory {
         return columns;
     }
 
+    // TODO: use return switch
     public static AppendableColumn createColumn(ColumnMetadata columnMetadata, int initialCapacity) {
         final Domain columnType = columnMetadata.domain();
         final boolean nullable = !columnMetadata.notNull();
@@ -83,6 +85,9 @@ public final class TableFactory {
             }
             case TEXT -> {
                 return new TextColumn(initialCapacity);
+            }
+            case VERSION -> {
+                return new VersionColumn(initialCapacity);
             }
             default -> throw new UnsupportedOperationException();
         }

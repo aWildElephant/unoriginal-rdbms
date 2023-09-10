@@ -53,6 +53,10 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-value</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-version</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
