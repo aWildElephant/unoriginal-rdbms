@@ -5,7 +5,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class ResultSetAsserter {
@@ -24,9 +23,7 @@ public final class ResultSetAsserter {
     public void isExpectedResult(ExpectedResult expected) throws Exception {
         assertColumnNames(resultSet.getMetaData(), expected.columnNames());
 
-        final List<Checker> columnCheckers = expected.columnTypes().stream()
-                                                     .map(Checker::checkerFor)
-                                                     .collect(toList());
+        final List<Checker> columnCheckers = expected.columnTypes().stream().map(Checker::checkerFor).toList();
 
         final List<List<String>> rows = expected.data();
 
