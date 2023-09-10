@@ -1,6 +1,4 @@
-package fr.awildelephant.rdbms.database.version;
-
-import fr.awildelephant.rdbms.database.TransactionId;
+package fr.awildelephant.rdbms.version;
 
 public class TemporaryVersion implements Version {
 

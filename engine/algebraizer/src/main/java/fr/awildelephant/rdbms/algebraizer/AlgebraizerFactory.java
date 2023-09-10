@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.database.StorageSnapshot;
-import fr.awildelephant.rdbms.database.version.Version;
+import fr.awildelephant.rdbms.version.Version;
 
 public final class AlgebraizerFactory {
 

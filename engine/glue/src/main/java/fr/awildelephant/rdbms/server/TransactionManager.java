@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.server;
 
-import fr.awildelephant.rdbms.database.TransactionId;
+import fr.awildelephant.rdbms.version.TransactionId;
 
 import java.util.concurrent.atomic.AtomicReference;
 

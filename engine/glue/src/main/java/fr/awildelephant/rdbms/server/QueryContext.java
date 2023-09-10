@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.server;
 
-import fr.awildelephant.rdbms.database.version.TemporaryVersion;
+import fr.awildelephant.rdbms.version.TemporaryVersion;
 
 public final class QueryContext {
 

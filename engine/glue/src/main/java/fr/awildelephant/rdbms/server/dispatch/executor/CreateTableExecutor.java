@@ -2,8 +2,8 @@ package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.database.Storage;
-import fr.awildelephant.rdbms.database.version.Version;
 import fr.awildelephant.rdbms.server.QueryContext;
+import fr.awildelephant.rdbms.version.Version;
 
 import static fr.awildelephant.rdbms.server.dispatch.executor.TableCreator.tableFrom;
 

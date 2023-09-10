@@ -1,5 +1,8 @@
 package fr.awildelephant.rdbms.database.version;
 
+import fr.awildelephant.rdbms.version.EndOfTimesVersion;
+import fr.awildelephant.rdbms.version.PermanentVersion;
+import fr.awildelephant.rdbms.version.Version;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

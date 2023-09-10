@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.database;
 
-import fr.awildelephant.rdbms.database.version.PermanentVersion;
-import fr.awildelephant.rdbms.database.version.TemporaryVersion;
+import fr.awildelephant.rdbms.version.PermanentVersion;
+import fr.awildelephant.rdbms.version.TemporaryVersion;
 
 import java.util.concurrent.atomic.AtomicReference;
 

@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.database.version;
+package fr.awildelephant.rdbms.version;
 
 public final class EndOfTimesVersion implements Version {
 

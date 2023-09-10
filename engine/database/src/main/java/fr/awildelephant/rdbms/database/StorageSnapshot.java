@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.database;
 
-import fr.awildelephant.rdbms.database.version.Version;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.version.Version;
 
 public final class StorageSnapshot {
 

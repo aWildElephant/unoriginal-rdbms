@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.database.version;
+package fr.awildelephant.rdbms.version;
 
 public record PermanentVersion(long value) implements Version {
 

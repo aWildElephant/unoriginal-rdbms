@@ -1,11 +1,11 @@
 package fr.awildelephant.rdbms.database;
 
-import fr.awildelephant.rdbms.database.version.Version;
-import fr.awildelephant.rdbms.database.version.VersionedObject;
 import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.execution.BaseTableLop;
 import fr.awildelephant.rdbms.execution.LogicalOperator;
 import fr.awildelephant.rdbms.schema.TableNotFoundException;
+import fr.awildelephant.rdbms.version.Version;
+import fr.awildelephant.rdbms.version.VersionedObject;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

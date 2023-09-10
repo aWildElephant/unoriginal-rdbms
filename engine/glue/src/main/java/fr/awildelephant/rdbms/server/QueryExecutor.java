@@ -2,12 +2,12 @@ package fr.awildelephant.rdbms.server;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.database.MVCC;
-import fr.awildelephant.rdbms.database.TransactionId;
-import fr.awildelephant.rdbms.database.version.TemporaryVersion;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.parser.Parser;
 import fr.awildelephant.rdbms.server.dispatch.QueryDispatcher;
+import fr.awildelephant.rdbms.version.TemporaryVersion;
+import fr.awildelephant.rdbms.version.TransactionId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

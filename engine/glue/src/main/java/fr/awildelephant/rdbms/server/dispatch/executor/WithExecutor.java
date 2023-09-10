@@ -4,9 +4,9 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.ast.WithElement;
 import fr.awildelephant.rdbms.ast.WithList;
-import fr.awildelephant.rdbms.database.version.Version;
 import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.server.with.WithQueryReplacer;
+import fr.awildelephant.rdbms.version.Version;
 
 import java.util.HashMap;
 import java.util.Map;
