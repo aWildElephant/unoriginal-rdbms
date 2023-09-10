@@ -1,12 +1,12 @@
 package fr.awildelephant.rdbms.execution.operator.hashing;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.chunk.BuildableChunk;
-import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
-import fr.awildelephant.rdbms.engine.data.chunk.ChunkFactory;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.record.Tuple;
-import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.chunk.BuildableChunk;
+import fr.awildelephant.rdbms.storage.data.chunk.Chunk;
+import fr.awildelephant.rdbms.storage.data.chunk.ChunkFactory;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.record.Tuple;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 import java.util.HashMap;
 import java.util.Map;

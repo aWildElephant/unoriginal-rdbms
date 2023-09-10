@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.execution.operator.join;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.record.Tuple;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.record.Tuple;
 
 public final class JoinUtils {
 

@@ -1,12 +1,12 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.TableFactory;
-import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.execution.operator.sort.MultipleColumnsComparator;
 import fr.awildelephant.rdbms.execution.sort.SortSpecification;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.table.TableFactory;
+import fr.awildelephant.rdbms.storage.data.table.WriteableTable;
 
 import java.util.ArrayList;
 import java.util.List;

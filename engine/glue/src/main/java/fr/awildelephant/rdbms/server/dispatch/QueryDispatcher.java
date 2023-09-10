@@ -13,7 +13,6 @@ import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Truncate;
 import fr.awildelephant.rdbms.ast.Values;
 import fr.awildelephant.rdbms.ast.With;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.server.QueryContext;
 import fr.awildelephant.rdbms.server.dispatch.executor.CreateTableExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.CreateViewExecutor;
@@ -23,6 +22,7 @@ import fr.awildelephant.rdbms.server.dispatch.executor.InsertIntoExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.ReadQueryExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.TruncateExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.WithExecutor;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 public final class QueryDispatcher {
 

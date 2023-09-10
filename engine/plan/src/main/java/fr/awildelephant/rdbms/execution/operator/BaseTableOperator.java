@@ -1,11 +1,11 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.column.Column;
-import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.column.Column;
+import fr.awildelephant.rdbms.storage.data.table.ColumnBasedTable;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 import java.util.ArrayList;
 import java.util.List;

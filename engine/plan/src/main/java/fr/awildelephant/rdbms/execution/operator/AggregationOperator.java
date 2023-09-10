@@ -1,13 +1,6 @@
 package fr.awildelephant.rdbms.execution.operator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
-import fr.awildelephant.rdbms.engine.data.chunk.ChunkFactory;
-import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.record.Tuple;
-import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.execution.aggregation.Aggregate;
 import fr.awildelephant.rdbms.execution.aggregation.AnyAggregate;
 import fr.awildelephant.rdbms.execution.aggregation.AvgAggregate;
@@ -36,6 +29,13 @@ import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.chunk.Chunk;
+import fr.awildelephant.rdbms.storage.data.chunk.ChunkFactory;
+import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.record.Tuple;
+import fr.awildelephant.rdbms.storage.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.table.WriteableTable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -45,7 +45,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import static fr.awildelephant.rdbms.storage.data.table.TableFactory.simpleTable;
 
 public class AggregationOperator implements Operator {
 

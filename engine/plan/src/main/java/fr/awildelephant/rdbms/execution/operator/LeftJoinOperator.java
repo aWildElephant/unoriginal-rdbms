@@ -1,6 +1,5 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.execution.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
@@ -15,6 +14,7 @@ import fr.awildelephant.rdbms.execution.operator.join.LeftJoinOutputCreator;
 import fr.awildelephant.rdbms.execution.operator.join.NestedLoopJoinMatcher;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

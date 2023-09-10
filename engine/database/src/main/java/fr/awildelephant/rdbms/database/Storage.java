@@ -1,9 +1,9 @@
 package fr.awildelephant.rdbms.database;
 
-import fr.awildelephant.rdbms.engine.data.table.ManagedTable;
 import fr.awildelephant.rdbms.execution.BaseTableLop;
 import fr.awildelephant.rdbms.execution.LogicalOperator;
 import fr.awildelephant.rdbms.schema.TableNotFoundException;
+import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.version.Version;
 import fr.awildelephant.rdbms.version.VersionedObject;
 

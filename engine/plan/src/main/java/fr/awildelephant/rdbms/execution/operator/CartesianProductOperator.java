@@ -1,14 +1,14 @@
 package fr.awildelephant.rdbms.execution.operator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.record.Tuple;
-import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.record.Tuple;
+import fr.awildelephant.rdbms.storage.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.table.WriteableTable;
 
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import static fr.awildelephant.rdbms.storage.data.table.TableFactory.simpleTable;
 
 public final class CartesianProductOperator implements Operator {
 

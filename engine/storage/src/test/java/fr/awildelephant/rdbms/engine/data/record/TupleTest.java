@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.engine.data.record;
 
+import fr.awildelephant.rdbms.storage.data.record.Tuple;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 

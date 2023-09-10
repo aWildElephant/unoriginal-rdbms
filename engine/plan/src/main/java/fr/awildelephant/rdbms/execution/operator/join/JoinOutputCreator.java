@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.execution.operator.join;
 
-import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
-import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.chunk.Chunk;
+import fr.awildelephant.rdbms.storage.data.record.Record;
 
 import java.util.List;
 

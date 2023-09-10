@@ -2,9 +2,9 @@ package fr.awildelephant.rdbms.execution.executor;
 
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.database.StorageSnapshot;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.execution.plan.Plan;
 import fr.awildelephant.rdbms.execution.plan.PlanStep;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.version.Version;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

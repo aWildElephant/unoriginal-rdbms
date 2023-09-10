@@ -1,9 +1,9 @@
 package fr.awildelephant.rdbms.execution.operator.join;
 
-import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
-import fr.awildelephant.rdbms.engine.data.chunk.ChunkFactory;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.chunk.Chunk;
+import fr.awildelephant.rdbms.storage.data.chunk.ChunkFactory;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 import java.util.Map;
 

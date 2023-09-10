@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.execution.operator.sort;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.record.Record;
 
 import java.util.Comparator;
 

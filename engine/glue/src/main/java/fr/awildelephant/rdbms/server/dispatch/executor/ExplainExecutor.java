@@ -3,10 +3,10 @@ package fr.awildelephant.rdbms.server.dispatch.executor;
 import fr.awildelephant.rdbms.algebraizer.Algebraizer;
 import fr.awildelephant.rdbms.algebraizer.AlgebraizerFactory;
 import fr.awildelephant.rdbms.ast.Explain;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.engine.optimizer.Optimizer;
 import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
 import fr.awildelephant.rdbms.server.QueryContext;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 public final class ExplainExecutor {
 

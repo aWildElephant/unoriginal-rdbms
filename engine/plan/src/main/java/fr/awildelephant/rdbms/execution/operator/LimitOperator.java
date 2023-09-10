@@ -1,13 +1,13 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.table.WriteableTable;
 
 import java.util.Iterator;
 
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.simpleTable;
+import static fr.awildelephant.rdbms.storage.data.table.TableFactory.simpleTable;
 
 public class LimitOperator implements Operator {
 

@@ -1,11 +1,11 @@
 package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.database.Storage;
-import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
-import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.WriteableTable;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.ReservedKeywords;
+import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
+import fr.awildelephant.rdbms.storage.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.table.WriteableTable;
 import fr.awildelephant.rdbms.version.EndOfTimesVersion;
 import fr.awildelephant.rdbms.version.TemporaryVersion;
 import fr.awildelephant.rdbms.version.Version;

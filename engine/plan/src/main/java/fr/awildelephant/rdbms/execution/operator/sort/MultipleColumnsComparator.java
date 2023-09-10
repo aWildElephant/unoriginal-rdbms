@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.execution.operator.sort;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
 import fr.awildelephant.rdbms.execution.sort.SortSpecification;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.record.Record;
 
 import java.util.Comparator;
 import java.util.List;

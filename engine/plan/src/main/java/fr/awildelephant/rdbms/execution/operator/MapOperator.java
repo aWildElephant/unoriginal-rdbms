@@ -1,11 +1,5 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.column.AppendableColumn;
-import fr.awildelephant.rdbms.engine.data.column.Column;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
-import fr.awildelephant.rdbms.engine.data.table.Table;
-import fr.awildelephant.rdbms.engine.data.table.TableFactory;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
@@ -13,6 +7,12 @@ import fr.awildelephant.rdbms.execution.operator.values.RecordValues;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
+import fr.awildelephant.rdbms.storage.data.column.Column;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.ColumnBasedTable;
+import fr.awildelephant.rdbms.storage.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.table.TableFactory;
 
 import java.util.ArrayList;
 import java.util.List;

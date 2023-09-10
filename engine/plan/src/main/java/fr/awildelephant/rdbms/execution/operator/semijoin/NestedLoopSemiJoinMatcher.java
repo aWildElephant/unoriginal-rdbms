@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.execution.operator.semijoin;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.execution.operator.values.JoinValues;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;

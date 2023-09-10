@@ -6,22 +6,22 @@ import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.constraints.NotNullConstraint;
 import fr.awildelephant.rdbms.ast.constraints.UniqueConstraint;
-import fr.awildelephant.rdbms.engine.constraint.NotNullChecker;
-import fr.awildelephant.rdbms.engine.constraint.UniqueChecker;
-import fr.awildelephant.rdbms.engine.data.index.UniqueIndex;
-import fr.awildelephant.rdbms.engine.data.table.TableWithChecker;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.ReservedKeywords;
+import fr.awildelephant.rdbms.storage.constraint.NotNullChecker;
+import fr.awildelephant.rdbms.storage.constraint.UniqueChecker;
+import fr.awildelephant.rdbms.storage.data.index.UniqueIndex;
+import fr.awildelephant.rdbms.storage.data.table.TableWithChecker;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.engine.data.table.TableFactory.tableWithChecker;
+import static fr.awildelephant.rdbms.storage.data.table.TableFactory.tableWithChecker;
 
 final class TableCreator {
 

@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.execution.operator.join;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.chunk.Chunk;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.record.Tuple;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.chunk.Chunk;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.record.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;

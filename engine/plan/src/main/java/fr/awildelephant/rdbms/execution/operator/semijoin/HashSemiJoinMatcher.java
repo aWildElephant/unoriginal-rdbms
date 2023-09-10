@@ -1,9 +1,9 @@
 package fr.awildelephant.rdbms.execution.operator.semijoin;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.record.Tuple;
-import fr.awildelephant.rdbms.engine.data.table.Table;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.record.Tuple;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import java.util.HashSet;

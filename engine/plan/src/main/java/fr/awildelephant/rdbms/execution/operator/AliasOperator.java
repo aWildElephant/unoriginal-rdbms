@@ -1,9 +1,9 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.table.AliasedTable;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.table.AliasedTable;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 public class AliasOperator implements Operator {
 

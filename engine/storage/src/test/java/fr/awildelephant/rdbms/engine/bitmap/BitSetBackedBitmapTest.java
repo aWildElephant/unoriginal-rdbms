@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.engine.bitmap;
 
+import fr.awildelephant.rdbms.storage.bitmap.BitSetBackedBitmap;
+import fr.awildelephant.rdbms.storage.bitmap.Bitmap;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

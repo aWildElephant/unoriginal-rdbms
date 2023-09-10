@@ -1,10 +1,5 @@
 package fr.awildelephant.rdbms.execution.operator;
 
-import fr.awildelephant.rdbms.engine.data.column.BooleanColumn;
-import fr.awildelephant.rdbms.engine.data.column.Column;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.ColumnBasedTable;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.execution.arithmetic.EqualExpression;
 import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
@@ -18,6 +13,11 @@ import fr.awildelephant.rdbms.execution.operator.semijoin.NestedLoopSemiJoinMatc
 import fr.awildelephant.rdbms.execution.operator.semijoin.SemiJoinMatcher;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.column.BooleanColumn;
+import fr.awildelephant.rdbms.storage.data.column.Column;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.ColumnBasedTable;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 import org.jetbrains.annotations.NotNull;
 

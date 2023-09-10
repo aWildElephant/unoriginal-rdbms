@@ -5,13 +5,13 @@ import fr.awildelephant.rdbms.data.value.FalseValue;
 import fr.awildelephant.rdbms.data.value.IntegerValue;
 import fr.awildelephant.rdbms.data.value.TextValue;
 import fr.awildelephant.rdbms.data.value.TrueValue;
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.rpc.generated.RDBMSGrpc;
 import fr.awildelephant.rdbms.rpc.generated.Rdbms;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.Glue;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 import io.grpc.stub.StreamObserver;
 
 public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {

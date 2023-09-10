@@ -1,11 +1,11 @@
 package fr.awildelephant.rdbms.embedded;
 
-import fr.awildelephant.rdbms.engine.data.record.Record;
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.jdbc.abstraction.ResultProxy;
 import fr.awildelephant.rdbms.jdbc.abstraction.Value;
 import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 import java.util.ArrayList;
 import java.util.List;

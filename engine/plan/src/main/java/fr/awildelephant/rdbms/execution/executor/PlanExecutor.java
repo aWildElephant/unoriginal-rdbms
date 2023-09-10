@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.execution.executor;
 
-import fr.awildelephant.rdbms.engine.data.table.Table;
 import fr.awildelephant.rdbms.execution.plan.Plan;
+import fr.awildelephant.rdbms.storage.data.table.Table;
 
 import java.util.function.Function;
 
