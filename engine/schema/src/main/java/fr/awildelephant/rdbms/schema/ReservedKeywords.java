@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.server;
+package fr.awildelephant.rdbms.schema;
 
 public final class ReservedKeywords {
 
