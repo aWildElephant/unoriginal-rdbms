@@ -21,6 +21,7 @@ import fr.awildelephant.rdbms.server.dispatch.executor.DropTableExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.ExplainExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.InsertIntoExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.ReadQueryExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.TruncateExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.WithExecutor;
 
 public final class QueryDispatcher {
@@ -32,8 +33,9 @@ public final class QueryDispatcher {
     private final InsertIntoExecutor insertIntoExecutor;
     private final ReadQueryExecutor readQueryExecutor;
     private final WithExecutor withExecutor;
+    private final TruncateExecutor truncateExecutor;
 
-    public QueryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor, DropTableExecutor dropTableExecutor, ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor, ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor) {
+    public QueryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor, DropTableExecutor dropTableExecutor, ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor, ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor, TruncateExecutor truncateExecutor) {
         this.createTableExecutor = createTableExecutor;
         this.createViewExecutor = createViewExecutor;
         this.dropTableExecutor = dropTableExecutor;
@@ -41,6 +43,7 @@ public final class QueryDispatcher {
         this.insertIntoExecutor = insertIntoExecutor;
         this.readQueryExecutor = readQueryExecutor;
         this.withExecutor = withExecutor;
+        this.truncateExecutor = truncateExecutor;
     }
 
     public Table dispatch(AST ast, QueryContext context) {
@@ -57,8 +60,8 @@ public final class QueryDispatcher {
             return explainExecutor.execute(explain, context);
         } else if (ast instanceof final InsertInto insertInto) {
             return insertIntoExecutor.execute(insertInto, context);
-        } else if (ast instanceof Truncate) {
-            throw new UnsupportedOperationException("TRUNCATE statement not yet implemented");
+        } else if (ast instanceof final Truncate truncate) {
+            return truncateExecutor.execute(truncate, context);
         } else if (ast instanceof final With with) {
             return withExecutor.execute(with, context.temporaryVersion().databaseVersion());
         } else if (isGenericReadQuery(ast)) {

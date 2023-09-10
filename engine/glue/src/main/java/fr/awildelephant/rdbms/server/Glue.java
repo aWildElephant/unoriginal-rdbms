@@ -20,6 +20,7 @@ import fr.awildelephant.rdbms.server.dispatch.executor.DropTableExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.ExplainExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.InsertIntoExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.ReadQueryExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.TruncateExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.WithExecutor;
 import io.activej.inject.Injector;
 import io.activej.inject.annotation.Provides;
@@ -148,13 +149,18 @@ public final class Glue {
         }
 
         @Provides
+        TruncateExecutor truncateExecutor(Storage storage) {
+            return new TruncateExecutor(storage);
+        }
+
+        @Provides
         WithExecutor withExecutor(ReadQueryExecutor readQueryExecutor) {
             return new WithExecutor(readQueryExecutor);
         }
 
         @Provides
-        QueryDispatcher queryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor, DropTableExecutor dropTableExecutor, ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor, ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor) {
-            return new QueryDispatcher(createTableExecutor, createViewExecutor, dropTableExecutor, explainExecutor, insertIntoExecutor, readQueryExecutor, withExecutor);
+        QueryDispatcher queryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor, DropTableExecutor dropTableExecutor, ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor, ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor, TruncateExecutor truncateExecutor) {
+            return new QueryDispatcher(createTableExecutor, createViewExecutor, dropTableExecutor, explainExecutor, insertIntoExecutor, readQueryExecutor, withExecutor, truncateExecutor);
         }
 
         @Provides
