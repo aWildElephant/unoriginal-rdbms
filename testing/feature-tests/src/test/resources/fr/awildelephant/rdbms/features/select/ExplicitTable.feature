@@ -1,6 +1,6 @@
 Feature: Explicit table
 
-  Scenario: I query the whole tale with just its name
+  Scenario: I query the whole table with just its name
 
     Given the table employee
       | name    | age     |

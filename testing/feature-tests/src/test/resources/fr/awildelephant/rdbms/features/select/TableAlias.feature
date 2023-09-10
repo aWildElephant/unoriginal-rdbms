@@ -31,7 +31,7 @@ Feature: Table alias
       | TEXT |
       | ok   |
 
-  Scenario: I select from an table with both table and column aliases
+  Scenario: I select from a table with both table and column aliases
 
     When I execute the query
     """
