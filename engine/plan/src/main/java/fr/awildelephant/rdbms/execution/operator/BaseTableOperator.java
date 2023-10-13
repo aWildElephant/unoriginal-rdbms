@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.storage.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.storage.data.table.FilteredTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.version.Version;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +30,24 @@ public class BaseTableOperator implements Operator {
     public Table compute(TemporaryStorage storage) {
         final Table inputTable = storage.get(tableName);
 
-        final Schema inputSchema = inputTable.schema();
+        final Bitmap bitmap = buildTemporalBitmap(inputTable, version);
 
-        final Schema outputSchema = inputSchema.removeSystemColumns();
+        Table result = removeSystemColumns(inputTable);
 
+        final boolean needFilter = bitmap.cardinality() != inputTable.numberOfTuples();
+        if (needFilter) {
+            // TODO: optimizer should decide whether we materialize a new table or not
+            result = new FilteredTable(result, bitmap);
+        }
+
+        return result;
+    }
+
+    @NotNull
+    private static ColumnBasedTable removeSystemColumns(Table inputTable) {
         // FIXME: code duplicated with ProjectOperator
+        final Schema inputSchema = inputTable.schema();
+        final Schema outputSchema = inputSchema.removeSystemColumns();
         final List<? extends Column> inputColumns = inputTable.columns();
 
         final List<Column> outputColumns = new ArrayList<>(outputSchema.numberOfAttributes());
@@ -41,10 +55,7 @@ public class BaseTableOperator implements Operator {
         for (ColumnReference columnReference : outputSchema.columnNames()) {
             outputColumns.add(inputColumns.get(inputSchema.column(columnReference).index()));
         }
-
-        // TODO: optimizer should decide whether we materialize a new table or not
-        final Bitmap bitmap = buildTemporalBitmap(inputTable, version);
-        return new FilteredTable(new ColumnBasedTable(outputSchema, outputColumns), bitmap);
+        return new ColumnBasedTable(outputSchema, outputColumns);
     }
 
     private static Bitmap buildTemporalBitmap(Table inputTable, Version version) {
