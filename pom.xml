@@ -22,7 +22,7 @@
         <project.fancyName>RDBMS</project.fancyName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <java.version>20</java.version>
+        <java.version>21</java.version>
         <log4j.version>2.20.0</log4j.version>
 
         <!-- test -->
@@ -41,7 +41,6 @@
                 <version>3.9.0</version>
                 <configuration>
                     <release>${java.version}</release>
-                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -54,6 +53,11 @@
                         <version>${junit.version}</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <systemPropertyVariables>
+                        <net.bytebuddy.experimental>true</net.bytebuddy.experimental>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>
