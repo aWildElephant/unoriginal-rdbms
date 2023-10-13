@@ -27,9 +27,9 @@
 
         <!-- test -->
         <assertj.version>3.24.2</assertj.version>
-        <cucumber.version>7.12.0</cucumber.version>
+        <cucumber.version>7.14.0</cucumber.version>
         <equalsverifier.version>3.15.2</equalsverifier.version>
-        <junit.version>5.9.3</junit.version>
+        <junit.version>5.10.0</junit.version>
     </properties>
 
     <name>${project.fancyName}</name>
@@ -38,14 +38,14 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.9.0</version>
+                <version>3.11.0</version>
                 <configuration>
                     <release>${java.version}</release>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.1.2</version>
                 <dependencies>
                     <dependency> <!-- Needed for cucumber tests -->
                         <groupId>org.junit.vintage</groupId>
@@ -89,14 +89,14 @@
             <dependency>
                 <groupId>io.activej</groupId>
                 <artifactId>activej-inject</artifactId>
-                <version>5.4.3</version>
+                <version>5.5</version>
             </dependency>
 
             <!-- Apache -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.12.0</version>
+                <version>3.13.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
