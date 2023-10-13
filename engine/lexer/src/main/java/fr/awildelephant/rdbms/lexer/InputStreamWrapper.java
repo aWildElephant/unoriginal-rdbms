@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.lexer;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +22,7 @@ public final class InputStreamWrapper {
     }
 
     private static InputStreamWrapper wrap(InputStream inputStream) {
-        return new InputStreamWrapper(new InputStreamReader(inputStream));
+        return new InputStreamWrapper(new BufferedReader(new InputStreamReader(inputStream)));
     }
 
     public static InputStreamWrapper wrap(String input) {
