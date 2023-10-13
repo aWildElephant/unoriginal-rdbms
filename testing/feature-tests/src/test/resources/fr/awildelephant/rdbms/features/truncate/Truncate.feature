@@ -9,7 +9,6 @@ Feature: Truncate
       | 2       |
       | 3       |
 
-  @todo
   Scenario: I truncate a table
 
     When I execute the query
