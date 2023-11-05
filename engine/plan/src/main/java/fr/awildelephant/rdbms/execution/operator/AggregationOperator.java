@@ -1,14 +1,6 @@
 package fr.awildelephant.rdbms.execution.operator;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.execution.aggregation.Aggregate;
-import fr.awildelephant.rdbms.execution.aggregation.AnyAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.AvgAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.CountAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.CountStarAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.MaxAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.MinAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.execution.operator.accumulator.Accumulator;
 import fr.awildelephant.rdbms.execution.operator.accumulator.AnyAccumulator;
@@ -25,6 +17,14 @@ import fr.awildelephant.rdbms.execution.operator.accumulator.wrapper.Accumulator
 import fr.awildelephant.rdbms.execution.operator.accumulator.wrapper.AccumulatorWithNoInputWrapper;
 import fr.awildelephant.rdbms.execution.operator.accumulator.wrapper.AccumulatorWrapper;
 import fr.awildelephant.rdbms.execution.operator.hashing.HashingHelper;
+import fr.awildelephant.rdbms.operator.logical.aggregation.Aggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.AnyAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.CountAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.MaxAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.MinAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.SumAggregate;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;

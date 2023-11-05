@@ -5,8 +5,8 @@ import fr.awildelephant.rdbms.engine.optimizer.optimization.JoinReordering;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.ProjectionPushDown;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.SimplifyExpressions;
 import fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting.SubqueryUnnesting;
-import fr.awildelephant.rdbms.execution.LogicalOperator;
-import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
+import fr.awildelephant.rdbms.function.VariableCollector;
+import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 
 public class Optimizer {
 

@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.execution.operator;
 
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.execution.operator.sort.MultipleColumnsComparator;
-import fr.awildelephant.rdbms.execution.sort.SortSpecification;
+import fr.awildelephant.rdbms.operator.logical.sort.SortSpecification;
 import fr.awildelephant.rdbms.storage.data.record.Record;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.storage.data.table.TableFactory;

@@ -1,8 +1,8 @@
 package fr.awildelephant.rdbms.execution.filter;
 
-import fr.awildelephant.rdbms.execution.arithmetic.AndExpression;
-import fr.awildelephant.rdbms.execution.arithmetic.DefaultValueExpressionVisitor;
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.arithmetic.AndExpression;
+import fr.awildelephant.rdbms.arithmetic.DefaultValueExpressionVisitor;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 
 import java.util.List;
 import java.util.stream.Collectors;

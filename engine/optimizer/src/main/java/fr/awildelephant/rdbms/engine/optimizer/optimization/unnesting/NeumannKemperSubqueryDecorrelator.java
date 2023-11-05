@@ -1,21 +1,21 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
+import fr.awildelephant.rdbms.arithmetic.ExpressionHelper;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.engine.optimizer.FreeVariableAliasing;
-import fr.awildelephant.rdbms.execution.AliasLop;
-import fr.awildelephant.rdbms.execution.CartesianProductLop;
-import fr.awildelephant.rdbms.execution.DependentJoinLop;
-import fr.awildelephant.rdbms.execution.DependentSemiJoinLop;
-import fr.awildelephant.rdbms.execution.DistinctLop;
-import fr.awildelephant.rdbms.execution.InnerJoinLop;
-import fr.awildelephant.rdbms.execution.LogicalOperator;
-import fr.awildelephant.rdbms.execution.ProjectionLop;
-import fr.awildelephant.rdbms.execution.SemiJoinLop;
-import fr.awildelephant.rdbms.execution.alias.Alias;
-import fr.awildelephant.rdbms.execution.alias.ExactMatchAlias;
-import fr.awildelephant.rdbms.execution.alias.ReversibleAlias;
-import fr.awildelephant.rdbms.execution.arithmetic.ExpressionHelper;
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
+import fr.awildelephant.rdbms.function.VariableCollector;
+import fr.awildelephant.rdbms.operator.logical.AliasLop;
+import fr.awildelephant.rdbms.operator.logical.CartesianProductLop;
+import fr.awildelephant.rdbms.operator.logical.DependentJoinLop;
+import fr.awildelephant.rdbms.operator.logical.DependentSemiJoinLop;
+import fr.awildelephant.rdbms.operator.logical.DistinctLop;
+import fr.awildelephant.rdbms.operator.logical.InnerJoinLop;
+import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
+import fr.awildelephant.rdbms.operator.logical.ProjectionLop;
+import fr.awildelephant.rdbms.operator.logical.SemiJoinLop;
+import fr.awildelephant.rdbms.operator.logical.alias.Alias;
+import fr.awildelephant.rdbms.operator.logical.alias.ExactMatchAlias;
+import fr.awildelephant.rdbms.operator.logical.alias.ReversibleAlias;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
@@ -32,12 +32,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static fr.awildelephant.rdbms.arithmetic.AndExpression.andExpression;
+import static fr.awildelephant.rdbms.arithmetic.EqualExpression.equalExpression;
+import static fr.awildelephant.rdbms.arithmetic.Variable.variable;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
-import static fr.awildelephant.rdbms.execution.arithmetic.AndExpression.andExpression;
-import static fr.awildelephant.rdbms.execution.arithmetic.EqualExpression.equalExpression;
-import static fr.awildelephant.rdbms.execution.arithmetic.Variable.variable;
 import static fr.awildelephant.rdbms.execution.filter.FilterCollapser.collapseFilters;
 
 /**

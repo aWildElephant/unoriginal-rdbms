@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.database;
 
-import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.version.Version;
 

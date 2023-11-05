@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.execution.plan;
 
-import fr.awildelephant.rdbms.execution.LogicalOperator;
+import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 
 import java.util.function.Function;
 

@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.execution.operator;
 
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.evaluator.Formula;
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;

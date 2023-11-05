@@ -1,18 +1,18 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization.unnesting;
 
-import fr.awildelephant.rdbms.execution.AggregationLop;
-import fr.awildelephant.rdbms.execution.CartesianProductLop;
-import fr.awildelephant.rdbms.execution.DefaultLopVisitor;
-import fr.awildelephant.rdbms.execution.DependentJoinLop;
-import fr.awildelephant.rdbms.execution.FilterLop;
-import fr.awildelephant.rdbms.execution.InnerJoinLop;
-import fr.awildelephant.rdbms.execution.LogicalOperator;
-import fr.awildelephant.rdbms.execution.MapLop;
-import fr.awildelephant.rdbms.execution.ProjectionLop;
-import fr.awildelephant.rdbms.execution.ScalarSubqueryLop;
-import fr.awildelephant.rdbms.execution.aggregation.Aggregate;
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.function.VariableCollector;
+import fr.awildelephant.rdbms.operator.logical.AggregationLop;
+import fr.awildelephant.rdbms.operator.logical.CartesianProductLop;
+import fr.awildelephant.rdbms.operator.logical.DefaultLopVisitor;
+import fr.awildelephant.rdbms.operator.logical.DependentJoinLop;
+import fr.awildelephant.rdbms.operator.logical.FilterLop;
+import fr.awildelephant.rdbms.operator.logical.InnerJoinLop;
+import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
+import fr.awildelephant.rdbms.operator.logical.MapLop;
+import fr.awildelephant.rdbms.operator.logical.ProjectionLop;
+import fr.awildelephant.rdbms.operator.logical.ScalarSubqueryLop;
+import fr.awildelephant.rdbms.operator.logical.aggregation.Aggregate;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.ArrayList;

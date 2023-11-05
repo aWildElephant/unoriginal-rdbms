@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.algebraizer.formula.SubqueryJoiner;
 import fr.awildelephant.rdbms.ast.AST;
-import fr.awildelephant.rdbms.execution.aggregation.Aggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.Aggregate;
 
 import java.util.ArrayList;
 import java.util.Collection;

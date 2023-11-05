@@ -1,11 +1,11 @@
 package fr.awildelephant.rdbms.execution.filter;
 
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 
 import java.util.Iterator;
 import java.util.Optional;
 
-import static fr.awildelephant.rdbms.execution.arithmetic.AndExpression.andExpression;
+import static fr.awildelephant.rdbms.arithmetic.AndExpression.andExpression;
 
 public final class FilterCollapser {
 

@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
-import fr.awildelephant.rdbms.execution.CartesianProductLop;
-import fr.awildelephant.rdbms.execution.DefaultLopVisitor;
-import fr.awildelephant.rdbms.execution.InnerJoinLop;
-import fr.awildelephant.rdbms.execution.LogicalOperator;
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.operator.logical.CartesianProductLop;
+import fr.awildelephant.rdbms.operator.logical.DefaultLopVisitor;
+import fr.awildelephant.rdbms.operator.logical.InnerJoinLop;
+import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,15 +1,15 @@
 package fr.awildelephant.rdbms.engine.optimizer;
 
-import fr.awildelephant.rdbms.execution.aggregation.Aggregate;
-import fr.awildelephant.rdbms.execution.aggregation.AnyAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.AvgAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.CountAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.CountStarAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.MaxAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.MinAggregate;
-import fr.awildelephant.rdbms.execution.aggregation.SumAggregate;
-import fr.awildelephant.rdbms.execution.alias.Alias;
-import fr.awildelephant.rdbms.execution.alias.ExactMatchAlias;
+import fr.awildelephant.rdbms.operator.logical.aggregation.Aggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.AnyAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.AvgAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.CountAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.CountStarAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.MaxAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.MinAggregate;
+import fr.awildelephant.rdbms.operator.logical.aggregation.SumAggregate;
+import fr.awildelephant.rdbms.operator.logical.alias.Alias;
+import fr.awildelephant.rdbms.operator.logical.alias.ExactMatchAlias;
 
 public final class AggregateAliaser {
 

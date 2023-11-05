@@ -1,17 +1,17 @@
 package fr.awildelephant.rdbms.execution.operator;
 
+import fr.awildelephant.rdbms.arithmetic.EqualExpression;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.arithmetic.Variable;
+import fr.awildelephant.rdbms.arithmetic.visitor.NotNullValueExpressionVisitor;
 import fr.awildelephant.rdbms.evaluator.Formula;
-import fr.awildelephant.rdbms.execution.arithmetic.EqualExpression;
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.execution.arithmetic.Variable;
-import fr.awildelephant.rdbms.execution.arithmetic.function.VariableCollector;
-import fr.awildelephant.rdbms.execution.arithmetic.visitor.NotNullValueExpressionVisitor;
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.execution.operator.join.FlippedInnerJoinOutputCreator;
 import fr.awildelephant.rdbms.execution.operator.join.HashJoinMatcher;
 import fr.awildelephant.rdbms.execution.operator.join.InnerJoinOutputCreator;
 import fr.awildelephant.rdbms.execution.operator.join.JoinMatcher;
 import fr.awildelephant.rdbms.execution.operator.join.NestedLoopJoinMatcher;
+import fr.awildelephant.rdbms.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.data.table.Table;

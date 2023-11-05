@@ -1,15 +1,15 @@
 package fr.awildelephant.rdbms.engine.optimizer.optimization;
 
+import fr.awildelephant.rdbms.arithmetic.DefaultValueExpressionVisitor;
+import fr.awildelephant.rdbms.arithmetic.OuterQueryVariable;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.arithmetic.Variable;
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.execution.arithmetic.DefaultValueExpressionVisitor;
-import fr.awildelephant.rdbms.execution.arithmetic.OuterQueryVariable;
-import fr.awildelephant.rdbms.execution.arithmetic.ValueExpression;
-import fr.awildelephant.rdbms.execution.arithmetic.Variable;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 
 import java.util.Map;
 
-import static fr.awildelephant.rdbms.execution.arithmetic.ConstantExpression.constantExpression;
+import static fr.awildelephant.rdbms.arithmetic.ConstantExpression.constantExpression;
 
 public final class VariableTransformer extends DefaultValueExpressionVisitor<ValueExpression> {
 

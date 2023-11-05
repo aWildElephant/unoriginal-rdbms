@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.execution.operator.sort;
 
-import fr.awildelephant.rdbms.execution.sort.SortSpecification;
+import fr.awildelephant.rdbms.operator.logical.sort.SortSpecification;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;

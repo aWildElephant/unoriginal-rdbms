@@ -1,5 +1,8 @@
 package fr.awildelephant.rdbms.execution;
 
+import fr.awildelephant.rdbms.operator.logical.AbstractBinaryLop;
+import fr.awildelephant.rdbms.operator.logical.AbstractLop;
+import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Named;
@@ -22,7 +25,7 @@ class LogicalOperatorEqualsAndHashCodeTest {
     }
 
     private static Stream<Class<? extends LogicalOperator>> implementationsOfLogicalOperator() {
-        return new Reflections("fr.awildelephant.rdbms.execution")
+        return new Reflections("fr.awildelephant.rdbms.operator.logical")
                 .getSubTypesOf(LogicalOperator.class)
                 .stream()
                 .sorted(comparing(Class::getSimpleName))
