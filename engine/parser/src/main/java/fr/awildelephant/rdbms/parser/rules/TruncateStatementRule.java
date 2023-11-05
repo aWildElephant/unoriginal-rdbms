@@ -7,7 +7,7 @@ import fr.awildelephant.rdbms.lexer.Lexer;
 import static fr.awildelephant.rdbms.ast.Truncate.truncate;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TRUNCATE;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
+import static fr.awildelephant.rdbms.parser.rules.TableNameOrFunctionRule.deriveTableName;
 
 final class TruncateStatementRule {
 

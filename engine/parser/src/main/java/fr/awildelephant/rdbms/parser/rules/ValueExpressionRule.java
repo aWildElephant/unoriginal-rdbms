@@ -298,7 +298,7 @@ final class ValueExpressionRule {
         return integerLiteral(((IntegerLiteralToken) token).value());
     }
 
-    private static AST deriveTextLiteral(final Lexer lexer) {
+    static AST deriveTextLiteral(final Lexer lexer) {
         final Token token = lexer.consumeNextToken();
 
         return textLiteral(((TextLiteralToken) token).content());

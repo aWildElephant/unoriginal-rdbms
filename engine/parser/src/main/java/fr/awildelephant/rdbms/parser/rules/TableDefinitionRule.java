@@ -23,7 +23,7 @@ import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
 import static fr.awildelephant.rdbms.parser.rules.TableContentsSourceRule.deriveTableContentsSourceRule;
-import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
+import static fr.awildelephant.rdbms.parser.rules.TableNameOrFunctionRule.deriveTableName;
 
 final class TableDefinitionRule {
 

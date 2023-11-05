@@ -26,7 +26,7 @@ import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
-import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
+import static fr.awildelephant.rdbms.parser.rules.TableNameOrFunctionRule.deriveTableNameOrFunction;
 import static fr.awildelephant.rdbms.parser.rules.TableValueConstructorRule.deriveTableValueConstructorRule;
 
 final class TableReferenceRule {
@@ -69,7 +69,7 @@ final class TableReferenceRule {
         } else if (nextTokenIs(VALUES, lexer)) {
             tablePrimary = deriveTableValueConstructorRule(lexer);
         } else {
-            tablePrimary = deriveTableName(lexer);
+            tablePrimary = deriveTableNameOrFunction(lexer);
         }
 
         consumeIfNextTokenIs(AS, lexer);

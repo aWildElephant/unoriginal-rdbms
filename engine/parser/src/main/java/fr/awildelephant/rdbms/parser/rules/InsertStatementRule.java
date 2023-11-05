@@ -9,7 +9,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INSERT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
-import static fr.awildelephant.rdbms.parser.rules.TableNameRule.deriveTableName;
+import static fr.awildelephant.rdbms.parser.rules.TableNameOrFunctionRule.deriveTableName;
 
 final class InsertStatementRule {
 
