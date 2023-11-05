@@ -11,11 +11,16 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.With.with;
 import static fr.awildelephant.rdbms.ast.WithElement.withElement;
 import static fr.awildelephant.rdbms.ast.WithList.withList;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.*;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
-import static fr.awildelephant.rdbms.parser.rules.ExplicitTableRule.deriveExplicitTableRule;
-import static fr.awildelephant.rdbms.parser.rules.ParseHelper.*;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
+import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QuerySpecificationRule.deriveQuerySpecificationRule;
+import static fr.awildelephant.rdbms.parser.rules.TableExpressionRule.deriveExplicitTableRule;
 import static fr.awildelephant.rdbms.parser.rules.TableValueConstructorRule.deriveTableValueConstructorRule;
 
 final class QueryExpressionRule {

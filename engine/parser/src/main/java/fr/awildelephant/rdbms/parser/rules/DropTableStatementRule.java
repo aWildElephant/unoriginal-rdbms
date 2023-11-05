@@ -7,7 +7,7 @@ import static fr.awildelephant.rdbms.ast.DropTable.dropTable;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
-import static fr.awildelephant.rdbms.parser.rules.TableNameOrFunctionRule.deriveTableName;
+import static fr.awildelephant.rdbms.parser.rules.TableExpressionRule.deriveTableName;
 
 final class DropTableStatementRule {
 

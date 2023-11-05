@@ -9,15 +9,15 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Function.function;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ValueExpressionRule.deriveTextLiteral;
 
-// TODO: find a better name
-final class TableNameOrFunctionRule {
+final class TableExpressionRule {
 
-    private TableNameOrFunctionRule() {
+    private TableExpressionRule() {
 
     }
 
@@ -39,5 +39,11 @@ final class TableNameOrFunctionRule {
         }
 
         return tableName(identifier);
+    }
+
+    static AST deriveExplicitTableRule(final Lexer lexer) {
+        consumeAndExpect(TABLE, lexer);
+
+        return deriveTableName(lexer);
     }
 }
