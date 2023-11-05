@@ -35,10 +35,10 @@ import java.util.UUID;
 import static fr.awildelephant.rdbms.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.arithmetic.EqualExpression.equalExpression;
 import static fr.awildelephant.rdbms.arithmetic.Variable.variable;
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterCollapser.collapseFilters;
 import static fr.awildelephant.rdbms.engine.optimizer.util.AttributesFunction.attributes;
 import static fr.awildelephant.rdbms.engine.optimizer.util.FreeVariablesFunction.freeVariables;
 import static fr.awildelephant.rdbms.engine.optimizer.util.SetHelper.intersection;
-import static fr.awildelephant.rdbms.execution.filter.FilterCollapser.collapseFilters;
 
 /**
  * Decorrelate subqueries using the method described in "Unnesting Arbitrary Queries" by Thomas Neumann and Alfons Kemper.

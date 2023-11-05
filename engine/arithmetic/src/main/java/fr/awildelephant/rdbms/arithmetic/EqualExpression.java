@@ -4,8 +4,6 @@ import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.function.Function;
 
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
-
 public final class EqualExpression extends BinaryExpression {
 
     private EqualExpression(ValueExpression left, ValueExpression right) {
@@ -18,7 +16,7 @@ public final class EqualExpression extends BinaryExpression {
 
     @Override
     public Domain domain() {
-        return BOOLEAN;
+        return Domain.BOOLEAN;
     }
 
     @Override

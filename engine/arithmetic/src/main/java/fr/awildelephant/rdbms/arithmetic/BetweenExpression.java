@@ -6,39 +6,38 @@ import fr.awildelephant.rdbms.tree.TernaryNode;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
-import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
-public final class SubstringExpression extends TernaryNode<ValueExpression, ValueExpression, ValueExpression, ValueExpression>
+public final class BetweenExpression extends TernaryNode<ValueExpression, ValueExpression, ValueExpression, ValueExpression>
         implements ValueExpression {
 
-    private SubstringExpression(ValueExpression input, ValueExpression start, ValueExpression length) {
-        super(input, start, length);
+    private BetweenExpression(ValueExpression value, ValueExpression lowerBound, ValueExpression upperBound) {
+        super(value, lowerBound, upperBound);
     }
 
-    public static SubstringExpression substringExpression(ValueExpression input, ValueExpression start, ValueExpression length) {
-        return new SubstringExpression(input, start, length);
+    public static BetweenExpression betweenExpression(ValueExpression value, ValueExpression lowerBound, ValueExpression upperBound) {
+        return new BetweenExpression(value, lowerBound, upperBound);
     }
 
-    public ValueExpression input() {
+    public ValueExpression value() {
         return firstChild();
     }
 
-    public ValueExpression start() {
+    public ValueExpression lowerBound() {
         return secondChild();
     }
 
-    public ValueExpression length() {
+    public ValueExpression upperBound() {
         return thirdChild();
     }
 
     @Override
     public Domain domain() {
-        return TEXT;
+        return Domain.BOOLEAN;
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new SubstringExpression(transformer.apply(firstChild()),
+        return new BetweenExpression(transformer.apply(firstChild()),
                 transformer.apply(secondChild()),
                 transformer.apply(thirdChild()));
     }
@@ -51,15 +50,15 @@ public final class SubstringExpression extends TernaryNode<ValueExpression, Valu
     @Override
     public String toString() {
         return toStringBuilder(this)
-                .append("input", firstChild())
-                .append("start", secondChild())
-                .append("length", thirdChild())
+                .append("value", firstChild())
+                .append("lowerBound", secondChild())
+                .append("upperBound", thirdChild())
                 .toString();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof final SubstringExpression other)) {
+        if (!(obj instanceof final BetweenExpression other)) {
             return false;
         }
 

@@ -36,12 +36,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.arithmetic.OrExpressionFactorizer.factorizeOrExpression;
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.engine.optimizer.optimization.ConstantEvaluator.isConstant;
 import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.innerJoinOutputSchema;
-import static fr.awildelephant.rdbms.execution.filter.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.execution.filter.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static java.util.stream.Collectors.toList;
 

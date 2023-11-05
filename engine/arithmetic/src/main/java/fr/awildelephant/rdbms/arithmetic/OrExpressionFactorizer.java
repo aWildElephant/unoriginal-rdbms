@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import static fr.awildelephant.rdbms.arithmetic.OrExpression.orExpression;
-import static fr.awildelephant.rdbms.execution.filter.FilterCollapser.collapseFilters;
-import static fr.awildelephant.rdbms.execution.filter.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterCollapser.collapseFilters;
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterExpander.expandFilters;
 
 public final class OrExpressionFactorizer extends DefaultValueExpressionVisitor<ValueExpression> {
 

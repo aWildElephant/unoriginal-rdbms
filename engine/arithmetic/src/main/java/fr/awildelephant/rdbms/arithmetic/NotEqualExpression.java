@@ -4,26 +4,24 @@ import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.function.Function;
 
-import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
+public final class NotEqualExpression extends BinaryExpression {
 
-public final class DivideExpression extends BinaryExpression {
-
-    private DivideExpression(ValueExpression left, ValueExpression right) {
+    private NotEqualExpression(ValueExpression left, ValueExpression right) {
         super(left, right);
     }
 
-    public static DivideExpression divideExpression(ValueExpression left, ValueExpression right) {
-        return new DivideExpression(left, right);
+    public static NotEqualExpression notEqualExpression(ValueExpression left, ValueExpression right) {
+        return new NotEqualExpression(left, right);
     }
 
     @Override
     public Domain domain() {
-        return DECIMAL;
+        return Domain.BOOLEAN;
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new DivideExpression(transformer.apply(leftChild()), transformer.apply(rightChild()));
+        return new NotEqualExpression(transformer.apply(leftChild()), transformer.apply(rightChild()));
     }
 
     @Override
@@ -33,7 +31,7 @@ public final class DivideExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof final DivideExpression other)) {
+        if (!(obj instanceof final NotEqualExpression other)) {
             return false;
         }
 

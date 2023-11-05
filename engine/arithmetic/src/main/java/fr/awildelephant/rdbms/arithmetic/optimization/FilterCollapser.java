@@ -1,4 +1,4 @@
-package fr.awildelephant.rdbms.execution.filter;
+package fr.awildelephant.rdbms.arithmetic.optimization;
 
 import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 

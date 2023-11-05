@@ -4,26 +4,24 @@ import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.function.Function;
 
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
+public final class LessOrEqualExpression extends BinaryExpression {
 
-public final class NotEqualExpression extends BinaryExpression {
-
-    private NotEqualExpression(ValueExpression left, ValueExpression right) {
+    private LessOrEqualExpression(ValueExpression left, ValueExpression right) {
         super(left, right);
     }
 
-    public static NotEqualExpression notEqualExpression(ValueExpression left, ValueExpression right) {
-        return new NotEqualExpression(left, right);
+    public static LessOrEqualExpression lessOrEqualExpression(ValueExpression left, ValueExpression right) {
+        return new LessOrEqualExpression(left, right);
     }
 
     @Override
     public Domain domain() {
-        return BOOLEAN;
+        return Domain.BOOLEAN;
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new NotEqualExpression(transformer.apply(leftChild()), transformer.apply(rightChild()));
+        return new LessOrEqualExpression(transformer.apply(leftChild()), transformer.apply(rightChild()));
     }
 
     @Override
@@ -33,7 +31,7 @@ public final class NotEqualExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof final NotEqualExpression other)) {
+        if (!(obj instanceof final LessOrEqualExpression other)) {
             return false;
         }
 

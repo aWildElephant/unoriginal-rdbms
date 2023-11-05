@@ -5,7 +5,6 @@ import fr.awildelephant.rdbms.schema.Domain;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
 public final class LikeExpression extends BinaryExpression {
 
@@ -27,7 +26,7 @@ public final class LikeExpression extends BinaryExpression {
 
     @Override
     public Domain domain() {
-        return BOOLEAN;
+        return Domain.BOOLEAN;
     }
 
     @Override

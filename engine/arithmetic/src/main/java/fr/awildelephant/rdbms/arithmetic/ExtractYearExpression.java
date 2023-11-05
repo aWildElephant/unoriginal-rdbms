@@ -6,32 +6,26 @@ import fr.awildelephant.rdbms.tree.UnaryNode;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
-public final class NotExpression extends UnaryNode<ValueExpression, ValueExpression>
+public final class ExtractYearExpression extends UnaryNode<ValueExpression, ValueExpression>
         implements ValueExpression {
 
-    private NotExpression(ValueExpression child) {
+    private ExtractYearExpression(ValueExpression child) {
         super(child);
     }
 
-    public static NotExpression notExpression(ValueExpression child) {
-        return new NotExpression(child);
+    public static ExtractYearExpression extractYearExpression(ValueExpression child) {
+        return new ExtractYearExpression(child);
     }
 
     @Override
     public Domain domain() {
-        return BOOLEAN;
+        return Domain.INTEGER;
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new NotExpression(transformer.apply(child()));
-    }
-
-    @Override
-    public <T> T accept(ValueExpressionVisitor<T> visitor) {
-        return visitor.visit(this);
+        return new ExtractYearExpression(transformer.apply(child()));
     }
 
     @Override
@@ -42,8 +36,13 @@ public final class NotExpression extends UnaryNode<ValueExpression, ValueExpress
     }
 
     @Override
+    public <T> T accept(ValueExpressionVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof final NotExpression other)) {
+        if (!(obj instanceof final ExtractYearExpression other)) {
             return false;
         }
 

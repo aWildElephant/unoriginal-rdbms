@@ -19,6 +19,7 @@
 
     <modules>
         <module>algebraizer</module>
+        <module>arithmetic</module>
         <module>ast</module>
         <module>database</module>
         <module>explain</module>
@@ -41,6 +42,11 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-algebraizer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-arithmetic</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

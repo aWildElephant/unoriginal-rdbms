@@ -24,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.innerJoinOutputSchema;
-import static fr.awildelephant.rdbms.execution.filter.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;

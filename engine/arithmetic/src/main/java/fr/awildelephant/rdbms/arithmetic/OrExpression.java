@@ -4,26 +4,24 @@ import fr.awildelephant.rdbms.schema.Domain;
 
 import java.util.function.Function;
 
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
+public final class OrExpression extends BinaryExpression {
 
-public final class GreaterExpression extends BinaryExpression {
-
-    private GreaterExpression(ValueExpression left, ValueExpression right) {
+    private OrExpression(ValueExpression left, ValueExpression right) {
         super(left, right);
     }
 
-    public static GreaterExpression greaterExpression(ValueExpression left, ValueExpression right) {
-        return new GreaterExpression(left, right);
+    public static OrExpression orExpression(ValueExpression left, ValueExpression right) {
+        return new OrExpression(left, right);
     }
 
     @Override
     public Domain domain() {
-        return BOOLEAN;
+        return Domain.BOOLEAN;
     }
 
     @Override
     public ValueExpression transformInputs(Function<ValueExpression, ValueExpression> transformer) {
-        return new GreaterExpression(transformer.apply(leftChild()), transformer.apply(rightChild()));
+        return new OrExpression(transformer.apply(leftChild()), transformer.apply(rightChild()));
     }
 
     @Override
@@ -33,7 +31,7 @@ public final class GreaterExpression extends BinaryExpression {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof final GreaterExpression other)) {
+        if (!(obj instanceof final OrExpression other)) {
             return false;
         }
 

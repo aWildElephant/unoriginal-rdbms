@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.innerJoinOutputSchema;
-import static fr.awildelephant.rdbms.execution.filter.FilterExpander.expandFilters;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 
 public class InnerJoinOperator implements Operator {

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static fr.awildelephant.rdbms.arithmetic.AndExpression.andExpression;
 import static fr.awildelephant.rdbms.arithmetic.EqualExpression.equalExpression;
 import static fr.awildelephant.rdbms.arithmetic.Variable.variable;
-import static fr.awildelephant.rdbms.execution.filter.FilterExpander.expandFilters;
+import static fr.awildelephant.rdbms.arithmetic.optimization.FilterExpander.expandFilters;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class FilterExpanderTest {

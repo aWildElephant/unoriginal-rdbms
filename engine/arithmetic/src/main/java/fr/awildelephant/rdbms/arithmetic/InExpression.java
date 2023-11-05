@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuilder;
-import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
 public final class InExpression implements ValueExpression {
 
@@ -35,7 +34,7 @@ public final class InExpression implements ValueExpression {
 
     @Override
     public Domain domain() {
-        return BOOLEAN;
+        return Domain.BOOLEAN;
     }
 
     @Override
