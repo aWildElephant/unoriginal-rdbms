@@ -36,7 +36,6 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 - Fix TODOs
 - Implement UPDATE
 - Implement DELETE
-- Implement TRUNCATE
 - Implement explain analyze to debug latency including parsing/optimizing
 - Implement prepared update
 - Improve error message when a feature test fail
