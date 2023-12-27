@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.Explain;
+import fr.awildelephant.rdbms.ast.FunctionCall;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
 import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.InnerJoin;
@@ -121,6 +122,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Explain explain);
 
     T visit(ExtractYear extractYear);
+
+    T visit(FunctionCall functionCall);
 
     T visit(Greater greater);
 

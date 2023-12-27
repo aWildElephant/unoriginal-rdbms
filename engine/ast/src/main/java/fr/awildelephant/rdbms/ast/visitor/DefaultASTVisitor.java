@@ -11,6 +11,7 @@ import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.Explain;
+import fr.awildelephant.rdbms.ast.FunctionCall;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
 import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.InnerJoin;
@@ -180,6 +181,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(ExtractYear extractYear) {
         return defaultVisit(extractYear);
+    }
+
+    @Override
+    public T visit(FunctionCall functionCall) {
+        return defaultVisit(functionCall);
     }
 
     @Override
