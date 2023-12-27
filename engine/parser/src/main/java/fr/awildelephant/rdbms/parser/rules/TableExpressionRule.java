@@ -7,7 +7,7 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import java.util.List;
 
-import static fr.awildelephant.rdbms.ast.Function.function;
+import static fr.awildelephant.rdbms.ast.FunctionCall.functionCall;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -35,7 +35,7 @@ final class TableExpressionRule {
 
             consumeAndExpect(TokenType.RIGHT_PAREN, lexer);
 
-            return function(identifier, List.of(singleParameter));
+            return functionCall(identifier, List.of(singleParameter));
         }
 
         return tableName(identifier);
