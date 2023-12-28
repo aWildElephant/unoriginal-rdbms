@@ -22,6 +22,7 @@ public enum TokenType {
     DAY,
     DECIMAL,
     DECIMAL_LITERAL,
+    DELETE,
     DESC,
     DISTINCT,
     DROP,

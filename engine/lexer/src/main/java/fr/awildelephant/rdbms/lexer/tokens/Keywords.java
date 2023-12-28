@@ -18,6 +18,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CSV;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DAY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DELETE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DESC;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DROP;
@@ -270,6 +271,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return DECIMAL;
+        }
+    },
+    DELETE_TOKEN {
+        @Override
+        public String text() {
+            return "delete";
+        }
+
+        @Override
+        public TokenType type() {
+            return DELETE;
         }
     },
     DESC_TOKEN {
