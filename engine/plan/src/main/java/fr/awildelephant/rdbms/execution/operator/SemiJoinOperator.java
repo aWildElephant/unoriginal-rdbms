@@ -156,6 +156,6 @@ public class SemiJoinOperator implements Operator {
         if (variables.isEmpty()) {
             throw new IllegalStateException();
         }
-        return variables.get(0);
+        return variables.getFirst();
     }
 }

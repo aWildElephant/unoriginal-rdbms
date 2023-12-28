@@ -30,7 +30,7 @@ public final class TableConstructorLop extends AbstractLop {
 
         final ArrayList<ColumnMetadata> columns = new ArrayList<>();
 
-        final List<ValueExpression> firstRow = matrix.get(0);
+        final List<ValueExpression> firstRow = matrix.getFirst();
 
         final List<Domain> columnTypes = determineColumnTypes(matrix);
 
@@ -45,7 +45,7 @@ public final class TableConstructorLop extends AbstractLop {
     }
 
     private static List<Domain> determineColumnTypes(List<List<ValueExpression>> matrix) {
-        final List<ValueExpression> firstRow = matrix.get(0);
+        final List<ValueExpression> firstRow = matrix.getFirst();
         final List<Domain> columnTypes = new ArrayList<>(firstRow.size());
 
         for (ValueExpression cell : firstRow) {
@@ -83,7 +83,7 @@ public final class TableConstructorLop extends AbstractLop {
             throw new UnsupportedOperationException("Empty table constructor");
         }
 
-        final int numberOfColumns = matrix.get(0).size();
+        final int numberOfColumns = matrix.getFirst().size();
 
         for (int i = 1; i < matrix.size(); i++) {
             if (matrix.get(i).size() != numberOfColumns) {

@@ -15,7 +15,7 @@ public final class FirstColumnNameResolver extends DefaultASTVisitor<String> {
 
     @Override
     public String visit(Select select) {
-        return columnNameResolver.apply(select.outputColumns().get(0));
+        return columnNameResolver.apply(select.outputColumns().getFirst());
     }
 
     @Override

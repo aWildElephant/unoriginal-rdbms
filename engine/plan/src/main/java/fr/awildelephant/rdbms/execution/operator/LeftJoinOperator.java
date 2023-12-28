@@ -136,7 +136,7 @@ public class LeftJoinOperator implements Operator {
         if (variables.isEmpty()) {
             throw new IllegalStateException();
         }
-        return variables.get(0);
+        return variables.getFirst();
     }
 
     private JoinMatcher createNestedLoopJoinMatcher(Table rightTable, Formula joinSpecification) {

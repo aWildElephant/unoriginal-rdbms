@@ -162,7 +162,7 @@ public class StepDefs implements En {
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
-        final List<String> expectedColumnNames = expected.get(0);
+        final List<String> expectedColumnNames = expected.getFirst();
         final List<String> expectedColumnTypes = expected.get(1);
         final List<List<String>> rows = expected.subList(2, expected.size());
 

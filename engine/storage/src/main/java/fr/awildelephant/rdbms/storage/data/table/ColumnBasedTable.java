@@ -13,7 +13,7 @@ public record ColumnBasedTable(Schema schema, List<Column> columns) implements T
 
     @Override
     public int numberOfTuples() {
-        return columns.get(0).size();
+        return columns.getFirst().size();
     }
 
     @Override

@@ -55,7 +55,7 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
 
         inputs.removeAll(inputsToJoin);
 
-        final LogicalOperator leftInput = apply(inputsToJoin.get(0));
+        final LogicalOperator leftInput = apply(inputsToJoin.getFirst());
         final LogicalOperator rightInput = cartesianProducts(listExcludingFirstElement(inputsToJoin));
         final LogicalOperator leftmostInput = new InnerJoinLop(leftInput, rightInput, filter,
                 joinOutputSchema(leftInput.schema(),
@@ -78,7 +78,7 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
         final Optional<ValueExpression> applicableFilter = getAnyApplicableFilter(remainingFilters, leftmostInput);
 
         if (applicableFilter.isEmpty()) {
-            final LogicalOperator right = remainingInputs.get(0);
+            final LogicalOperator right = remainingInputs.getFirst();
             final Schema joinOutputSchema = joinOutputSchema(leftmostInput.schema(), right.schema());
             final CartesianProductLop join = new CartesianProductLop(leftmostInput, right, joinOutputSchema);
 
@@ -134,7 +134,7 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
     }
 
     private LogicalOperator cartesianProducts(List<LogicalOperator> inputs) {
-        LogicalOperator output = apply(inputs.get(0));
+        LogicalOperator output = apply(inputs.getFirst());
 
         for (int i = 1; i < inputs.size(); i++) {
             final LogicalOperator right = inputs.get(i);

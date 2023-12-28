@@ -46,7 +46,7 @@ public record ColumnBasedWriteableTable(Schema schema, List<AppendableColumn> co
 
     @Override
     public int numberOfTuples() {
-        return columns.get(0).size();
+        return columns.getFirst().size();
     }
 
     @Override

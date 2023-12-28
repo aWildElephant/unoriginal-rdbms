@@ -41,6 +41,6 @@ public final class MultipleColumnsIteratorRecord implements Record {
     }
 
     public boolean validPosition(int position) {
-        return position < columns.get(0).size();
+        return position < columns.getFirst().size();
     }
 }
