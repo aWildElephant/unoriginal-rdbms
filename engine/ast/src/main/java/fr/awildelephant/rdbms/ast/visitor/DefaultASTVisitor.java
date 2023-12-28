@@ -184,11 +184,6 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     }
 
     @Override
-    public T visit(ReadCSV ReadCSV) {
-        return defaultVisit(ReadCSV);
-    }
-
-    @Override
     public T visit(Greater greater) {
         return defaultVisit(greater);
     }
@@ -316,6 +311,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(QualifiedColumnName qualifiedColumnReference) {
         return defaultVisit(qualifiedColumnReference);
+    }
+
+    @Override
+    public T visit(ReadCSV readCSV) {
+        return defaultVisit(readCSV);
     }
 
     @Override

@@ -34,6 +34,8 @@ public interface LopVisitor<T> extends Function<LogicalOperator, T> {
 
     T visit(ProjectionLop projection);
 
+    T visit(ReadCSVLop readCSV);
+
     T visit(ScalarSubqueryLop scalarSubquery);
 
     T visit(SemiJoinLop semiJoin);

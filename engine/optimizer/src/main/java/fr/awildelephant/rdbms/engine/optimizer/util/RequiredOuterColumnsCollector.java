@@ -14,6 +14,7 @@ import fr.awildelephant.rdbms.operator.logical.LimitLop;
 import fr.awildelephant.rdbms.operator.logical.LopVisitor;
 import fr.awildelephant.rdbms.operator.logical.MapLop;
 import fr.awildelephant.rdbms.operator.logical.ProjectionLop;
+import fr.awildelephant.rdbms.operator.logical.ReadCSVLop;
 import fr.awildelephant.rdbms.operator.logical.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.operator.logical.SemiJoinLop;
 import fr.awildelephant.rdbms.operator.logical.SortLop;
@@ -115,6 +116,11 @@ final class RequiredOuterColumnsCollector implements LopVisitor<Stream<ColumnRef
         return StreamHelper.concat(apply(dependentSemiJoin.left()),
                                    apply(dependentSemiJoin.right()),
                                    outerQueryVariableExtractor.apply(dependentSemiJoin.predicate()));
+    }
+
+    @Override
+    public Stream<ColumnReference> visit(ReadCSVLop readCSV) {
+        return Stream.of();
     }
 
     @Override

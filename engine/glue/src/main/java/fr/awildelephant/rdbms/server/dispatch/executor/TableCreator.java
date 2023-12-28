@@ -1,7 +1,6 @@
 package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
-import fr.awildelephant.rdbms.ast.ColumnType;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.constraints.NotNullConstraint;
@@ -21,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static fr.awildelephant.rdbms.algebraizer.ColumnUtils.domainOf;
 import static fr.awildelephant.rdbms.storage.data.table.TableFactory.tableWithChecker;
 
 final class TableCreator {
@@ -94,16 +94,5 @@ final class TableCreator {
             notNullColumns.add(notNullConstraint.columnName());
         }
         return notNullColumns;
-    }
-
-    private static Domain domainOf(ColumnType columnType) {
-        return switch (columnType) {
-            case BOOLEAN -> Domain.BOOLEAN;
-            case BIGINT -> Domain.LONG;
-            case DATE -> Domain.DATE;
-            case DECIMAL -> Domain.DECIMAL;
-            case INTEGER -> Domain.INTEGER;
-            case TEXT -> Domain.TEXT;
-        };
     }
 }

@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.operator.logical.LimitLop;
 import fr.awildelephant.rdbms.operator.logical.LopVisitor;
 import fr.awildelephant.rdbms.operator.logical.MapLop;
 import fr.awildelephant.rdbms.operator.logical.ProjectionLop;
+import fr.awildelephant.rdbms.operator.logical.ReadCSVLop;
 import fr.awildelephant.rdbms.operator.logical.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.operator.logical.SemiJoinLop;
 import fr.awildelephant.rdbms.operator.logical.SortLop;
@@ -88,6 +89,11 @@ public final class ExplanationTreeBuilder implements LopVisitor<Tree<String>> {
     @Override
     public Tree<String> visit(ProjectionLop projection) {
         return node("Projection", apply(projection.input()));
+    }
+
+    @Override
+    public Tree<String> visit(ReadCSVLop readCSV) {
+        return leaf("Read CSV [" + readCSV.filePath() + ']');
     }
 
     @Override

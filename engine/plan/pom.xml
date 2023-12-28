@@ -21,5 +21,12 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-storage</artifactId>
         </dependency>
+
+        <!-- required for loading CSV in ReadCSVOperator -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.6</version>
+        </dependency>
     </dependencies>
 </project>

@@ -17,6 +17,7 @@ import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 import fr.awildelephant.rdbms.operator.logical.LopVisitor;
 import fr.awildelephant.rdbms.operator.logical.MapLop;
 import fr.awildelephant.rdbms.operator.logical.ProjectionLop;
+import fr.awildelephant.rdbms.operator.logical.ReadCSVLop;
 import fr.awildelephant.rdbms.operator.logical.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.operator.logical.SemiJoinLop;
 import fr.awildelephant.rdbms.operator.logical.SortLop;
@@ -303,6 +304,17 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
                                         transformedRightInput,
                                         aliasedPredicate,
                                         aliasedSemiJoinOutputColumn);
+    }
+
+    @Override
+    public LogicalOperator visit(ReadCSVLop readCSV) {
+        if (aliasing.isEmpty()) {
+            return readCSV;
+        }
+
+        final Schema aliasedSchema = readCSV.schema().alias(reference -> aliasing.getOrDefault(reference, reference));
+
+        return new ReadCSVLop(readCSV.filePath(), aliasedSchema);
     }
 
     @Override

@@ -10,6 +10,7 @@ import fr.awildelephant.rdbms.ast.InnerJoin;
 import fr.awildelephant.rdbms.ast.LeftJoin;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.OrderingSpecification;
+import fr.awildelephant.rdbms.ast.ReadCSV;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
@@ -34,6 +35,7 @@ import fr.awildelephant.rdbms.operator.logical.LimitLop;
 import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 import fr.awildelephant.rdbms.operator.logical.MapLop;
 import fr.awildelephant.rdbms.operator.logical.ProjectionLop;
+import fr.awildelephant.rdbms.operator.logical.ReadCSVLop;
 import fr.awildelephant.rdbms.operator.logical.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.operator.logical.SortLop;
 import fr.awildelephant.rdbms.operator.logical.TableConstructorLop;
@@ -41,6 +43,7 @@ import fr.awildelephant.rdbms.operator.logical.aggregation.Aggregate;
 import fr.awildelephant.rdbms.operator.logical.alias.ColumnAlias;
 import fr.awildelephant.rdbms.operator.logical.alias.ColumnAliasBuilder;
 import fr.awildelephant.rdbms.operator.logical.sort.SortSpecification;
+import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.schema.UnqualifiedColumnReference;
@@ -50,6 +53,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
+import static fr.awildelephant.rdbms.algebraizer.ColumnUtils.domainOf;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.leftJoinOutputSchema;
@@ -149,7 +153,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                 plan = applySubqueryJoiners(plan, joiners);
             }
 
-            plan = createFilter(plan, filter.mapsAboveAggregates().get(0));
+            plan = createFilter(plan, filter.mapsAboveAggregates().getFirst());
 
             if (!joiners.isEmpty()) {
                 plan = new ProjectionLop(plan, filterInputSchema.columnNames());
@@ -326,6 +330,15 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
 
     private LogicalOperator createFilter(LogicalOperator input, AST filter) {
         return new FilterLop(input, createValueExpression(filter, input.schema(), outerQuerySchema));
+    }
+
+    @Override
+    public LogicalOperator visit(ReadCSV readCSV) {
+        final List<ColumnMetadata> columnMetadataList = readCSV.children().stream()
+                .map(columnDefinition -> new ColumnMetadata(new UnqualifiedColumnReference(columnDefinition.columnName()), domainOf(columnDefinition.columnType()), false, false))
+                .toList();
+        final Schema schema = Schema.of(columnMetadataList);
+        return new ReadCSVLop(readCSV.filePath(), schema);
     }
 
     @Override

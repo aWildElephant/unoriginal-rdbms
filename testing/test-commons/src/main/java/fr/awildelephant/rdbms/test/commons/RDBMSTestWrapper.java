@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -49,8 +50,8 @@ public class RDBMSTestWrapper {
         return lastException;
     }
 
-    public Statement getStatement() {
-        return lastStatement;
+    public ResultSet lastResultSet() throws SQLException {
+        return lastStatement.getResultSet();
     }
 
     private void reset() throws SQLException {
@@ -58,9 +59,5 @@ public class RDBMSTestWrapper {
             lastStatement.close();
             lastStatement = null;
         }
-    }
-
-    public Connection connection() {
-        return connection;
     }
 }

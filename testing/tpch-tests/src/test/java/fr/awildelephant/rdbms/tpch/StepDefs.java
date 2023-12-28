@@ -1,6 +1,5 @@
 package fr.awildelephant.rdbms.tpch;
 
-import fr.awildelephant.csvloader.Loader;
 import fr.awildelephant.rdbms.test.commons.ExpectedResult;
 import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
 import io.cucumber.datatable.DataTable;
@@ -12,12 +11,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,10 +61,9 @@ public class StepDefs implements En {
 
                 testWrapper.forwardExceptionIfPresent();
 
-                final File compressedCsvDataFile = Paths
-                        .get(tpchDataDirectory, String.valueOf(scaleFactor), tableName + ".tbl.gz").toFile();
+                testWrapper.execute(createInsertQuery(tableName, tpchDataDirectory, scaleFactor));
 
-                new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
+                //new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
             } else {
                 LOGGER.info("Table {} is already loaded", tableName);
             }
@@ -89,6 +88,51 @@ public class StepDefs implements En {
 
             assertResult(expectedResult);
         });
+    }
+
+    private String createInsertQuery(String tableName, String tpchDataDirectory, Integer scaleFactor) throws SQLException {
+        final String compressedCsvDataFile = Paths
+                .get(tpchDataDirectory, String.valueOf(scaleFactor), tableName + ".tbl.gz").toAbsolutePath().toString();
+
+        testWrapper.execute("SELECT * FROM " + tableName);
+
+        final ResultSetMetaData metaData = testWrapper.lastResultSet().getMetaData();
+
+        final StringBuilder queryBuilder = new StringBuilder("INSERT INTO ");
+        queryBuilder.append(tableName);
+        queryBuilder.append(" READ CSV '");
+        queryBuilder.append(compressedCsvDataFile);
+        queryBuilder.append("' (");
+
+        boolean needsComma = false;
+        final int columnCount = metaData.getColumnCount();
+        for (int i = 1; i <= columnCount; i++) {
+            if (needsComma) {
+                queryBuilder.append(", ");
+            }
+
+            queryBuilder.append(metaData.getColumnName(i));
+            queryBuilder.append(' ');
+            queryBuilder.append(typeLabel(metaData.getColumnType(i)));
+
+            needsComma = true;
+        }
+
+        queryBuilder.append(')');
+
+        return queryBuilder.toString();
+    }
+
+    private String typeLabel(int columnType) {
+        return switch (columnType) {
+            case Types.BOOLEAN -> "BOOLEAN";
+            case Types.BIGINT -> "BIGINT";
+            case Types.DATE -> "DATE";
+            case Types.DECIMAL -> "DECIMAL";
+            case Types.INTEGER -> "INTEGER";
+            case Types.VARCHAR, Types.NVARCHAR -> "TEXT";
+            default -> throw new IllegalStateException("Unsupported SQL type " + columnType);
+        };
     }
 
     private List<String> toList(CSVRecord record) {
@@ -117,7 +161,7 @@ public class StepDefs implements En {
     private void assertResult(List<List<String>> expectedResult) throws Exception {
         testWrapper.forwardExceptionIfPresent();
 
-        final ResultSet lastResult = testWrapper.getStatement().getResultSet();
+        final ResultSet lastResult = testWrapper.lastResultSet();
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 

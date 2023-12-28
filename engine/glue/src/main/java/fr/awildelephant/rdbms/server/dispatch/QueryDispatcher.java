@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Explain;
 import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.ast.Limit;
+import fr.awildelephant.rdbms.ast.ReadCSV;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.Truncate;
@@ -72,6 +73,6 @@ public final class QueryDispatcher {
     }
 
     private static boolean isGenericReadQuery(AST ast) {
-        return ast instanceof Distinct || ast instanceof Limit || ast instanceof Select || ast instanceof TableName || ast instanceof Values;
+        return ast instanceof Distinct || ast instanceof Limit || ast instanceof ReadCSV || ast instanceof Select || ast instanceof TableName || ast instanceof Values;
     }
 }

@@ -13,6 +13,7 @@ import fr.awildelephant.rdbms.execution.operator.ProjectionOperator;
 import fr.awildelephant.rdbms.execution.operator.SemiJoinOperator;
 import fr.awildelephant.rdbms.execution.operator.SortOperator;
 import fr.awildelephant.rdbms.execution.operator.TableConstructorOperator;
+import fr.awildelephant.rdbms.execution.operator.csv.ReadCSVOperator;
 import fr.awildelephant.rdbms.operator.logical.AggregationLop;
 import fr.awildelephant.rdbms.operator.logical.AliasLop;
 import fr.awildelephant.rdbms.operator.logical.BaseTableLop;
@@ -26,6 +27,7 @@ import fr.awildelephant.rdbms.operator.logical.LimitLop;
 import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
 import fr.awildelephant.rdbms.operator.logical.MapLop;
 import fr.awildelephant.rdbms.operator.logical.ProjectionLop;
+import fr.awildelephant.rdbms.operator.logical.ReadCSVLop;
 import fr.awildelephant.rdbms.operator.logical.ScalarSubqueryLop;
 import fr.awildelephant.rdbms.operator.logical.SemiJoinLop;
 import fr.awildelephant.rdbms.operator.logical.SortLop;
@@ -166,6 +168,15 @@ public class BasicPlanGenerator extends DefaultLopVisitor<String> implements Bui
         final String key = generateKey();
 
         steps.add(new PlanStep(key, Set.of(inputKey), new ProjectionOperator(inputKey, projection.schema())));
+
+        return key;
+    }
+
+    @Override
+    public String visit(ReadCSVLop readCSV) {
+        final String key = generateKey();
+
+        steps.add(new PlanStep(key, Set.of(), new ReadCSVOperator(readCSV.filePath(), readCSV.schema())));
 
         return key;
     }

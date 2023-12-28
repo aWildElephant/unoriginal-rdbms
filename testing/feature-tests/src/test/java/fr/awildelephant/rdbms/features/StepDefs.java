@@ -123,7 +123,7 @@ public class StepDefs implements En {
         Then("^I expect the plan$", (String expectedPlan) -> {
             testWrapper.forwardExceptionIfPresent();
 
-            final ResultSet lastResult = testWrapper.getStatement().getResultSet();
+            final ResultSet lastResult = testWrapper.lastResultSet();
 
             assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
@@ -158,7 +158,7 @@ public class StepDefs implements En {
     private void assertResult(List<List<String>> expected) throws Exception {
         testWrapper.forwardExceptionIfPresent();
 
-        final ResultSet lastResult = testWrapper.getStatement().getResultSet();
+        final ResultSet lastResult = testWrapper.lastResultSet();
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 

@@ -68,6 +68,11 @@ public abstract class DefaultLopVisitor<T> implements LopVisitor<T> {
     }
 
     @Override
+    public T visit(ReadCSVLop readCSV) {
+        return defaultVisit(readCSV);
+    }
+
+    @Override
     public T visit(SemiJoinLop semiJoin) {
         return defaultVisit(semiJoin);
     }

@@ -123,8 +123,6 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(ExtractYear extractYear);
 
-    T visit(ReadCSV CSVRead);
-
     T visit(Greater greater);
 
     T visit(GreaterOrEqual greaterOrEqual);
@@ -174,6 +172,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(Plus plus);
 
     T visit(QualifiedColumnName qualifiedColumnReference);
+
+    T visit(ReadCSV readCSV);
 
     T visit(Row row);
 
