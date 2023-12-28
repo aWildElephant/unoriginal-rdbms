@@ -11,7 +11,6 @@ import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.Explain;
-import fr.awildelephant.rdbms.ast.FunctionCall;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
 import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.InnerJoin;
@@ -19,6 +18,7 @@ import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.ast.LeftJoin;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.ReadCSV;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.SemiJoin;
@@ -123,7 +123,7 @@ public interface ASTVisitor<T> extends Function<AST, T> {
 
     T visit(ExtractYear extractYear);
 
-    T visit(FunctionCall functionCall);
+    T visit(ReadCSV CSVRead);
 
     T visit(Greater greater);
 

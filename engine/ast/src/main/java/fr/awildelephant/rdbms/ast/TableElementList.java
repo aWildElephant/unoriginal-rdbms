@@ -86,7 +86,11 @@ public final class TableElementList extends NAryNode<AST, ColumnDefinition> impl
         private final List<ForeignKeyConstraint> foreignKeyConstraints = new LinkedList<>();
 
         public Builder addColumn(String columnName, ColumnType columnType) {
-            columns.add(column(columnName, columnType));
+            return addColumn(column(columnName, columnType));
+        }
+
+        public Builder addColumn(ColumnDefinition column) {
+            columns.add(column);
 
             return this;
         }

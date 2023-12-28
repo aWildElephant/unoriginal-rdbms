@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.ColumnType;
 import fr.awildelephant.rdbms.ast.value.IntervalGranularity;
+import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.DecimalLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
@@ -298,7 +299,7 @@ final class ValueExpressionRule {
         return integerLiteral(((IntegerLiteralToken) token).value());
     }
 
-    static AST deriveTextLiteral(final Lexer lexer) {
+    static TextLiteral deriveTextLiteral(final Lexer lexer) {
         final Token token = lexer.consumeNextToken();
 
         return textLiteral(((TextLiteralToken) token).content());

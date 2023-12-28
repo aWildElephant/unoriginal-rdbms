@@ -18,6 +18,7 @@ import fr.awildelephant.rdbms.ast.InsertInto;
 import fr.awildelephant.rdbms.ast.LeftJoin;
 import fr.awildelephant.rdbms.ast.Limit;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
+import fr.awildelephant.rdbms.ast.ReadCSV;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.SemiJoin;
@@ -204,6 +205,11 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(CreateView createView) {
         return createView(createView.name(), createView.columnNames(), function.apply(createView.query()));
+    }
+
+    @Override
+    public AST visit(ReadCSV readCSV) {
+        return readCSV;
     }
 
     @Override

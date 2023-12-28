@@ -14,6 +14,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COUNT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CSV;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DAY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DECIMAL;
@@ -52,6 +53,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OUTER;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.READ;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.REFERENCES;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SUBSTRING;
@@ -224,6 +226,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return CREATE;
+        }
+    },
+    CSV_TOKEN {
+        @Override
+        public String text() {
+            return "csv";
+        }
+
+        @Override
+        public TokenType type() {
+            return CSV;
         }
     },
     DATE_TOKEN {
@@ -642,6 +655,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return OUTER;
+        }
+    },
+    READ_TOKEN {
+        @Override
+        public String text() {
+            return "read";
+        }
+
+        @Override
+        public TokenType type() {
+            return READ;
         }
     },
     REFERENCES_TOKEN {

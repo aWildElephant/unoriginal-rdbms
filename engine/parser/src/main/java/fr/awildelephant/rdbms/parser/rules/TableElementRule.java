@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.parser.rules;
 
+import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.ColumnType;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.lexer.Lexer;
@@ -8,6 +9,7 @@ import fr.awildelephant.rdbms.lexer.tokens.Token;
 import java.util.HashSet;
 import java.util.Set;
 
+import static fr.awildelephant.rdbms.ast.ColumnDefinition.column;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTEGER_LITERAL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
@@ -63,13 +65,22 @@ final class TableElementRule {
                 tableElementListBuilder.addUniqueConstraint(columns);
             }
             default -> {
-                final String columnName = consumeIdentifier(lexer);
-                final Token columnTypeToken = lexer.consumeNextToken();
-                final ColumnType columnType = columnType(columnTypeToken, lexer);
-                tableElementListBuilder.addColumn(columnName, columnType);
-                deriveColumnConstraintDefinitions(columnName, tableElementListBuilder, lexer);
+                final ColumnDefinition column = deriveColumnDefinition(lexer);
+                tableElementListBuilder.addColumn(column);
+                deriveColumnConstraintDefinitions(column.columnName(), tableElementListBuilder, lexer);
             }
         }
+    }
+
+    public static ColumnDefinition deriveColumnDefinition(final Lexer lexer) {
+        final String columnName = consumeIdentifier(lexer);
+        final ColumnType columnType = deriveColumnType(lexer);
+        return column(columnName, columnType);
+    }
+
+    private static ColumnType deriveColumnType(final Lexer lexer) {
+        final Token token = lexer.consumeNextToken();
+        return columnType(token, lexer);
     }
 
     private static ColumnType columnType(final Token columnTypeToken, final Lexer lexer) {

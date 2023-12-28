@@ -40,7 +40,7 @@ public final class StatementRule {
             case EXPLAIN -> deriveExplainStatement(lexer);
             case INSERT -> deriveInsertStatement(lexer);
             case TRUNCATE -> deriveTruncateStatement(lexer);
-            case SELECT, TABLE, VALUES, WITH -> deriveQueryExpression(lexer);
+            case READ, SELECT, TABLE, VALUES, WITH -> deriveQueryExpression(lexer);
             default -> throw unexpectedToken(token);
         };
     }
