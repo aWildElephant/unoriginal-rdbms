@@ -11,7 +11,7 @@ import fr.awildelephant.rdbms.storage.data.table.WriteableTable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SortOperator implements Operator {
+public final class SortOperator implements Operator {
 
     private final String inputKey;
     private final List<SortSpecification> sortSpecificationList;

@@ -5,7 +5,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.data.table.AliasedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 
-public class AliasOperator implements Operator {
+public final class AliasOperator implements Operator {
 
     private final String inputKey;
     private final Schema schema;

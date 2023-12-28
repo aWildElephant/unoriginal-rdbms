@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.storage.data.table.TableFactory.simpleTable;
 
-public class AggregationOperator implements Operator {
+public final class AggregationOperator implements Operator {
 
     private final String inputKey;
     private final List<Aggregate> aggregates;

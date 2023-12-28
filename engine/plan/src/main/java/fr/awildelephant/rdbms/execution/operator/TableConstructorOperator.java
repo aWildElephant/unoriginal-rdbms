@@ -16,7 +16,7 @@ import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 
-public class TableConstructorOperator implements Operator {
+public final class TableConstructorOperator implements Operator {
 
     private final List<List<ValueExpression>> matrix;
     private final Schema outputSchema;

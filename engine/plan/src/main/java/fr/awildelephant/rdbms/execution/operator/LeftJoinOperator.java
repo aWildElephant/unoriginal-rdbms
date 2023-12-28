@@ -25,7 +25,7 @@ import static fr.awildelephant.rdbms.arithmetic.optimization.FilterExpander.expa
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.innerJoinOutputSchema;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 
-public class LeftJoinOperator implements Operator {
+public final class LeftJoinOperator implements Operator {
 
     private final VariableCollector variableCollector = new VariableCollector();
 

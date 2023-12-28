@@ -41,7 +41,7 @@ import java.util.Set;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 
 // TODO: if a node appears twice in the LogicalOperator tree, ensure we only compute the PlanStep once
-public class BasicPlanGenerator extends DefaultLopVisitor<String> implements Builder<Plan> {
+public final class BasicPlanGenerator extends DefaultLopVisitor<String> implements Builder<Plan> {
 
     private final LogicalOperator logicalTree;
     private final List<PlanStep> steps;

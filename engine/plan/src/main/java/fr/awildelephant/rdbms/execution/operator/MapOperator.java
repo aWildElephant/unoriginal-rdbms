@@ -20,7 +20,7 @@ import java.util.List;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static java.util.stream.Collectors.toList;
 
-public class MapOperator implements Operator {
+public final class MapOperator implements Operator {
 
     private final String inputKey;
     private final List<ValueExpression> expressions;

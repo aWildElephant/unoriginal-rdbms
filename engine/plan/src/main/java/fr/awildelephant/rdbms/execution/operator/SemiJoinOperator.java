@@ -33,7 +33,7 @@ import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTr
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
-public class SemiJoinOperator implements Operator {
+public final class SemiJoinOperator implements Operator {
 
     private final VariableCollector variableCollector = new VariableCollector();
     private final String leftInputKey;

@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 import static fr.awildelephant.rdbms.storage.data.table.TableFactory.simpleTable;
 
-public class LimitOperator implements Operator {
+public final class LimitOperator implements Operator {
 
     private final String inputKey;
     private final int limit;

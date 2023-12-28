@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseTableOperator implements Operator {
+public final class BaseTableOperator implements Operator {
 
     private final String tableName;
     private final Version version;

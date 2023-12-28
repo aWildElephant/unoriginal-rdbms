@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class FreeTemporaryResultAsapPlanModifier implements PlanModifier {
+public final class FreeTemporaryResultAsapPlanModifier implements PlanModifier {
 
     @Override
     public Plan apply(Plan plan) {
@@ -25,7 +25,7 @@ public class FreeTemporaryResultAsapPlanModifier implements PlanModifier {
 
         final List<PlanStep> resultingSteps = new ArrayList<>();
 
-        resultingSteps.add(steps.get(steps.size() - 1));
+        resultingSteps.add(steps.getLast());
         for (int i = steps.size() - 2; i >= 0; i--) {
             final PlanStep step = steps.get(i);
 

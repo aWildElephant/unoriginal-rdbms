@@ -11,7 +11,7 @@ import fr.awildelephant.rdbms.storage.data.table.Table;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectionOperator implements Operator {
+public final class ProjectionOperator implements Operator {
 
     private final String inputKey;
     private final Schema outputSchema;
