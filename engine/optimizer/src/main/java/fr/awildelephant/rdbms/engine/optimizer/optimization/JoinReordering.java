@@ -49,7 +49,7 @@ public final class JoinReordering extends DefaultLopVisitor<LogicalOperator> {
             return cartesianProducts(inputs);
         }
 
-        final ValueExpression filter = filters.remove(filters.size() - 1);
+        final ValueExpression filter = filters.removeLast();
 
         final List<LogicalOperator> inputsToJoin = inputsToHaveAllColumns(inputs, filter);
 
