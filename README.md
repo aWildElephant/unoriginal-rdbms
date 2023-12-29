@@ -35,12 +35,10 @@ You need to set the `TPCH_DATA_DIRECTORY` environment variable, and place the gz
 
 - Fix TODOs
 - Implement UPDATE
-- Implement DELETE
 - Implement explain analyze to debug latency including parsing/optimizing
 - Implement prepared update
 - Improve error message when a feature test fail
 - Improve evaluation of formulas: filter and map nodes are a lot slower than they should be
-- Improve loading speed of the TPC-H scale factor 1 dataset (currently around 2 minute)
 
 ## F.A.Q.
 
