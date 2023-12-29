@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.server.dispatch;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.CreateView;
+import fr.awildelephant.rdbms.ast.Delete;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Explain;
@@ -17,6 +18,7 @@ import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.server.QueryContext;
 import fr.awildelephant.rdbms.server.dispatch.executor.CreateTableExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.CreateViewExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.DeleteExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.DropTableExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.ExplainExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.InsertIntoExecutor;
@@ -29,6 +31,7 @@ public final class QueryDispatcher {
 
     private final CreateTableExecutor createTableExecutor;
     private final CreateViewExecutor createViewExecutor;
+    private final DeleteExecutor deleteExecutor;
     private final DropTableExecutor dropTableExecutor;
     private final ExplainExecutor explainExecutor;
     private final InsertIntoExecutor insertIntoExecutor;
@@ -36,9 +39,14 @@ public final class QueryDispatcher {
     private final WithExecutor withExecutor;
     private final TruncateExecutor truncateExecutor;
 
-    public QueryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor, DropTableExecutor dropTableExecutor, ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor, ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor, TruncateExecutor truncateExecutor) {
+    public QueryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor,
+                           DeleteExecutor deleteExecutor, DropTableExecutor dropTableExecutor,
+                           ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor,
+                           ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor,
+                           TruncateExecutor truncateExecutor) {
         this.createTableExecutor = createTableExecutor;
         this.createViewExecutor = createViewExecutor;
+        this.deleteExecutor = deleteExecutor;
         this.dropTableExecutor = dropTableExecutor;
         this.explainExecutor = explainExecutor;
         this.insertIntoExecutor = insertIntoExecutor;
@@ -53,6 +61,9 @@ public final class QueryDispatcher {
             return null;
         } else if (ast instanceof final CreateView createView) {
             createViewExecutor.execute(createView, context);
+            return null;
+        } else if (ast instanceof final Delete delete) {
+            deleteExecutor.execute(delete, context);
             return null;
         } else if (ast instanceof final DropTable dropTable) {
             dropTableExecutor.execute(dropTable, context);

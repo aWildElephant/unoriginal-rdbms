@@ -98,7 +98,7 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         this.outerQuerySchema = outerQuerySchema;
     }
 
-    static ValueExpression createValueExpression(AST tree, Schema inputSchema, Schema outerQuerySchema) {
+    public static ValueExpression createValueExpression(AST tree, Schema inputSchema, Schema outerQuerySchema) {
         return new ASTToValueExpressionTransformer(inputSchema, outerQuerySchema).apply(tree);
     }
 

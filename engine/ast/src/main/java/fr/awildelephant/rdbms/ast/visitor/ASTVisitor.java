@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.CreateView;
+import fr.awildelephant.rdbms.ast.Delete;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Exists;
@@ -108,6 +109,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(CreateView createView);
 
     T visit(DecimalLiteral decimalLiteral);
+
+    T visit(Delete delete);
 
     T visit(Distinct distinct);
 

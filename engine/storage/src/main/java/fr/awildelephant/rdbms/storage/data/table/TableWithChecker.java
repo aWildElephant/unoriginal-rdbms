@@ -1,9 +1,11 @@
 package fr.awildelephant.rdbms.storage.data.table;
 
+import fr.awildelephant.rdbms.schema.ReservedKeywords;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.constraint.CompositeChecker;
 import fr.awildelephant.rdbms.storage.constraint.ConstraintChecker;
 import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
+import fr.awildelephant.rdbms.storage.data.column.WriteableColumn;
 import fr.awildelephant.rdbms.storage.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.storage.data.record.Record;
 
@@ -83,5 +85,15 @@ public class TableWithChecker implements ManagedTable {
     @Override
     public void addChecker(ConstraintChecker checker) {
         checkers.add(checker);
+    }
+
+    @Override
+    public WriteableColumn fromVersionColumn() {
+        return (WriteableColumn) columns().get(schema().indexOf(ReservedKeywords.FROM_VERSION_COLUMN));
+    }
+
+    @Override
+    public WriteableColumn toVersionColumn() {
+        return (WriteableColumn) columns().get(schema().indexOf(ReservedKeywords.TO_VERSION_COLUMN));
     }
 }

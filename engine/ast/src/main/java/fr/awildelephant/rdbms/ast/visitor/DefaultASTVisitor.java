@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.CreateView;
+import fr.awildelephant.rdbms.ast.Delete;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Exists;
@@ -146,6 +147,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(DecimalLiteral decimalLiteral) {
         return defaultVisit(decimalLiteral);
+    }
+
+    @Override
+    public T visit(Delete delete) {
+        return defaultVisit(delete);
     }
 
     @Override

@@ -7,6 +7,7 @@ import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.CreateView;
+import fr.awildelephant.rdbms.ast.Delete;
 import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.DropTable;
 import fr.awildelephant.rdbms.ast.Exists;
@@ -78,6 +79,7 @@ import java.util.stream.Collectors;
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.CreateView.createView;
+import static fr.awildelephant.rdbms.ast.Delete.delete;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.Exists.exists;
 import static fr.awildelephant.rdbms.ast.Explain.explain;
@@ -215,6 +217,11 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(DecimalLiteral decimalLiteral) {
         return decimalLiteral;
+    }
+
+    @Override
+    public AST visit(Delete delete) {
+        return delete(visit(delete.leftChild()), apply(delete.rightChild()));
     }
 
     @Override

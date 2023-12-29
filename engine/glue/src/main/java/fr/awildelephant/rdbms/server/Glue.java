@@ -15,6 +15,7 @@ import fr.awildelephant.rdbms.explain.LogicalPlanTableBuilder;
 import fr.awildelephant.rdbms.server.dispatch.QueryDispatcher;
 import fr.awildelephant.rdbms.server.dispatch.executor.CreateTableExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.CreateViewExecutor;
+import fr.awildelephant.rdbms.server.dispatch.executor.DeleteExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.DropTableExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.ExplainExecutor;
 import fr.awildelephant.rdbms.server.dispatch.executor.InsertIntoExecutor;
@@ -129,6 +130,11 @@ public final class Glue {
         }
 
         @Provides
+        DeleteExecutor deleteExecutor(Storage storage) {
+            return new DeleteExecutor(storage);
+        }
+
+        @Provides
         DropTableExecutor dropTableExecutor(Storage storage) {
             return new DropTableExecutor(storage);
         }
@@ -159,8 +165,13 @@ public final class Glue {
         }
 
         @Provides
-        QueryDispatcher queryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor, DropTableExecutor dropTableExecutor, ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor, ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor, TruncateExecutor truncateExecutor) {
-            return new QueryDispatcher(createTableExecutor, createViewExecutor, dropTableExecutor, explainExecutor, insertIntoExecutor, readQueryExecutor, withExecutor, truncateExecutor);
+        QueryDispatcher queryDispatcher(CreateTableExecutor createTableExecutor, CreateViewExecutor createViewExecutor,
+                                        DeleteExecutor deleteExecutor, DropTableExecutor dropTableExecutor,
+                                        ExplainExecutor explainExecutor, InsertIntoExecutor insertIntoExecutor,
+                                        ReadQueryExecutor readQueryExecutor, WithExecutor withExecutor,
+                                        TruncateExecutor truncateExecutor) {
+            return new QueryDispatcher(createTableExecutor, createViewExecutor, deleteExecutor, dropTableExecutor,
+                    explainExecutor, insertIntoExecutor, readQueryExecutor, withExecutor, truncateExecutor);
         }
 
         @Provides

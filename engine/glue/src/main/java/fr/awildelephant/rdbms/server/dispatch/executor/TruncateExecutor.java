@@ -3,7 +3,6 @@ package fr.awildelephant.rdbms.server.dispatch.executor;
 import fr.awildelephant.rdbms.ast.Truncate;
 import fr.awildelephant.rdbms.data.value.VersionValue;
 import fr.awildelephant.rdbms.database.Storage;
-import fr.awildelephant.rdbms.schema.ReservedKeywords;
 import fr.awildelephant.rdbms.server.QueryContext;
 import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.storage.data.column.WriteableColumn;
@@ -29,9 +28,8 @@ public final class TruncateExecutor {
         final PermanentVersion readVersion = context.temporaryVersion().databaseVersion();
         final ManagedTable table = storage.get(truncate.tableName().name(), readVersion);
 
-        final AppendableColumn fromVersionColumn = table.columns().get(table.schema().indexOf(ReservedKeywords.FROM_VERSION_COLUMN));
-        // FIXME: cast dégueulasse
-        final WriteableColumn toVersionColumn = (WriteableColumn) table.columns().get(table.schema().indexOf(ReservedKeywords.TO_VERSION_COLUMN));
+        final AppendableColumn fromVersionColumn = table.fromVersionColumn();
+        final WriteableColumn toVersionColumn = table.toVersionColumn();
 
         final VersionValue endVersion = versionValue(context.temporaryVersion());
 

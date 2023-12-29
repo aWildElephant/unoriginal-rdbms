@@ -13,8 +13,16 @@ public final class Delete extends BinaryNode<AST, TableName, AST> implements AST
         return new Delete(tableName, predicate);
     }
 
+    public String tableName() {
+        return leftChild().name();
+    }
+
+    public AST predicate() {
+        return rightChild();
+    }
+
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
-        return null;
+        return visitor.visit(this);
     }
 }

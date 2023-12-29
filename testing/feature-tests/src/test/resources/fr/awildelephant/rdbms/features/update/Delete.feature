@@ -11,7 +11,6 @@ Feature: Delete
       | 4       |
       | 5       |
 
-  @todo
   Scenario: I delete one row from a table
 
     When I execute the query
@@ -27,7 +26,6 @@ Feature: Delete
       | 4       |
       | 5       |
 
-  @todo
   Scenario: I delete several rows from a table
 
     When I execute the query
