@@ -37,7 +37,6 @@ public class StepDefs implements En {
     private static final String SCHEMA_PATH = "/schema/%s.sql";
 
     private static RDBMSTestWrapper testWrapper;
-    private static Set<String> createdTables;
     private static Set<String> loadedTables;
 
     public StepDefs() throws SQLException {
@@ -62,8 +61,6 @@ public class StepDefs implements En {
                 testWrapper.forwardExceptionIfPresent();
 
                 testWrapper.execute(createInsertQuery(tableName, tpchDataDirectory, scaleFactor));
-
-                //new Loader(testWrapper.connection()).load(compressedCsvDataFile, tableName);
             } else {
                 LOGGER.info("Table {} is already loaded", tableName);
             }
@@ -147,7 +144,7 @@ public class StepDefs implements En {
 
     private String createTableQuery(String tableName) {
         final InputStream stream = this.getClass()
-                                       .getResourceAsStream(String.format(SCHEMA_PATH, tableName));
+                .getResourceAsStream(String.format(SCHEMA_PATH, tableName));
 
         if (stream == null) {
             throw new NoSuchElementException("ResultProxy " + tableName + " is not a known TPC-H table");
