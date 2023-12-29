@@ -19,8 +19,6 @@ import java.util.function.Predicate;
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
-import static fr.awildelephant.rdbms.schema.ReservedKeywords.FROM_VERSION_COLUMN;
-import static fr.awildelephant.rdbms.schema.ReservedKeywords.TO_VERSION_COLUMN;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 
 public final class DeleteExecutor {
@@ -55,8 +53,9 @@ public final class DeleteExecutor {
     private Predicate<Record> buildPredicate(final AST ast, final Schema tableSchema, Version version) {
         final Formula formula = createFormula(createValueExpression(ast, tableSchema, EMPTY_SCHEMA), tableSchema);
 
-        final int fromVersionIndex = tableSchema.indexOf(FROM_VERSION_COLUMN);
-        final int toVersionIndex = tableSchema.indexOf(TO_VERSION_COLUMN);
+        final int numberOfAttributes = tableSchema.numberOfAttributes();
+        final int fromVersionIndex = numberOfAttributes - 2;
+        final int toVersionIndex = numberOfAttributes - 1;
 
         final RecordValues recordValues = new RecordValues();
         return record -> {

@@ -2,13 +2,14 @@ package fr.awildelephant.rdbms.execution.operator;
 
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
 import fr.awildelephant.rdbms.schema.ColumnReference;
-import fr.awildelephant.rdbms.schema.ReservedKeywords;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.bitmap.BitSetBackedBitmap;
 import fr.awildelephant.rdbms.storage.bitmap.Bitmap;
 import fr.awildelephant.rdbms.storage.data.column.Column;
+import fr.awildelephant.rdbms.storage.data.column.VersionColumn;
 import fr.awildelephant.rdbms.storage.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.storage.data.table.FilteredTable;
+import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.version.Version;
 import org.jetbrains.annotations.NotNull;
@@ -21,14 +22,14 @@ public final class BaseTableOperator implements Operator {
     private final String tableName;
     private final Version version;
 
-    public BaseTableOperator(String tableName, Version version) {
+    public BaseTableOperator(final String tableName, final Version version) {
         this.tableName = tableName;
         this.version = version;
     }
 
     @Override
-    public Table compute(TemporaryStorage storage) {
-        final Table inputTable = storage.get(tableName);
+    public Table compute(final TemporaryStorage storage) {
+        final ManagedTable inputTable = storage.getBaseTable(tableName);
 
         final Bitmap bitmap = buildTemporalBitmap(inputTable, version);
 
@@ -44,7 +45,7 @@ public final class BaseTableOperator implements Operator {
     }
 
     @NotNull
-    private static ColumnBasedTable removeSystemColumns(Table inputTable) {
+    private static ColumnBasedTable removeSystemColumns(final Table inputTable) {
         // FIXME: code duplicated with ProjectOperator
         final Schema inputSchema = inputTable.schema();
         final Schema outputSchema = inputSchema.removeSystemColumns();
@@ -58,17 +59,16 @@ public final class BaseTableOperator implements Operator {
         return new ColumnBasedTable(outputSchema, outputColumns);
     }
 
-    private static Bitmap buildTemporalBitmap(Table inputTable, Version version) {
+    private static Bitmap buildTemporalBitmap(final ManagedTable inputTable, final Version version) {
         final int inputSize = inputTable.numberOfTuples();
         final Bitmap bitmap = new BitSetBackedBitmap(inputSize);
 
-        final List<? extends Column> inputColumn = inputTable.columns();
-        final Column fromVersionColumn = inputColumn.get(inputTable.schema().indexOf(ReservedKeywords.FROM_VERSION_COLUMN));
-        final Column toVersionColumn = inputColumn.get(inputTable.schema().indexOf(ReservedKeywords.TO_VERSION_COLUMN));
+        final VersionColumn fromVersionColumn = inputTable.fromVersionColumn();
+        final VersionColumn toVersionColumn = inputTable.toVersionColumn();
 
         for (int i = 0; i < inputSize; i++) {
-            final Version fromVersion = fromVersionColumn.get(i).getVersion();
-            final Version toVersion = toVersionColumn.get(i).getVersion();
+            final Version fromVersion = fromVersionColumn.getGeneric(i);
+            final Version toVersion = toVersionColumn.getGeneric(i);
 
             if (!fromVersion.isAfter(version) && toVersion.isAfter(version)) {
                 bitmap.set(i);
