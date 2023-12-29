@@ -26,3 +26,17 @@ Feature: Delete
       | 3       |
       | 4       |
       | 5       |
+
+  @todo
+  Scenario: I delete several rows from a table
+
+    When I execute the query
+    """
+    DELETE FROM t1 WHERE c1 <= 3
+    """
+
+    Then table t1 should be
+      | c1      |
+      | INTEGER |
+      | 4       |
+      | 5       |
