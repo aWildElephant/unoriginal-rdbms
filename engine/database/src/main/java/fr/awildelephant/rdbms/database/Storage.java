@@ -10,7 +10,6 @@ import fr.awildelephant.rdbms.version.VersionedObject;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO: version storage
 public final class Storage {
 
     private final Map<String, VersionedObject<ManagedTable>> tables = new ConcurrentHashMap<>();
