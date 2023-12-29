@@ -25,15 +25,23 @@ public abstract class ObjectColumn<T> implements AppendableColumn {
         return transform(value);
     }
 
+    public T getGeneric(int index) {
+        return backingArray.get(index);
+    }
+
     protected abstract DomainValue transform(T value);
 
     @Override
-    public void add(DomainValue value) {
+    public void add(final DomainValue value) {
         if (value.isNull()) {
             backingArray.add(null);
         } else {
             backingArray.add(extract(value));
         }
+    }
+
+    public void addGeneric(final T value) {
+        backingArray.add(value);
     }
 
     protected abstract T extract(DomainValue value);

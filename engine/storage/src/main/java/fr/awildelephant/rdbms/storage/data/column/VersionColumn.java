@@ -7,22 +7,26 @@ import static fr.awildelephant.rdbms.data.value.VersionValue.versionValue;
 
 public final class VersionColumn extends ObjectColumn<Version> implements WriteableColumn {
 
-    public VersionColumn(int initialCapacity) {
+    public VersionColumn(final int initialCapacity) {
         super(initialCapacity);
     }
 
     @Override
-    public void set(int index, DomainValue value) {
+    public void set(final int index, final DomainValue value) {
         backingArray.set(index, extract(value));
     }
 
+    public void setGeneric(final int index, final Version value) {
+        backingArray.set(index, value);
+    }
+
     @Override
-    protected DomainValue transform(Version value) {
+    protected DomainValue transform(final Version value) {
         return versionValue(value);
     }
 
     @Override
-    protected Version extract(DomainValue value) {
+    protected Version extract(final DomainValue value) {
         return value.getVersion();
     }
 }

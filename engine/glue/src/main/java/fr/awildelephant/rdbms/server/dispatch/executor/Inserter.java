@@ -2,14 +2,12 @@ package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
+import fr.awildelephant.rdbms.storage.data.column.VersionColumn;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.version.EndOfTimesVersion;
 import fr.awildelephant.rdbms.version.TemporaryVersion;
 import fr.awildelephant.rdbms.version.Version;
-
-import static fr.awildelephant.rdbms.data.value.VersionValue.versionValue;
 
 final class Inserter {
 
@@ -32,19 +30,19 @@ final class Inserter {
     }
 
     private static void fillTemporalColumns(final TemporaryVersion version, final ManagedTable destination, final int insertedCount) {
-        final AppendableColumn fromColumn = destination.fromVersionColumn();
-        final AppendableColumn toColumn = destination.toVersionColumn();
+        final VersionColumn fromColumn = destination.fromVersionColumn();
+        final VersionColumn toColumn = destination.toVersionColumn();
 
         final int newNumberOfTuples = destination.numberOfTuples() + insertedCount;
         fromColumn.ensureCapacity(newNumberOfTuples);
         for (int i = 0; i < insertedCount; i++) {
-            fromColumn.add(versionValue(version));
+            fromColumn.addGeneric(version);
         }
 
         final Version endOfTimes = EndOfTimesVersion.getInstance();
         toColumn.ensureCapacity(newNumberOfTuples);
         for (int i = 0; i < insertedCount; i++) {
-            toColumn.add(versionValue(endOfTimes));
+            toColumn.addGeneric(endOfTimes);
         }
     }
 

@@ -2,13 +2,12 @@ package fr.awildelephant.rdbms.server.dispatch.executor;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Delete;
-import fr.awildelephant.rdbms.data.value.VersionValue;
 import fr.awildelephant.rdbms.database.Storage;
 import fr.awildelephant.rdbms.evaluator.Formula;
 import fr.awildelephant.rdbms.execution.operator.values.RecordValues;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.server.QueryContext;
-import fr.awildelephant.rdbms.storage.data.column.WriteableColumn;
+import fr.awildelephant.rdbms.storage.data.column.VersionColumn;
 import fr.awildelephant.rdbms.storage.data.record.Record;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.version.PermanentVersion;
@@ -19,7 +18,6 @@ import java.util.function.Predicate;
 
 import static fr.awildelephant.rdbms.algebraizer.ASTToValueExpressionTransformer.createValueExpression;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
-import static fr.awildelephant.rdbms.data.value.VersionValue.versionValue;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
 import static fr.awildelephant.rdbms.schema.ReservedKeywords.FROM_VERSION_COLUMN;
 import static fr.awildelephant.rdbms.schema.ReservedKeywords.TO_VERSION_COLUMN;
@@ -43,13 +41,11 @@ public final class DeleteExecutor {
 
         final Predicate<Record> predicate = buildPredicate(delete.predicate(), table.schema(), readVersion);
 
-        final VersionValue deletedRowVersion = versionValue(updateVersion);
-
-        final WriteableColumn toVersionColumn = table.toVersionColumn();
+        final VersionColumn toVersionColumn = table.toVersionColumn();
         int i = 0;
         for (Record record : table) {
             if (predicate.test(record)) {
-                toVersionColumn.set(i, deletedRowVersion);
+                toVersionColumn.setGeneric(i, updateVersion);
             }
 
             i++;

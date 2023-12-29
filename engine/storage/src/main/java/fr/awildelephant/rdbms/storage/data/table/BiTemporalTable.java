@@ -1,10 +1,10 @@
 package fr.awildelephant.rdbms.storage.data.table;
 
-import fr.awildelephant.rdbms.storage.data.column.WriteableColumn;
+import fr.awildelephant.rdbms.storage.data.column.VersionColumn;
 
 public interface BiTemporalTable {
 
-    WriteableColumn fromVersionColumn();
+    VersionColumn fromVersionColumn();
 
-    WriteableColumn toVersionColumn();
+    VersionColumn toVersionColumn();
 }
