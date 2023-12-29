@@ -20,7 +20,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIMIT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.SELECT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHERE;
-import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
+import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpression;
 import static fr.awildelephant.rdbms.parser.rules.FromClauseRule.deriveFromClauseRule;
 import static fr.awildelephant.rdbms.parser.rules.GroupingSpecificationRule.deriveGroupingSpecification;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
@@ -45,7 +45,7 @@ final class QuerySpecificationRule {
 
         final AST whereClause;
         if (consumeIfNextTokenIs(WHERE, lexer)) {
-            whereClause = deriveBooleanValueExpressionRule(lexer);
+            whereClause = deriveBooleanValueExpression(lexer);
         } else {
             whereClause = null;
         }
@@ -61,7 +61,7 @@ final class QuerySpecificationRule {
 
         final AST havingClause;
         if (consumeIfNextTokenIs(HAVING, lexer)) {
-            havingClause = deriveBooleanValueExpressionRule(lexer);
+            havingClause = deriveBooleanValueExpression(lexer);
         } else {
             havingClause = null;
         }

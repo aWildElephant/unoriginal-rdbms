@@ -20,7 +20,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OUTER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
-import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
+import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpression;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
@@ -42,7 +42,7 @@ final class TableReferenceRule {
                 consumeAndExpect(JOIN, lexer);
                 final AST innerJoinRightInput = deriveTableReferenceRule(lexer);
                 consumeAndExpect(ON, lexer);
-                final AST innerJoinSpecification = deriveBooleanValueExpressionRule(lexer);
+                final AST innerJoinSpecification = deriveBooleanValueExpression(lexer);
                 return innerJoin(leftInput, innerJoinRightInput, innerJoinSpecification);
             }
             case LEFT -> {
@@ -51,7 +51,7 @@ final class TableReferenceRule {
                 consumeAndExpect(JOIN, lexer);
                 final AST leftJoinRightInput = deriveTableReferenceRule(lexer);
                 consumeAndExpect(ON, lexer);
-                final AST leftJoinSpecification = deriveBooleanValueExpressionRule(lexer);
+                final AST leftJoinSpecification = deriveBooleanValueExpression(lexer);
                 return leftJoin(leftInput, leftJoinRightInput, leftJoinSpecification);
             }
             default -> {

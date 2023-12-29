@@ -52,7 +52,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.THEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WHEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
-import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpressionRule;
+import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpression;
 import static fr.awildelephant.rdbms.parser.rules.ColumnReferenceRule.deriveColumnReference;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
@@ -148,7 +148,7 @@ final class ValueExpressionRule {
             case CASE -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(WHEN, lexer);
-                final AST condition = deriveBooleanValueExpressionRule(lexer);
+                final AST condition = deriveBooleanValueExpression(lexer);
                 consumeAndExpect(THEN, lexer);
                 final AST thenExpression = deriveValueExpression(lexer);
                 consumeAndExpect(ELSE, lexer);
@@ -215,7 +215,7 @@ final class ValueExpressionRule {
                     return countStar();
                 }
                 final boolean distinct = consumeIfNextTokenIs(DISTINCT, lexer);
-                final AST input = deriveBooleanValueExpressionRule(lexer);
+                final AST input = deriveBooleanValueExpression(lexer);
                 consumeAndExpect(RIGHT_PAREN, lexer);
                 return count(distinct, input);
             }

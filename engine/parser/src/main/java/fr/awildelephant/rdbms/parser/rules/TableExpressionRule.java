@@ -15,7 +15,7 @@ final class TableExpressionRule {
 
     }
 
-    static TableName deriveTableName(Lexer lexer) {
+    static TableName deriveTableName(final Lexer lexer) {
         return tableName(consumeIdentifier(lexer));
     }
 

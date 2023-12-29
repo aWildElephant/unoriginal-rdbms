@@ -50,11 +50,11 @@ final class BooleanValueExpressionRule {
 
     }
 
-    static AST deriveBooleanValueExpressionRule(final Lexer lexer) {
+    static AST deriveBooleanValueExpression(final Lexer lexer) {
         final AST left = deriveTerm(lexer);
 
         if (consumeIfNextTokenIs(OR, lexer)) {
-            return or(left, deriveBooleanValueExpressionRule(lexer));
+            return or(left, deriveBooleanValueExpression(lexer));
         }
 
         return left;
@@ -169,10 +169,10 @@ final class BooleanValueExpressionRule {
 
         final List<AST> values = new ArrayList<>();
 
-        values.add(deriveBooleanValueExpressionRule(lexer));
+        values.add(deriveBooleanValueExpression(lexer));
 
         while (consumeIfNextTokenIs(COMMA, lexer)) {
-            values.add(deriveBooleanValueExpressionRule(lexer));
+            values.add(deriveBooleanValueExpression(lexer));
         }
 
         consumeAndExpect(RIGHT_PAREN, lexer);
@@ -196,7 +196,7 @@ final class BooleanValueExpressionRule {
         switch (nextToken.type()) {
             case LEFT_PAREN -> {
                 lexer.consumeNextToken();
-                final AST parenthesizedValueExpression = deriveBooleanValueExpressionRule(lexer);
+                final AST parenthesizedValueExpression = deriveBooleanValueExpression(lexer);
                 consumeAndExpect(RIGHT_PAREN, lexer);
                 return parenthesizedValueExpression;
             }
