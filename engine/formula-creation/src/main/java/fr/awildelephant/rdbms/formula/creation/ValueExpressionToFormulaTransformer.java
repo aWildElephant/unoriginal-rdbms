@@ -63,6 +63,7 @@ import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerSubtraction;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerVariable;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.LongConstant;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.LongVariable;
+import fr.awildelephant.rdbms.evaluator.operation.text.SubstringOperation;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextConstant;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextOperation;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextVariable;
@@ -84,7 +85,6 @@ import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.Compari
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractBigDecimal;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractInteger;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractLong;
-import static fr.awildelephant.rdbms.evaluator.operation.text.SubstringOperation.substringOperation;
 
 public final class ValueExpressionToFormulaTransformer extends DefaultValueExpressionVisitor<Operation> {
 
@@ -319,10 +319,10 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     @Override
     public Operation visit(SubstringExpression substring) {
         final TextOperation input = (TextOperation) apply(substring.input());
-        final Operation start = apply(substring.start());
-        final Operation length = apply(substring.length());
+        final IntegerOperation start = (IntegerOperation) apply(substring.start());
+        final IntegerOperation length = (IntegerOperation) apply(substring.length());
 
-        return substringOperation(input, start, length);
+        return new SubstringOperation(input, start, length);
     }
 
     @Override

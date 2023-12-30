@@ -1,7 +1,7 @@
 package fr.awildelephant.rdbms.evaluator.operation.text;
 
-import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerOperation;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,18 +9,13 @@ import java.util.List;
 public final class SubstringOperation implements TextOperation {
 
     private final TextOperation input;
-    // TODO: start & length devraient évaluer comme un entier
-    private final Operation start;
-    private final Operation length;
+    private final IntegerOperation start;
+    private final IntegerOperation length;
 
-    private SubstringOperation(TextOperation input, Operation start, Operation length) {
+    public SubstringOperation(final TextOperation input, final IntegerOperation start, final IntegerOperation length) {
         this.input = input;
         this.start = start;
         this.length = length;
-    }
-
-    public static SubstringOperation substringOperation(TextOperation input, Operation start, Operation length) {
-        return new SubstringOperation(input, start, length);
     }
 
     @Override
@@ -30,18 +25,18 @@ public final class SubstringOperation implements TextOperation {
             return inputValue;
         }
 
-        final DomainValue startValue = start.evaluateAndWrap();
-        if (startValue.isNull()) {
+        final Integer startValue = start.evaluateInteger();
+        if (startValue == null) {
             return null;
         }
 
-        final DomainValue lengthValue = length.evaluateAndWrap();
-        if (lengthValue.isNull()) {
+        final Integer lengthValue = length.evaluateInteger();
+        if (lengthValue == null) {
             return null;
         }
 
-        final int startIndex = startValue.getInt() - 1;
-        final int endIndex = Math.min(startIndex + lengthValue.getInt(), inputValue.length());
+        final int startIndex = startValue - 1;
+        final int endIndex = Math.min(startIndex + lengthValue, inputValue.length());
 
         return inputValue.substring(startIndex, endIndex);
     }
