@@ -28,13 +28,13 @@ public final class IntegerSubtraction extends BinaryOperation<IntegerOperation, 
     }
 
     @Override
-    public Integer evaluate() {
-        final Integer leftValue = leftChild().evaluate();
+    public Integer evaluateInteger() {
+        final Integer leftValue = leftChild().evaluateInteger();
         if (leftValue == null) {
             return null;
         }
 
-        final Integer rightValue = rightChild().evaluate();
+        final Integer rightValue = rightChild().evaluateInteger();
         if (rightValue == null) {
             return null;
         }

@@ -8,6 +8,7 @@ import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
+import static fr.awildelephant.rdbms.schema.Domain.BOOLEAN;
 
 public interface BooleanOperation extends Operation {
 
@@ -24,7 +25,7 @@ public interface BooleanOperation extends Operation {
 
     @Override
     default Domain domain() {
-        return Domain.BOOLEAN;
+        return BOOLEAN;
     }
 
     ThreeValuedLogic evaluate();

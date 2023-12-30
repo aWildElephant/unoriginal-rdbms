@@ -3,18 +3,19 @@ package fr.awildelephant.rdbms.evaluator.operation.numeric;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.tree.LeafNode;
 
+import java.math.BigDecimal;
 import java.util.function.Supplier;
 
-public final class IntegerVariable extends LeafNode<Operation> implements IntegerOperation {
+public final class DecimalVariable extends LeafNode<Operation> implements DecimalOperation {
 
-    private final Supplier<Integer> supplier;
+    private final Supplier<BigDecimal> supplier;
 
-    public IntegerVariable(final Supplier<Integer> supplier) {
+    public DecimalVariable(final Supplier<BigDecimal> supplier) {
         this.supplier = supplier;
     }
 
     @Override
-    public Integer evaluateInteger() {
+    public BigDecimal evaluateBigDecimal() {
         return supplier.get();
     }
 

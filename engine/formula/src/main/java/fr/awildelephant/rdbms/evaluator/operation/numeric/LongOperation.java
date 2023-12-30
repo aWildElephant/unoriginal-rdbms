@@ -6,47 +6,35 @@ import fr.awildelephant.rdbms.schema.Domain;
 
 import java.math.BigDecimal;
 
-import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
+import static fr.awildelephant.rdbms.data.value.LongValue.longValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
-import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
+import static fr.awildelephant.rdbms.schema.Domain.LONG;
 
-public interface IntegerOperation extends Operation, LongOperation, DecimalOperation {
+public interface LongOperation extends Operation, DecimalOperation {
 
     @Override
     default DomainValue evaluateAndWrap() {
-        final Integer value = evaluateInteger();
-
+        final Long value = evaluateLong();
         if (value == null) {
             return nullValue();
         }
 
-        return integerValue(value);
-    }
-
-    @Override
-    default Long evaluateLong() {
-        final Integer value = evaluateInteger();
-        if (value == null) {
-            return null;
-        }
-
-        return value.longValue();
+        return longValue(value);
     }
 
     @Override
     default BigDecimal evaluateBigDecimal() {
-        final Integer value = evaluateInteger();
+        final Long value = evaluateLong();
         if (value == null) {
             return null;
         }
-
         return new BigDecimal(value);
     }
 
-    Integer evaluateInteger();
+    Long evaluateLong();
 
     @Override
     default Domain domain() {
-        return INTEGER;
+        return LONG;
     }
 }

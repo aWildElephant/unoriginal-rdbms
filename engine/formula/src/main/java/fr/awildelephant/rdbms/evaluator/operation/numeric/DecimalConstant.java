@@ -3,16 +3,18 @@ package fr.awildelephant.rdbms.evaluator.operation.numeric;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.tree.LeafNode;
 
-public final class IntegerConstant extends LeafNode<Operation> implements IntegerOperation {
+import java.math.BigDecimal;
 
-    private final Integer value;
+public final class DecimalConstant extends LeafNode<Operation> implements DecimalOperation {
 
-    public IntegerConstant(final Integer value) {
+    private final BigDecimal value;
+
+    public DecimalConstant(BigDecimal value) {
         this.value = value;
     }
 
     @Override
-    public Integer evaluateInteger() {
+    public BigDecimal evaluateBigDecimal() {
         return value;
     }
 

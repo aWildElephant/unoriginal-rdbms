@@ -5,16 +5,16 @@ import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.function.Supplier;
 
-public final class IntegerVariable extends LeafNode<Operation> implements IntegerOperation {
+public final class LongVariable extends LeafNode<Operation> implements LongOperation {
 
-    private final Supplier<Integer> supplier;
+    private final Supplier<Long> supplier;
 
-    public IntegerVariable(final Supplier<Integer> supplier) {
+    public LongVariable(final Supplier<Long> supplier) {
         this.supplier = supplier;
     }
 
     @Override
-    public Integer evaluateInteger() {
+    public Long evaluateLong() {
         return supplier.get();
     }
 

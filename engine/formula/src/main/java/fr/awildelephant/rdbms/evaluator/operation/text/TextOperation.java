@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.schema.Domain;
 
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
+import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
 public interface TextOperation extends Operation {
 
@@ -22,7 +23,7 @@ public interface TextOperation extends Operation {
 
     @Override
     default Domain domain() {
-        return Domain.TEXT;
+        return TEXT;
     }
 
     String evaluate();

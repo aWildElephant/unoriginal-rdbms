@@ -9,13 +9,13 @@ public final class IntegerMultiplication extends BinaryOperation<IntegerOperatio
     }
 
     @Override
-    public Integer evaluate() {
-        final Integer leftValue = leftChild().evaluate();
+    public Integer evaluateInteger() {
+        final Integer leftValue = leftChild().evaluateInteger();
         if (leftValue == null || leftValue == 0) {
             return leftValue;
         }
 
-        final Integer rightValue = rightChild().evaluate();
+        final Integer rightValue = rightChild().evaluateInteger();
         if (rightValue == null || rightValue == 0) {
             return rightValue;
         }

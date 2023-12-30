@@ -35,7 +35,6 @@ import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanConstant;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanVariable;
 import fr.awildelephant.rdbms.evaluator.operation.bool.OrOperation;
-import fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateConstant;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalAddition;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalSubstraction;
@@ -45,6 +44,13 @@ import fr.awildelephant.rdbms.evaluator.operation.date.TextToDateCastOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalConstant;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalVariable;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalAddition;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalConstant;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalDivision;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalMultiplication;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalOperation;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalSubtraction;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalVariable;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.ExtractYearOperation;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerAddition;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerConstant;
@@ -53,6 +59,8 @@ import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerMultiplication;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerOperation;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerSubtraction;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerVariable;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.LongConstant;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.LongVariable;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextConstant;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextOperation;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextVariable;
@@ -67,10 +75,6 @@ import java.util.function.Supplier;
 
 import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
-import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimalAddition;
-import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
-import static fr.awildelephant.rdbms.evaluator.operation.DecimalMultiplication.decimalMultiplication;
-import static fr.awildelephant.rdbms.evaluator.operation.DecimalSubtraction.decimalSubtraction;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.IsNullPredicate.isNullPredicate;
@@ -80,11 +84,11 @@ import static fr.awildelephant.rdbms.evaluator.operation.bool.OrOperation.orOper
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.ComparisonFactory.equalComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.ComparisonFactory.lessComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.ComparisonFactory.lessOrEqualComparison;
+import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractBigDecimal;
+import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractInteger;
+import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractLong;
 import static fr.awildelephant.rdbms.evaluator.operation.text.SubstringOperation.substringOperation;
 import static fr.awildelephant.rdbms.schema.Domain.DATE;
-import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
-import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
-import static fr.awildelephant.rdbms.schema.Domain.INTERVAL;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
@@ -117,19 +121,19 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     }
 
     @Override
-    public Operation visit(AddExpression add) {
+    public Operation visit(final AddExpression add) {
         final Operation left = apply(add.left());
         final Operation right = apply(add.right());
 
-        if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
+        if (left instanceof IntegerOperation && right instanceof IntegerOperation) {
             return new IntegerAddition((IntegerOperation) left, (IntegerOperation) right);
         }
 
-        if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
-            return decimalAddition(left, right);
+        if (left instanceof DecimalOperation && right instanceof DecimalOperation) {
+            return new DecimalAddition((DecimalOperation) left, (DecimalOperation) right);
         }
 
-        if (left.domain().canBeUsedAs(DATE) && right.domain().canBeUsedAs(INTERVAL)) {
+        if (left instanceof DateOperation && right instanceof IntervalOperation) {
             return new DateIntervalAddition((DateOperation) left, (IntervalOperation) right);
         }
 
@@ -176,10 +180,12 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         return switch (constantExpression.domain()) {
             case BOOLEAN -> new BooleanConstant(toThreeValuedLogic(domainValue));
             case DATE -> new DateConstant(toLocalDate(domainValue));
-            case INTEGER -> new IntegerConstant(DomainValueUtils.extractInteger(domainValue));
+            case DECIMAL -> new DecimalConstant(extractBigDecimal(domainValue));
+            case INTEGER -> new IntegerConstant(extractInteger(domainValue));
             case INTERVAL -> new IntervalConstant(toPeriod(domainValue));
+            case LONG -> new LongConstant(extractLong(domainValue));
             case TEXT -> new TextConstant(toString(domainValue));
-            default -> constant(domainValue, constantExpression.domain());
+            default -> constant(domainValue, constantExpression.domain()); // TODO: stop
         };
     }
 
@@ -218,16 +224,16 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     }
 
     @Override
-    public Operation visit(DivideExpression divide) {
+    public Operation visit(final DivideExpression divide) {
         final Operation left = apply(divide.left());
         final Operation right = apply(divide.right());
 
-        if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
+        if (left instanceof IntegerOperation && right instanceof IntegerOperation) {
             return new IntegerDivision((IntegerOperation) left, (IntegerOperation) right);
         }
 
-        if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
-            return decimalDivision(left, right);
+        if (left instanceof DecimalOperation && right instanceof DecimalOperation) {
+            return new DecimalDivision((DecimalOperation) left, (DecimalOperation) right);
         }
 
         throw new IllegalStateException();
@@ -245,12 +251,11 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     public Operation visit(ExtractYearExpression extractYear) {
         final Operation input = apply(extractYear.child());
 
-        final Domain inputDomain = input.domain();
-        if (!inputDomain.canBeUsedAs(DATE)) {
-            throw new UnsupportedOperationException("Cannot extract YEAR from incompatible type " + inputDomain);
+        if (!(input instanceof final DateOperation dateOperation)) {
+            throw new UnsupportedOperationException("Cannot extract YEAR from incompatible type " + input.domain());
         }
 
-        return new ExtractYearOperation((DateOperation) input);
+        return new ExtractYearOperation(dateOperation);
     }
 
     @Override
@@ -317,16 +322,16 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     }
 
     @Override
-    public Operation visit(MultiplyExpression multiply) {
+    public Operation visit(final MultiplyExpression multiply) {
         final Operation left = apply(multiply.left());
         final Operation right = apply(multiply.right());
 
-        if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
+        if (left instanceof IntegerOperation && right instanceof IntegerOperation) {
             return new IntegerMultiplication((IntegerOperation) left, (IntegerOperation) right);
         }
 
-        if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
-            return decimalMultiplication(left, right);
+        if (left instanceof DecimalOperation && right instanceof DecimalOperation) {
+            return new DecimalMultiplication((DecimalOperation) left, (DecimalOperation) right);
         }
 
         throw new IllegalStateException();
@@ -371,15 +376,15 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation left = apply(subtract.left());
         final Operation right = apply(subtract.right());
 
-        if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
+        if (left instanceof IntegerOperation && right instanceof IntegerOperation) {
             return new IntegerSubtraction((IntegerOperation) left, (IntegerOperation) right);
         }
 
-        if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
-            return decimalSubtraction(left, right);
+        if (left instanceof DecimalOperation && right instanceof DecimalOperation) {
+            return new DecimalSubtraction((DecimalOperation) left, (DecimalOperation) right);
         }
 
-        if (left.domain().canBeUsedAs(DATE) && right.domain().canBeUsedAs(INTERVAL)) {
+        if (left instanceof DateOperation && right instanceof IntervalOperation) {
             return new DateIntervalSubstraction((DateOperation) left, (IntervalOperation) right);
         }
 
@@ -395,10 +400,12 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         return switch (domain) {
             case BOOLEAN -> new BooleanVariable(() -> toThreeValuedLogic(domainValueSupplier.get()));
             case DATE -> new DateVariable(() -> toLocalDate(domainValueSupplier.get()));
-            case INTEGER -> new IntegerVariable(() -> DomainValueUtils.extractInteger(domainValueSupplier.get()));
+            case DECIMAL -> new DecimalVariable(() -> extractBigDecimal(domainValueSupplier.get()));
+            case INTEGER -> new IntegerVariable(() -> extractInteger(domainValueSupplier.get()));
             case INTERVAL -> new IntervalVariable(() -> toPeriod(domainValueSupplier.get()));
+            case LONG -> new LongVariable(() -> extractLong(domainValueSupplier.get()));
             case TEXT -> new TextVariable(() -> toString(domainValueSupplier.get()));
-            default -> reference(domain, domainValueSupplier);
+            default -> reference(domain, domainValueSupplier); // TODO: stop
         };
     }
 

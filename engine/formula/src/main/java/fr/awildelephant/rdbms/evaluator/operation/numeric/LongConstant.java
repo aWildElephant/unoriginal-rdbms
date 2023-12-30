@@ -3,16 +3,16 @@ package fr.awildelephant.rdbms.evaluator.operation.numeric;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.tree.LeafNode;
 
-public final class IntegerConstant extends LeafNode<Operation> implements IntegerOperation {
+public final class LongConstant extends LeafNode<Operation> implements LongOperation {
 
-    private final Integer value;
+    private final Long value;
 
-    public IntegerConstant(final Integer value) {
+    public LongConstant(final Long value) {
         this.value = value;
     }
 
     @Override
-    public Integer evaluateInteger() {
+    public Long evaluateLong() {
         return value;
     }
 

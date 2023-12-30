@@ -27,10 +27,22 @@ public final class DomainValueUtils {
     public static BigDecimal extractBigDecimal(final Operation operation) {
         final DomainValue domainValue = operation.evaluateAndWrap();
 
+        return extractBigDecimal(domainValue);
+    }
+
+    public static BigDecimal extractBigDecimal(DomainValue domainValue) {
         if (domainValue.isNull()) {
             return null;
         }
 
         return domainValue.getBigDecimal();
+    }
+
+    public static Long extractLong(final DomainValue domainValue) {
+        if (domainValue.isNull()) {
+            return null;
+        }
+
+        return domainValue.getLong();
     }
 }
