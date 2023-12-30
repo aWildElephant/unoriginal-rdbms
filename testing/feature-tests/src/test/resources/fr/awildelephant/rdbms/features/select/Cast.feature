@@ -12,7 +12,6 @@ Feature: Cast
       | DATE       |
       | 1992-05-20 |
 
-  @todo
   Scenario: Explicit cast from text to date
 
     When I execute the query
