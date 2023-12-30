@@ -1,17 +1,15 @@
 package fr.awildelephant.rdbms.evaluator.operation;
 
-public abstract class BinaryOperation implements Operation {
+import fr.awildelephant.rdbms.tree.BinaryNode;
 
-    protected final Operation left;
-    protected final Operation right;
+public abstract class BinaryOperation<L extends Operation, R extends Operation> extends BinaryNode<Operation, L, R> implements Operation {
 
-    protected BinaryOperation(Operation left, Operation right) {
-        this.left = left;
-        this.right = right;
+    protected BinaryOperation(L left, R right) {
+        super(left, right);
     }
 
     @Override
     public boolean isConstant() {
-        return left.isConstant() && right.isConstant();
+        return leftChild().isConstant() && rightChild().isConstant();
     }
 }

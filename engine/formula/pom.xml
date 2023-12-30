@@ -21,5 +21,13 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-schema</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-tree</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-logic</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -1,6 +1,9 @@
-package fr.awildelephant.rdbms.evaluator.operation.comparison;
+package fr.awildelephant.rdbms.evaluator.operation.bool.comparison;
 
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanOperation;
+import fr.awildelephant.rdbms.evaluator.operation.date.DateOperation;
+import fr.awildelephant.rdbms.evaluator.operation.text.TextOperation;
 import fr.awildelephant.rdbms.schema.Domain;
 
 import static fr.awildelephant.rdbms.schema.Domain.DATE;
@@ -14,7 +17,7 @@ public final class ComparisonFactory {
 
     }
 
-    public static Operation equalComparison(Operation left, Operation right) {
+    public static BooleanOperation equalComparison(Operation left, Operation right) {
         final Domain leftDomain = left.domain();
         final Domain rightDomain = right.domain();
 
@@ -23,13 +26,13 @@ public final class ComparisonFactory {
         } else if (leftDomain.canBeUsedAs(DECIMAL) && rightDomain.canBeUsedAs(DECIMAL)) {
             return new DecimalDecimalEqualComparison(left, right);
         } else if (leftDomain == TEXT && rightDomain == TEXT) {
-            return new TextTextEqualComparison(left, right);
+            return new TextTextEqualComparison((TextOperation) left, (TextOperation) right);
         } else {
             throw new UnsupportedOperationException("Unsupported comparison: " + leftDomain + " = " + rightDomain);
         }
     }
 
-    public static Operation lessComparison(Operation left, Operation right) {
+    public static BooleanOperation lessComparison(Operation left, Operation right) {
         final Domain leftDomain = left.domain();
         final Domain rightDomain = right.domain();
 
@@ -38,19 +41,20 @@ public final class ComparisonFactory {
         } else if (leftDomain.canBeUsedAs(DECIMAL) && rightDomain.canBeUsedAs(DECIMAL)) {
             return new DecimalDecimalLessComparison(left, right);
         } else if (leftDomain == DATE && rightDomain == DATE) {
-            return new DateDateLessComparison(left, right);
+            // TODO: se baser sur le type des fils plutôt que sur le domaine (?)
+            return new DateDateLessComparison((DateOperation) left, (DateOperation) right);
         } else {
             throw new UnsupportedOperationException("Unsupported comparison: " + leftDomain + " < " + rightDomain);
         }
 
     }
 
-    public static Operation lessOrEqualComparison(Operation left, Operation right) {
+    public static BooleanOperation lessOrEqualComparison(Operation left, Operation right) {
         final Domain leftDomain = left.domain();
         final Domain rightDomain = right.domain();
 
         if (leftDomain == DATE && rightDomain == DATE) {
-            return new DateDateLessOrEqualComparison(left, right);
+            return new DateDateLessOrEqualComparison((DateOperation) left, (DateOperation) right);
         } else if (leftDomain == INTEGER && rightDomain == INTEGER) {
             return new IntegerIntegerLessOrEqualComparison(left, right);
         } else if (leftDomain.canBeUsedAs(DECIMAL) && rightDomain.canBeUsedAs(DECIMAL)) {

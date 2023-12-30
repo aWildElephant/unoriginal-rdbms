@@ -1,33 +1,31 @@
 package fr.awildelephant.rdbms.evaluator.operation;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.evaluator.operation.date.DateOperation;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.UnaryNode;
+
+import java.time.LocalDate;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public final class ExtractYearOperation implements Operation {
+public final class ExtractYearOperation extends UnaryNode<Operation, DateOperation> implements Operation {
 
-    private final Operation input;
-
-    private ExtractYearOperation(Operation input) {
-        this.input = input;
-    }
-
-    public static ExtractYearOperation extractYearOperation(Operation input) {
-        return new ExtractYearOperation(input);
+    public ExtractYearOperation(final DateOperation input) {
+        super(input);
     }
 
     @Override
-    public DomainValue evaluate() {
-        final DomainValue date = input.evaluate();
+    public DomainValue evaluateAndWrap() {
+        final LocalDate date = child().evaluate();
 
-        if (date.isNull()) {
+        if (date == null) {
             return nullValue();
         }
 
-        return integerValue(date.getLocalDate().getYear());
+        return integerValue(date.getYear());
     }
 
     @Override
@@ -37,6 +35,6 @@ public final class ExtractYearOperation implements Operation {
 
     @Override
     public boolean isConstant() {
-        return input.isConstant();
+        return child().isConstant();
     }
 }

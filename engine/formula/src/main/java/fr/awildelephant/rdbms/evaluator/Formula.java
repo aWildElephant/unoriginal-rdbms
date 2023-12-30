@@ -18,7 +18,7 @@ public class Formula {
     public DomainValue evaluate(Values values) {
         setValues(values);
 
-        return operation.evaluate();
+        return operation.evaluateAndWrap();
     }
 
     private void setValues(Values values) {

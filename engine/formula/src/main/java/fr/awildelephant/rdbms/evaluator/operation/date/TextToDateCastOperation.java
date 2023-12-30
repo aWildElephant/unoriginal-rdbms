@@ -1,0 +1,30 @@
+package fr.awildelephant.rdbms.evaluator.operation.date;
+
+import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.evaluator.operation.text.TextOperation;
+import fr.awildelephant.rdbms.tree.UnaryNode;
+
+import java.time.LocalDate;
+
+public final class TextToDateCastOperation extends UnaryNode<Operation, TextOperation> implements DateOperation {
+
+    public TextToDateCastOperation(final TextOperation input) {
+        super(input);
+    }
+
+    @Override
+    public LocalDate evaluate() {
+        final String childValue = child().evaluate();
+
+        if (childValue == null) {
+            return null;
+        }
+
+        return LocalDate.parse(childValue);
+    }
+
+    @Override
+    public boolean isConstant() {
+        return child().isConstant();
+    }
+}

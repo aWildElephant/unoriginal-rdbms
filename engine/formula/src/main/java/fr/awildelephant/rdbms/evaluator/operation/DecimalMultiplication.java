@@ -10,7 +10,7 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static java.math.BigDecimal.ZERO;
 
-public class DecimalMultiplication extends BinaryOperation {
+public class DecimalMultiplication extends BinaryOperation<Operation, Operation> {
 
     private DecimalMultiplication(Operation left, Operation right) {
         super(left, right);
@@ -21,8 +21,8 @@ public class DecimalMultiplication extends BinaryOperation {
     }
 
     @Override
-    public DomainValue evaluate() {
-        final DomainValue leftValue = left.evaluate();
+    public DomainValue evaluateAndWrap() {
+        final DomainValue leftValue = leftChild().evaluateAndWrap();
         if (leftValue.isNull()) {
             return leftValue;
         }
@@ -32,7 +32,7 @@ public class DecimalMultiplication extends BinaryOperation {
             return leftValue;
         }
 
-        final DomainValue rightValue = right.evaluate();
+        final DomainValue rightValue = rightChild().evaluateAndWrap();
         if (rightValue.isNull()) {
             return nullValue();
         }

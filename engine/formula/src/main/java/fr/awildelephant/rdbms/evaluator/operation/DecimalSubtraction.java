@@ -6,7 +6,7 @@ import fr.awildelephant.rdbms.schema.Domain;
 import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 
-public class DecimalSubtraction extends BinaryOperation {
+public class DecimalSubtraction extends BinaryOperation<Operation, Operation> {
 
     private DecimalSubtraction(Operation left, Operation right) {
         super(left, right);
@@ -17,13 +17,13 @@ public class DecimalSubtraction extends BinaryOperation {
     }
 
     @Override
-    public DomainValue evaluate() {
-        final DomainValue leftValue = left.evaluate();
+    public DomainValue evaluateAndWrap() {
+        final DomainValue leftValue = leftChild().evaluateAndWrap();
         if (leftValue.isNull()) {
             return leftValue;
         }
 
-        final DomainValue rightValue = right.evaluate();
+        final DomainValue rightValue = rightChild().evaluateAndWrap();
         if (rightValue.isNull()) {
             return rightValue;
         }

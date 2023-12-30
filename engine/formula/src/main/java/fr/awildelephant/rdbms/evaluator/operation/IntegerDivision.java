@@ -7,7 +7,7 @@ import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public class IntegerDivision extends BinaryOperation {
+public class IntegerDivision extends BinaryOperation<Operation, Operation> {
 
     private IntegerDivision(Operation left, Operation right) {
         super(left, right);
@@ -18,8 +18,8 @@ public class IntegerDivision extends BinaryOperation {
     }
 
     @Override
-    public DomainValue evaluate() {
-        final DomainValue leftValue = left.evaluate();
+    public DomainValue evaluateAndWrap() {
+        final DomainValue leftValue = leftChild().evaluateAndWrap();
         if (leftValue.isNull()) {
             return leftValue;
         }
@@ -29,7 +29,7 @@ public class IntegerDivision extends BinaryOperation {
             return leftValue;
         }
 
-        final DomainValue rightValue = right.evaluate();
+        final DomainValue rightValue = rightChild().evaluateAndWrap();
         if (rightValue.isNull()) {
             return nullValue();
         }

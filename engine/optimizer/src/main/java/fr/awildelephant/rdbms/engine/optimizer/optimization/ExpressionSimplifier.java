@@ -116,7 +116,7 @@ public final class ExpressionSimplifier extends DefaultValueExpressionVisitor<Va
 
     private ValueExpression simplifyIfConstant(ValueExpression expression) {
         if (isConstant(expression)) {
-            final DomainValue value = createFormula(expression).evaluate();
+            final DomainValue value = createFormula(expression).evaluateAndWrap();
 
             return constantExpression(value, expression.domain());
         } else {

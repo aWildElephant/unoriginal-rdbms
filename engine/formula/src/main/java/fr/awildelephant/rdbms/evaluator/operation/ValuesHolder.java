@@ -2,9 +2,8 @@ package fr.awildelephant.rdbms.evaluator.operation;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.evaluator.input.Values;
-import fr.awildelephant.rdbms.schema.Domain;
 
-import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
+import java.util.function.Supplier;
 
 public final class ValuesHolder implements Values {
 
@@ -19,7 +18,7 @@ public final class ValuesHolder implements Values {
         return values.valueOf(index);
     }
 
-    public Reference createReference(int index, Domain domain) {
-        return reference(domain, () -> values.valueOf(index));
+    public Supplier<DomainValue> createSupplier(int index) {
+        return () -> values.valueOf(index);
     }
 }

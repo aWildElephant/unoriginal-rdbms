@@ -2,8 +2,9 @@ package fr.awildelephant.rdbms.evaluator.operation;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
-public class Constant implements Operation {
+public class Constant extends LeafNode<Operation> implements Operation {
 
     private final DomainValue value;
     private final Domain domain;
@@ -18,7 +19,7 @@ public class Constant implements Operation {
     }
 
     @Override
-    public DomainValue evaluate() {
+    public DomainValue evaluateAndWrap() {
         return value;
     }
 

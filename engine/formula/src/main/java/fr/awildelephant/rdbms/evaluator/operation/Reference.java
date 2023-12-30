@@ -2,10 +2,11 @@ package fr.awildelephant.rdbms.evaluator.operation;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.tree.LeafNode;
 
 import java.util.function.Supplier;
 
-public class Reference implements Operation {
+public class Reference extends LeafNode<Operation> implements Operation {
 
     private final Domain domain;
     private final Supplier<DomainValue> valueSupplier;
@@ -20,7 +21,7 @@ public class Reference implements Operation {
     }
 
     @Override
-    public DomainValue evaluate() {
+    public DomainValue evaluateAndWrap() {
         return valueSupplier.get();
     }
 
