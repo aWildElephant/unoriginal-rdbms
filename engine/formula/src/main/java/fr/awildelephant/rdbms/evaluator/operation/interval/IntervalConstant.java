@@ -1,11 +1,10 @@
 package fr.awildelephant.rdbms.evaluator.operation.interval;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
-import fr.awildelephant.rdbms.tree.LeafNode;
+import fr.awildelephant.rdbms.evaluator.operation.ConstantOperation;
 
 import java.time.Period;
 
-public final class IntervalConstant extends LeafNode<Operation> implements IntervalOperation {
+public final class IntervalConstant extends ConstantOperation implements IntervalOperation {
 
     private final Period value;
 
@@ -16,10 +15,5 @@ public final class IntervalConstant extends LeafNode<Operation> implements Inter
     @Override
     public Period evaluatePeriod() {
         return value;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return true;
     }
 }

@@ -1,11 +1,10 @@
 package fr.awildelephant.rdbms.evaluator.operation.numeric;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
-import fr.awildelephant.rdbms.tree.LeafNode;
+import fr.awildelephant.rdbms.evaluator.operation.ConstantOperation;
 
 import java.math.BigDecimal;
 
-public final class DecimalConstant extends LeafNode<Operation> implements DecimalOperation {
+public final class DecimalConstant extends ConstantOperation implements DecimalOperation {
 
     private final BigDecimal value;
 
@@ -16,10 +15,5 @@ public final class DecimalConstant extends LeafNode<Operation> implements Decima
     @Override
     public BigDecimal evaluateBigDecimal() {
         return value;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return true;
     }
 }

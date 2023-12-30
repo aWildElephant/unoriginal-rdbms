@@ -1,9 +1,8 @@
 package fr.awildelephant.rdbms.evaluator.operation.numeric;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
-import fr.awildelephant.rdbms.tree.LeafNode;
+import fr.awildelephant.rdbms.evaluator.operation.ConstantOperation;
 
-public final class IntegerConstant extends LeafNode<Operation> implements IntegerOperation {
+public final class IntegerConstant extends ConstantOperation implements IntegerOperation {
 
     private final Integer value;
 
@@ -14,10 +13,5 @@ public final class IntegerConstant extends LeafNode<Operation> implements Intege
     @Override
     public Integer evaluateInteger() {
         return value;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return true;
     }
 }

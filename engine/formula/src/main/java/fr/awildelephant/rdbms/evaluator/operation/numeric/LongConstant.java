@@ -1,9 +1,8 @@
 package fr.awildelephant.rdbms.evaluator.operation.numeric;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
-import fr.awildelephant.rdbms.tree.LeafNode;
+import fr.awildelephant.rdbms.evaluator.operation.ConstantOperation;
 
-public final class LongConstant extends LeafNode<Operation> implements LongOperation {
+public final class LongConstant extends ConstantOperation implements LongOperation {
 
     private final Long value;
 
@@ -14,10 +13,5 @@ public final class LongConstant extends LeafNode<Operation> implements LongOpera
     @Override
     public Long evaluateLong() {
         return value;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return true;
     }
 }

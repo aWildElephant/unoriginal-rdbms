@@ -1,11 +1,10 @@
 package fr.awildelephant.rdbms.evaluator.operation.date;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
-import fr.awildelephant.rdbms.tree.LeafNode;
+import fr.awildelephant.rdbms.evaluator.operation.ConstantOperation;
 
 import java.time.LocalDate;
 
-public final class DateConstant extends LeafNode<Operation> implements DateOperation {
+public final class DateConstant extends ConstantOperation implements DateOperation {
 
     private final LocalDate value;
 
@@ -16,10 +15,5 @@ public final class DateConstant extends LeafNode<Operation> implements DateOpera
     @Override
     public LocalDate evaluateLocalDate() {
         return value;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return true;
     }
 }

@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.evaluator.operation.nil;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.evaluator.operation.ConstantOperation;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanOperation;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateOperation;
@@ -10,7 +11,6 @@ import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerOperation;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.LongOperation;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextOperation;
 import fr.awildelephant.rdbms.schema.Domain;
-import fr.awildelephant.rdbms.tree.LeafNode;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import java.time.LocalDate;
@@ -20,16 +20,11 @@ import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.schema.Domain.NULL;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.UNKNOWN;
 
-public final class NullConstant extends LeafNode<Operation> implements Operation, BooleanOperation, DateOperation, DecimalOperation, IntegerOperation, IntervalOperation, LongOperation, TextOperation {
+public final class NullConstant extends ConstantOperation implements Operation, BooleanOperation, DateOperation, DecimalOperation, IntegerOperation, IntervalOperation, LongOperation, TextOperation {
 
     @Override
     public DomainValue evaluateAndWrap() {
         return nullValue();
-    }
-
-    @Override
-    public boolean isConstant() {
-        return true;
     }
 
     @Override
