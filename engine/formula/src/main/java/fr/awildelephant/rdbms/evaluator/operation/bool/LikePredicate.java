@@ -25,7 +25,6 @@ public final class LikePredicate extends BinaryOperation<TextOperation, TextOper
         return Pattern.compile(patternString.replace("%", ".*"));
     }
 
-    // TODO: les deux inputs devraient évaluer comme du texte, pas besoin de wrapper
     @Override
     public ThreeValuedLogic evaluateBoolean() {
         final String value = firstChild().evaluateString();
