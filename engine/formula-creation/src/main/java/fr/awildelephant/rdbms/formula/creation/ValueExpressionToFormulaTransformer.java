@@ -36,12 +36,12 @@ import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanVariable;
 import fr.awildelephant.rdbms.evaluator.operation.bool.OrOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils;
+import fr.awildelephant.rdbms.evaluator.operation.cast.CastOperationFactory;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateConstant;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalAddition;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalSubstraction;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateOperation;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateVariable;
-import fr.awildelephant.rdbms.evaluator.operation.date.TextToDateCastOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalConstant;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalVariable;
@@ -85,8 +85,6 @@ import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainV
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractInteger;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils.extractLong;
 import static fr.awildelephant.rdbms.evaluator.operation.text.SubstringOperation.substringOperation;
-import static fr.awildelephant.rdbms.schema.Domain.DATE;
-import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 
 public final class ValueExpressionToFormulaTransformer extends DefaultValueExpressionVisitor<Operation> {
 
@@ -159,13 +157,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(CastExpression cast) {
-        // TODO: cast factory that constructs the correct instance and throws an exception for unsupported type combinations
-        if (cast.domain() != DATE || cast.child().domain() != TEXT) {
-            // TODO: proper exception
-            throw new IllegalStateException();
-        }
-
-        return new TextToDateCastOperation((TextOperation) apply(cast.child()));
+        return CastOperationFactory.build(apply(cast.child()), cast.domain());
     }
 
     @Override
