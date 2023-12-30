@@ -13,8 +13,10 @@ public final class DomainValueUtils {
     }
 
     public static Integer extractInteger(final Operation operation) {
-        final DomainValue domainValue = operation.evaluateAndWrap();
+        return extractInteger(operation.evaluateAndWrap());
+    }
 
+    public static Integer extractInteger(final DomainValue domainValue) {
         if (domainValue.isNull()) {
             return null;
         }

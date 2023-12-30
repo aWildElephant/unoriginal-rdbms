@@ -28,7 +28,6 @@ import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.arithmetic.Variable;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.evaluator.Formula;
-import fr.awildelephant.rdbms.evaluator.operation.ExtractYearOperation;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.evaluator.operation.ValuesHolder;
 import fr.awildelephant.rdbms.evaluator.operation.bool.AndOperation;
@@ -36,6 +35,7 @@ import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanConstant;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanVariable;
 import fr.awildelephant.rdbms.evaluator.operation.bool.OrOperation;
+import fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateConstant;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalAddition;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalSubstraction;
@@ -45,6 +45,14 @@ import fr.awildelephant.rdbms.evaluator.operation.date.TextToDateCastOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalConstant;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalVariable;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.ExtractYearOperation;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerAddition;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerConstant;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerDivision;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerMultiplication;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerOperation;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerSubtraction;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerVariable;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextConstant;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextOperation;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextVariable;
@@ -63,10 +71,6 @@ import static fr.awildelephant.rdbms.evaluator.operation.DecimalAddition.decimal
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalDivision.decimalDivision;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalMultiplication.decimalMultiplication;
 import static fr.awildelephant.rdbms.evaluator.operation.DecimalSubtraction.decimalSubtraction;
-import static fr.awildelephant.rdbms.evaluator.operation.IntegerAddition.integerAddition;
-import static fr.awildelephant.rdbms.evaluator.operation.IntegerDivision.integerDivision;
-import static fr.awildelephant.rdbms.evaluator.operation.IntegerMultiplication.integerMultiplication;
-import static fr.awildelephant.rdbms.evaluator.operation.IntegerSubtraction.integerSubtraction;
 import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.IsNullPredicate.isNullPredicate;
@@ -118,7 +122,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation right = apply(add.right());
 
         if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
-            return integerAddition(left, right);
+            return new IntegerAddition((IntegerOperation) left, (IntegerOperation) right);
         }
 
         if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
@@ -172,6 +176,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         return switch (constantExpression.domain()) {
             case BOOLEAN -> new BooleanConstant(toThreeValuedLogic(domainValue));
             case DATE -> new DateConstant(toLocalDate(domainValue));
+            case INTEGER -> new IntegerConstant(DomainValueUtils.extractInteger(domainValue));
             case INTERVAL -> new IntervalConstant(toPeriod(domainValue));
             case TEXT -> new TextConstant(toString(domainValue));
             default -> constant(domainValue, constantExpression.domain());
@@ -218,7 +223,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation right = apply(divide.right());
 
         if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
-            return integerDivision(left, right);
+            return new IntegerDivision((IntegerOperation) left, (IntegerOperation) right);
         }
 
         if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
@@ -317,7 +322,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation right = apply(multiply.right());
 
         if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
-            return integerMultiplication(left, right);
+            return new IntegerMultiplication((IntegerOperation) left, (IntegerOperation) right);
         }
 
         if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
@@ -367,7 +372,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation right = apply(subtract.right());
 
         if (left.domain().canBeUsedAs(INTEGER) && right.domain().canBeUsedAs(INTEGER)) {
-            return integerSubtraction(left, right);
+            return new IntegerSubtraction((IntegerOperation) left, (IntegerOperation) right);
         }
 
         if (left.domain().canBeUsedAs(DECIMAL) && right.domain().canBeUsedAs(DECIMAL)) {
@@ -390,6 +395,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         return switch (domain) {
             case BOOLEAN -> new BooleanVariable(() -> toThreeValuedLogic(domainValueSupplier.get()));
             case DATE -> new DateVariable(() -> toLocalDate(domainValueSupplier.get()));
+            case INTEGER -> new IntegerVariable(() -> DomainValueUtils.extractInteger(domainValueSupplier.get()));
             case INTERVAL -> new IntervalVariable(() -> toPeriod(domainValueSupplier.get()));
             case TEXT -> new TextVariable(() -> toString(domainValueSupplier.get()));
             default -> reference(domain, domainValueSupplier);

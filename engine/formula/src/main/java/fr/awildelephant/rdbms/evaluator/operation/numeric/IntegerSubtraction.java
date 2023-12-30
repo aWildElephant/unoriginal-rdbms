@@ -1,20 +1,15 @@
-package fr.awildelephant.rdbms.evaluator.operation;
+package fr.awildelephant.rdbms.evaluator.operation.numeric;
 
 import fr.awildelephant.rdbms.data.value.DomainValue;
-import fr.awildelephant.rdbms.schema.Domain;
+import fr.awildelephant.rdbms.evaluator.operation.BinaryOperation;
 
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
-import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 
-public final class IntegerSubtraction extends BinaryOperation<Operation, Operation> {
+public final class IntegerSubtraction extends BinaryOperation<IntegerOperation, IntegerOperation> implements IntegerOperation {
 
-    private IntegerSubtraction(Operation left, Operation right) {
+    public IntegerSubtraction(final IntegerOperation left, final IntegerOperation right) {
         super(left, right);
-    }
-
-    public static IntegerSubtraction integerSubtraction(Operation left, Operation right) {
-        return new IntegerSubtraction(left, right);
     }
 
     @Override
@@ -33,7 +28,17 @@ public final class IntegerSubtraction extends BinaryOperation<Operation, Operati
     }
 
     @Override
-    public Domain domain() {
-        return INTEGER;
+    public Integer evaluate() {
+        final Integer leftValue = leftChild().evaluate();
+        if (leftValue == null) {
+            return null;
+        }
+
+        final Integer rightValue = rightChild().evaluate();
+        if (rightValue == null) {
+            return null;
+        }
+
+        return leftValue - rightValue;
     }
 }
