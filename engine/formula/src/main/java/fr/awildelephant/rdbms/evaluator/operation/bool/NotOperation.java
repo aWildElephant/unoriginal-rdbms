@@ -20,8 +20,8 @@ public final class NotOperation extends UnaryNode<Operation, BooleanOperation> i
     }
 
     @Override
-    public ThreeValuedLogic evaluate() {
-        final ThreeValuedLogic childValue = child().evaluate();
+    public ThreeValuedLogic evaluateBoolean() {
+        final ThreeValuedLogic childValue = child().evaluateBoolean();
         return switch (childValue) {
             case UNKNOWN -> UNKNOWN;
             case FALSE -> TRUE;

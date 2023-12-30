@@ -18,7 +18,7 @@ public final class IsNullPredicate extends UnaryNode<Operation, Operation> imple
     }
 
     @Override
-    public ThreeValuedLogic evaluate() {
+    public ThreeValuedLogic evaluateBoolean() {
         return child().evaluateAndWrap().isNull() ? TRUE : FALSE;
     }
 

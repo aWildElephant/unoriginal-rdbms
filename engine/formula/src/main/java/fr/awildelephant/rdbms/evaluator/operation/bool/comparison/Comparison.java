@@ -21,7 +21,7 @@ public abstract class Comparison<L extends Operation, LV, R extends Operation, R
     }
 
     @Override
-    public ThreeValuedLogic evaluate() {
+    public ThreeValuedLogic evaluateBoolean() {
         final LV leftValue = leftEvaluation.apply(leftChild());
         if (leftValue == null) {
             return UNKNOWN;

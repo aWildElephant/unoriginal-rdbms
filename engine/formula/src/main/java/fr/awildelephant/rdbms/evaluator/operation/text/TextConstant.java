@@ -17,7 +17,7 @@ public final class TextConstant extends LeafNode<Operation> implements TextOpera
     }
 
     @Override
-    public String evaluate() {
+    public String evaluateString() {
         return value;
     }
 }

@@ -12,7 +12,7 @@ public interface TextOperation extends Operation {
 
     @Override
     default DomainValue evaluateAndWrap() {
-        final String value = evaluate();
+        final String value = evaluateString();
 
         if (value == null) {
             return nullValue();
@@ -26,5 +26,5 @@ public interface TextOperation extends Operation {
         return TEXT;
     }
 
-    String evaluate();
+    String evaluateString();
 }

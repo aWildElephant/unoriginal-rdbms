@@ -27,15 +27,15 @@ public final class LikePredicate extends BinaryOperation<TextOperation, TextOper
 
     // TODO: les deux inputs devraient évaluer comme du texte, pas besoin de wrapper
     @Override
-    public ThreeValuedLogic evaluate() {
-        final String value = firstChild().evaluate();
+    public ThreeValuedLogic evaluateBoolean() {
+        final String value = firstChild().evaluateString();
 
         if (value == null) {
             return UNKNOWN;
         }
 
         // TODO: si l'opération est constante, on peut compiler le pattern une seule fois
-        final String pattern = secondChild().evaluate();
+        final String pattern = secondChild().evaluateString();
 
         if (pattern == null) {
             return UNKNOWN;

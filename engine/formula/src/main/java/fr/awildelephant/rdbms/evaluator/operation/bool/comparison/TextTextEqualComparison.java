@@ -9,7 +9,7 @@ import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 final class TextTextEqualComparison extends Comparison<TextOperation, String, TextOperation, String> {
 
     TextTextEqualComparison(TextOperation left, TextOperation right) {
-        super(left, right, TextOperation::evaluate, TextOperation::evaluate);
+        super(left, right, TextOperation::evaluateString, TextOperation::evaluateString);
     }
 
     @Override

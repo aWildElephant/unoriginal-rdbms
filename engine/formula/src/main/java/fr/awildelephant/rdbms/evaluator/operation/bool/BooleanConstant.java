@@ -19,7 +19,7 @@ public final class BooleanConstant extends LeafNode<Operation> implements Boolea
     }
 
     @Override
-    public ThreeValuedLogic evaluate() {
+    public ThreeValuedLogic evaluateBoolean() {
         return value;
     }
 }

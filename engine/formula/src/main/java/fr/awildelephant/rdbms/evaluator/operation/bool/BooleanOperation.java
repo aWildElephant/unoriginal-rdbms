@@ -14,7 +14,7 @@ public interface BooleanOperation extends Operation {
 
     @Override
     default DomainValue evaluateAndWrap() {
-        final ThreeValuedLogic value = evaluate();
+        final ThreeValuedLogic value = evaluateBoolean();
 
         return switch (value) {
             case UNKNOWN -> nullValue();
@@ -28,5 +28,5 @@ public interface BooleanOperation extends Operation {
         return BOOLEAN;
     }
 
-    ThreeValuedLogic evaluate();
+    ThreeValuedLogic evaluateBoolean();
 }

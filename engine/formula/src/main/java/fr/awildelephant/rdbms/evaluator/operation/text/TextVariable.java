@@ -14,7 +14,7 @@ public final class TextVariable extends LeafNode<Operation> implements TextOpera
     }
 
     @Override
-    public String evaluate() {
+    public String evaluateString() {
         return supplier.get();
     }
 

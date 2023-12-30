@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.schema.Domain;
 import java.util.Collection;
 import java.util.List;
 
+// TODO: avec mes checks il va falloir créer une opération case-when pour chaque type (+condition est une BooleanOperation)
 public class CaseWhenOperation implements Operation {
 
     private final Operation condition;

@@ -14,7 +14,7 @@ public interface IntervalOperation extends Operation {
 
     @Override
     default DomainValue evaluateAndWrap() {
-        final Period value = evaluate();
+        final Period value = evaluatePeriod();
 
         if (value == null) {
             return nullValue();
@@ -28,5 +28,5 @@ public interface IntervalOperation extends Operation {
         return INTERVAL;
     }
 
-    Period evaluate();
+    Period evaluatePeriod();
 }

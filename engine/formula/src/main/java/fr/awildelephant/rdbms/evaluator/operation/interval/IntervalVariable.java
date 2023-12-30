@@ -15,7 +15,7 @@ public final class IntervalVariable extends LeafNode<Operation> implements Inter
     }
 
     @Override
-    public Period evaluate() {
+    public Period evaluatePeriod() {
         return supplier.get();
     }
 

@@ -15,7 +15,7 @@ public final class DateVariable extends LeafNode<Operation> implements DateOpera
     }
 
     @Override
-    public LocalDate evaluate() {
+    public LocalDate evaluateLocalDate() {
         return supplier.get();
     }
 

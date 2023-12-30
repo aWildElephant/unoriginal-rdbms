@@ -24,8 +24,8 @@ public final class SubstringOperation implements TextOperation {
     }
 
     @Override
-    public String evaluate() {
-        final String inputValue = input.evaluate();
+    public String evaluateString() {
+        final String inputValue = input.evaluateString();
         if (inputValue == null || inputValue.isEmpty()) {
             return inputValue;
         }

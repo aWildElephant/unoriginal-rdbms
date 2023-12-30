@@ -14,7 +14,7 @@ public final class ExtractYearOperation extends UnaryNode<Operation, DateOperati
 
     @Override
     public Integer evaluateInteger() {
-        final LocalDate date = child().evaluate();
+        final LocalDate date = child().evaluateLocalDate();
 
         if (date == null) {
             return null;

@@ -14,7 +14,7 @@ public interface DateOperation extends Operation {
 
     @Override
     default DomainValue evaluateAndWrap() {
-        final LocalDate value = evaluate();
+        final LocalDate value = evaluateLocalDate();
 
         if (value == null) {
             return nullValue();
@@ -28,5 +28,5 @@ public interface DateOperation extends Operation {
         return DATE;
     }
 
-    LocalDate evaluate();
+    LocalDate evaluateLocalDate();
 }

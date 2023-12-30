@@ -13,14 +13,14 @@ public final class DateIntervalSubstraction extends BinaryOperation<DateOperatio
     }
 
     @Override
-    public LocalDate evaluate() {
-        final LocalDate date = firstChild().evaluate();
+    public LocalDate evaluateLocalDate() {
+        final LocalDate date = firstChild().evaluateLocalDate();
 
         if (date == null) {
             return null;
         }
 
-        final Period period = secondChild().evaluate();
+        final Period period = secondChild().evaluatePeriod();
 
         if (period == null) {
             return null;

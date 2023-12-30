@@ -17,12 +17,12 @@ public class AndOperation extends BinaryOperation<BooleanOperation, BooleanOpera
     }
 
     @Override
-    public ThreeValuedLogic evaluate() {
-        final ThreeValuedLogic leftValue = leftChild().evaluate();
+    public ThreeValuedLogic evaluateBoolean() {
+        final ThreeValuedLogic leftValue = leftChild().evaluateBoolean();
         return switch (leftValue) {
             case UNKNOWN -> UNKNOWN;
             case FALSE -> FALSE;
-            case TRUE -> rightChild().evaluate();
+            case TRUE -> rightChild().evaluateBoolean();
         };
     }
 }

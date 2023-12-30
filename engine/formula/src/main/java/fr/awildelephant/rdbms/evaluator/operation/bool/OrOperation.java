@@ -17,10 +17,10 @@ public class OrOperation extends BinaryOperation<BooleanOperation, BooleanOperat
     }
 
     @Override
-    public ThreeValuedLogic evaluate() {
-        final ThreeValuedLogic leftValue = leftChild().evaluate();
+    public ThreeValuedLogic evaluateBoolean() {
+        final ThreeValuedLogic leftValue = leftChild().evaluateBoolean();
         return switch (leftValue) {
-            case UNKNOWN, FALSE -> switch (rightChild().evaluate()) {
+            case UNKNOWN, FALSE -> switch (rightChild().evaluateBoolean()) {
                 case UNKNOWN -> UNKNOWN;
                 case FALSE -> leftValue;
                 case TRUE -> TRUE;

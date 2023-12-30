@@ -44,6 +44,7 @@ import fr.awildelephant.rdbms.evaluator.operation.date.TextToDateCastOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalConstant;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalOperation;
 import fr.awildelephant.rdbms.evaluator.operation.interval.IntervalVariable;
+import fr.awildelephant.rdbms.evaluator.operation.nil.NullConstant;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalAddition;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalConstant;
 import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalDivision;
@@ -74,8 +75,6 @@ import java.time.Period;
 import java.util.function.Supplier;
 
 import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
-import static fr.awildelephant.rdbms.evaluator.operation.Constant.constant;
-import static fr.awildelephant.rdbms.evaluator.operation.Reference.reference;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.AndOperation.andOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.IsNullPredicate.isNullPredicate;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.LikePredicate.likePredicate;
@@ -177,15 +176,17 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     @Override
     public Operation visit(ConstantExpression constantExpression) {
         final DomainValue domainValue = constantExpression.value();
-        return switch (constantExpression.domain()) {
+        final Domain domain = constantExpression.domain();
+        return switch (domain) {
             case BOOLEAN -> new BooleanConstant(toThreeValuedLogic(domainValue));
             case DATE -> new DateConstant(toLocalDate(domainValue));
             case DECIMAL -> new DecimalConstant(extractBigDecimal(domainValue));
             case INTEGER -> new IntegerConstant(extractInteger(domainValue));
             case INTERVAL -> new IntervalConstant(toPeriod(domainValue));
             case LONG -> new LongConstant(extractLong(domainValue));
+            case NULL -> new NullConstant();
             case TEXT -> new TextConstant(toString(domainValue));
-            default -> constant(domainValue, constantExpression.domain()); // TODO: stop
+            default -> throw new IllegalStateException("Cannot create constant of type " + domain);
         };
     }
 
@@ -404,8 +405,9 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
             case INTEGER -> new IntegerVariable(() -> extractInteger(domainValueSupplier.get()));
             case INTERVAL -> new IntervalVariable(() -> toPeriod(domainValueSupplier.get()));
             case LONG -> new LongVariable(() -> extractLong(domainValueSupplier.get()));
+            case NULL -> new NullConstant();
             case TEXT -> new TextVariable(() -> toString(domainValueSupplier.get()));
-            default -> reference(domain, domainValueSupplier); // TODO: stop
+            default -> throw new IllegalStateException("Cannot create variable of type " + domain);
         };
     }
 

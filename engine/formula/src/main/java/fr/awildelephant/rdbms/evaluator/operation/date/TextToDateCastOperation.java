@@ -13,8 +13,8 @@ public final class TextToDateCastOperation extends UnaryNode<Operation, TextOper
     }
 
     @Override
-    public LocalDate evaluate() {
-        final String childValue = child().evaluate();
+    public LocalDate evaluateLocalDate() {
+        final String childValue = child().evaluateString();
 
         if (childValue == null) {
             return null;
