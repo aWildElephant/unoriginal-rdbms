@@ -78,7 +78,7 @@ final class TableElementRule {
         return column(columnName, columnType);
     }
 
-    private static ColumnType deriveColumnType(final Lexer lexer) {
+    public static ColumnType deriveColumnType(final Lexer lexer) {
         final Token token = lexer.consumeNextToken();
         return columnType(token, lexer);
     }

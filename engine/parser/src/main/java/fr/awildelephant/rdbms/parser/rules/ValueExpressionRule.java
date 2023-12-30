@@ -36,6 +36,7 @@ import static fr.awildelephant.rdbms.ast.value.Placeholder.placeholder;
 import static fr.awildelephant.rdbms.ast.value.Plus.plus;
 import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
@@ -58,6 +59,7 @@ import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.nextTokenIs;
 import static fr.awildelephant.rdbms.parser.rules.QueryExpressionRule.deriveQueryExpression;
+import static fr.awildelephant.rdbms.parser.rules.TableElementRule.deriveColumnType;
 
 final class ValueExpressionRule {
 
@@ -69,6 +71,15 @@ final class ValueExpressionRule {
         final TokenType nextType = lexer.lookupNextToken().type();
 
         switch (nextType) {
+            case CAST -> {
+                lexer.consumeNextToken(); // CAST
+                consumeAndExpect(LEFT_PAREN, lexer);
+                final AST input = deriveBooleanValueExpression(lexer);
+                consumeAndExpect(AS, lexer);
+                final ColumnType columnType = deriveColumnType(lexer);
+                consumeAndExpect(RIGHT_PAREN, lexer);
+                return cast(input, columnType);
+            }
             case SUBSTRING -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
