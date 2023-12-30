@@ -35,6 +35,7 @@ import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanConstant;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanVariable;
 import fr.awildelephant.rdbms.evaluator.operation.bool.OrOperation;
+import fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateConstant;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalAddition;
 import fr.awildelephant.rdbms.evaluator.operation.date.DateIntervalSubstraction;
@@ -68,10 +69,7 @@ import fr.awildelephant.rdbms.evaluator.operation.text.TextVariable;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
-import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.function.Supplier;
 
 import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
@@ -89,9 +87,6 @@ import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainV
 import static fr.awildelephant.rdbms.evaluator.operation.text.SubstringOperation.substringOperation;
 import static fr.awildelephant.rdbms.schema.Domain.DATE;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
-import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
-import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
-import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.UNKNOWN;
 
 public final class ValueExpressionToFormulaTransformer extends DefaultValueExpressionVisitor<Operation> {
 
@@ -178,50 +173,16 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final DomainValue domainValue = constantExpression.value();
         final Domain domain = constantExpression.domain();
         return switch (domain) {
-            case BOOLEAN -> new BooleanConstant(toThreeValuedLogic(domainValue));
-            case DATE -> new DateConstant(toLocalDate(domainValue));
+            case BOOLEAN -> new BooleanConstant(DomainValueUtils.extractThreeValuedLogic(domainValue));
+            case DATE -> new DateConstant(DomainValueUtils.extractLocalDate(domainValue));
             case DECIMAL -> new DecimalConstant(extractBigDecimal(domainValue));
             case INTEGER -> new IntegerConstant(extractInteger(domainValue));
-            case INTERVAL -> new IntervalConstant(toPeriod(domainValue));
+            case INTERVAL -> new IntervalConstant(DomainValueUtils.extractPeriod(domainValue));
             case LONG -> new LongConstant(extractLong(domainValue));
             case NULL -> new NullConstant();
-            case TEXT -> new TextConstant(toString(domainValue));
+            case TEXT -> new TextConstant(DomainValueUtils.extractString(domainValue));
             default -> throw new IllegalStateException("Cannot create constant of type " + domain);
         };
-    }
-
-    private static LocalDate toLocalDate(DomainValue domainValue) {
-        if (domainValue.isNull()) {
-            return null;
-        }
-
-        return domainValue.getLocalDate();
-    }
-
-    private static Period toPeriod(DomainValue domainValue) {
-        if (domainValue.isNull()) {
-            return null;
-        }
-
-        return domainValue.getPeriod();
-    }
-
-    private static String toString(DomainValue domainValue) {
-        if (domainValue.isNull()) {
-            return null;
-        }
-
-        return domainValue.getString();
-    }
-
-    private static ThreeValuedLogic toThreeValuedLogic(DomainValue value) {
-        if (value.isNull()) {
-            return UNKNOWN;
-        }
-        if (value.getBool()) {
-            return TRUE;
-        }
-        return FALSE;
     }
 
     @Override
@@ -399,14 +360,15 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Domain domain = column.metadata().domain();
         final Supplier<DomainValue> domainValueSupplier = valuesHolder.createSupplier(column.index());
         return switch (domain) {
-            case BOOLEAN -> new BooleanVariable(() -> toThreeValuedLogic(domainValueSupplier.get()));
-            case DATE -> new DateVariable(() -> toLocalDate(domainValueSupplier.get()));
+            case BOOLEAN ->
+                    new BooleanVariable(() -> DomainValueUtils.extractThreeValuedLogic(domainValueSupplier.get()));
+            case DATE -> new DateVariable(() -> DomainValueUtils.extractLocalDate(domainValueSupplier.get()));
             case DECIMAL -> new DecimalVariable(() -> extractBigDecimal(domainValueSupplier.get()));
             case INTEGER -> new IntegerVariable(() -> extractInteger(domainValueSupplier.get()));
-            case INTERVAL -> new IntervalVariable(() -> toPeriod(domainValueSupplier.get()));
+            case INTERVAL -> new IntervalVariable(() -> DomainValueUtils.extractPeriod(domainValueSupplier.get()));
             case LONG -> new LongVariable(() -> extractLong(domainValueSupplier.get()));
             case NULL -> new NullConstant();
-            case TEXT -> new TextVariable(() -> toString(domainValueSupplier.get()));
+            case TEXT -> new TextVariable(() -> DomainValueUtils.extractString(domainValueSupplier.get()));
             default -> throw new IllegalStateException("Cannot create variable of type " + domain);
         };
     }
