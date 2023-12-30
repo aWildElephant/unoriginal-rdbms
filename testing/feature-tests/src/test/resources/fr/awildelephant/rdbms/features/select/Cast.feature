@@ -24,7 +24,18 @@ Feature: Cast
       | DATE       |
       | 1992-05-20 |
 
-  @todo
+  Scenario: I cast a text literal to an integer
+
+    When I execute the query
+    """
+    VALUES (CAST('12' AS INTEGER))
+    """
+
+    Then I expect the result set
+      | column1 |
+      | INTEGER |
+      | 12      |
+
   Scenario: I cast an integer constant to a text
 
     When I execute the query

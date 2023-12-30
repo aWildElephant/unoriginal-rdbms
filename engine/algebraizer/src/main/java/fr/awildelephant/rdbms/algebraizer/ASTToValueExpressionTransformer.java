@@ -3,7 +3,6 @@ package fr.awildelephant.rdbms.algebraizer;
 import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
-import fr.awildelephant.rdbms.ast.ColumnType;
 import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Substring;
@@ -159,19 +158,9 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
 
     @Override
     public ValueExpression visit(Cast cast) {
-        if (cast.targetType() != ColumnType.DATE) {
-            throw new UnsupportedOperationException("Unsupported cast to type " + cast.targetType());
-        }
-
         final ValueExpression input = apply(cast.child());
 
-        final Domain inputDomain = input.domain();
-
-        if (inputDomain != TEXT) {
-            throw new UnsupportedOperationException("Unsupported cast from " + inputDomain + " to DATE");
-        }
-
-        return castExpression(input, DATE);
+        return castExpression(input, ColumnUtils.domainOf(cast.targetType()));
     }
 
     @Override
