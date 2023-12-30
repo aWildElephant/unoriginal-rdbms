@@ -9,12 +9,8 @@ import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.UNKNOWN;
 
 public final class NotOperation extends UnaryOperation<BooleanOperation> implements BooleanOperation {
 
-    private NotOperation(final BooleanOperation input) {
+    public NotOperation(final BooleanOperation input) {
         super(input);
-    }
-
-    public static NotOperation notOperation(final BooleanOperation input) {
-        return new NotOperation(input);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.evaluator.operation.bool.comparison;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.DecimalOperation;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import java.math.BigDecimal;
@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
-final class DecimalDecimalLessComparison extends Comparison<Operation, BigDecimal, Operation, BigDecimal> {
+final class DecimalDecimalLessComparison extends Comparison<DecimalOperation, BigDecimal, DecimalOperation, BigDecimal> {
 
-    DecimalDecimalLessComparison(final Operation left, final Operation right) {
-        super(left, right, DomainValueUtils::extractBigDecimal, DomainValueUtils::extractBigDecimal);
+    DecimalDecimalLessComparison(final DecimalOperation left, final DecimalOperation right) {
+        super(left, right, DecimalOperation::evaluateBigDecimal, DecimalOperation::evaluateBigDecimal);
     }
 
     @Override

@@ -1,15 +1,15 @@
 package fr.awildelephant.rdbms.evaluator.operation.bool.comparison;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerOperation;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
-final class IntegerIntegerLessComparison extends Comparison<Operation, Integer, Operation, Integer> {
+final class IntegerIntegerLessComparison extends Comparison<IntegerOperation, Integer, IntegerOperation, Integer> {
 
-    IntegerIntegerLessComparison(final Operation left, final Operation right) {
-        super(left, right, DomainValueUtils::extractInteger, DomainValueUtils::extractInteger);
+    IntegerIntegerLessComparison(final IntegerOperation left, final IntegerOperation right) {
+        super(left, right, IntegerOperation::evaluateInteger, IntegerOperation::evaluateInteger);
     }
 
     @Override

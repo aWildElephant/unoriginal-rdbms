@@ -9,12 +9,8 @@ import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
 public final class IsNullPredicate extends UnaryOperation<Operation> implements BooleanOperation {
 
-    private IsNullPredicate(Operation input) {
+    public IsNullPredicate(final Operation input) {
         super(input);
-    }
-
-    public static IsNullPredicate isNullPredicate(Operation input) {
-        return new IsNullPredicate(input);
     }
 
     @Override

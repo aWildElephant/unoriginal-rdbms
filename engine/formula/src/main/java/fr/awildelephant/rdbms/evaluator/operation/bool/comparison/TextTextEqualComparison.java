@@ -8,12 +8,12 @@ import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
 final class TextTextEqualComparison extends Comparison<TextOperation, String, TextOperation, String> {
 
-    TextTextEqualComparison(TextOperation left, TextOperation right) {
+    TextTextEqualComparison(final TextOperation left, final TextOperation right) {
         super(left, right, TextOperation::evaluateString, TextOperation::evaluateString);
     }
 
     @Override
-    ThreeValuedLogic evaluateNotNull(String leftInput, String rightInput) {
+    ThreeValuedLogic evaluateNotNull(final String leftInput, final String rightInput) {
         return leftInput.equals(rightInput) ? TRUE : FALSE;
     }
 }

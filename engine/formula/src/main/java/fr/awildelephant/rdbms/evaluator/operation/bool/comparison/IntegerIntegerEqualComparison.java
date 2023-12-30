@@ -1,19 +1,19 @@
 package fr.awildelephant.rdbms.evaluator.operation.bool.comparison;
 
-import fr.awildelephant.rdbms.evaluator.operation.Operation;
+import fr.awildelephant.rdbms.evaluator.operation.numeric.IntegerOperation;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.FALSE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 
-final class IntegerIntegerEqualComparison extends Comparison<Operation, Integer, Operation, Integer> {
+final class IntegerIntegerEqualComparison extends Comparison<IntegerOperation, Integer, IntegerOperation, Integer> {
 
-    IntegerIntegerEqualComparison(final Operation left, final Operation right) {
-        super(left, right, DomainValueUtils::extractInteger, DomainValueUtils::extractInteger);
+    IntegerIntegerEqualComparison(final IntegerOperation left, final IntegerOperation right) {
+        super(left, right, IntegerOperation::evaluateInteger, IntegerOperation::evaluateInteger);
     }
 
     @Override
-    ThreeValuedLogic evaluateNotNull(Integer leftInput, Integer rightInput) {
+    ThreeValuedLogic evaluateNotNull(final Integer leftInput, final Integer rightInput) {
         return leftInput.intValue() == rightInput.intValue() ? TRUE : FALSE;
     }
 }

@@ -12,15 +12,11 @@ import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.UNKNOWN;
 
 public final class LikePredicate extends BinaryOperation<TextOperation, TextOperation> implements BooleanOperation {
 
-    private LikePredicate(TextOperation input, TextOperation patternOperation) {
+    public LikePredicate(final TextOperation input, final TextOperation patternOperation) {
         super(input, patternOperation);
     }
 
-    public static LikePredicate likePredicate(TextOperation input, TextOperation patternOperation) {
-        return new LikePredicate(input, patternOperation);
-    }
-
-    private Pattern createJavaPattern(String patternString) {
+    private Pattern createJavaPattern(final String patternString) {
         // TODO: il faut échapper les caractères spéciaux de regexp java dans la regexp SQL
         return Pattern.compile(patternString.replace("%", ".*"));
     }

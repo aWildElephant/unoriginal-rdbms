@@ -6,14 +6,10 @@ import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.TRUE;
 import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.UNKNOWN;
 
-public class OrOperation extends BinaryOperation<BooleanOperation, BooleanOperation> implements BooleanOperation {
+public final class OrOperation extends BinaryOperation<BooleanOperation, BooleanOperation> implements BooleanOperation {
 
-    private OrOperation(BooleanOperation left, BooleanOperation right) {
+    public OrOperation(final BooleanOperation left, final BooleanOperation right) {
         super(left, right);
-    }
-
-    public static OrOperation orOperation(BooleanOperation left, BooleanOperation right) {
-        return new OrOperation(left, right);
     }
 
     @Override

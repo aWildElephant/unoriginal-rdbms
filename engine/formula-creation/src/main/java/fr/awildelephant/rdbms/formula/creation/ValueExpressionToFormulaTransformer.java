@@ -34,6 +34,9 @@ import fr.awildelephant.rdbms.evaluator.operation.bool.AndOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanConstant;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.BooleanVariable;
+import fr.awildelephant.rdbms.evaluator.operation.bool.IsNullPredicate;
+import fr.awildelephant.rdbms.evaluator.operation.bool.LikePredicate;
+import fr.awildelephant.rdbms.evaluator.operation.bool.NotOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.OrOperation;
 import fr.awildelephant.rdbms.evaluator.operation.bool.comparison.DomainValueUtils;
 import fr.awildelephant.rdbms.evaluator.operation.cast.CastOperationFactory;
@@ -74,11 +77,6 @@ import fr.awildelephant.rdbms.schema.Schema;
 import java.util.function.Supplier;
 
 import static fr.awildelephant.rdbms.evaluator.operation.CaseWhenOperation.caseWhenOperation;
-import static fr.awildelephant.rdbms.evaluator.operation.bool.AndOperation.andOperation;
-import static fr.awildelephant.rdbms.evaluator.operation.bool.IsNullPredicate.isNullPredicate;
-import static fr.awildelephant.rdbms.evaluator.operation.bool.LikePredicate.likePredicate;
-import static fr.awildelephant.rdbms.evaluator.operation.bool.NotOperation.notOperation;
-import static fr.awildelephant.rdbms.evaluator.operation.bool.OrOperation.orOperation;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.ComparisonFactory.equalComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.ComparisonFactory.lessComparison;
 import static fr.awildelephant.rdbms.evaluator.operation.bool.comparison.ComparisonFactory.lessOrEqualComparison;
@@ -134,7 +132,8 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public AndOperation visit(AndExpression and) {
-        return andOperation((BooleanOperation) apply(and.left()), (BooleanOperation) apply(and.right()));
+        final BooleanOperation left = (BooleanOperation) apply(and.left());
+        return new AndOperation(left, (BooleanOperation) apply(and.right()));
     }
 
     @Override
@@ -143,7 +142,8 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation lowerBound = apply(between.lowerBound());
         final Operation upperBound = apply(between.upperBound());
 
-        return andOperation(lessOrEqualComparison(lowerBound, value), lessOrEqualComparison(value, upperBound));
+        final BooleanOperation left = lessOrEqualComparison(lowerBound, value);
+        return new AndOperation(left, lessOrEqualComparison(value, upperBound));
     }
 
     @Override
@@ -237,7 +237,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         for (ValueExpression value : in.values()) {
             final BooleanOperation comparison = equalComparison(input, apply(value));
             if (inOperation != null) {
-                inOperation = orOperation(inOperation, comparison);
+                inOperation = new OrOperation(inOperation, comparison);
             } else {
                 inOperation = comparison;
             }
@@ -248,7 +248,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(IsNullExpression isNull) {
-        return isNullPredicate(apply(isNull.child()));
+        return new IsNullPredicate(apply(isNull.child()));
     }
 
     @Override
@@ -272,7 +272,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final TextOperation value = (TextOperation) apply(like.input());
         final TextOperation pattern = (TextOperation) apply(like.pattern());
 
-        return likePredicate(value, pattern);
+        return new LikePredicate(value, pattern);
     }
 
     @Override
@@ -293,7 +293,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
 
     @Override
     public Operation visit(NotExpression not) {
-        return notOperation((BooleanOperation) apply(not.child()));
+        return new NotOperation((BooleanOperation) apply(not.child()));
     }
 
     @Override
@@ -301,12 +301,13 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation left = apply(notEqualExpression.left());
         final Operation right = apply(notEqualExpression.right());
 
-        return notOperation(equalComparison(left, right));
+        return new NotOperation(equalComparison(left, right));
     }
 
     @Override
     public OrOperation visit(OrExpression or) {
-        return orOperation((BooleanOperation) apply(or.left()), (BooleanOperation) apply(or.right()));
+        BooleanOperation left = (BooleanOperation) apply(or.left());
+        return new OrOperation(left, (BooleanOperation) apply(or.right()));
     }
 
     @Override

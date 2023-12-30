@@ -8,12 +8,8 @@ import static fr.awildelephant.rdbms.util.logic.ThreeValuedLogic.UNKNOWN;
 
 public class AndOperation extends BinaryOperation<BooleanOperation, BooleanOperation> implements BooleanOperation {
 
-    private AndOperation(final BooleanOperation left, final BooleanOperation right) {
+    public AndOperation(final BooleanOperation left, final BooleanOperation right) {
         super(left, right);
-    }
-
-    public static AndOperation andOperation(final BooleanOperation left, final BooleanOperation right) {
-        return new AndOperation(left, right);
     }
 
     @Override

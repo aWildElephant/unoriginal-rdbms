@@ -15,9 +15,9 @@ public final class ComparisonFactory {
 
     public static BooleanOperation equalComparison(final Operation left, final Operation right) {
         if (left instanceof IntegerOperation && right instanceof IntegerOperation) {
-            return new IntegerIntegerEqualComparison(left, right);
+            return new IntegerIntegerEqualComparison((IntegerOperation) left, (IntegerOperation) right);
         } else if (left instanceof DecimalOperation && right instanceof DecimalOperation) {
-            return new DecimalDecimalEqualComparison(left, right);
+            return new DecimalDecimalEqualComparison((DecimalOperation) left, (DecimalOperation) right);
         } else if (left instanceof TextOperation && right instanceof TextOperation) {
             return new TextTextEqualComparison((TextOperation) left, (TextOperation) right);
         } else {
@@ -27,9 +27,9 @@ public final class ComparisonFactory {
 
     public static BooleanOperation lessComparison(final Operation left, final Operation right) {
         if (left instanceof IntegerOperation && right instanceof IntegerOperation) {
-            return new IntegerIntegerLessComparison(left, right);
+            return new IntegerIntegerLessComparison((IntegerOperation) left, (IntegerOperation) right);
         } else if (left instanceof DecimalOperation && right instanceof DecimalOperation) {
-            return new DecimalDecimalLessComparison(left, right);
+            return new DecimalDecimalLessComparison((DecimalOperation) left, (DecimalOperation) right);
         } else if (left instanceof DateOperation && right instanceof DateOperation) {
             // TODO: se baser sur le type des fils plutôt que sur le domaine (?)
             return new DateDateLessComparison((DateOperation) left, (DateOperation) right);
@@ -43,9 +43,9 @@ public final class ComparisonFactory {
         if (left instanceof DateOperation && right instanceof DateOperation) {
             return new DateDateLessOrEqualComparison((DateOperation) left, (DateOperation) right);
         } else if (left instanceof IntegerOperation && right instanceof IntegerOperation) {
-            return new IntegerIntegerLessOrEqualComparison(left, right);
+            return new IntegerIntegerLessOrEqualComparison((IntegerOperation) left, (IntegerOperation) right);
         } else if (left instanceof DecimalOperation && right instanceof DecimalOperation) {
-            return new DecimalLessOrEqualComparison(left, right);
+            return new DecimalLessOrEqualComparison((DecimalOperation) left, (DecimalOperation) right);
         } else {
             throw new UnsupportedOperationException("Unsupported comparison: " + left.getClass() + " <= " + right.getClass());
         }
