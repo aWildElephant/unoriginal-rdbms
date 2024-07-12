@@ -34,7 +34,7 @@ public abstract class UnaryNode<T extends Tree<T>, C extends T> implements Tree<
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof UnaryNode other)) {
+        if (!(obj instanceof final UnaryNode<?, ?> other)) {
             return false;
         }
 

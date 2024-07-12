@@ -20,7 +20,7 @@ import static java.util.Comparator.comparing;
 
 class ValueExpressionEqualsAndHashCodeTest {
 
-    // TODO: why are we not testing more classes?
+    // TODO: we're not testing more classes because of a reflection issue in equalsverifier
     private static final Set<Class<?>> TO_TEST = Set.of(ConstantExpression.class, OuterQueryVariable.class, Variable.class);
 
     private static Collection<Arguments> parameters() {
