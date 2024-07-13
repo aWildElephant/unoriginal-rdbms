@@ -21,11 +21,9 @@ final class GroupingSpecificationRule {
     static GroupingSetsList deriveGroupingSpecification(Lexer lexer) {
         final List<ColumnName> columns = new ArrayList<>();
 
-        columns.add(deriveColumnReference(lexer));
-
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
+        do {
             columns.add(deriveColumnReference(lexer));
-        }
+        } while (consumeIfNextTokenIs(COMMA, lexer));
 
         return groupingSetsList(columns);
     }

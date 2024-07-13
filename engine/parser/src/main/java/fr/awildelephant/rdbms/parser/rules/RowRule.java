@@ -29,11 +29,9 @@ final class RowRule {
         }
 
         final List<AST> values = new LinkedList<>();
-        values.add(deriveBooleanValueExpression(lexer));
-
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
+        do {
             values.add(deriveBooleanValueExpression(lexer));
-        }
+        } while (consumeIfNextTokenIs(COMMA, lexer));
 
         consumeAndExpect(RIGHT_PAREN, lexer);
 

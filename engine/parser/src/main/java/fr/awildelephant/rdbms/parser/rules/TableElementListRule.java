@@ -22,11 +22,9 @@ final class TableElementListRule {
 
         consumeAndExpect(LEFT_PAREN, lexer);
 
-        deriveTableElement(builder, lexer);
-
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
+        do {
             deriveTableElement(builder, lexer);
-        }
+        } while (consumeIfNextTokenIs(COMMA, lexer));
 
         consumeAndExpect(RIGHT_PAREN, lexer);
 

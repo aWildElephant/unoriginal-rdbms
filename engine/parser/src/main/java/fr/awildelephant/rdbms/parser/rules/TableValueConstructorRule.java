@@ -30,11 +30,10 @@ final class TableValueConstructorRule {
         }
 
         final ArrayList<Row> rows = new ArrayList<>();
-        rows.add(deriveRowRule(lexer));
 
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
+        do {
             rows.add(deriveRowRule(lexer));
-        }
+        } while (consumeIfNextTokenIs(COMMA, lexer));
 
         return rows(rows);
     }

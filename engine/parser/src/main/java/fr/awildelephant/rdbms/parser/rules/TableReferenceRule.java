@@ -4,7 +4,6 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
@@ -12,7 +11,6 @@ import static fr.awildelephant.rdbms.ast.LeftJoin.leftJoin;
 import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
 import static fr.awildelephant.rdbms.ast.TableAliasWithColumns.tableAliasWithColumns;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
-import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IDENTIFIER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
@@ -21,6 +19,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OUTER;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VALUES;
 import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpression;
+import static fr.awildelephant.rdbms.parser.rules.ColumnNameListRule.deriveColumnNameList;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIfNextTokenIs;
@@ -86,13 +85,7 @@ final class TableReferenceRule {
 
         lexer.consumeNextToken();
 
-        final List<String> columnAliases = new ArrayList<>();
-
-        columnAliases.add(consumeIdentifier(lexer));
-
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
-            columnAliases.add(consumeIdentifier(lexer));
-        }
+        List<String> columnAliases = deriveColumnNameList(lexer);
 
         consumeAndExpect(RIGHT_PAREN, lexer);
 

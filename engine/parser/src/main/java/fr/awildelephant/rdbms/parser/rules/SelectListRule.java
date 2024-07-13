@@ -26,11 +26,9 @@ final class SelectListRule {
 
         final List<AST> selectList = new LinkedList<>();
 
-        selectList.add(deriveDerivedColumn(lexer));
-
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
+        do {
             selectList.add(deriveDerivedColumn(lexer));
-        }
+        } while (consumeIfNextTokenIs(COMMA, lexer));
 
         return selectList;
     }

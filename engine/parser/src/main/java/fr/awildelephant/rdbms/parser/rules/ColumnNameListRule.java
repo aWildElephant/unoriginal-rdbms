@@ -17,11 +17,10 @@ public final class ColumnNameListRule {
 
     public static List<String> deriveColumnNameList(Lexer lexer) {
         final List<String> columnNames = new ArrayList<>();
-        columnNames.add(consumeIdentifier(lexer));
 
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
+        do {
             columnNames.add(consumeIdentifier(lexer));
-        }
+        } while (consumeIfNextTokenIs(COMMA, lexer));
 
         return columnNames;
     }

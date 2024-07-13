@@ -22,23 +22,18 @@ public final class AggregateAliaser {
     }
 
     public Aggregate alias(Aggregate aggregate) {
-        if (aggregate instanceof AnyAggregate) {
-            return doAlias((AnyAggregate) aggregate);
-        } else if (aggregate instanceof AvgAggregate) {
-            return doAlias((AvgAggregate) aggregate);
-        } else if (aggregate instanceof CountAggregate) {
-            return doAlias((CountAggregate) aggregate);
-        } else if (aggregate instanceof CountStarAggregate) {
-            return doAlias((CountStarAggregate) aggregate);
-        } else if (aggregate instanceof MaxAggregate) {
-            return doAlias((MaxAggregate) aggregate);
-        } else if (aggregate instanceof MinAggregate) {
-            return doAlias((MinAggregate) aggregate);
-        } else if (aggregate instanceof SumAggregate) {
-            return doAlias((SumAggregate) aggregate);
-        } else {
-            throw new UnsupportedOperationException("Aliasing input of " + aggregate.getClass().getSimpleName() + " not supported");
-        }
+        return switch (aggregate) {
+            case AnyAggregate anyAggregate -> doAlias(anyAggregate);
+            case AvgAggregate avgAggregate -> doAlias(avgAggregate);
+            case CountAggregate countAggregate -> doAlias(countAggregate);
+            case CountStarAggregate countStarAggregate -> doAlias(countStarAggregate);
+            case MaxAggregate maxAggregate -> doAlias(maxAggregate);
+            case MinAggregate minAggregate -> doAlias(minAggregate);
+            case SumAggregate sumAggregate -> doAlias(sumAggregate);
+            case null -> throw new IllegalStateException();
+            default ->
+                    throw new UnsupportedOperationException("Aliasing input of " + aggregate.getClass().getSimpleName() + " not supported");
+        };
     }
 
     private AnyAggregate doAlias(AnyAggregate aggregate) {

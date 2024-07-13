@@ -21,11 +21,9 @@ final class SortSpecificationListRule {
     static SortSpecificationList deriveSortSpecificationList(final Lexer lexer) {
         final List<SortSpecification> columns = new ArrayList<>();
 
-        columns.add(deriveSortSpecification(lexer));
-
-        while (consumeIfNextTokenIs(COMMA, lexer)) {
+        do {
             columns.add(deriveSortSpecification(lexer));
-        }
+        } while (consumeIfNextTokenIs(COMMA, lexer));
 
         return sortSpecificationList(columns);
     }

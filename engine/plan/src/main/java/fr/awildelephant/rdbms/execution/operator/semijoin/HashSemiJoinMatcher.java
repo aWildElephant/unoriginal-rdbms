@@ -1,8 +1,7 @@
 package fr.awildelephant.rdbms.execution.operator.semijoin;
 
-import fr.awildelephant.rdbms.data.value.DomainValue;
+import fr.awildelephant.rdbms.execution.operator.hashing.HashingHelper;
 import fr.awildelephant.rdbms.storage.data.record.Record;
-import fr.awildelephant.rdbms.storage.data.record.Tuple;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
 
@@ -33,13 +32,7 @@ public final class HashSemiJoinMatcher implements SemiJoinMatcher {
     }
 
     private static Record key(Record record, int[] mapping) {
-        final DomainValue[] values = new DomainValue[mapping.length]; // TODO: avoid building a new tuple?
-
-        for (int i = 0; i < mapping.length; i++) {
-            values[i] = record.get(mapping[i]);
-        }
-
-        return new Tuple(values);
+        return HashingHelper.key(record, mapping);
     }
 
     @Override

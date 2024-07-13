@@ -146,37 +146,45 @@ public final class AggregationOperator implements Operator {
     }
 
     private Accumulator accumulator(Aggregate aggregate, Schema schema) {
-        if (aggregate instanceof AnyAggregate) {
-            return new AnyAccumulator();
-        } else if (aggregate instanceof AvgAggregate) {
-            return new AvgAccumulator();
-        } else if (aggregate instanceof CountAggregate countAggregate) {
-            if (countAggregate.distinct()) {
-                return new CountDistinctAccumulator();
-            } else {
-                return new CountAccumulator();
+        // TODO: case ... when can probably help us remove nested stuff
+        switch (aggregate) {
+            case AnyAggregate ignored -> {
+                return new AnyAccumulator();
             }
-        } else if (aggregate instanceof CountStarAggregate) {
-            return new CountStarAccumulator();
-        } else if (aggregate instanceof MaxAggregate) {
-            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
+            case AvgAggregate ignored -> {
+                return new AvgAccumulator();
+            }
+            case CountAggregate countAggregate -> {
+                if (countAggregate.distinct()) {
+                    return new CountDistinctAccumulator();
+                } else {
+                    return new CountAccumulator();
+                }
+            }
+            case CountStarAggregate ignored -> {
+                return new CountStarAccumulator();
+            }
+            case MaxAggregate ignored -> {
+                final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
 
-            return new MaxAccumulator(comparator(inputColumn));
-        } else if (aggregate instanceof MinAggregate) {
-            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
+                return new MaxAccumulator(comparator(inputColumn));
+            }
+            case MinAggregate ignored -> {
+                final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
 
-            return new MinAccumulator(comparator(inputColumn));
-        } else if (aggregate instanceof SumAggregate) {
-            final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
+                return new MinAccumulator(comparator(inputColumn));
+            }
+            case SumAggregate ignored -> {
+                final ColumnMetadata inputColumn = schema.column(aggregate.inputColumn().orElseThrow()).metadata();
 
-            return switch (inputColumn.domain()) {
-                case INTEGER -> new IntegerSumAccumulator();
-                case LONG -> new LongSumAccumulator();
-                case DECIMAL -> new DecimalSumAccumulator();
-                default -> throw new IllegalStateException();
-            };
-        } else {
-            throw new IllegalStateException();
+                return switch (inputColumn.domain()) {
+                    case INTEGER -> new IntegerSumAccumulator();
+                    case LONG -> new LongSumAccumulator();
+                    case DECIMAL -> new DecimalSumAccumulator();
+                    default -> throw new IllegalStateException();
+                };
+            }
+            case null, default -> throw new IllegalStateException();
         }
     }
 

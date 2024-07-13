@@ -16,7 +16,9 @@ public final class Driver extends AbstractRDBMSDriver {
     protected ServerProxy createProxy(String url) {
         final Matcher matcher = URL_PATTERN.matcher(url);
 
-        matcher.matches();
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException();
+        }
 
         final String host = matcher.group(1);
         final int port = parseInt(matcher.group(2));

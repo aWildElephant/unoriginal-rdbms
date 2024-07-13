@@ -37,19 +37,17 @@ final class TableElementRule {
                 consumeAndExpect(KEY, lexer);
                 consumeAndExpect(LEFT_PAREN, lexer);
                 final Set<String> columnNames = new HashSet<>();
-                columnNames.add(consumeIdentifier(lexer));
-                while (consumeIfNextTokenIs(COMMA, lexer)) {
+                do {
                     columnNames.add(consumeIdentifier(lexer));
-                }
+                } while (consumeIfNextTokenIs(COMMA, lexer));
                 consumeAndExpect(RIGHT_PAREN, lexer);
                 consumeAndExpect(REFERENCES, lexer);
                 final String targetTableName = consumeIdentifier(lexer);
                 consumeAndExpect(LEFT_PAREN, lexer);
                 final Set<String> targetColumnNames = new HashSet<>();
-                targetColumnNames.add(consumeIdentifier(lexer));
-                while (consumeIfNextTokenIs(COMMA, lexer)) {
+                do {
                     targetColumnNames.add(consumeIdentifier(lexer));
-                }
+                } while (consumeIfNextTokenIs(COMMA, lexer));
                 consumeAndExpect(RIGHT_PAREN, lexer);
                 tableElementListBuilder.addForeignKeyConstraint(columnNames, targetTableName, targetColumnNames);
             }
@@ -57,10 +55,9 @@ final class TableElementRule {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
                 final HashSet<String> columns = new HashSet<>();
-                columns.add(consumeIdentifier(lexer));
-                while (consumeIfNextTokenIs(COMMA, lexer)) {
+                do {
                     columns.add(consumeIdentifier(lexer));
-                }
+                } while (consumeIfNextTokenIs(COMMA, lexer));
                 consumeAndExpect(RIGHT_PAREN, lexer);
                 tableElementListBuilder.addUniqueConstraint(columns);
             }
