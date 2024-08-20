@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.execution.executor;
 
 import fr.awildelephant.rdbms.database.StorageSnapshot;
+import fr.awildelephant.rdbms.execution.exception.KeyAlreadyExistsException;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 
@@ -27,8 +28,8 @@ public class TemporaryStorage {
     }
 
     public void storeTemporaryResult(String key, Table table) {
-        if (permanentStorageSnapshot.exists(key)) {
-            throw new IllegalArgumentException(); // TODO: proper exception
+        if (permanentStorageSnapshot.exists(key) || temporaryComponent.containsKey(key)) {
+            throw new KeyAlreadyExistsException(key);
         }
 
         temporaryComponent.put(key, table);

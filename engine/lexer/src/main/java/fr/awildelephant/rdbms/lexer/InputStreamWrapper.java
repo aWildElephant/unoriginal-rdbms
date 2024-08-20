@@ -1,5 +1,7 @@
 package fr.awildelephant.rdbms.lexer;
 
+import fr.awildelephant.rdbms.lexer.exception.LexingException;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +49,7 @@ public final class InputStreamWrapper {
         try {
             next = reader.read();
         } catch (IOException e) {
-            throw new IllegalStateException(e); // Throw a customized exception
+            throw new LexingException(e);
         }
     }
 }
