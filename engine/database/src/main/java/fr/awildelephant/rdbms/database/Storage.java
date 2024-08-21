@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.database;
 
 import fr.awildelephant.rdbms.operator.logical.BaseTableLop;
 import fr.awildelephant.rdbms.operator.logical.LogicalOperator;
-import fr.awildelephant.rdbms.schema.TableNotFoundException;
+import fr.awildelephant.rdbms.schema.TableNotFoundError;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.version.Version;
 import fr.awildelephant.rdbms.version.VersionedObject;
@@ -29,7 +29,7 @@ public final class Storage {
                 return versionedObject.endAt(version);
             }
 
-            throw new TableNotFoundException(tableName);
+            throw new TableNotFoundError(tableName);
         });
     }
 
@@ -42,7 +42,7 @@ public final class Storage {
         final VersionedObject<ManagedTable> table = tables.get(tableName);
 
         if (table == null || !table.isValidAt(version)) {
-            throw new TableNotFoundException(tableName);
+            throw new TableNotFoundError(tableName);
         }
 
         return table.object();
@@ -61,6 +61,6 @@ public final class Storage {
             return view.object();
         }
 
-        throw new TableNotFoundException(name);
+        throw new TableNotFoundError(name);
     }
 }

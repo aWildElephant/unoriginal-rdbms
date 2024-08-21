@@ -74,7 +74,7 @@ public final class Schema {
         final Map<String, OrderedColumnMetadata> tables = columnIndex.get(name);
 
         if (tables == null || tables.isEmpty()) {
-            throw new ColumnNotFoundException(name);
+            throw new ColumnNotFoundError(name);
         }
 
         if (tables.size() > 1) {
@@ -88,13 +88,13 @@ public final class Schema {
         final Map<String, OrderedColumnMetadata> tables = columnIndex.get(columnName);
 
         if (tables == null || tables.isEmpty()) {
-            throw new ColumnNotFoundException(tableName, columnName);
+            throw new ColumnNotFoundError(tableName, columnName);
         }
 
         final OrderedColumnMetadata column = tables.get(tableName);
 
         if (column == null) {
-            throw new ColumnNotFoundException(tableName, columnName);
+            throw new ColumnNotFoundError(tableName, columnName);
         }
 
         return column;
@@ -110,7 +110,7 @@ public final class Schema {
         try {
             column(columnReference);
             return true;
-        } catch (ColumnNotFoundException unused) {
+        } catch (ColumnNotFoundError unused) {
             return false;
         }
     }

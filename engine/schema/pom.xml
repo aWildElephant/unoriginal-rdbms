@@ -13,6 +13,10 @@
     <name>${engine.fancyName} :: Schema</name>
 
     <dependencies>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-error</artifactId>
+        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

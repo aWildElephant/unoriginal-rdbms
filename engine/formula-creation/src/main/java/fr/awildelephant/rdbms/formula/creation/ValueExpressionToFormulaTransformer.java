@@ -70,6 +70,7 @@ import fr.awildelephant.rdbms.evaluator.operation.text.SubstringOperation;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextConstant;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextOperation;
 import fr.awildelephant.rdbms.evaluator.operation.text.TextVariable;
+import fr.awildelephant.rdbms.formula.exception.ExtractIncompatibleTypeError;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.OrderedColumnMetadata;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -206,7 +207,7 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
         final Operation input = apply(extractYear.child());
 
         if (!(input instanceof final DateOperation dateOperation)) {
-            throw new UnsupportedOperationException("Cannot extract YEAR from incompatible type " + input.domain());
+            throw new ExtractIncompatibleTypeError("YEAR", input.domain().name());
         }
 
         return new ExtractYearOperation(dateOperation);

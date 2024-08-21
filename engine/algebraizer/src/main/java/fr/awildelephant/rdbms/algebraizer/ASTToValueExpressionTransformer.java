@@ -36,7 +36,7 @@ import fr.awildelephant.rdbms.ast.value.TextLiteral;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
-import fr.awildelephant.rdbms.schema.ColumnNotFoundException;
+import fr.awildelephant.rdbms.schema.ColumnNotFoundError;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.QualifiedColumnReference;
@@ -395,7 +395,7 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         try {
             final ColumnMetadata column = inputSchema.column(reference).metadata();
             return variable(column.name(), column.domain());
-        } catch (ColumnNotFoundException unused) {
+        } catch (ColumnNotFoundError unused) {
             final ColumnMetadata outerColumn = outerQuerySchema.column(reference).metadata();
             return outerQueryVariable(outerColumn.name(), outerColumn.domain());
         }

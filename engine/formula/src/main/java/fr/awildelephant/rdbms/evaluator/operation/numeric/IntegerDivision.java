@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.evaluator.operation.numeric;
 
+import fr.awildelephant.rdbms.evaluator.exception.DivisionByZeroError;
 import fr.awildelephant.rdbms.evaluator.operation.BinaryOperation;
 
 public final class IntegerDivision extends BinaryOperation<IntegerOperation, IntegerOperation> implements IntegerOperation {
@@ -21,7 +22,7 @@ public final class IntegerDivision extends BinaryOperation<IntegerOperation, Int
         }
 
         if (rightValue == 0) {
-            throw new IllegalStateException("Division by zero");
+            throw new DivisionByZeroError();
         }
 
         return leftValue / rightValue;

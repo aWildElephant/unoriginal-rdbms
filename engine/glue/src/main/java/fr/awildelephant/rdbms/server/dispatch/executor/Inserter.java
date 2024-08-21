@@ -5,6 +5,8 @@ import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
+import fr.awildelephant.rdbms.server.exception.ColumnCountMismatchError;
+import fr.awildelephant.rdbms.server.exception.IncompatibleColumnTypeError;
 import fr.awildelephant.rdbms.storage.data.column.VersionColumn;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
@@ -59,7 +61,7 @@ final class Inserter {
 
     private static void checkColumnCount(final int actual, final int expected) {
         if (actual != expected) {
-            throw new IllegalArgumentException("Column count mismatch: expected " + expected + " but got " + actual);
+            throw new ColumnCountMismatchError(expected, actual);
         }
     }
 
@@ -74,7 +76,7 @@ final class Inserter {
             final Domain sourceDomain = sourceColumn.domain();
             final Domain destinationDomain = destinationColumn.domain();
             if (!sourceDomain.canBeUsedAs(destinationDomain)) {
-                throw new IllegalArgumentException(String.format("Column '%s': type %s is incompatible with type %s", destinationColumn.name(), sourceDomain.name(), destinationDomain.name()));
+                throw new IncompatibleColumnTypeError(destinationColumn.name().fullName(), sourceDomain.name(), destinationDomain.name());
             }
         }
     }

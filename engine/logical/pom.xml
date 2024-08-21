@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-error</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-formula</artifactId>
         </dependency>
         <dependency>

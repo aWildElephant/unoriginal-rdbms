@@ -77,6 +77,11 @@
             </dependency>
             <dependency>
                 <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-error</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>

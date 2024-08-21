@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.storage.constraint;
 
 import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.exception.NotNullConstraintViolationError;
 
 public class NotNullChecker implements ConstraintChecker {
 
@@ -15,7 +16,7 @@ public class NotNullChecker implements ConstraintChecker {
     @Override
     public void check(Record record) {
         if (record.get(columnIndex).isNull()) {
-            throw new IllegalArgumentException("Cannot insert NULL in not-null column " + columnName);
+            throw new NotNullConstraintViolationError(columnName);
         }
     }
 }

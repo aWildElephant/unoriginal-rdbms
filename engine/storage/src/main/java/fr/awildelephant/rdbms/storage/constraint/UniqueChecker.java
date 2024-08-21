@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.storage.constraint;
 
 import fr.awildelephant.rdbms.storage.data.index.UniqueIndex;
 import fr.awildelephant.rdbms.storage.data.record.Record;
+import fr.awildelephant.rdbms.storage.exception.UniqueConstraintViolationError;
 
 public final class UniqueChecker implements ConstraintChecker {
 
@@ -14,7 +15,7 @@ public final class UniqueChecker implements ConstraintChecker {
     @Override
     public void check(Record record) {
         if (index.conflictsWith(record)) {
-            throw new IllegalArgumentException("Unique constraint violation");
+            throw new UniqueConstraintViolationError();
         }
     }
 }

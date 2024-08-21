@@ -7,9 +7,8 @@
         <groupId>fr.awildelephant</groupId>
         <artifactId>rdbms-util</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>rdbms-logic</artifactId>
-    <name>${util.fancyName} :: Three-valued logic</name>
+    <artifactId>rdbms-error</artifactId>
+    <name>${util.fancyName} :: Error</name>
 </project>

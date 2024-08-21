@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.ast.WithElement;
 import fr.awildelephant.rdbms.ast.WithList;
+import fr.awildelephant.rdbms.server.exception.DuplicateQueryNameError;
 import fr.awildelephant.rdbms.server.with.WithQueryReplacer;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.version.Version;
@@ -30,7 +31,7 @@ public final class WithExecutor {
 
         for (WithElement element : withList.elements()) {
             if (elementsMap.containsKey(element.name())) {
-                throw new IllegalArgumentException("Duplicate query name '" + element.name() + "' in with clause");
+                throw new DuplicateQueryNameError(element.name());
             }
 
             elementsMap.put(element.name(), element.definition());

@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.evaluator.operation.numeric;
 
+import fr.awildelephant.rdbms.evaluator.exception.DivisionByZeroError;
 import fr.awildelephant.rdbms.evaluator.operation.BinaryOperation;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ public final class DecimalDivision extends BinaryOperation<DecimalOperation, Dec
         }
 
         if (isZero(rightValue)) {
-            throw new IllegalStateException("Division by zero");
+            throw new DivisionByZeroError();
         }
 
         final BigDecimal leftValue = leftChild().evaluateBigDecimal();

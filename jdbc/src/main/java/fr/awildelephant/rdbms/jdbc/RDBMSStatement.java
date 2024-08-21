@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.jdbc;
 
+import fr.awildelephant.rdbms.error.DatabaseError;
 import fr.awildelephant.rdbms.jdbc.abstraction.ResultProxy;
 import fr.awildelephant.rdbms.jdbc.abstraction.ServerProxy;
 
@@ -74,8 +75,10 @@ public class RDBMSStatement extends AbstractStatement {
     private ResultProxy executeAndForwardException(String sql) throws SQLException {
         try {
             return serverProxy.execute(sql);
-        } catch (Throwable e) {
+        } catch (DatabaseError e) {
             throw new SQLException(e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new SQLException("Unprocessed internal error", e);
         }
     }
 }

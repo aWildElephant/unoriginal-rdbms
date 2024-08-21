@@ -28,7 +28,6 @@ Feature: Insert Into errors
       Column count mismatch: expected 2 but got 1
       """
 
-  # TODO: have an exception type for engine error rather than throwing an IllegalArgumentException
   Scenario: I try to insert a value of the wrong type in a column
 
     Given the table test

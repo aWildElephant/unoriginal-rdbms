@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.operator.logical;
 
 import fr.awildelephant.rdbms.arithmetic.ValueExpression;
+import fr.awildelephant.rdbms.logical.exception.TableConstructorColumnCountMismatchError;
 import fr.awildelephant.rdbms.schema.ColumnMetadata;
 import fr.awildelephant.rdbms.schema.Domain;
 import fr.awildelephant.rdbms.schema.Schema;
@@ -87,7 +88,7 @@ public final class TableConstructorLop extends AbstractLop {
 
         for (int i = 1; i < matrix.size(); i++) {
             if (matrix.get(i).size() != numberOfColumns) {
-                throw new UnsupportedOperationException("Column count does not match");
+                throw new TableConstructorColumnCountMismatchError();
             }
         }
 
