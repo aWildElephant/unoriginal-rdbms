@@ -2,8 +2,6 @@ Feature: With
 
   Scenario: I execute a query with the same query name twice in the with clause
 
-    # TODO: (not related to this test but found executing it) if the query has a syntax error, the exception is lost
-
     When I execute the query
     """
     WITH oops AS (VALUES ('hello')), oops AS (VALUES ('WORLD')) SELECT * FROM oops
