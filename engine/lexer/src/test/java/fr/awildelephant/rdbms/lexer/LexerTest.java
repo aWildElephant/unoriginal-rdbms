@@ -6,6 +6,8 @@ import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+
 import static fr.awildelephant.rdbms.lexer.LexingTestHelper.assertLexing;
 import static fr.awildelephant.rdbms.lexer.LexingTestHelper.lexerFrom;
 import static fr.awildelephant.rdbms.lexer.tokens.Keywords.COUNT_TOKEN;
@@ -69,7 +71,7 @@ class LexerTest {
                 RIGHT_PAREN_TOKEN,
                 VALUES_TOKEN,
                 LEFT_PAREN_TOKEN,
-                new IntegerLiteralToken(1),
+                new IntegerLiteralToken(BigInteger.valueOf(1)),
                 RIGHT_PAREN_TOKEN,
                 SEMICOLON_TOKEN);
     }
@@ -105,7 +107,7 @@ class LexerTest {
                 new TextLiteralToken("120"),
                 DAY_TOKEN,
                 LEFT_PAREN_TOKEN,
-                new IntegerLiteralToken(3),
+                new IntegerLiteralToken(BigInteger.valueOf(3)),
                 RIGHT_PAREN_TOKEN);
     }
 

@@ -58,6 +58,7 @@ import fr.awildelephant.rdbms.ast.value.IsNull;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.LongLiteral;
 import fr.awildelephant.rdbms.ast.value.Max;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
@@ -262,6 +263,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(Limit limit) {
         return defaultVisit(limit);
+    }
+
+    @Override
+    public T visit(LongLiteral longLiteral) {
+        return defaultVisit(longLiteral);
     }
 
     @Override

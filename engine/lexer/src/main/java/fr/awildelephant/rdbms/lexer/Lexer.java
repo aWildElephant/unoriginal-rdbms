@@ -9,6 +9,7 @@ import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
@@ -31,7 +32,6 @@ import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.QUESTION_MARK_TOKE
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.RIGHT_PAREN_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SEMICOLON_TOKEN;
 import static fr.awildelephant.rdbms.lexer.tokens.StaticToken.SOLIDUS_TOKEN;
-import static java.lang.Integer.parseInt;
 
 public final class Lexer {
 
@@ -202,7 +202,7 @@ public final class Lexer {
                 if (decimalSeparatorFound) {
                     return new DecimalLiteralToken(new BigDecimal(valueBuilder.toString()));
                 } else {
-                    return new IntegerLiteralToken(parseInt(valueBuilder.toString()));
+                    return new IntegerLiteralToken(new BigInteger(valueBuilder.toString()));
                 }
             } else {
                 throw new LexingException();

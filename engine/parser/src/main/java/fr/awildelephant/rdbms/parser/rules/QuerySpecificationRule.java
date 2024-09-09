@@ -82,7 +82,7 @@ final class QuerySpecificationRule {
         }
 
         if (consumeIfNextTokenIs(LIMIT, lexer)) {
-            final int limit = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
+            final int limit = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value().intValue();
 
             output = limit(output, limit);
         }

@@ -24,6 +24,7 @@ import fr.awildelephant.rdbms.ast.value.IsNull;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.LongLiteral;
 import fr.awildelephant.rdbms.ast.value.Minus;
 import fr.awildelephant.rdbms.ast.value.Multiply;
 import fr.awildelephant.rdbms.ast.value.Not;
@@ -75,6 +76,7 @@ import static fr.awildelephant.rdbms.data.value.DecimalValue.decimalValue;
 import static fr.awildelephant.rdbms.data.value.FalseValue.falseValue;
 import static fr.awildelephant.rdbms.data.value.IntegerValue.integerValue;
 import static fr.awildelephant.rdbms.data.value.IntervalValue.intervalValue;
+import static fr.awildelephant.rdbms.data.value.LongValue.longValue;
 import static fr.awildelephant.rdbms.data.value.NullValue.nullValue;
 import static fr.awildelephant.rdbms.data.value.TextValue.textValue;
 import static fr.awildelephant.rdbms.data.value.TrueValue.trueValue;
@@ -83,6 +85,7 @@ import static fr.awildelephant.rdbms.schema.Domain.DATE;
 import static fr.awildelephant.rdbms.schema.Domain.DECIMAL;
 import static fr.awildelephant.rdbms.schema.Domain.INTEGER;
 import static fr.awildelephant.rdbms.schema.Domain.INTERVAL;
+import static fr.awildelephant.rdbms.schema.Domain.LONG;
 import static fr.awildelephant.rdbms.schema.Domain.NULL;
 import static fr.awildelephant.rdbms.schema.Domain.TEXT;
 import static java.lang.Integer.parseInt;
@@ -275,6 +278,11 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         }
 
         return likeExpression(input, pattern);
+    }
+
+    @Override
+    public ValueExpression visit(LongLiteral longLiteral) {
+        return constantExpression(longValue(longLiteral.value()), LONG);
     }
 
     @Override

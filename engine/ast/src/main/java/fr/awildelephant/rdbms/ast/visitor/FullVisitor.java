@@ -58,6 +58,7 @@ import fr.awildelephant.rdbms.ast.value.IsNull;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.LongLiteral;
 import fr.awildelephant.rdbms.ast.value.Max;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
@@ -331,6 +332,11 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(Limit limit) {
         return limit(function.apply(limit.child()), limit.limit());
+    }
+
+    @Override
+    public AST visit(LongLiteral longLiteral) {
+        return longLiteral;
     }
 
     @Override

@@ -12,6 +12,9 @@ import fr.awildelephant.rdbms.lexer.tokens.TextLiteralToken;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
 import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.Substring.substring;
 import static fr.awildelephant.rdbms.ast.value.Any.any;
@@ -27,6 +30,7 @@ import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.DAY_GRANULARI
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.MONTH_GRANULARITY;
 import static fr.awildelephant.rdbms.ast.value.IntervalGranularity.YEAR_GRANULARITY;
 import static fr.awildelephant.rdbms.ast.value.IntervalLiteral.intervalLiteral;
+import static fr.awildelephant.rdbms.ast.value.LongLiteral.longLiteral;
 import static fr.awildelephant.rdbms.ast.value.Max.max;
 import static fr.awildelephant.rdbms.ast.value.Min.min;
 import static fr.awildelephant.rdbms.ast.value.Minus.minus;
@@ -96,17 +100,14 @@ final class ValueExpressionRule {
             }
             case MINUS -> {
                 lexer.consumeNextToken();
-                final Token numericValueToNegate = lexer.consumeNextToken();
-                switch (numericValueToNegate.type()) {
+                switch (lexer.lookupNextToken().type()) {
                     case INTEGER_LITERAL -> {
-                        final IntegerLiteralToken integerValue = (IntegerLiteralToken) numericValueToNegate;
-                        return integerLiteral(-integerValue.value());
+                        return deriveIntegerLiteral(lexer, true);
                     }
                     case DECIMAL_LITERAL -> {
-                        final DecimalLiteralToken decimalValue = (DecimalLiteralToken) numericValueToNegate;
-                        return decimalLiteral(decimalValue.value().negate());
+                        return deriveDecimalLiteral(lexer, true);
                     }
-                    default -> throw unexpectedToken(numericValueToNegate);
+                    default -> throw unexpectedToken(lexer.lookupNextToken());
                 }
             }
             default -> {
@@ -185,7 +186,7 @@ final class ValueExpressionRule {
                 };
                 Integer precision = null;
                 if (consumeIfNextTokenIs(LEFT_PAREN, lexer)) {
-                    precision = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value();
+                    precision = ((IntegerLiteralToken) consumeAndExpect(INTEGER_LITERAL, lexer)).value().intValue();
 
                     consumeAndExpect(RIGHT_PAREN, lexer);
                 }
@@ -299,15 +300,30 @@ final class ValueExpressionRule {
     }
 
     private static AST deriveDecimalLiteral(Lexer lexer) {
+        return  deriveDecimalLiteral(lexer, false);
+    }
+
+    private static AST deriveDecimalLiteral(Lexer lexer, boolean negate) {
         final Token token = lexer.consumeNextToken();
 
-        return decimalLiteral(((DecimalLiteralToken) token).value());
+        final BigDecimal value = ((DecimalLiteralToken) token).value();
+        return negate ? decimalLiteral(value.negate()) : decimalLiteral(value);
     }
 
     private static AST deriveIntegerLiteral(Lexer lexer) {
+        return deriveIntegerLiteral(lexer, false);
+    }
+
+    private static AST deriveIntegerLiteral(Lexer lexer, boolean negate) {
         final Token token = lexer.consumeNextToken();
 
-        return integerLiteral(((IntegerLiteralToken) token).value());
+        final BigInteger value = ((IntegerLiteralToken) token).value();
+        final long longValue = negate ? -value.longValue(): value.longValue();
+        if (longValue > Integer.MAX_VALUE || longValue < Integer.MIN_VALUE) {
+            return longLiteral(longValue);
+        } else {
+            return integerLiteral((int) longValue);
+        }
     }
 
     static TextLiteral deriveTextLiteral(final Lexer lexer) {

@@ -3,6 +3,8 @@ package fr.awildelephant.rdbms.lexer.tokens;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class IntegerLiteralTokenTest {
@@ -16,7 +18,7 @@ class IntegerLiteralTokenTest {
     void toString_should_contain_the_value_of_the_token() {
         final int value = 42;
 
-        final IntegerLiteralToken integer = new IntegerLiteralToken(value);
+        final IntegerLiteralToken integer = new IntegerLiteralToken(BigInteger.valueOf(value));
 
         assertThat(integer.toString()).contains(String.valueOf(value));
     }

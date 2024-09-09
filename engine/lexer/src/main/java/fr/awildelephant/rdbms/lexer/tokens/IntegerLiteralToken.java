@@ -1,18 +1,13 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
-public final class IntegerLiteralToken implements Token {
+import java.math.BigInteger;
 
-    private final int value;
+public record IntegerLiteralToken(BigInteger value) implements Token {
 
     /**
      * @param value must be not null
      */
-    public IntegerLiteralToken(int value) {
-        this.value = value;
-    }
-
-    public int value() {
-        return value;
+    public IntegerLiteralToken {
     }
 
     @Override
@@ -23,20 +18,6 @@ public final class IntegerLiteralToken implements Token {
     @Override
     public TokenType type() {
         return TokenType.INTEGER_LITERAL;
-    }
-
-    @Override
-    public int hashCode() {
-        return value;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof final IntegerLiteralToken other)) {
-            return false;
-        }
-
-        return value == other.value;
     }
 
     @Override

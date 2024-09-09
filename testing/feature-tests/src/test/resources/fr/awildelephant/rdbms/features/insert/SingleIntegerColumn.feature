@@ -6,52 +6,45 @@ Feature: Insert into a single integer column
       | a       |
       | INTEGER |
 
-  Scenario: I insert a single digit
+  Scenario: I insert several valid values
 
     And I execute the query
       """
-      INSERT INTO test VALUES (1)
+      INSERT INTO test VALUES (null), (0), (1), (-1), (1992), (2147483647), (-2147483648)
       """
 
     Then table test should be
-      | a       |
-      | INTEGER |
-      | 1       |
+      | a           |
+      | INTEGER     |
+      | null        |
+      | 0           |
+      | 1           |
+      | -1          |
+      | 1992        |
+      | 2147483647  |
+      | -2147483648 |
 
-  Scenario: I insert an integer greater than 10
+
+  Scenario: I insert a value lower than INTEGER's min value
 
     When I execute the query
       """
-      INSERT INTO test VALUES (1992)
+      INSERT INTO test VALUES (-2147483649)
       """
 
-    Then table test should be
-      | a       |
-      | INTEGER |
-      | 1992    |
+    Then I expect an error with the message
+      """
+      Value out of bounds: -2147483649
+      """
 
-  Scenario: I insert null
+  Scenario: I insert a value greater than INTEGER's max value
 
     When I execute the query
       """
-      INSERT INTO test VALUES (null)
+      INSERT INTO test VALUES (2147483648)
       """
 
-    Then table test should be
-      | a       |
-      | INTEGER |
-      | null    |
-
-  Scenario: I insert a negative value
-
-    When I execute the query
+    Then I expect an error with the message
       """
-      INSERT INTO test VALUES (-1)
+      Value out of bounds: 2147483648
       """
-
-    Then table test should be
-      | a       |
-      | INTEGER |
-      | -1      |
-
-    # TODO: test inserting value bigger than integer's max value

@@ -26,6 +26,7 @@ import fr.awildelephant.rdbms.ast.value.IsNull;
 import fr.awildelephant.rdbms.ast.value.Less;
 import fr.awildelephant.rdbms.ast.value.LessOrEqual;
 import fr.awildelephant.rdbms.ast.value.Like;
+import fr.awildelephant.rdbms.ast.value.LongLiteral;
 import fr.awildelephant.rdbms.ast.value.Max;
 import fr.awildelephant.rdbms.ast.value.Min;
 import fr.awildelephant.rdbms.ast.value.Minus;
@@ -209,6 +210,13 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
     @Override
     public Void visit(Like like) {
         return visitBinaryOperation(like.input(), " LIKE ", like.pattern());
+    }
+
+    @Override
+    public Void visit(LongLiteral longLiteral) {
+        stringBuilder.append(longLiteral.value());
+
+        return null;
     }
 
     @Override

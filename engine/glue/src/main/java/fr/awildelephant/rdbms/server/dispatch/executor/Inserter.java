@@ -75,6 +75,10 @@ final class Inserter {
 
             final Domain sourceDomain = sourceColumn.domain();
             final Domain destinationDomain = destinationColumn.domain();
+            if (sourceDomain == Domain.LONG && destinationDomain == Domain.INTEGER) {
+                // We tolerate this and fail later
+                return;
+            }
             if (!sourceDomain.canBeUsedAs(destinationDomain)) {
                 throw new IncompatibleColumnTypeError(destinationColumn.name().fullName(), sourceDomain.name(), destinationDomain.name());
             }
