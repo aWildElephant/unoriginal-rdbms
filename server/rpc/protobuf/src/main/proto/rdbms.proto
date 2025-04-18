@@ -20,9 +20,11 @@ message QueryResult {
 
     enum Type {
         BOOLEAN = 0;
-        DECIMAL = 1;
-        INTEGER = 2;
-        TEXT = 3;
+        DATE = 1;
+        DECIMAL = 2;
+        INTEGER = 3;
+        LONG = 4;
+        TEXT = 5;
     }
 
     message Column {

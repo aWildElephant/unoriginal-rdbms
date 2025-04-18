@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.features;
 
+import fr.awildelephant.rdbms.test.commons.Checker;
 import fr.awildelephant.rdbms.test.commons.ExpectedResult;
 import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
 import io.cucumber.datatable.DataTable;
@@ -163,7 +164,7 @@ public class StepDefs implements En {
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
         final List<String> expectedColumnNames = expected.getFirst();
-        final List<String> expectedColumnTypes = expected.get(1);
+        final List<Checker> expectedColumnTypes = expected.get(1).stream().map(Checker::checkerFor).toList();
         final List<List<String>> rows = expected.subList(2, expected.size());
 
         final ExpectedResult expectedResult = new ExpectedResult(expectedColumnNames, expectedColumnTypes, rows);

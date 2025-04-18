@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -29,6 +30,11 @@ public enum Checker {
                 assertEquals(Boolean.valueOf(expected), actualBoolean);
             }
         }
+
+        @Override
+        public boolean supports(int columnType) {
+            return columnType == Types.BOOLEAN;
+        }
     },
     DATE {
         @Override
@@ -41,6 +47,11 @@ public enum Checker {
             } else {
                 assertEquals(ISO8601.parse(expected), actualDate, messageSupplier);
             }
+        }
+
+        @Override
+        public boolean supports(int columnType) {
+            return columnType == Types.DATE;
         }
     },
     DECIMAL {
@@ -67,6 +78,11 @@ public enum Checker {
         private boolean validateDecimalValue(double actual, double expected) {
             return 0.99 * expected <= actual && actual <= 1.01 * expected;
         }
+
+        @Override
+        public boolean supports(int columnType) {
+            return columnType == Types.DECIMAL || BIGINT.supports(columnType);
+        }
     },
     INTEGER {
         @Override
@@ -80,6 +96,11 @@ public enum Checker {
                 assertEquals(parseInt(expected), actualInt, messageSupplier);
             }
         }
+
+        @Override
+        public boolean supports(int columnType) {
+            return columnType == Types.INTEGER;
+        }
     },
     BIGINT {
         @Override
@@ -92,6 +113,11 @@ public enum Checker {
             } else {
                 assertEquals(parseLong(expected), actualLong, messageSupplier);
             }
+        }
+
+        @Override
+        public boolean supports(int columnType) {
+            return columnType == Types.BIGINT || INTEGER.supports(columnType);
         }
     },
     TEXT {
@@ -109,6 +135,11 @@ public enum Checker {
                     assertEquals(expected, actualString, messageSupplier);
                 }
             }
+        }
+
+        @Override
+        public boolean supports(int columnType) {
+            return columnType == Types.VARCHAR;
         }
     };
 
@@ -135,4 +166,6 @@ public enum Checker {
     }
 
     public abstract void check(ResultSet actual, int rowPosition, int columnPosition, String expected) throws Exception;
+
+    public abstract boolean supports(int columnType);
 }

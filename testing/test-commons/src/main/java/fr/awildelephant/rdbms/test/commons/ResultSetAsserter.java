@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class ResultSetAsserter {
 
@@ -19,11 +20,10 @@ public final class ResultSetAsserter {
         return new ResultSetAsserter(resultSet);
     }
 
-    // TODO: actual check column types
     public void isExpectedResult(ExpectedResult expected) throws Exception {
-        assertColumnNames(resultSet.getMetaData(), expected.columnNames());
+        checkResultSetMetadata(expected);
 
-        final List<Checker> columnCheckers = expected.columnTypes().stream().map(Checker::checkerFor).toList();
+        final List<Checker> columnCheckers = expected.columnTypes();
 
         final List<List<String>> rows = expected.data();
 
@@ -48,13 +48,18 @@ public final class ResultSetAsserter {
         assertEquals(numberOfExpectedRows, i, "Row count mismatch");
     }
 
-    private void assertColumnNames(ResultSetMetaData metaData, List<String> expectedColumnNames) throws SQLException {
+    private void checkResultSetMetadata(ExpectedResult expected) throws SQLException {
+        final ResultSetMetaData metaData = resultSet.getMetaData();
+
         final int numberOfColumns = metaData.getColumnCount();
+        final List<String> expectedColumnNames = expected.columnNames();
+        final List<Checker> expectedColumnTypes = expected.columnTypes();
 
         assertEquals(expectedColumnNames.size(), numberOfColumns, "Column count mismatch");
 
         for (int i = 0; i < numberOfColumns; i++) {
             assertEquals(expectedColumnNames.get(i), metaData.getColumnName(i + 1), "Column name mismatch");
+            assertTrue(expectedColumnTypes.get(i).supports(metaData.getColumnType(i + 1)), "Column type " + metaData.getColumnTypeName(i + 1) + " not supported by checker " + expectedColumnTypes.get(i).name());
         }
     }
 }

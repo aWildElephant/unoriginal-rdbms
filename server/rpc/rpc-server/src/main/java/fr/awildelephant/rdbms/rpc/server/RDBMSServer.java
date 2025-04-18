@@ -77,8 +77,10 @@ public class RDBMSServer extends RDBMSGrpc.RDBMSImplBase {
     private Rdbms.QueryResult.Type getType(Schema schema, ColumnReference columnReference) {
         return switch (schema.column(columnReference).metadata().domain()) {
             case BOOLEAN -> Rdbms.QueryResult.Type.BOOLEAN;
+            case DATE -> Rdbms.QueryResult.Type.DATE;
             case DECIMAL -> Rdbms.QueryResult.Type.DECIMAL;
             case INTEGER -> Rdbms.QueryResult.Type.INTEGER;
+            case LONG -> Rdbms.QueryResult.Type.LONG;
             case TEXT -> Rdbms.QueryResult.Type.TEXT;
             default -> throw new IllegalStateException();
         };
