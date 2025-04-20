@@ -72,7 +72,6 @@ public class RDBMSResultSet extends AbstractResultSet {
     }
 
     // TODO: implement getDate methods with Calendar as second parameter?
-    // TODO: NullPointerException if the ResultSet is closed
     @Override
     public int getInt(int columnIndex) throws SQLException {
         final Value value = field(columnIndex);
@@ -190,6 +189,16 @@ public class RDBMSResultSet extends AbstractResultSet {
         // NOP: getWarnings not actually supported
     }
 
+    private Value field(int columnIndex) throws SQLException {
+        checkNotClosed();
+
+        if (cursor < 0) {
+            throw new SQLException("Cursor is not pointing to a valid row. Did you call next?");
+        }
+
+        return table.get(cursor, columnIndex - 1);
+    }
+
     @Override
     public void close() {
         isClosed = true;
@@ -205,17 +214,5 @@ public class RDBMSResultSet extends AbstractResultSet {
         if (isClosed()) {
             throw new ResourceClosedSQLException();
         }
-    }
-
-    private Value field(int columnIndex) throws SQLException {
-        if (isClosed) {
-            throw new SQLException("Result set is closed");
-        }
-
-        if (cursor < 0) {
-            throw new SQLException("Cursor is not pointing to a valid row. Did you call next?");
-        }
-
-        return table.get(cursor, columnIndex - 1);
     }
 }

@@ -27,6 +27,14 @@ class RDBMSResultSetTest {
     }
 
     @Test
+    void getInt_should_throw_if_the_result_set_is_closed() {
+        final RDBMSResultSet resultSet = new RDBMSResultSet(new MockResultProxy(TWO_ROWS));
+        resultSet.next();
+        resultSet.close();
+        assertThrows(ResourceClosedSQLException.class, () -> resultSet.getInt(1));
+    }
+
+    @Test
     void isBeforeFirst_should_return_true_before_the_first_call_to_next() throws SQLException {
         try (final RDBMSResultSet resultSet = new RDBMSResultSet(new MockResultProxy(TWO_ROWS))) {
             assertThat(resultSet.isBeforeFirst()).isTrue();
