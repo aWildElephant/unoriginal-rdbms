@@ -90,6 +90,11 @@
                 <artifactId>rdbms-glue</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-matrix</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- ActiveJ -->
             <dependency>

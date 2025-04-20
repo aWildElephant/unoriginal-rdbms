@@ -1,8 +1,9 @@
 package fr.awildelephant.rdbms.test.commons;
 
+import fr.awildelephant.rdbms.util.structure.matrix.Matrix;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,21 +22,34 @@ public final class ResultSetAsserter {
     }
 
     public void isExpectedResult(ExpectedResult expected) throws Exception {
-        checkResultSetMetadata(expected);
+        final List<ExpectedColumn> expectedColumns = expected.columns();
+        final int expectedNumberOfColumns = expectedColumns.size();
+        final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
-        final List<Checker> columnCheckers = expected.columnTypes();
+        final int actualNumberOfColumns = resultSetMetaData.getColumnCount();
+        assertEquals(expectedNumberOfColumns, actualNumberOfColumns, "Column count mismatch: expected " + expectedNumberOfColumns + " but got " + actualNumberOfColumns);
 
-        final List<List<String>> rows = expected.data();
+        for (int i = 0; i < expectedNumberOfColumns; i++) {
+            final ExpectedColumn expectedColumn = expectedColumns.get(i);
 
-        final int numberOfExpectedRows = rows.size();
+            final String expectedColumnName = expectedColumn.name();
+            final String actualColumnName = resultSetMetaData.getColumnName(i + 1);
+            assertEquals(expectedColumnName, actualColumnName, "Column name mismatch: expected " + expectedColumnName + " but got " + actualColumnName);
+
+            final Checker expectedColumnType = expectedColumn.checker();
+            final int actualColumnType = resultSetMetaData.getColumnType(i + 1);
+            assertTrue(expectedColumnType.supports(actualColumnType), "Column type " + resultSetMetaData.getColumnTypeName(i + 1) + " not supported by checker " + expectedColumnType.name());
+        }
+
+        final Matrix<String> expectedContent = expected.content();
+        final int numberOfExpectedRows = expectedContent.numberOfRows();
 
         int i = 0;
 
         while (i < numberOfExpectedRows && resultSet.next()) {
-            final List<String> row = rows.get(i);
-
-            for (int j = 0; j < row.size(); j++) {
-                columnCheckers.get(j).check(resultSet, i + 1, j + 1, row.get(j));
+            for (int j = 0; j < expectedNumberOfColumns; j++) {
+                final ExpectedColumn expectedColumn = expectedColumns.get(j);
+                expectedColumn.checker().check(resultSet, i + 1, j + 1, expectedContent.get(j, i));
             }
 
             i++;
@@ -46,20 +60,5 @@ public final class ResultSetAsserter {
         }
 
         assertEquals(numberOfExpectedRows, i, "Row count mismatch");
-    }
-
-    private void checkResultSetMetadata(ExpectedResult expected) throws SQLException {
-        final ResultSetMetaData metaData = resultSet.getMetaData();
-
-        final int numberOfColumns = metaData.getColumnCount();
-        final List<String> expectedColumnNames = expected.columnNames();
-        final List<Checker> expectedColumnTypes = expected.columnTypes();
-
-        assertEquals(expectedColumnNames.size(), numberOfColumns, "Column count mismatch");
-
-        for (int i = 0; i < numberOfColumns; i++) {
-            assertEquals(expectedColumnNames.get(i), metaData.getColumnName(i + 1), "Column name mismatch");
-            assertTrue(expectedColumnTypes.get(i).supports(metaData.getColumnType(i + 1)), "Column type " + metaData.getColumnTypeName(i + 1) + " not supported by checker " + expectedColumnTypes.get(i).name());
-        }
     }
 }

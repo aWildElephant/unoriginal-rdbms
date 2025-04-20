@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// FIXME: not used (why did I add this?)
 public final class Multimap<K, V> implements Map<K, List<V>> {
 
     private final Map<K, List<V>> delegate = new HashMap<>();

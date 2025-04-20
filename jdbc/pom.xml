@@ -17,6 +17,13 @@
             <groupId>fr.awildelephant</groupId>
             <artifactId>rdbms-error</artifactId>
         </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>fr.awildelephant</groupId>
+            <artifactId>rdbms-matrix</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>

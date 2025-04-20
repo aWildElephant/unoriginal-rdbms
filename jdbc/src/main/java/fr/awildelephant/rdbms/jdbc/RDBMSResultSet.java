@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.jdbc;
 
 import fr.awildelephant.rdbms.jdbc.abstraction.ResultProxy;
 import fr.awildelephant.rdbms.jdbc.abstraction.Value;
+import fr.awildelephant.rdbms.jdbc.exception.ResourceClosedSQLException;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -21,6 +22,7 @@ public class RDBMSResultSet extends AbstractResultSet {
         this.table = table;
     }
 
+    //region getters
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
         final Value value = field(columnIndex);
@@ -132,7 +134,9 @@ public class RDBMSResultSet extends AbstractResultSet {
     public boolean wasNull() {
         return wasNull;
     }
+    //endregion
 
+    //region navigation
     @Override
     public boolean next() {
         if (cursor < table.numberOfRows() - 1) {
@@ -144,6 +148,32 @@ public class RDBMSResultSet extends AbstractResultSet {
 
         return false;
     }
+
+    @Override
+    public boolean isBeforeFirst() throws SQLException {
+        checkNotClosed();
+        return cursor == -1;
+    }
+
+    @Override
+    public boolean isFirst() throws SQLException {
+        checkNotClosed();
+        return cursor == 0;
+    }
+
+    @Override
+    public void beforeFirst() throws SQLException {
+        checkNotClosed();
+        cursor = -1;
+    }
+
+    @Override
+    public boolean first() throws SQLException {
+        checkNotClosed();
+        cursor = 0;
+        return true; // TODO: check the doc, what should we return + should we throw if result set is closed?
+    }
+    //endregion
 
     @Override
     public ResultSetMetaData getMetaData() {
@@ -169,6 +199,12 @@ public class RDBMSResultSet extends AbstractResultSet {
     @Override
     public boolean isClosed() {
         return isClosed;
+    }
+
+    private void checkNotClosed() throws ResourceClosedSQLException {
+        if (isClosed()) {
+            throw new ResourceClosedSQLException();
+        }
     }
 
     private Value field(int columnIndex) throws SQLException {

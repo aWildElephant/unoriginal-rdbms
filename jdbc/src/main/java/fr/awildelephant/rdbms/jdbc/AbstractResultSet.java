@@ -21,6 +21,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * Helper abstract class to isolate the methods currently not supported by RDBMSResultSet.
+ */
 public abstract class AbstractResultSet implements ResultSet {
 
     @Override
@@ -30,11 +33,6 @@ public abstract class AbstractResultSet implements ResultSet {
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public long getLong(int columnIndex) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -90,11 +88,6 @@ public abstract class AbstractResultSet implements ResultSet {
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public long getLong(String columnLabel) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -179,17 +172,7 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public boolean isBeforeFirst() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
     public boolean isAfterLast() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public boolean isFirst() throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -199,17 +182,7 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void beforeFirst() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
     public void afterLast() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public boolean first() throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 

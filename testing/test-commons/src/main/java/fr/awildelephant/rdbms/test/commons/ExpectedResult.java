@@ -1,8 +1,9 @@
 package fr.awildelephant.rdbms.test.commons;
 
+import fr.awildelephant.rdbms.util.structure.matrix.Matrix;
+
 import java.util.List;
 
-// TODO: refactor to make columnar (?)
-public record ExpectedResult(List<String> columnNames, List<Checker> columnTypes, List<List<String>> data) {
+public record ExpectedResult(List<ExpectedColumn> columns, Matrix<String> content) {
 
 }

@@ -27,6 +27,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static fr.awildelephant.rdbms.test.commons.ExpectedDataHelper.fromRowBasedData;
 import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -163,12 +164,6 @@ public class StepDefs implements En {
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
-        final List<String> expectedColumnNames = expectedResult.getFirst();
-        final List<Checker> expectedColumnTypes = expectedResult.get(1).stream().map(Checker::checkerFor).toList();
-        final List<List<String>> rows = expectedResult.subList(2, expectedResult.size());
-
-        final ExpectedResult expected = new ExpectedResult(expectedColumnNames, expectedColumnTypes, rows);
-
-        assertThat(lastResult).isExpectedResult(expected);
+        assertThat(lastResult).isExpectedResult(fromRowBasedData(expectedResult));
     }
 }

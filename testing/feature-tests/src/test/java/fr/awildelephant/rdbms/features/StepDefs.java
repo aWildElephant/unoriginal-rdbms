@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.features;
 import fr.awildelephant.rdbms.test.commons.Checker;
 import fr.awildelephant.rdbms.test.commons.ExpectedResult;
 import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
+import fr.awildelephant.rdbms.test.commons.ExpectedDataHelper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
 
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static fr.awildelephant.rdbms.test.commons.ExpectedDataHelper.fromRowBasedData;
 import static fr.awildelephant.rdbms.test.commons.ResultSetAsserter.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -102,7 +104,7 @@ public class StepDefs implements En {
 
         Then("I expect a result set with no column and {int} rows", (Integer numberOfRows) -> {
             // Add two rows for where the name/type should have been
-            final List<List<String>> expectedData = IntStream.range(0, numberOfRows + 2).mapToObj(unused -> List.<String>of()).toList();
+            final List<List<String>> expectedData = IntStream.range(0, numberOfRows + 2).mapToObj(_ -> List.<String>of()).toList();
 
             assertResult(expectedData);
         });
@@ -156,19 +158,13 @@ public class StepDefs implements En {
         assertResult(expected.asLists());
     }
 
-    private void assertResult(List<List<String>> expected) throws Exception {
+    private void assertResult(List<List<String>> expectedData) throws Exception {
         testWrapper.forwardExceptionIfPresent();
 
         final ResultSet lastResult = testWrapper.lastResultSet();
 
         assertNotNull(lastResult, "Result set is null: no query run or last query was an update");
 
-        final List<String> expectedColumnNames = expected.getFirst();
-        final List<Checker> expectedColumnTypes = expected.get(1).stream().map(Checker::checkerFor).toList();
-        final List<List<String>> rows = expected.subList(2, expected.size());
-
-        final ExpectedResult expectedResult = new ExpectedResult(expectedColumnNames, expectedColumnTypes, rows);
-
-        assertThat(lastResult).isExpectedResult(expectedResult);
+        assertThat(lastResult).isExpectedResult(fromRowBasedData(expectedData));
     }
 }

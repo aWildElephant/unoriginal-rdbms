@@ -17,6 +17,7 @@
         <module>multimap</module>
         <module>tree</module>
         <module>primitive-list</module>
+        <module>matrix</module>
     </modules>
 
     <properties>
