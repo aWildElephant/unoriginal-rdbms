@@ -80,65 +80,44 @@ public final class Lexer {
 
         input.next();
 
-        switch (codePoint) {
-            case '*':
-                return ASTERISK_TOKEN;
-            case '=':
-                return EQUAL_TOKEN;
-            case '<':
+        return switch (codePoint) {
+            case '*' -> ASTERISK_TOKEN;
+            case '=' -> EQUAL_TOKEN;
+            case '<' -> {
                 if (input.get() == '=') {
                     input.next();
 
-                    return LESS_OR_EQUAL_TOKEN;
+                    yield LESS_OR_EQUAL_TOKEN;
                 } else if (input.get() == '>') {
                     input.next();
 
-                    return NOT_EQUAL_TOKEN;
+                    yield NOT_EQUAL_TOKEN;
+                } else {
+                    yield LESS_TOKEN;
                 }
-
-                return LESS_TOKEN;
-            case '>':
+            }
+            case '>' -> {
                 if (input.get() == '=') {
                     input.next();
 
-                    return GREATER_OR_EQUAL_TOKEN;
+                    yield GREATER_OR_EQUAL_TOKEN;
+                } else {
+                    yield GREATER_TOKEN;
                 }
-
-                return GREATER_TOKEN;
-            case '/':
-                return SOLIDUS_TOKEN;
-            case '+':
-                return PLUS_TOKEN;
-            case '-':
-                return MINUS_TOKEN;
-            case '(':
-                return LEFT_PAREN_TOKEN;
-            case ')':
-                return RIGHT_PAREN_TOKEN;
-            case ',':
-                return COMMA_TOKEN;
-            case ';':
-                return SEMICOLON_TOKEN;
-            case '?':
-                return QUESTION_MARK_TOKEN;
-            case '.':
-                return PERIOD_TOKEN;
-            case '\'':
-                return matchTextLiteral();
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                return matchIntegerOrDecimalLiteral(codePoint);
-            default:
-                return matchKeywordOrIdentifier(codePoint);
-        }
+            }
+            case '/' -> SOLIDUS_TOKEN;
+            case '+' -> PLUS_TOKEN;
+            case '-' -> MINUS_TOKEN;
+            case '(' -> LEFT_PAREN_TOKEN;
+            case ')' -> RIGHT_PAREN_TOKEN;
+            case ',' -> COMMA_TOKEN;
+            case ';' -> SEMICOLON_TOKEN;
+            case '?' -> QUESTION_MARK_TOKEN;
+            case '.' -> PERIOD_TOKEN;
+            case '\'' -> matchTextLiteral();
+            case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> matchIntegerOrDecimalLiteral(codePoint);
+            default -> matchKeywordOrIdentifier(codePoint);
+        };
     }
 
     private Token matchTextLiteral() {
