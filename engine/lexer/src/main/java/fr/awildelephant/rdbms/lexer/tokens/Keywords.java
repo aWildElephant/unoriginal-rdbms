@@ -28,6 +28,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXISTS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXPLAIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.EXTRACT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FALSE;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FIRST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FOREIGN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.FROM;
@@ -42,6 +43,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.INTO;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.IS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.JOIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.KEY;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIKE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LIMIT;
@@ -50,6 +52,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MIN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.MONTH;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NOT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULL;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.NULLS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ON;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.OR;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ORDER;
@@ -383,6 +386,17 @@ public enum Keywords implements Token {
             return FALSE;
         }
     },
+    FIRST_TOKEN {
+        @Override
+        public String text() {
+            return "first";
+        }
+
+        @Override
+        public TokenType type() {
+            return FIRST;
+        }
+    },
     FOR_TOKEN {
         @Override
         public String text() {
@@ -537,6 +551,17 @@ public enum Keywords implements Token {
             return KEY;
         }
     },
+    LAST_TOKEN {
+        @Override
+        public String text() {
+            return "last";
+        }
+
+        @Override
+        public TokenType type() {
+            return LAST;
+        }
+    },
     LEFT_TOKEN {
         @Override
         public String text() {
@@ -623,6 +648,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return NULL;
+        }
+    },
+    NULLS_TOKEN {
+        @Override
+        public String text() {
+            return "nulls";
+        }
+
+        @Override
+        public TokenType type() {
+            return NULLS;
         }
     },
     ON_TOKEN {

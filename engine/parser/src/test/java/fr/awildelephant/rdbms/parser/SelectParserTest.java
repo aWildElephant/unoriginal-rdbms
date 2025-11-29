@@ -9,8 +9,6 @@ import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.InnerJoin.innerJoin;
 import static fr.awildelephant.rdbms.ast.Limit.limit;
-import static fr.awildelephant.rdbms.ast.OrderingSpecification.ASCENDING;
-import static fr.awildelephant.rdbms.ast.OrderingSpecification.DESCENDING;
 import static fr.awildelephant.rdbms.ast.QualifiedColumnName.qualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Row.row;
 import static fr.awildelephant.rdbms.ast.Select.select;
@@ -21,6 +19,10 @@ import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
+import static fr.awildelephant.rdbms.ast.ordering.NullsHandling.NULLS_FIRST;
+import static fr.awildelephant.rdbms.ast.ordering.NullsHandling.NULLS_LAST;
+import static fr.awildelephant.rdbms.ast.ordering.OrderingSpecification.ASCENDING;
+import static fr.awildelephant.rdbms.ast.ordering.OrderingSpecification.DESCENDING;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.falseLiteral;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.trueLiteral;
 import static fr.awildelephant.rdbms.ast.value.Equal.equal;
@@ -87,7 +89,18 @@ class SelectParserTest {
 
     @Test
     void it_should_parse_a_select_query_with_an_order_by_clause() {
-        assertParsing("SELECT column1 FROM test ORDER BY column1 ASC, column2, column3 DESC",
+        assertParsing("""
+                        SELECT column1
+                        FROM test
+                        ORDER BY
+                            column1 ASC,
+                            column2,
+                            column3 DESC,
+                            column4 NULLS FIRST,
+                            column5 NULLS LAST,
+                            column6 DESC NULLS FIRST,
+                            column7 DESC NULLS LAST
+                        """,
 
                 select(columns("column1"),
                         tableName("test"),
@@ -97,7 +110,11 @@ class SelectParserTest {
                         sortSpecificationList(List.of(
                                 sortSpecification(unqualifiedColumnName("column1"), ASCENDING),
                                 sortSpecification(unqualifiedColumnName("column2"), ASCENDING),
-                                sortSpecification(unqualifiedColumnName("column3"), DESCENDING)))));
+                                sortSpecification(unqualifiedColumnName("column3"), DESCENDING),
+                                sortSpecification(unqualifiedColumnName("column4"), ASCENDING, NULLS_FIRST),
+                                sortSpecification(unqualifiedColumnName("column5"), ASCENDING, NULLS_LAST),
+                                sortSpecification(unqualifiedColumnName("column6"), DESCENDING, NULLS_FIRST),
+                                sortSpecification(unqualifiedColumnName("column7"), DESCENDING, NULLS_LAST)))));
     }
 
     @Test

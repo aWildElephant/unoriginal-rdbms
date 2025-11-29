@@ -31,10 +31,6 @@ public final class InputStreamWrapper {
         return wrap(new ByteArrayInputStream(input.getBytes()));
     }
 
-    boolean isFinished() {
-        return next == END_OF_FILE_CODE;
-    }
-
     int get() {
         return next;
     }

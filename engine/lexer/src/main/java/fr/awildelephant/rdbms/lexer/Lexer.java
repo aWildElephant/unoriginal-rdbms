@@ -66,16 +66,16 @@ public final class Lexer {
     }
 
     private Token matchNextToken() {
-        if (input.isFinished()) {
-            return END_OF_FILE_TOKEN;
-        }
-
         int codePoint = input.get();
 
         while (isBlank(codePoint)) {
             input.next();
 
             codePoint = input.get();
+        }
+
+        if (codePoint < 0) {
+            return END_OF_FILE_TOKEN;
         }
 
         input.next();

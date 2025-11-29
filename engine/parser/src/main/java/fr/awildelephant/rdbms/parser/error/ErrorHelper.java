@@ -17,7 +17,7 @@ public final class ErrorHelper {
         return new UnexpectedTokenError(actual, new TokenType[]{ expected });
     }
 
-    public static UnexpectedTokenError unexpectedToken(Token actual, TokenType[] expected) {
+    public static UnexpectedTokenError unexpectedToken(Token actual, TokenType... expected) {
         return new UnexpectedTokenError(actual, expected);
     }
 }

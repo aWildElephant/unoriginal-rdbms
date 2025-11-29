@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static fr.awildelephant.rdbms.operator.logical.sort.SortSpecification.ascending;
-import static fr.awildelephant.rdbms.operator.logical.sort.SortSpecification.descending;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -356,11 +354,7 @@ public final class AliasSimplification implements LopVisitor<LogicalOperator> {
         final List<SortSpecification> aliasedSortSpecificationList = sort.sortSpecificationList().stream()
                 .map(specification -> {
                     final ColumnReference aliasedColumn = aliaser.alias(specification.column());
-                    if (specification.ascending()) {
-                        return ascending(aliasedColumn);
-                    } else {
-                        return descending(aliasedColumn);
-                    }
+                    return new SortSpecification(aliasedColumn, specification.ascending(), specification.nullsLast());
                 })
                 .collect(toList());
 

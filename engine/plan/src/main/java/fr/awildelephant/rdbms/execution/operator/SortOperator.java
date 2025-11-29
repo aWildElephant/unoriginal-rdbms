@@ -1,7 +1,8 @@
 package fr.awildelephant.rdbms.execution.operator;
 
 import fr.awildelephant.rdbms.execution.executor.TemporaryStorage;
-import fr.awildelephant.rdbms.execution.operator.sort.MultipleColumnsComparator;
+import fr.awildelephant.rdbms.execution.operator.sort.RecordComparator;
+import fr.awildelephant.rdbms.execution.operator.sort.RecordComparatorFactory;
 import fr.awildelephant.rdbms.operator.logical.sort.SortSpecification;
 import fr.awildelephant.rdbms.storage.data.record.Record;
 import fr.awildelephant.rdbms.storage.data.table.Table;
@@ -25,7 +26,8 @@ public final class SortOperator implements Operator {
     public Table compute(TemporaryStorage storage) {
         final Table inputTable = storage.get(inputKey);
 
-        final MultipleColumnsComparator comparator = new MultipleColumnsComparator(inputTable.schema(), sortSpecificationList);
+
+        final RecordComparator comparator = RecordComparatorFactory.buildComparator(inputTable.schema(), sortSpecificationList);
         final List<Record> sortedList = new ArrayList<>(inputTable.numberOfTuples());
 
         for (Record record : inputTable) {

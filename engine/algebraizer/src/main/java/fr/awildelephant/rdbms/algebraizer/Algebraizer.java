@@ -9,7 +9,6 @@ import fr.awildelephant.rdbms.ast.Distinct;
 import fr.awildelephant.rdbms.ast.InnerJoin;
 import fr.awildelephant.rdbms.ast.LeftJoin;
 import fr.awildelephant.rdbms.ast.Limit;
-import fr.awildelephant.rdbms.ast.OrderingSpecification;
 import fr.awildelephant.rdbms.ast.ReadCSV;
 import fr.awildelephant.rdbms.ast.Row;
 import fr.awildelephant.rdbms.ast.Select;
@@ -19,6 +18,8 @@ import fr.awildelephant.rdbms.ast.TableAliasWithColumns;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.ast.TableReferenceList;
 import fr.awildelephant.rdbms.ast.Values;
+import fr.awildelephant.rdbms.ast.ordering.NullsHandling;
+import fr.awildelephant.rdbms.ast.ordering.OrderingSpecification;
 import fr.awildelephant.rdbms.ast.value.ScalarSubquery;
 import fr.awildelephant.rdbms.ast.visitor.DefaultASTVisitor;
 import fr.awildelephant.rdbms.database.StorageSnapshot;
@@ -59,8 +60,6 @@ import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.innerJoin
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.leftJoinOutputSchema;
 import static fr.awildelephant.rdbms.execution.join.JoinType.SEMI;
 import static fr.awildelephant.rdbms.operator.logical.alias.TableAlias.tableAlias;
-import static fr.awildelephant.rdbms.operator.logical.sort.SortSpecification.ascending;
-import static fr.awildelephant.rdbms.operator.logical.sort.SortSpecification.descending;
 import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
@@ -231,11 +230,9 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
                     .stream()
                     .map(element -> {
                         final ColumnReference reference = columnReferenceTransformer.apply(element.sortKey());
-                        if (element.ordering() == OrderingSpecification.DESCENDING) {
-                            return descending(reference);
-                        } else {
-                            return ascending(reference);
-                        }
+                        final boolean ascending = element.ordering() != OrderingSpecification.DESCENDING;
+                        final boolean nullsLast = element.nullsHandling() != NullsHandling.NULLS_FIRST;
+                        return new SortSpecification(reference, ascending, nullsLast);
                     })
                     .collect(toList());
             plan = new SortLop(plan, specifications);

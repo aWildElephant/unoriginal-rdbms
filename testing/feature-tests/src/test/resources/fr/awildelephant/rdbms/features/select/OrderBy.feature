@@ -88,8 +88,6 @@ Feature: Order by
       | a    | 1        |
       | b    | 3        |
 
-  # TODO: implement NULLS FIRST/NULLS LAST ? (sql 2003)
-  @todo
   Scenario: I order by an integer column with a null value
 
     Given the table test
@@ -108,10 +106,10 @@ Feature: Order by
     Then I expect the result set
       | a       |
       | INTEGER |
-      | null    |
       | 0       |
       | 2       |
       | 3       |
+      | null    |
 
   Scenario: I order by a bigint column
 
@@ -133,3 +131,26 @@ Feature: Order by
       | 3      |
       | 2      |
       | 1      |
+
+  Scenario: I order with nulls first
+
+    Given the table test
+      | a    |
+      | TEXT |
+      | ab   |
+      | z    |
+      | null |
+      | a    |
+
+    When I execute the query
+      """
+      SELECT a FROM test ORDER BY a NULLS FIRST
+      """
+
+    Then I expect the result set
+      | a    |
+      | TEXT |
+      | null |
+      | a    |
+      | ab   |
+      | z    |
