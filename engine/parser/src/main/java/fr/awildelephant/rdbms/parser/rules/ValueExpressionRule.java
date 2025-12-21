@@ -14,8 +14,11 @@ import fr.awildelephant.rdbms.lexer.tokens.TokenType;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
+import static fr.awildelephant.rdbms.ast.Coalesce.coalesce;
 import static fr.awildelephant.rdbms.ast.Substring.substring;
 import static fr.awildelephant.rdbms.ast.value.Any.any;
 import static fr.awildelephant.rdbms.ast.value.Avg.avg;
@@ -42,6 +45,7 @@ import static fr.awildelephant.rdbms.ast.value.Sum.sum;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASTERISK;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COMMA;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ELSE;
@@ -167,6 +171,18 @@ final class ValueExpressionRule {
                 final AST elseExpression = deriveValueExpression(lexer);
                 consumeAndExpect(END, lexer);
                 return caseWhen(condition, thenExpression, elseExpression);
+            }
+            case COALESCE -> {
+                lexer.consumeNextToken();
+                consumeAndExpect(LEFT_PAREN, lexer);
+                final List<AST> arguments = new ArrayList<>();
+                arguments.add(deriveValueExpression(lexer));
+                while (lexer.lookupNextToken().type() == COMMA) {
+                    lexer.consumeNextToken();
+                    arguments.add(deriveValueExpression(lexer));
+                }
+                consumeAndExpect(RIGHT_PAREN, lexer);
+                return coalesce(arguments);
             }
             case LEFT_PAREN -> {
                 return deriveParenthesizedValueExpression(lexer);

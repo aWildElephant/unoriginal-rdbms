@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.ast.visitor;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.Coalesce;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.CreateTable;
@@ -78,6 +79,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static fr.awildelephant.rdbms.ast.Cast.cast;
+import static fr.awildelephant.rdbms.ast.Coalesce.coalesce;
 import static fr.awildelephant.rdbms.ast.ColumnAlias.columnAlias;
 import static fr.awildelephant.rdbms.ast.CreateView.createView;
 import static fr.awildelephant.rdbms.ast.Delete.delete;
@@ -178,6 +180,11 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(Cast cast) {
         return cast(function.apply(cast.child()), cast.targetType());
+    }
+
+    @Override
+    public AST visit(Coalesce coalesce) {
+        return coalesce(coalesce.children().stream().map(function).toList());
     }
 
     @Override

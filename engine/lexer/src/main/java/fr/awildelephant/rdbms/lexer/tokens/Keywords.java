@@ -12,6 +12,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CASE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COALESCE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COUNT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CSV;
@@ -208,6 +209,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return CHAR;
+        }
+    },
+    COALESCE_TOKEN {
+        @Override
+        public String text() {
+            return "coalesce";
+        }
+
+        @Override
+        public TokenType type() {
+            return COALESCE;
         }
     },
     COUNT_TOKEN {

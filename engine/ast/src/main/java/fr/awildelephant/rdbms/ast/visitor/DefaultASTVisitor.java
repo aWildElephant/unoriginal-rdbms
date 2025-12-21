@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.ast.visitor;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.Coalesce;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.CreateTable;
@@ -113,6 +114,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(Cast cast) {
         return defaultVisit(cast);
+    }
+
+    @Override
+    public T visit(Coalesce coalesce) {
+        return defaultVisit(coalesce);
     }
 
     @Override

@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.ast.visitor;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Asterisk;
 import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.Coalesce;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.CreateTable;
@@ -96,6 +97,8 @@ public interface ASTVisitor<T> extends Function<AST, T> {
     T visit(CaseWhen caseWhen);
 
     T visit(Cast cast);
+
+    T visit(Coalesce coalesce);
 
     T visit(ColumnAlias columnAlias);
 

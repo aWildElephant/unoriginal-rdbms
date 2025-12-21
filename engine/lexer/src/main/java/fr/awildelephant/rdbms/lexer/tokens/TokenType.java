@@ -15,6 +15,7 @@ public enum TokenType {
     CAST,
     CHAR,
     COMMA,
+    COALESCE,
     COUNT,
     CREATE,
     CSV,
