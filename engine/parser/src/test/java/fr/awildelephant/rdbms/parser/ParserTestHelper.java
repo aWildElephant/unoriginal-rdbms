@@ -4,6 +4,7 @@ import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnName;
 import fr.awildelephant.rdbms.lexer.InputStreamWrapper;
 import fr.awildelephant.rdbms.lexer.Lexer;
+import fr.awildelephant.rdbms.utils.common.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,10 @@ final class ParserTestHelper {
 
     private ParserTestHelper() {
 
+    }
+
+    static void assertParsing(String input, Builder<? extends AST> expectedASTBuilder) {
+        assertParsing(input, expectedASTBuilder.build());
     }
 
     static void assertParsing(String input, AST expectedAST) {

@@ -21,6 +21,7 @@
         <module>algebraizer</module>
         <module>arithmetic</module>
         <module>ast</module>
+        <module>ast-builder</module>
         <module>database</module>
         <module>explain</module>
         <module>formula</module>
@@ -42,6 +43,11 @@
             <dependency>
                 <groupId>fr.awildelephant</groupId>
                 <artifactId>rdbms-algebraizer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.awildelephant</groupId>
+                <artifactId>rdbms-ast-builder</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
