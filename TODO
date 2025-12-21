@@ -1,5 +1,7 @@
 * supporter ORDER BY avec l'index des colonnes
     e.g. SELECT a, b FROM t1 ORDER BY 1 DESC -> trie par b décroissant
+* implémenter ANY()
+* implémenter ALL()
 * réécrire 'IN' comme '=ANY()' c.f. https://www.youtube.com/watch?v=II5qNuxfSoo ~53mins
 * support partiel CTE (WITH sans RECURSIVE)
 * support CTE (WITH RECURSIVE)

@@ -1,5 +1,6 @@
 package fr.awildelephant.rdbms.lexer.tokens;
 
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ALL;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ANY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
@@ -79,6 +80,17 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.WITH;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.YEAR;
 
 public enum Keywords implements Token {
+    ALL_TOKEN {
+        @Override
+        public String text() {
+            return "all";
+        }
+
+        @Override
+        public TokenType type() {
+            return ALL;
+        }
+    },
     AND_TOKEN {
         @Override
         public String text() {
