@@ -270,9 +270,7 @@ final class ValueExpressionRule {
             }
             case ANY -> {
                 lexer.consumeNextToken();
-                consumeAndExpect(LEFT_PAREN, lexer);
-                final AST anyInput = deriveValueExpression(lexer);
-                consumeAndExpect(RIGHT_PAREN, lexer);
+                final AST anyInput = deriveParenthesizedValueExpression(lexer);
                 return any(anyInput);
             }
             case IDENTIFIER -> {
