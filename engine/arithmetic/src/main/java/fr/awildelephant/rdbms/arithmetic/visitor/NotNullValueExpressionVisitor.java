@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.arithmetic.BetweenExpression;
 import fr.awildelephant.rdbms.arithmetic.BinaryExpression;
 import fr.awildelephant.rdbms.arithmetic.CaseWhenExpression;
 import fr.awildelephant.rdbms.arithmetic.CastExpression;
+import fr.awildelephant.rdbms.arithmetic.CoalesceExpression;
 import fr.awildelephant.rdbms.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.arithmetic.DivideExpression;
 import fr.awildelephant.rdbms.arithmetic.EqualExpression;
@@ -24,21 +25,29 @@ import fr.awildelephant.rdbms.arithmetic.OrExpression;
 import fr.awildelephant.rdbms.arithmetic.OuterQueryVariable;
 import fr.awildelephant.rdbms.arithmetic.SubstringExpression;
 import fr.awildelephant.rdbms.arithmetic.SubtractExpression;
+import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.arithmetic.ValueExpressionVisitor;
 import fr.awildelephant.rdbms.arithmetic.Variable;
 import fr.awildelephant.rdbms.schema.Schema;
+
+import java.util.function.Predicate;
 
 /**
  * Returns true if the expression is sure to never evaluate to UNKNOWN.
  * <p>
  * This visitor might return false for an expression that never evaluate to UNKNOWN.
  */
-public class NotNullValueExpressionVisitor implements ValueExpressionVisitor<Boolean> {
+public class NotNullValueExpressionVisitor implements ValueExpressionVisitor<Boolean>, Predicate<ValueExpression> {
 
     private final Schema schema;
 
     public NotNullValueExpressionVisitor(Schema schema) {
         this.schema = schema;
+    }
+
+    @Override
+    public boolean test(ValueExpression valueExpression) {
+        return Boolean.TRUE == apply(valueExpression);
     }
 
     @Override
@@ -64,6 +73,11 @@ public class NotNullValueExpressionVisitor implements ValueExpressionVisitor<Boo
     @Override
     public Boolean visit(CastExpression cast) {
         return apply(cast.child());
+    }
+
+    @Override
+    public Boolean visit(CoalesceExpression coalesce) {
+        return coalesce.children().stream().anyMatch(this);
     }
 
     @Override

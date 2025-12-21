@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.arithmetic.BetweenExpression;
 import fr.awildelephant.rdbms.arithmetic.BinaryExpression;
 import fr.awildelephant.rdbms.arithmetic.CaseWhenExpression;
 import fr.awildelephant.rdbms.arithmetic.CastExpression;
+import fr.awildelephant.rdbms.arithmetic.CoalesceExpression;
 import fr.awildelephant.rdbms.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.arithmetic.DivideExpression;
 import fr.awildelephant.rdbms.arithmetic.EqualExpression;
@@ -55,6 +56,11 @@ public final class ConstantEvaluator implements ValueExpressionVisitor<Boolean> 
     @Override
     public Boolean visit(CastExpression cast) {
         return apply(cast.child());
+    }
+
+    @Override
+    public Boolean visit(CoalesceExpression coalesce) {
+        return Boolean.FALSE; // TODO
     }
 
     @Override

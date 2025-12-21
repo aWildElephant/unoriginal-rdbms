@@ -1,8 +1,10 @@
 package fr.awildelephant.rdbms.algebraizer;
 
+import fr.awildelephant.rdbms.arithmetic.CoalesceExpression;
 import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.Cast;
+import fr.awildelephant.rdbms.ast.Coalesce;
 import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
 import fr.awildelephant.rdbms.ast.Substring;
@@ -164,6 +166,11 @@ public class ASTToValueExpressionTransformer extends DefaultASTVisitor<ValueExpr
         final ValueExpression input = apply(cast.child());
 
         return castExpression(input, ColumnUtils.domainOf(cast.targetType()));
+    }
+
+    @Override
+    public ValueExpression visit(Coalesce coalesce) {
+        return new CoalesceExpression(coalesce.children().stream().map(this).toList());
     }
 
     @Override

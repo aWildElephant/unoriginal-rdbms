@@ -5,6 +5,7 @@ import fr.awildelephant.rdbms.arithmetic.AndExpression;
 import fr.awildelephant.rdbms.arithmetic.BetweenExpression;
 import fr.awildelephant.rdbms.arithmetic.CaseWhenExpression;
 import fr.awildelephant.rdbms.arithmetic.CastExpression;
+import fr.awildelephant.rdbms.arithmetic.CoalesceExpression;
 import fr.awildelephant.rdbms.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.arithmetic.DefaultValueExpressionVisitor;
 import fr.awildelephant.rdbms.arithmetic.DivideExpression;
@@ -28,6 +29,7 @@ import fr.awildelephant.rdbms.arithmetic.ValueExpression;
 import fr.awildelephant.rdbms.arithmetic.Variable;
 import fr.awildelephant.rdbms.data.value.DomainValue;
 import fr.awildelephant.rdbms.evaluator.Formula;
+import fr.awildelephant.rdbms.evaluator.operation.CoalesceOperation;
 import fr.awildelephant.rdbms.evaluator.operation.Operation;
 import fr.awildelephant.rdbms.evaluator.operation.ValuesHolder;
 import fr.awildelephant.rdbms.evaluator.operation.bool.AndOperation;
@@ -159,6 +161,11 @@ public final class ValueExpressionToFormulaTransformer extends DefaultValueExpre
     @Override
     public Operation visit(CastExpression cast) {
         return CastOperationFactory.build(apply(cast.child()), cast.domain());
+    }
+
+    @Override
+    public Operation visit(CoalesceExpression coalesce) {
+        return new CoalesceOperation(coalesce.children().stream().map(this).toList());
     }
 
     @Override

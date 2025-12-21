@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.arithmetic.BetweenExpression;
 import fr.awildelephant.rdbms.arithmetic.BinaryExpression;
 import fr.awildelephant.rdbms.arithmetic.CaseWhenExpression;
 import fr.awildelephant.rdbms.arithmetic.CastExpression;
+import fr.awildelephant.rdbms.arithmetic.CoalesceExpression;
 import fr.awildelephant.rdbms.arithmetic.ConstantExpression;
 import fr.awildelephant.rdbms.arithmetic.DivideExpression;
 import fr.awildelephant.rdbms.arithmetic.EqualExpression;
@@ -52,6 +53,11 @@ final class OuterQueryVariableExtractor implements ValueExpressionVisitor<Stream
     @Override
     public Stream<ColumnReference> visit(CastExpression cast) {
         return apply(cast.child());
+    }
+
+    @Override
+    public Stream<ColumnReference> visit(CoalesceExpression coalesce) {
+        return coalesce.children().stream().flatMap(this);
     }
 
     @Override

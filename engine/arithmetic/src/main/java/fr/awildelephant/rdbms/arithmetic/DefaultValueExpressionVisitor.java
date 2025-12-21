@@ -28,6 +28,11 @@ public abstract class DefaultValueExpressionVisitor<T> implements ValueExpressio
     }
 
     @Override
+    public T visit(CoalesceExpression coalesce) {
+        return defaultVisit(coalesce);
+    }
+
+    @Override
     public T visit(ConstantExpression constant) {
         return defaultVisit(constant);
     }

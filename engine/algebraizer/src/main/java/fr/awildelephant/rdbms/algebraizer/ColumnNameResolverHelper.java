@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.algebraizer;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.Coalesce;
 import fr.awildelephant.rdbms.ast.Exists;
 import fr.awildelephant.rdbms.ast.InValueList;
 import fr.awildelephant.rdbms.ast.QualifiedColumnName;
@@ -93,6 +94,15 @@ public class ColumnNameResolverHelper extends DefaultASTVisitor<Void> {
         stringBuilder.append(" else ");
         apply(caseWhen.elseExpression());
         stringBuilder.append(" end");
+
+        return null;
+    }
+
+    @Override
+    public Void visit(Coalesce coalesce) {
+        stringBuilder.append("coalesce(");
+        coalesce.children().forEach(this::apply);
+        stringBuilder.append(')');
 
         return null;
     }

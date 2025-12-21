@@ -18,6 +18,8 @@ public interface ValueExpressionVisitor<T> extends Function<ValueExpression, T> 
 
     T visit(CastExpression cast);
 
+    T visit(CoalesceExpression coalesce);
+
     T visit(ConstantExpression constant);
 
     T visit(DivideExpression divide);
