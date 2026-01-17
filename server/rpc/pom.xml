@@ -21,7 +21,7 @@
 
     <properties>
         <rpc.fancyName>${server.fancyName} :: RPC</rpc.fancyName>
-        <grpc.version>1.20.0</grpc.version>
+        <grpc.version>1.53.0</grpc.version>
     </properties>
 
     <dependencyManagement>
