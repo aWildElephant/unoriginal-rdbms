@@ -92,7 +92,6 @@ import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
 import static fr.awildelephant.rdbms.ast.LeftJoin.leftJoin;
 import static fr.awildelephant.rdbms.ast.Limit.limit;
 import static fr.awildelephant.rdbms.ast.Row.row;
-import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.SemiJoin.semiJoin;
 import static fr.awildelephant.rdbms.ast.Substring.substring;
 import static fr.awildelephant.rdbms.ast.TableAlias.tableAlias;
@@ -418,7 +417,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(Select select) {
-        return select(select.outputColumns().stream().map(function).collect(Collectors.toList()),
+        return new Select(select.outputColumns().stream().map(function).collect(Collectors.toList()),
                 function.apply(select.fromClause()),
                 Optional.ofNullable(select.whereClause()).map(function).orElse(null),
                 select.groupByClause(),

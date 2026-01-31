@@ -9,10 +9,10 @@ import static fr.awildelephant.rdbms.ast.ColumnType.DATE;
 import static fr.awildelephant.rdbms.ast.Exists.exists;
 import static fr.awildelephant.rdbms.ast.InValueList.inValueList;
 import static fr.awildelephant.rdbms.ast.Row.row;
-import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.UnqualifiedColumnName.unqualifiedColumnName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
+import static fr.awildelephant.rdbms.ast.builder.SelectBuilder.select;
 import static fr.awildelephant.rdbms.ast.value.And.and;
 import static fr.awildelephant.rdbms.ast.value.Between.between;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.falseLiteral;
@@ -138,7 +138,9 @@ class BooleanExpressionParserTest {
         assertParsing("VALUES (a IN (SELECT b FROM test))",
 
                 rows(row(in(unqualifiedColumnName("a"),
-                        select(List.of(unqualifiedColumnName("b")), tableName("test"), null, null, null, null)))));
+                        select()
+                                .outputColumns(unqualifiedColumnName("b"))
+                                .fromClause(tableName("test")).build()))));
     }
 
     @Test

@@ -11,10 +11,6 @@ import static fr.awildelephant.rdbms.ast.util.ToStringBuilderHelper.toStringBuil
 public record Select(List<? extends AST> outputColumns, AST fromClause, AST whereClause, GroupingSetsList groupByClause,
                      AST havingClause, SortSpecificationList orderByClause) implements AST {
 
-    public static Select select(List<? extends AST> outputColumns, AST fromClause, AST whereClause, GroupingSetsList groupByClause, AST havingClause, SortSpecificationList orderByClause) {
-        return new Select(outputColumns, fromClause, whereClause, groupByClause, havingClause, orderByClause);
-    }
-
     @Override
     public Collection<? extends AST> children() {
         final List<AST> children = new ArrayList<>(outputColumns);

@@ -42,6 +42,21 @@ public final class SelectBuilder implements Builder<Select> {
         return this;
     }
 
+    public SelectBuilder groupByClause(GroupingSetsList groupByClause) {
+        this.groupByClause = groupByClause;
+        return this;
+    }
+
+    public SelectBuilder havingClause(AST havingClause) {
+        this.havingClause = havingClause;
+        return this;
+    }
+
+    public SelectBuilder orderByClause(SortSpecificationList orderByClause) {
+        this.orderByClause = orderByClause;
+        return this;
+    }
+
     @Override
     public Select build() {
         return new Select(

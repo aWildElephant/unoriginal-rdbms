@@ -1,18 +1,18 @@
 package fr.awildelephant.rdbms.parser;
 
+import fr.awildelephant.rdbms.ast.TableName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Asterisk.asterisk;
 import static fr.awildelephant.rdbms.ast.Cast.cast;
 import static fr.awildelephant.rdbms.ast.ColumnType.DATE;
 import static fr.awildelephant.rdbms.ast.InsertInto.insertInto;
 import static fr.awildelephant.rdbms.ast.Row.row;
-import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.ast.TableName.tableName;
 import static fr.awildelephant.rdbms.ast.Values.rows;
+import static fr.awildelephant.rdbms.ast.builder.SelectBuilder.select;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.falseLiteral;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.trueLiteral;
 import static fr.awildelephant.rdbms.ast.value.BooleanLiteral.unknownLiteral;
@@ -85,6 +85,8 @@ class InsertIntoParserTest {
     void it_should_parse_an_insert_into_statement_with_subquery() {
         assertParsing("INSERT INTO test SELECT * FROM test2",
 
-                insertInto(tableName("test"), select(List.of(asterisk()), tableName("test2"), null, null, null, null)));
+                insertInto(tableName("test"), select()
+                        .outputColumns(asterisk())
+                        .fromClause(TableName.tableName("test2")).build()));
     }
 }

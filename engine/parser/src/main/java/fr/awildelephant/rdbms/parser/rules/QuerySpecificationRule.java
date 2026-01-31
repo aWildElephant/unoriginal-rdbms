@@ -2,6 +2,7 @@ package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.GroupingSetsList;
+import fr.awildelephant.rdbms.ast.Select;
 import fr.awildelephant.rdbms.ast.SortSpecificationList;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.IntegerLiteralToken;
@@ -10,7 +11,6 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.Distinct.distinct;
 import static fr.awildelephant.rdbms.ast.Limit.limit;
-import static fr.awildelephant.rdbms.ast.Select.select;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.DISTINCT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.GROUP;
@@ -75,7 +75,7 @@ final class QuerySpecificationRule {
             orderByClause = null;
         }
 
-        AST output = select(outputColumns, fromClause, whereClause, groupByClause, havingClause, orderByClause);
+        AST output = new Select(outputColumns, fromClause, whereClause, groupByClause, havingClause, orderByClause);
 
         if (distinct) {
             output = distinct(output);
