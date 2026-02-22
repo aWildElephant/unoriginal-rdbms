@@ -135,18 +135,7 @@ public class RDBMSResultSet extends AbstractResultSet {
     }
     //endregion
 
-    //region navigation
-    @Override
-    public boolean next() {
-        if (cursor < table.numberOfRows() - 1) {
-            wasNull = false;
-            cursor++;
-
-            return true;
-        }
-
-        return false;
-    }
+    //region check the position of the cursor
 
     @Override
     public boolean isBeforeFirst() throws SQLException {
@@ -158,6 +147,38 @@ public class RDBMSResultSet extends AbstractResultSet {
     public boolean isFirst() throws SQLException {
         checkNotClosed();
         return cursor == 0;
+    }
+
+    @Override
+    public boolean isAfterLast() throws SQLException {
+        checkNotClosed();
+        return cursor == table.numberOfRows() - 1;
+    }
+
+    @Override
+    public boolean isLast() throws SQLException {
+        checkNotClosed();
+        return cursor >= table.numberOfRows();
+    }
+
+    //endregion
+
+    //region navigation
+
+    @Override
+    public boolean next() {
+        final int numberOfRows = table.numberOfRows();
+        if (cursor < numberOfRows) {
+            cursor++;
+
+            if (cursor < numberOfRows - 1) {
+                wasNull = false;
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

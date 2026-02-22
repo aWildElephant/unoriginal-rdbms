@@ -172,16 +172,6 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public boolean isAfterLast() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
-    public boolean isLast() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
-    }
-
-    @Override
     public void afterLast() throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
