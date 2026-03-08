@@ -107,6 +107,24 @@ class RDBMSResultSetTest {
         }
     }
 
+    @Test
+    void last_and_isLast_work() throws SQLException {
+        try (final RDBMSResultSet resultSet = new RDBMSResultSet(new MockResultProxy(TWO_ROWS))) {
+            resultSet.last();
+            assertThat(resultSet.isLast()).isTrue();
+            assertThat(resultSet.isAfterLast()).isFalse();
+        }
+    }
+
+    @Test
+    void afterLast_and_isAfterLast_work() throws SQLException {
+        try (final RDBMSResultSet resultSet = new RDBMSResultSet(new MockResultProxy(TWO_ROWS))) {
+            resultSet.afterLast();
+            assertThat(resultSet.isLast()).isFalse();
+            assertThat(resultSet.isAfterLast()).isTrue();
+        }
+    }
+
     private static final class SingleNullCellResultProxy implements ResultProxy {
 
         @Override

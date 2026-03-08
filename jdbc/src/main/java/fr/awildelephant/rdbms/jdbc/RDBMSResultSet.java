@@ -152,13 +152,13 @@ public class RDBMSResultSet extends AbstractResultSet {
     @Override
     public boolean isAfterLast() throws SQLException {
         checkNotClosed();
-        return cursor == table.numberOfRows() - 1;
+        return cursor >= table.numberOfRows();
     }
 
     @Override
     public boolean isLast() throws SQLException {
         checkNotClosed();
-        return cursor >= table.numberOfRows();
+        return cursor == table.numberOfRows() - 1;
     }
 
     //endregion
@@ -193,6 +193,25 @@ public class RDBMSResultSet extends AbstractResultSet {
         cursor = 0;
         return true; // TODO: check the doc, what should we return + should we throw if result set is closed?
     }
+
+    @Override
+    public boolean last() {
+        final int numberOfRows = table.numberOfRows();
+        if (numberOfRows == 0) {
+            return false;
+        }
+        cursor = numberOfRows - 1;
+        return true;
+    }
+
+    @Override
+    public void afterLast() {
+        final int numberOfRows = table.numberOfRows();
+        if (numberOfRows > 0) {
+            cursor = numberOfRows;
+        }
+    }
+
     //endregion
 
     @Override
