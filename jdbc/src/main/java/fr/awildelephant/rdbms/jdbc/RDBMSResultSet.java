@@ -190,8 +190,12 @@ public class RDBMSResultSet extends AbstractResultSet {
     @Override
     public boolean first() throws SQLException {
         checkNotClosed();
+        final int numberOfRows = table.numberOfRows();
+        if (numberOfRows == 0) {
+            return false;
+        }
         cursor = 0;
-        return true; // TODO: check the doc, what should we return + should we throw if result set is closed?
+        return true;
     }
 
     @Override

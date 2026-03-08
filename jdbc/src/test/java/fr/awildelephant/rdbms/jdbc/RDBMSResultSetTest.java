@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RDBMSResultSetTest {
 
+    private final Matrix<Value> NO_ROW = MatrixFactory.fromRowBasedData(0, 1);
     private final Matrix<Value> TWO_ROWS = MatrixFactory.fromRowBasedData(2, 1, new MockStringValue("first_row"), new MockStringValue("second_row"));
 
     @Test
@@ -94,6 +95,14 @@ class RDBMSResultSetTest {
             resultSet.next();
             resultSet.beforeFirst();
             assertThat(resultSet.isBeforeFirst()).isTrue();
+        }
+    }
+
+    @Test
+    void first_and_last_should_return_false_if_result_set_is_empty() throws SQLException {
+        try (final RDBMSResultSet resultSet = new RDBMSResultSet(new MockResultProxy(NO_ROW))) {
+            assertThat(resultSet.first()).isFalse();
+            assertThat(resultSet.last()).isFalse();
         }
     }
 
