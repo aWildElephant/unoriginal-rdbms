@@ -46,7 +46,7 @@ public final class ResultSetAsserter {
 
         int i = 0;
 
-        while (i < numberOfExpectedRows && resultSet.next()) {
+        while (i <= numberOfExpectedRows && resultSet.next()) {
             for (int j = 0; j < expectedNumberOfColumns; j++) {
                 final ExpectedColumn expectedColumn = expectedColumns.get(j);
                 expectedColumn.checker().check(resultSet, i + 1, j + 1, expectedContent.get(j, i));

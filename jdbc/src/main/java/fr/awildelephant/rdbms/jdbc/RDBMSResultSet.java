@@ -171,7 +171,7 @@ public class RDBMSResultSet extends AbstractResultSet {
         if (cursor < numberOfRows) {
             cursor++;
 
-            if (cursor < numberOfRows - 1) {
+            if (cursor < numberOfRows) {
                 wasNull = false;
 
                 return true;
