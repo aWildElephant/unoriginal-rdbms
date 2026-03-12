@@ -11,7 +11,7 @@ import static fr.awildelephant.rdbms.ast.builder.SelectBuilder.select;
 import static fr.awildelephant.rdbms.ast.value.TextLiteral.textLiteral;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 
-public class FunctionParserTest {
+class FunctionParserTest {
 
     @Test
     void it_should_parse_coalesce_function_with_one_argument() {

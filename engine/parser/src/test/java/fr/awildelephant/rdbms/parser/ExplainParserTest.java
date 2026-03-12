@@ -8,7 +8,7 @@ import static fr.awildelephant.rdbms.ast.Explain.explain;
 import static fr.awildelephant.rdbms.ast.builder.SelectBuilder.select;
 import static fr.awildelephant.rdbms.parser.ParserTestHelper.assertParsing;
 
-public class ExplainParserTest {
+class ExplainParserTest {
 
     @Test
     void it_should_parse_an_explain_statement() {
