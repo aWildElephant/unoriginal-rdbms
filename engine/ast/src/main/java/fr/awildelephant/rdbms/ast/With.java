@@ -11,10 +11,6 @@ public final class With extends BinaryNode<AST, WithList, AST> implements AST {
         super(withList, query);
     }
 
-    public static With with(WithList withList, AST query) {
-        return new With(withList, query);
-    }
-
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);

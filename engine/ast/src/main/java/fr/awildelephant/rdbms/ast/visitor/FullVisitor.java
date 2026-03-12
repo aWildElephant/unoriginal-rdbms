@@ -99,7 +99,6 @@ import static fr.awildelephant.rdbms.ast.TableAliasWithColumns.tableAliasWithCol
 import static fr.awildelephant.rdbms.ast.TableReferenceList.tableReferenceList;
 import static fr.awildelephant.rdbms.ast.Truncate.truncate;
 import static fr.awildelephant.rdbms.ast.Values.rows;
-import static fr.awildelephant.rdbms.ast.With.with;
 import static fr.awildelephant.rdbms.ast.WithElement.withElement;
 import static fr.awildelephant.rdbms.ast.WithList.withList;
 import static fr.awildelephant.rdbms.ast.value.And.and;
@@ -505,7 +504,7 @@ public final class FullVisitor implements ASTVisitor<AST> {
 
     @Override
     public AST visit(With with) {
-        return with(visit(with.withList()), function.apply(with.query()));
+        return new With(visit(with.withList()), function.apply(with.query()));
     }
 
     @Override

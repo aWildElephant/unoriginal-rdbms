@@ -3,6 +3,7 @@ package fr.awildelephant.rdbms.parser.rules;
 import fr.awildelephant.rdbms.ast.AST;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
 import fr.awildelephant.rdbms.ast.ReadCSV;
+import fr.awildelephant.rdbms.ast.With;
 import fr.awildelephant.rdbms.ast.WithElement;
 import fr.awildelephant.rdbms.lexer.Lexer;
 import fr.awildelephant.rdbms.lexer.tokens.Token;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static fr.awildelephant.rdbms.ast.ReadCSV.readCSV;
-import static fr.awildelephant.rdbms.ast.With.with;
 import static fr.awildelephant.rdbms.ast.WithElement.withElement;
 import static fr.awildelephant.rdbms.ast.WithList.withList;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
@@ -100,6 +100,6 @@ final class QueryExpressionRule {
 
         final AST query = deriveQueryExpression(lexer);
 
-        return with(withList(withElements), query);
+        return new With(withList(withElements), query);
     }
 }
