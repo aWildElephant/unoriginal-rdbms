@@ -1,6 +1,6 @@
 package fr.awildelephant.rdbms.util.multimap;
 
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,7 +71,7 @@ public final class Multimap<K, V> implements Map<K, List<V>> {
     }
 
     public void putSingle(K key, V value) {
-        compute(key, (unused, values) -> {
+        compute(key, (_, values) -> {
             if (values == null) {
                 values = new ArrayList<>();
             }
@@ -83,7 +83,7 @@ public final class Multimap<K, V> implements Map<K, List<V>> {
     }
 
     @Override
-    public void putAll(@NotNull Map<? extends K, ? extends List<V>> map) {
+    public void putAll(@Nonnull Map<? extends K, ? extends List<V>> map) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -93,19 +93,19 @@ public final class Multimap<K, V> implements Map<K, List<V>> {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Set<K> keySet() {
         return delegate.keySet();
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Collection<List<V>> values() {
         return delegate.values();
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Set<Entry<K, List<V>>> entrySet() {
         return delegate.entrySet();
     }

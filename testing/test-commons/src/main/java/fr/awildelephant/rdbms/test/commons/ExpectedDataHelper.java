@@ -2,7 +2,7 @@ package fr.awildelephant.rdbms.test.commons;
 
 import fr.awildelephant.rdbms.util.structure.matrix.Matrix;
 import fr.awildelephant.rdbms.util.structure.matrix.MatrixFactory;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public final class ExpectedDataHelper {
 
     }
 
-    public static ExpectedResult fromRowBasedData(@NotNull final List<List<String>> data) {
+    public static ExpectedResult fromRowBasedData(@Nonnull final List<List<String>> data) {
         final List<String> columnNames = data.getFirst();
         final List<String> columnTypes = data.get(1);
 

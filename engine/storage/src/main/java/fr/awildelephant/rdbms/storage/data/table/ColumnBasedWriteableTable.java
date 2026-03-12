@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.storage.data.record.MultipleColumnsIterator;
 import fr.awildelephant.rdbms.storage.data.record.Record;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public record ColumnBasedWriteableTable(Schema schema, List<AppendableColumn> co
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Iterator<Record> iterator() {
         return new MultipleColumnsIterator(columns);
     }
@@ -69,6 +69,7 @@ public record ColumnBasedWriteableTable(Schema schema, List<AppendableColumn> co
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "ColumnBasedWriteableTable[" +
                 "schema=" + schema + ", " +

@@ -12,7 +12,7 @@ import fr.awildelephant.rdbms.storage.data.table.FilteredTable;
 import fr.awildelephant.rdbms.storage.data.table.ManagedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.version.Version;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public final class BaseTableOperator implements Operator {
         return result;
     }
 
-    @NotNull
+    @Nonnull
     private static ColumnBasedTable removeSystemColumns(final Table inputTable) {
         // FIXME: code duplicated with ProjectOperator
         final Schema inputSchema = inputTable.schema();

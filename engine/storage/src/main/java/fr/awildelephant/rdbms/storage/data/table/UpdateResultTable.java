@@ -9,7 +9,7 @@ import fr.awildelephant.rdbms.storage.data.column.Column;
 import fr.awildelephant.rdbms.storage.data.column.SingleCellColumn;
 import fr.awildelephant.rdbms.storage.data.record.Record;
 import fr.awildelephant.rdbms.storage.data.record.SingleCellRecord;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +50,7 @@ public class UpdateResultTable implements Table {
         return columns;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Iterator<Record> iterator() {
         return records.iterator();

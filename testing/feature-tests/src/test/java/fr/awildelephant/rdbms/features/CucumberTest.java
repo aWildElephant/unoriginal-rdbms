@@ -1,10 +1,11 @@
 package fr.awildelephant.rdbms.features;
 
-import io.cucumber.junit.CucumberOptions;
-import io.cucumber.junit.Cucumber;
-import org.junit.runner.RunWith;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.platform.suite.api.SelectPackages;
+import org.junit.platform.suite.api.Suite;
 
-@CucumberOptions(glue = {"fr.awildelephant.rdbms.features"}, tags = "not @todo")
-@RunWith(Cucumber.class)
+@Suite
+@IncludeEngines("cucumber")
+@SelectPackages("fr.awildelephant.rdbms.features")
 public class CucumberTest {
 }

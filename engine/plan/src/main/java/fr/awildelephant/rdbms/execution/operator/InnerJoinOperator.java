@@ -15,7 +15,7 @@ import fr.awildelephant.rdbms.function.VariableCollector;
 import fr.awildelephant.rdbms.schema.ColumnReference;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.data.table.Table;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,7 +147,7 @@ public final class InnerJoinOperator implements Operator {
         return new HashJoinMatcher(rightTable, leftMapping, rightMapping);
     }
 
-    @NotNull
+    @Nonnull
     private ColumnReference variable(ValueExpression valueExpression) {
         final List<ColumnReference> variables = variableCollector.apply(valueExpression);
         if (variables.isEmpty()) {

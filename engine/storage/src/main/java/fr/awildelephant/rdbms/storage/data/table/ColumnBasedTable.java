@@ -4,7 +4,7 @@ import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.data.column.Column;
 import fr.awildelephant.rdbms.storage.data.record.MultipleColumnsIterator;
 import fr.awildelephant.rdbms.storage.data.record.Record;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +22,7 @@ public record ColumnBasedTable(Schema schema, List<Column> columns) implements T
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Iterator<Record> iterator() {
         return new MultipleColumnsIterator(columns);
     }
@@ -38,6 +38,7 @@ public record ColumnBasedTable(Schema schema, List<Column> columns) implements T
     }
 
     @Override
+    @Nonnull
     public String toString() {
         return "NewColumnBasedTable[" +
                 "schema=" + schema + ", " +

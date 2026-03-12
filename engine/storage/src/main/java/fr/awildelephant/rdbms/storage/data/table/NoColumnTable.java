@@ -3,7 +3,7 @@ package fr.awildelephant.rdbms.storage.data.table;
 import fr.awildelephant.rdbms.schema.Schema;
 import fr.awildelephant.rdbms.storage.data.column.AppendableColumn;
 import fr.awildelephant.rdbms.storage.data.record.Record;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -55,7 +55,7 @@ public final class NoColumnTable implements WriteableTable {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public Iterator<Record> iterator() {
         return new NoColumnIterator(size);
     }

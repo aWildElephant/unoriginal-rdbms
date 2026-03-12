@@ -19,7 +19,7 @@ import fr.awildelephant.rdbms.storage.data.record.Record;
 import fr.awildelephant.rdbms.storage.data.table.ColumnBasedTable;
 import fr.awildelephant.rdbms.storage.data.table.Table;
 import fr.awildelephant.rdbms.util.logic.ThreeValuedLogic;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,7 +150,7 @@ public final class SemiJoinOperator implements Operator {
         return new HashSemiJoinMatcher(rightTable, leftMapping, rightMapping);
     }
 
-    @NotNull
+    @Nonnull
     private ColumnReference variable(ValueExpression valueExpression) {
         final List<ColumnReference> variables = variableCollector.apply(valueExpression);
         if (variables.isEmpty()) {
