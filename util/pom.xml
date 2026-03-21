@@ -24,5 +24,6 @@
         <module>printer</module>
         <module>structure</module>
         <module>common</module>
+        <module>standard</module>
     </modules>
 </project>

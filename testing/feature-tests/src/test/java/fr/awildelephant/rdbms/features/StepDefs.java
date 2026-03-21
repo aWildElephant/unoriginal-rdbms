@@ -1,9 +1,6 @@
 package fr.awildelephant.rdbms.features;
 
-import fr.awildelephant.rdbms.test.commons.Checker;
-import fr.awildelephant.rdbms.test.commons.ExpectedResult;
 import fr.awildelephant.rdbms.test.commons.RDBMSTestWrapper;
-import fr.awildelephant.rdbms.test.commons.ExpectedDataHelper;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java8.En;
 

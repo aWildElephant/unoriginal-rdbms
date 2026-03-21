@@ -937,5 +937,5 @@ public enum Keywords implements Token {
         public TokenType type() {
             return YEAR;
         }
-    }
+    };
 }

@@ -32,7 +32,6 @@ public final class MapOperator implements Operator {
         this.outputSchema = outputSchema;
     }
 
-
     @Override
     public Table compute(TemporaryStorage storage) {
         final Table inputTable = storage.get(inputKey);
