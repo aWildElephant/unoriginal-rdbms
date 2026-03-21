@@ -14,7 +14,6 @@ import java.util.List;
 
 import static fr.awildelephant.rdbms.evaluator.input.NoValues.noValues;
 import static fr.awildelephant.rdbms.formula.creation.ValueExpressionToFormulaTransformer.createFormula;
-import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 
 public final class TableConstructorOperator implements Operator {
 
@@ -30,8 +29,7 @@ public final class TableConstructorOperator implements Operator {
     public Table compute(TemporaryStorage storage) {
         final List<List<Formula>> formulas = matrix.stream()
                 .map(row -> row.stream()
-                        .map(expression -> createFormula(expression,
-                                EMPTY_SCHEMA))
+                        .map(expression -> createFormula(expression, Schema.empty()))
                         .toList())
                 .toList();
 

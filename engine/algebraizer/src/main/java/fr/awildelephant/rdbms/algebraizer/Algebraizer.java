@@ -60,7 +60,6 @@ import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.innerJoin
 import static fr.awildelephant.rdbms.execution.JoinOutputSchemaFactory.leftJoinOutputSchema;
 import static fr.awildelephant.rdbms.execution.join.JoinType.SEMI;
 import static fr.awildelephant.rdbms.operator.logical.alias.TableAlias.tableAlias;
-import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
 import static java.util.stream.Collectors.toList;
 
 public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
@@ -73,7 +72,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
     private final ColumnReferenceTransformer columnReferenceTransformer;
 
     public Algebraizer(StorageSnapshot storageSnapshot, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
-        this(storageSnapshot, EMPTY_SCHEMA, columnNameResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
+        this(storageSnapshot, Schema.empty(), columnNameResolver, columnReferenceTransformer, expressionSplitter, aliasExtractor);
     }
 
     private Algebraizer(StorageSnapshot storageSnapshot, Schema outerQuerySchema, ColumnNameResolver columnNameResolver, ColumnReferenceTransformer columnReferenceTransformer, ExpressionSplitter expressionSplitter, AliasExtractor aliasExtractor) {
@@ -410,7 +409,7 @@ public final class Algebraizer extends DefaultASTVisitor<LogicalOperator> {
             final List<ValueExpression> valueExpressions = new ArrayList<>();
 
             for (AST expression : expressions) {
-                valueExpressions.add(createValueExpression(expression, EMPTY_SCHEMA, outerQuerySchema));
+                valueExpressions.add(createValueExpression(expression, Schema.empty(), outerQuerySchema));
             }
 
             matrix.add(valueExpressions);

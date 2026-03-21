@@ -9,8 +9,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import static fr.awildelephant.rdbms.schema.Schema.EMPTY_SCHEMA;
-
 public final class NoColumnTable implements WriteableTable {
 
     private int size;
@@ -21,7 +19,7 @@ public final class NoColumnTable implements WriteableTable {
 
     @Override
     public Schema schema() {
-        return EMPTY_SCHEMA;
+        return Schema.empty();
     }
 
     @Override

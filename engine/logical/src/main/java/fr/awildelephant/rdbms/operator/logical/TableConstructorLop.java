@@ -26,7 +26,7 @@ public final class TableConstructorLop extends AbstractLop {
 
     private static Schema createSchema(List<List<ValueExpression>> matrix) {
         if (matrix.isEmpty()) {
-            return Schema.EMPTY_SCHEMA;
+            return Schema.empty();
         }
 
         final ArrayList<ColumnMetadata> columns = new ArrayList<>();

@@ -125,6 +125,6 @@ public final class ExpressionSimplifier extends DefaultValueExpressionVisitor<Va
     }
 
     private Operation createFormula(ValueExpression expression) {
-        return new ValueExpressionToFormulaTransformer(Schema.EMPTY_SCHEMA).apply(expression);
+        return new ValueExpressionToFormulaTransformer(Schema.empty()).apply(expression);
     }
 }

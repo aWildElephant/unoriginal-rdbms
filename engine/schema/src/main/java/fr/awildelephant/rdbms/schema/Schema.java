@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public final class Schema {
 
-    public static final Schema EMPTY_SCHEMA = new Schema(List.of());
+    private static final Schema EMPTY_SCHEMA = new Schema(List.of());
 
     private final List<ColumnReference> allColumns;
 
@@ -32,7 +32,7 @@ public final class Schema {
         for (OrderedColumnMetadata column : reindexedColumns) {
             final ColumnReference columnReference = column.metadata().name();
             allColumns.add(columnReference);
-            columnIndex.compute(columnReference.name(), (unused, tables) -> {
+            columnIndex.compute(columnReference.name(), (_, tables) -> {
                 if (tables == null) {
                     tables = new HashMap<>();
                 }
