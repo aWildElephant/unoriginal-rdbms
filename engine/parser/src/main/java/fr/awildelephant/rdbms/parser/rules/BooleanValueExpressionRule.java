@@ -192,12 +192,6 @@ final class BooleanValueExpressionRule {
         final Token nextToken = lexer.lookupNextToken();
 
         switch (nextToken.type()) {
-            case LEFT_PAREN -> {
-                lexer.consumeNextToken();
-                final AST parenthesizedValueExpression = deriveBooleanValueExpression(lexer);
-                consumeAndExpect(RIGHT_PAREN, lexer);
-                return parenthesizedValueExpression;
-            }
             case EXISTS -> {
                 lexer.consumeNextToken();
                 consumeAndExpect(LEFT_PAREN, lexer);
