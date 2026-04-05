@@ -5,6 +5,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AND;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ANY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASC;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.ASSERTION;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AVG;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BETWEEN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BIGINT;
@@ -13,6 +14,7 @@ import static fr.awildelephant.rdbms.lexer.tokens.TokenType.BY;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CASE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CAST;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHAR;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHECK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COALESCE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.COUNT;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
@@ -135,6 +137,17 @@ public enum Keywords implements Token {
             return ASC;
         }
     },
+    ASSERTION_TOKEN {
+        @Override
+        public String text() {
+            return "assertion";
+        }
+
+        @Override
+        public TokenType type() {
+            return ASSERTION;
+        }
+    },
     AVG_TOKEN {
         @Override
         public String text() {
@@ -221,6 +234,17 @@ public enum Keywords implements Token {
         @Override
         public TokenType type() {
             return CHAR;
+        }
+    },
+    CHECK_TOKEN {
+        @Override
+        public String text() {
+            return "check";
+        }
+
+        @Override
+        public TokenType type() {
+            return CHECK;
         }
     },
     COALESCE_TOKEN {
@@ -937,5 +961,5 @@ public enum Keywords implements Token {
         public TokenType type() {
             return YEAR;
         }
-    };
+    }
 }

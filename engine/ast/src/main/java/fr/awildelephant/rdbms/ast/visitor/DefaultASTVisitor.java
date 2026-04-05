@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.Coalesce;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.CreateAssertion;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.CreateView;
 import fr.awildelephant.rdbms.ast.Delete;
@@ -139,6 +140,11 @@ public abstract class DefaultASTVisitor<T> implements ASTVisitor<T> {
     @Override
     public T visit(CountStar countStar) {
         return defaultVisit(countStar);
+    }
+
+    @Override
+    public T visit(CreateAssertion createAssertion) {
+        return defaultVisit(createAssertion);
     }
 
     @Override

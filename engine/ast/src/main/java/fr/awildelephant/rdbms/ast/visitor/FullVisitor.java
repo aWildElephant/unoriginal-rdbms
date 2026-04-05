@@ -6,6 +6,7 @@ import fr.awildelephant.rdbms.ast.Cast;
 import fr.awildelephant.rdbms.ast.Coalesce;
 import fr.awildelephant.rdbms.ast.ColumnAlias;
 import fr.awildelephant.rdbms.ast.ColumnDefinition;
+import fr.awildelephant.rdbms.ast.CreateAssertion;
 import fr.awildelephant.rdbms.ast.CreateTable;
 import fr.awildelephant.rdbms.ast.CreateView;
 import fr.awildelephant.rdbms.ast.Delete;
@@ -203,6 +204,11 @@ public final class FullVisitor implements ASTVisitor<AST> {
     @Override
     public AST visit(CountStar countStar) {
         return countStar;
+    }
+
+    @Override
+    public AST visit(CreateAssertion createAssertion) {
+        return new CreateAssertion(createAssertion.name(), createAssertion.child());
     }
 
     @Override

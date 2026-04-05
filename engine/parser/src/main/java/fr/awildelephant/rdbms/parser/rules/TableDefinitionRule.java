@@ -1,6 +1,7 @@
 package fr.awildelephant.rdbms.parser.rules;
 
 import fr.awildelephant.rdbms.ast.AST;
+import fr.awildelephant.rdbms.ast.CreateAssertion;
 import fr.awildelephant.rdbms.ast.TableElementList;
 import fr.awildelephant.rdbms.ast.TableName;
 import fr.awildelephant.rdbms.lexer.Lexer;
@@ -12,12 +13,14 @@ import java.util.List;
 import static fr.awildelephant.rdbms.ast.CreateTable.createTable;
 import static fr.awildelephant.rdbms.ast.CreateView.createView;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.AS;
+import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CHECK;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.CREATE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.LEFT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.RIGHT_PAREN;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.TABLE;
 import static fr.awildelephant.rdbms.lexer.tokens.TokenType.VIEW;
 import static fr.awildelephant.rdbms.parser.error.ErrorHelper.unexpectedToken;
+import static fr.awildelephant.rdbms.parser.rules.BooleanValueExpressionRule.deriveBooleanValueExpression;
 import static fr.awildelephant.rdbms.parser.rules.ColumnNameListRule.deriveColumnNameList;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeAndExpect;
 import static fr.awildelephant.rdbms.parser.rules.ParseHelper.consumeIdentifier;
@@ -38,6 +41,15 @@ final class TableDefinitionRule {
 
         final Token nextToken = lexer.lookupNextToken();
         switch (nextToken.type()) {
+            case ASSERTION -> {
+                lexer.consumeNextToken();
+                final String assertionName = consumeIdentifier(lexer);
+                consumeAndExpect(CHECK, lexer);
+                consumeAndExpect(LEFT_PAREN, lexer);
+                final AST predicate = deriveBooleanValueExpression(lexer);
+                consumeAndExpect(RIGHT_PAREN, lexer);
+                return new CreateAssertion(assertionName, predicate);
+            }
             case TABLE -> {
                 lexer.consumeNextToken();
                 final TableName tableName = deriveTableName(lexer);
